@@ -1,9 +1,11 @@
-import { BaseEntity, Contact } from '../lib';
+import { BaseEntity } from '../lib/BaseClasses';
+import { Contact } from '../lib/ValueObjects';
 import { Appointment } from './Appointment';
-import { SalerId } from './SalerId';
+import { SellerId } from './SellerId';
+import { convertDate } from 'src/infra/support/dateHelpers';
 
-export class Saler extends BaseEntity {
-  constructor({ id = new SalerId(), personName, contacts = [], appointments = [] }) {
+export class Seller extends BaseEntity {
+  constructor({ id = new SellerId(), personName, contacts = [], appointments = [] }) {
     super(id);
     this.personName = personName;
     this.contacts = contacts;
@@ -18,15 +20,25 @@ export class Saler extends BaseEntity {
     this.contacts = [ ...this.contacts, new Contact({ type, value }) ];
   }
 
-  appointByPostId(postId, date) {
+  appointToPostId(postId, date) {
+    const previousPostId = this.getPostIdAtDate(date);
+
+    if (previousPostId === postId) {
+      const error = new Error('Validation Error');
+      error.details = ['Seller already have this post'];
+      throw error;
+    }
+
     const appointment = new Appointment({ postId, date });
     this.appointments = [ ...this.appointments, appointment ].sort((a, b) => a.date > b.date);
   }
 
-  getPostIdAtDate(date) {
+  getPostIdAtDate(rawDate) {
     if (this.appointments.length === 0) {
       return;
     }
+
+    const date = convertDate(rawDate);
 
     const [ firstAppointment, ...restAppointments ] = this.appointments;
     if (firstAppointment.date > date) {
@@ -34,7 +46,7 @@ export class Saler extends BaseEntity {
     }
 
     const { postId } = restAppointments.reduce((currentAppointment, appointment) => {
-      return appointment.date < date ? appointment : currentAppointment;
+      return appointment.date <= date ? appointment : currentAppointment;
     }, firstAppointment);
 
     return postId;

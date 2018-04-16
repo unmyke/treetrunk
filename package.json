@@ -1,7 +1,7 @@
 {
   "name": "treetrunk",
   "version": "0.0.1",
-  "description": "Saler managament system that process payroll",
+  "description": "Seller managament system that process payroll",
   "main": "index.js",
   "author": "unmyke",
   "license": "MIT",

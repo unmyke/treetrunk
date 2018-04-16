@@ -4,7 +4,7 @@ export const isValidDate = (date = new Date('Invalid Date')) => date.constructor
 
 export const convertDate = (date) => {
   if (date === undefined) {
-    return date;
+    return undefined;
   }
 
   if (isValidDate(date)) {

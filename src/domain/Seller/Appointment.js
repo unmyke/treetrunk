@@ -1,4 +1,5 @@
-import { BaseValue } from '../lib';
+import { BaseValue } from '../lib/BaseClasses';
+import { addDateAccessors } from '../lib/functions';
 
 export class Appointment extends BaseValue {
   constructor({ postId, date }) {
@@ -7,3 +8,5 @@ export class Appointment extends BaseValue {
     this.date = date;
   }
 }
+
+addDateAccessors(Appointment);

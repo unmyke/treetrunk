@@ -1,6 +1,6 @@
 import { format, differenceInDays, addDays } from 'date-fns';
 import { isValidDate, convertDate } from 'src/infra/support/dateHelpers';
-import { BaseValue } from '../BaseValue';
+import { BaseValue } from '../../BaseClasses';
 
 export class DateRange extends BaseValue {
   constructor({ start, end } = {}) {

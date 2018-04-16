@@ -1,4 +1,4 @@
-import { BaseValue } from '../BaseValue';
+import { BaseValue } from '../../BaseClasses';
 
 export class PersonName extends BaseValue {
   constructor({ surname, firstName, middleName }) {

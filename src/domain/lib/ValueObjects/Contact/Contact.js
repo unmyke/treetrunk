@@ -1,4 +1,4 @@
-import { BaseValue } from '../BaseValue';
+import { BaseValue } from '../../BaseClasses';
 
 export class Contact extends BaseValue {
   constructor({ type, value }) {

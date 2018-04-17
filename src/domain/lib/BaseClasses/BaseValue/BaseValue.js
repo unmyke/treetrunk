@@ -1,3 +1,10 @@
+const valueEquality = (value1, value2) => {
+  if (value1 instanceof BaseValue || value1 instanceof Date) {
+    return value1.equals(value2);
+  }
+  return value1 === value2;
+};
+
 export class BaseValue {
   equals(value) {
     if (this === value) {
@@ -11,14 +18,10 @@ export class BaseValue {
     const thisPropNames = Object.getOwnPropertyNames(this).sort();
     const valuePropNames = Object.getOwnPropertyNames(value).sort();
 
-    if (thisPropNames.length !== valuePropNames.length) {
-      return false;
-    }
-
     return thisPropNames.reduce((isEqual, propertyName, index) => {
       return isEqual &&
         propertyName === valuePropNames[index] &&
-        this[propertyName] === value[propertyName];
+        valueEquality(this[propertyName], value[propertyName]);
     }, true);
   }
 }

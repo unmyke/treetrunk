@@ -5,11 +5,13 @@ import { SellerId } from './SellerId';
 import { Post } from '../Post';
 import { Appointment } from './Appointment';
 
-const personName = new PersonName({ surname: 'Surname', firstName: 'Firstname', middleName: 'Middlename' });
-const contact = new Contact({ type: 'телефон', value: '55-66-00' });
+const surname = 'Surname';
+const firstName = 'Firstname';
+const middleName = 'Middlename';
+const phone = '55-66-00';
 
 const floristPost       = new Post({ name: 'Флорист' });
-const senoirFloristPost = new Post({ name: 'Старший флорист' });
+const seniorFloristPost = new Post({ name: 'Старший флорист' });
 
 const appointmentDate1 = new Date('2018.02.14 11:00');
 const appointmentDate2 = new Date('2018.03.20 11:00');
@@ -18,32 +20,21 @@ const appointmentDate3 = new Date('2018.04.14 11:00');
 describe('Domain :: entities :: Seller', () => {
   let seller; 
   beforeEach(() => {
-    seller = new Seller({ personName });
+    seller = new Seller({ surname, firstName, middleName, phone });
   });
 
-  describe('#construcor', () => {
-    context('when contruct with only person name', () => {
-      it('should be instance of Seller', () => {
-        expect(seller).toBeInstanceOf(Seller);
-        expect(seller.id).toBeInstanceOf(SellerId);
-        expect(seller.appointments).toHaveLength(0);
-        expect(seller.contacts).toHaveLength(0);
-      });
-    });
-  });
-
-  describe('#addContact', () => {
-    it('should contains new contact', () => {
-      seller.addContact(contact.type, contact.value);
-
-      expect(seller.contacts).toHaveLength(1);
-      expect(seller.contacts[0].equals(contact)).toBeTruthy();
+  describe('#constructor', () => {
+    it('should be instance of Seller', () => {
+      expect(seller).toBeInstanceOf(Seller);
+      expect(seller.id).toBeInstanceOf(SellerId);
+      expect(seller.phone).toBe(phone);
+      expect(seller.appointments).toHaveLength(0);
     });
   });
 
   describe('#appointToPostId', () => {
-    context('when appoint one postId', () => {
-      it('should have appointments length qual 1', () => {
+    context('when appoint to one postId', () => {
+      it('should have appointments length equal 1', () => {
         seller.appointToPostId(floristPost.id, appointmentDate1);
 
         expect(seller.appointments).toHaveLength(1);
@@ -79,8 +70,8 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when appoint to different postId, different date, but previous postId is same', () => {
-      it('should have appointments length qual 2', () => {
-        seller.appointToPostId(senoirFloristPost.id, appointmentDate2);
+      it('should have appointments length equal 2', () => {
+        seller.appointToPostId(seniorFloristPost.id, appointmentDate2);
         seller.appointToPostId(floristPost.id, appointmentDate1);
 
         expect(seller.appointments).toHaveLength(2);
@@ -90,7 +81,7 @@ describe('Domain :: entities :: Seller', () => {
 
   describe('#getPostIdAtDate', () => {
     beforeEach(() => {
-      seller.appointToPostId(senoirFloristPost.id, appointmentDate2);
+      seller.appointToPostId(seniorFloristPost.id, appointmentDate2);
       seller.appointToPostId(floristPost.id, appointmentDate3);
       seller.appointToPostId(floristPost.id, appointmentDate1);
     });
@@ -103,13 +94,46 @@ describe('Domain :: entities :: Seller', () => {
 
     context('when date equal second appointment date', () => {
       it('should return second appointment\'s postId', () => {
-        expect(seller.getPostIdAtDate(appointmentDate2)).toBe(senoirFloristPost.id);
+        expect(seller.getPostIdAtDate(appointmentDate2)).toBe(seniorFloristPost.id);
       });
     });
 
     context('when date after third appointment date', () => {
       it('should return third appointment\'s postId', () => {
         expect(seller.getPostIdAtDate(new Date())).toBe(floristPost.id);
+      });
+    });
+  });
+
+  describe('#deleteAppointmentToPostIdAtDate', () => {
+    beforeEach(() => {
+      seller.appointToPostId(floristPost.id, appointmentDate1);
+      seller.appointToPostId(seniorFloristPost.id, appointmentDate2);
+      seller.appointToPostId(floristPost.id, appointmentDate3);
+    });
+
+    context('when delete existing appointment', () => {
+      it('should decrease appointments length', () => {
+        expect(seller.appointments).toHaveLength(3);
+
+        seller.deleteAppointmentToPostIdAtDate(floristPost.id, appointmentDate3);
+
+        expect(seller.getPostIdAtDate()).toBe(seniorFloristPost.id);
+        expect(seller.appointments).toHaveLength(2);
+      });
+    });
+
+    context('when delete appointment twice', () => {
+      it('should throw exeption', () => {
+        seller.deleteAppointmentToPostIdAtDate(floristPost.id, appointmentDate3);
+
+        try {
+          seller.deleteAppointmentToPostIdAtDate(floristPost.id, appointmentDate3);
+        }
+        catch(e) {
+          expect(e.details).toEqual(['Seller have not such appointment to this postId']);
+          expect(seller.appointments).toHaveLength(2);
+        }
       });
     });
   });

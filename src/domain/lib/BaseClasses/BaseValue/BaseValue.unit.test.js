@@ -71,4 +71,39 @@ describe('Domain :: lib :: BaseValue', () => {
       expect(valueObject.equals(anotherValueObject)).toBeFalsy();
     });
   });
+
+  context('when value objects include value objects that and are' , () => {
+
+    class CompositeValue extends BaseValue {
+      constructor({ valueObj, attr1, attr2 }) {
+        super();
+        this.valueObj = valueObj;
+        this.attr1 = attr1;
+        this.attr2 = attr2;
+      }
+    }
+
+    const valueObj = new ConcreteValue(props);
+    const anotherValueObj = new ConcreteValue(anotherProps);
+
+    context('equal', () => {
+      it('should be equal', () => {
+
+        const valueObject1 = new CompositeValue({ ...props, valueObj });
+        const valueObject2 = new CompositeValue({ ...props, valueObj });
+
+        expect(valueObject1.equals(valueObject2)).toBeTruthy();
+      });
+    });
+
+    context('not equal', () => {
+      it('should not be equal', () => {
+
+        const valueObject1 = new CompositeValue({ ...props, valueObj });
+        const valueObject2 = new CompositeValue({ ...props, valueObj : anotherValueObj });
+
+        expect(valueObject1.equals(valueObject2)).toBeFalsy();
+      });
+    });
+  });
 });

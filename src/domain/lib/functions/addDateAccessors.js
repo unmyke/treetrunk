@@ -11,4 +11,8 @@ export function addDateAccessors(Class) {
       }
     }
   });
+
+  Date.prototype.equals = function(date) {
+    return this.getTime() === date.getTime();
+  };
 }

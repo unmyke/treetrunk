@@ -2,8 +2,8 @@
   "name": "treetrunk",
   "version": "0.0.1",
   "description": "Seller managament system that process payroll",
-  "main": "index.js",
-  "author": "unmyke",
+  "main": "dist/index.js",
+  "author": "untritt and unmyke",
   "license": "MIT",
   "scripts": {
     "jest": "yarn test",
@@ -12,7 +12,16 @@
     "test:unit": "yarn run jest 'src/.*\\.unit\\.test\\.js'",
     "test:features": "yarn run jest 'src/.*\\.feature\\.test\\.js'",
     "babel-node": "babel-node",
-    "build": "NODE_ENV=production babel src --out-dir dist --source-maps"
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps",
+    "start": "nodemon --exec yarn run babel-node -- ./cluster.js",
+    "dev": "NODE_PATH=. NODE_ENV=development nodemon --exec yarn run babel-node -- ./index.js",
+    "lint": "eslint {src,config}/**/*.js",
+    "sequelize": "NODE_PATH=. sequelize",
+    "sequelize:migrate": "yarn run sequelize db:migrate --env development && yarn run sequelize db:migrate --env test",
+    "sequelize:migrate:undoAll": "yarn run sequelize db:migrate:undo:all --env development && yarn run sequelize db:migrate:undo:all --env test",
+    "sequelize:re-migrate": "yarn run sequelize:migrate:undoAll && yarn run sequelize:migrate",
+    "console": "NODE_PATH=. babel-node src/interfaces/console/index.js",
+    "pm2": "pm2"
   },
   "jest": {
     "setupFiles": [
@@ -30,9 +39,27 @@
     "eslint": "^4.19.1",
     "jest": "^22.4.3",
     "jest-plugin-context": "^2.9.0",
-    "prettier": "1.12.0"
+    "prettier": "1.12.0",
+    "sequelize-cli": "^4.0.0"
   },
   "dependencies": {
-    "date-fns": "^1.29.0"
+    "awilix": "^3.0.7",
+    "awilix-express": "^1.0.0",
+    "compression": "^1.7.2",
+    "cors": "^2.8.4",
+    "date-fns": "^1.29.0",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "express-status-monitor": "^1.0.1",
+    "http-status": "^1.0.1",
+    "log4js": "^2.5.3",
+    "method-override": "^2.3.10",
+    "morgan": "^1.9.0",
+    "mysql2": "^1.5.3",
+    "nodemod": "^1.5.19",
+    "nodemon": "^1.17.3",
+    "pm2": "^2.10.2",
+    "sequelize": "^4.37.6",
+    "swagger-ui-express": "^3.0.8"
   }
 }

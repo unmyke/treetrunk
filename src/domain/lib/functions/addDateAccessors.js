@@ -12,7 +12,9 @@ export function addDateAccessors(Class) {
     }
   });
 
-  Date.prototype.equals = function(date) {
-    return this.getTime() === date.getTime();
-  };
+  if (Date.prototype.equals === undefined) {
+    Date.prototype.equals = function(date) {
+      return this.getTime() === date.getTime();
+    };
+  }
 }

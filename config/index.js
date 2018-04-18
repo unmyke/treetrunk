@@ -1,20 +1,19 @@
-require('dotenv').load();
+import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
-const fs = require('fs');
-const path = require('path');
+dotenv.load();
 
 const ENV = process.env.NODE_ENV || 'development';
 
-const envConfig = require(path.join(__dirname, 'environments', ENV));
+const { envConfig } = require(path.join(__dirname, 'environments', ENV));
 const dbConfig = loadDbConfig();
 
-const config = Object.assign({
+export const config = Object.assign({
   [ENV]: true,
   env: ENV,
   db: dbConfig
 }, envConfig);
-
-module.exports = config;
 
 function loadDbConfig() {
   if(process.env.DATABASE_URL) {

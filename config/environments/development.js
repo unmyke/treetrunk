@@ -1,14 +1,20 @@
-const path = require('path');
+import path from 'path';
 const logPath = path.join(__dirname, '../../logs/development.log');
 
-module.exports = {
+export const envConfig = {
   web: {
     port: 3000
   },
   logging: {
-    appenders: [
-      { type: 'console' },
-      { type: 'file', filename: logPath }
-    ]
+    appenders: {
+      out: { type: 'console' },
+      app: { type: 'file', filename: logPath }
+    },
+    categories: {
+      default: {
+        appenders:['out'],
+        level: 'info',
+      } 
+    },
   }
 };

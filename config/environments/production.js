@@ -1,4 +1,4 @@
-module.exports = {
+export const envConfig = {
   web: {
     port: process.env.PORT
   },

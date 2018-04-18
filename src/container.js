@@ -1,7 +1,7 @@
-import { createContainer, Lifetime, asValue, asFunction, asClass } from 'awilix';
+import { createContainer, asValue, asFunction, asClass } from 'awilix';
 import { scopePerRequest } from 'awilix-express';
 
-import config from '../config';
+import { config } from '../config';
 import { Application } from './app/Application';
 import * as services from './app';
 
@@ -15,13 +15,13 @@ import { devErrorHandler } from './interfaces/http/errors/devErrorHandler';
 import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
 import { logger } from './infra/logging/logger';
+import { lowercaseFirstLetter } from './infra/support/changeCaseFirstLetter';
+// import { Operation } from './app/lib/Operation';
 // import * as repositories from './infra/repositories';
 // import { db } from 'src/infra/database/models';
 // const { database, models } = db;
 
-const container = createContainer();
-
-console.log(container);
+export const container = createContainer();
 
 // System
 container
@@ -60,17 +60,17 @@ container
 // });
 
 // Operations
-container.registerClass({
-  createSeller: CreateSeller,
-  // getAllSellers: GetAllSellers,
-  // getSeller: GetSeller,
-  // updateSeller: UpdateSeller,
-  // deleteSeller: DeleteSeller
+Object.keys(services).forEach(entityName => {
+  Object.keys(services[entityName]).forEach(operation => {
+    container.register({
+      [`services.${entityName}.${lowercaseFirstLetter(operation)}`]: asClass(services[entityName][operation])
+    });
+  });
 });
 
 // Serializers
-container.registerValue({
-  sellerSerializer: SellerSerializer
+Object.keys(serializers).forEach(entityName => {
+  container.register({
+    [`serializers.${lowercaseFirstLetter(entityName)}`]: asValue(serializers[entityName])
+  });
 });
-
-module.exports = container;

@@ -1,6 +1,5 @@
-import { SellerSerializer as Seller, SellerIdSerializer as SellerId  } from './SellerSerializer';
+import { SellerSerializer  } from './SellerSerializer';
 
 export {
-  Seller,
-  SellerId,
-}
+  SellerSerializer,
+};

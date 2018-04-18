@@ -16,6 +16,7 @@ const seniorFloristPost = new Post({ name: 'Старший флорист' });
 const appointmentDate1 = new Date('2018.02.14 11:00');
 const appointmentDate2 = new Date('2018.03.20 11:00');
 const appointmentDate3 = new Date('2018.04.14 11:00');
+const wrongAppointmentDate = new Date('2017.02.14 11:00');
 
 describe('Domain :: entities :: Seller', () => {
   let seller; 
@@ -27,6 +28,8 @@ describe('Domain :: entities :: Seller', () => {
     it('should be instance of Seller', () => {
       expect(seller).toBeInstanceOf(Seller);
       expect(seller.id).toBeInstanceOf(SellerId);
+      expect(seller.personName).toBeInstanceOf(PersonName);
+      expect(seller.fullName).toBe(`${surname} ${firstName} ${middleName}`);
       expect(seller.phone).toBe(phone);
       expect(seller.appointments).toHaveLength(0);
     });
@@ -134,6 +137,46 @@ describe('Domain :: entities :: Seller', () => {
           expect(e.details).toEqual(['Seller have not such appointment to this postId']);
           expect(seller.appointments).toHaveLength(2);
         }
+      });
+    });
+  });
+
+  describe('#editAppointment', () => {
+    beforeEach(() => {
+      seller.appointToPostId(floristPost.id, appointmentDate1);
+    });
+
+    context('when appointment has created with wrong postId', () => {
+      it('should change associated postId', () => {
+        expect(seller.getPostIdAtDate()).toBe(floristPost.id);
+
+        seller.editAppointment(floristPost.id, appointmentDate1, seniorFloristPost.id, appointmentDate1);
+
+        expect(seller.appointments).toHaveLength(1);
+        expect(seller.appointments[0].date).toBe(appointmentDate1);
+        expect(seller.getPostIdAtDate()).toBe(seniorFloristPost.id);
+      });
+    });
+
+    context('when appointment has created with wrong date', () => {
+      it('should change associated date', () => {
+        seller.appointToPostId(floristPost.id, wrongAppointmentDate);
+        seller.editAppointment(floristPost.id, wrongAppointmentDate, floristPost.id, appointmentDate1);
+        expect(seller.appointments).toHaveLength(2);
+        expect(seller.getPostIdAtDate(wrongAppointmentDate)).toBe(undefined);
+        expect(seller.getPostIdAtDate(appointmentDate1)).toBe(floristPost.id);
+      });
+    });
+  });
+
+  describe('#seniority', () => {
+    
+    context('when seller have many appointments without departures', () => {
+      it('should count working experience of seller', () => {
+        seller.appointToPostId(floristPost.id, appointmentDate1);
+        expect(seller.seniority().toBe(30));
+        seller.appointToPostId(seniorFloristPost.id, appointmentDate2);
+        expect(seller.seniority().toBe(60));
       });
     });
   });

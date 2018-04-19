@@ -1,23 +1,28 @@
-import { BaseEntity } from "../lib/BaseClasses";
-import { Contact, PersonName } from "../lib/ValueObjects";
-import { Appointment } from "./Appointment";
-import { SellerId } from "./SellerId";
-import { convertDate } from "src/infra/support/dateHelpers";
-import { differenceInMonths, differenceInDays } from "date-fns";
+import { BaseEntity } from '../lib/BaseClasses';
+import { PersonName } from '../lib/ValueObjects';
+import { Appointment } from './Appointment';
+import { SellerId } from './SellerId';
+import { convertDate } from 'src/infra/support/dateHelpers';
+import { differenceInMonths } from 'date-fns';
 
 export class Seller extends BaseEntity {
   constructor({
-    id = new SellerId(),
+    sellerId = new SellerId(),
     surname,
     firstName,
     middleName,
     phone,
+    postId,
+    appointDate = new Date(),
     appointments = []
   }) {
-    super(id);
+    super(sellerId);
     this.personName = new PersonName({ surname, firstName, middleName });
     this.phone = phone;
     this.appointments = appointments;
+    if (postId !== undefined) {
+      this.appointToPostId(postId, appointDate);
+    }
   }
 
   get fullName() {
@@ -40,8 +45,8 @@ export class Seller extends BaseEntity {
     const previousPostId = this.getPostIdAtDate(date);
 
     if (previousPostId === postId) {
-      const error = new Error("Validation Error");
-      error.details = ["Seller already have this post"];
+      const error = new Error('Validation Error');
+      error.details = ['Seller already have this post'];
       throw error;
     }
 
@@ -78,8 +83,8 @@ export class Seller extends BaseEntity {
   }
 
   deleteAppointmentToPostIdAtDate(postId, date) {
-    const error = new Error("Validation Error");
-    error.details = ["Seller have not such appointment to this postId"];
+    const error = new Error('Validation Error');
+    error.details = ['Seller have not such appointment to this postId'];
 
     const appointmentToDelete = new Appointment({ postId, date });
 
@@ -99,8 +104,8 @@ export class Seller extends BaseEntity {
   }
 
   seniority(rawDate = new Date()) {
-    const error = new Error("Validation Error");
-    error.details = ["Seniority can not be count before seller's appointment"];
+    const error = new Error('Validation Error');
+    error.details = ['Seniority can not be count before seller\'s appointment'];
     const date = convertDate(rawDate);
     if (date < this.recruitedAt()) {
       throw error;

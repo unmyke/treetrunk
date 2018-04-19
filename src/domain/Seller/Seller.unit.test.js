@@ -27,7 +27,7 @@ describe("Domain :: entities :: Seller", () => {
   describe("#constructor", () => {
     it("should be instance of Seller", () => {
       expect(seller).toBeInstanceOf(Seller);
-      expect(seller.id).toBeInstanceOf(SellerId);
+      expect(seller.sellerId).toBeInstanceOf(SellerId);
       expect(seller.personName).toBeInstanceOf(PersonName);
       expect(seller.fullName).toBe(`${surname} ${firstName} ${middleName}`);
       expect(seller.phone).toBe(phone);
@@ -38,7 +38,7 @@ describe("Domain :: entities :: Seller", () => {
   describe("#appointToPostId", () => {
     context("when appoint to one postId", () => {
       it("should have appointments length equal 1", () => {
-        seller.appointToPostId(floristPost.id, appointmentDate1);
+        seller.appointToPostId(floristPost.postId, appointmentDate1);
 
         expect(seller.appointments).toHaveLength(1);
       });
@@ -46,10 +46,10 @@ describe("Domain :: entities :: Seller", () => {
 
     context("when appoint to same postId by same date", () => {
       it("should throw exeption", () => {
-        seller.appointToPostId(floristPost.id, appointmentDate1);
+        seller.appointToPostId(floristPost.postId, appointmentDate1);
 
         try {
-          seller.appointToPostId(floristPost.id, appointmentDate1);
+          seller.appointToPostId(floristPost.postId, appointmentDate1);
         } catch (e) {
           expect(e.details).toEqual(["Seller already have this post"]);
           expect(seller.appointments).toHaveLength(1);
@@ -61,10 +61,10 @@ describe("Domain :: entities :: Seller", () => {
       "when appoint to same postId, different date, but previous postId is same",
       () => {
         it("should throw exeption", () => {
-          seller.appointToPostId(floristPost.id, appointmentDate1);
+          seller.appointToPostId(floristPost.postId, appointmentDate1);
 
           try {
-            seller.appointToPostId(floristPost.id, new Date());
+            seller.appointToPostId(floristPost.postId, new Date());
           } catch (e) {
             expect(e.details).toEqual(["Seller already have this post"]);
             expect(seller.appointments).toHaveLength(1);
@@ -77,8 +77,8 @@ describe("Domain :: entities :: Seller", () => {
       "when appoint to different postId, different date, but previous postId is same",
       () => {
         it("should have appointments length equal 2", () => {
-          seller.appointToPostId(seniorFloristPost.id, appointmentDate2);
-          seller.appointToPostId(floristPost.id, appointmentDate1);
+          seller.appointToPostId(seniorFloristPost.postId, appointmentDate2);
+          seller.appointToPostId(floristPost.postId, appointmentDate1);
 
           expect(seller.appointments).toHaveLength(2);
         });
@@ -88,9 +88,9 @@ describe("Domain :: entities :: Seller", () => {
 
   describe("#getPostIdAtDate", () => {
     beforeEach(() => {
-      seller.appointToPostId(seniorFloristPost.id, appointmentDate2);
-      seller.appointToPostId(floristPost.id, appointmentDate3);
-      seller.appointToPostId(floristPost.id, appointmentDate1);
+      seller.appointToPostId(seniorFloristPost.postId, appointmentDate2);
+      seller.appointToPostId(floristPost.postId, appointmentDate3);
+      seller.appointToPostId(floristPost.postId, appointmentDate1);
     });
 
     context("when date before first appointment", () => {
@@ -104,23 +104,23 @@ describe("Domain :: entities :: Seller", () => {
     context("when date equal second appointment date", () => {
       it("should return second appointment's postId", () => {
         expect(seller.getPostIdAtDate(appointmentDate2)).toBe(
-          seniorFloristPost.id
+          seniorFloristPost.postId
         );
       });
     });
 
     context("when date after third appointment date", () => {
       it("should return third appointment's postId", () => {
-        expect(seller.getPostIdAtDate(new Date())).toBe(floristPost.id);
+        expect(seller.getPostIdAtDate(new Date())).toBe(floristPost.postId);
       });
     });
   });
 
   describe("#deleteAppointmentToPostIdAtDate", () => {
     beforeEach(() => {
-      seller.appointToPostId(floristPost.id, appointmentDate1);
-      seller.appointToPostId(seniorFloristPost.id, appointmentDate2);
-      seller.appointToPostId(floristPost.id, appointmentDate3);
+      seller.appointToPostId(floristPost.postId, appointmentDate1);
+      seller.appointToPostId(seniorFloristPost.postId, appointmentDate2);
+      seller.appointToPostId(floristPost.postId, appointmentDate3);
     });
 
     context("when delete existing appointment", () => {
@@ -128,11 +128,11 @@ describe("Domain :: entities :: Seller", () => {
         expect(seller.appointments).toHaveLength(3);
 
         seller.deleteAppointmentToPostIdAtDate(
-          floristPost.id,
+          floristPost.postId,
           appointmentDate3
         );
 
-        expect(seller.getPostIdAtDate()).toBe(seniorFloristPost.id);
+        expect(seller.getPostIdAtDate()).toBe(seniorFloristPost.postId);
         expect(seller.appointments).toHaveLength(2);
       });
     });
@@ -140,13 +140,13 @@ describe("Domain :: entities :: Seller", () => {
     context("when delete appointment twice", () => {
       it("should throw exeption", () => {
         seller.deleteAppointmentToPostIdAtDate(
-          floristPost.id,
+          floristPost.postId,
           appointmentDate3
         );
 
         try {
           seller.deleteAppointmentToPostIdAtDate(
-            floristPost.id,
+            floristPost.postId,
             appointmentDate3
           );
         } catch (e) {
@@ -161,15 +161,15 @@ describe("Domain :: entities :: Seller", () => {
 
   describe("#editAppointment", () => {
     beforeEach(() => {
-      seller.appointToPostId(floristPost.id, appointmentDate1);
+      seller.appointToPostId(floristPost.postId, appointmentDate1);
     });
 
     context("when appointment has created with wrong postId", () => {
       it("should change associated postId", () => {
         seller.editAppointment(
-          floristPost.id,
+          floristPost.postId,
           appointmentDate1,
-          seniorFloristPost.id,
+          seniorFloristPost.postId,
           appointmentDate1
         );
 
@@ -177,28 +177,28 @@ describe("Domain :: entities :: Seller", () => {
         expect(seller.appointments[0].date).toEqual(
           startOfDay(appointmentDate1)
         );
-        expect(seller.getPostIdAtDate()).toBe(seniorFloristPost.id);
+        expect(seller.getPostIdAtDate()).toBe(seniorFloristPost.postId);
       });
     });
 
     context("when appointment has created with wrong date", () => {
       it("should change associated date", () => {
         seller.editAppointment(
-          floristPost.id,
+          floristPost.postId,
           appointmentDate1,
-          floristPost.id,
+          floristPost.postId,
           appointmentDate2
         );
         expect(seller.appointments).toHaveLength(1);
         expect(seller.getPostIdAtDate(appointmentDate1)).toEqual(undefined);
-        expect(seller.getPostIdAtDate(appointmentDate2)).toBe(floristPost.id);
+        expect(seller.getPostIdAtDate(appointmentDate2)).toBe(floristPost.postId);
       });
     });
   });
 
   describe("#seniority", () => {
     beforeEach(() => {
-      seller.appointToPostId(floristPost.id, appointmentDate2);
+      seller.appointToPostId(floristPost.postId, appointmentDate2);
     });
 
     context("when seller have appointments", () => {

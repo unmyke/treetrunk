@@ -10,7 +10,7 @@ describe('Domain :: lib :: BaseEntity', () => {
     it('should be instance of BaseEntity', () => {
       const idObj = new BaseEntity();
 
-      expect(idObj.id.constructor).toBe(idConstructor);
+      expect(idObj.baseId.constructor).toBe(idConstructor);
     });
   });
 
@@ -18,7 +18,7 @@ describe('Domain :: lib :: BaseEntity', () => {
     it('should be id argument', () => {
       const idObj = new BaseEntity(id);
 
-      expect(idObj.id).toBe(id);
+      expect(idObj.baseId).toBe(id);
     });
   });
 });

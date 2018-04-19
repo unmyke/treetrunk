@@ -6,4 +6,12 @@ export class BaseId extends BaseValue {
     super();
     this.id = id;
   }
+
+  valueOf() {
+    return this.id;
+  }
+
+  toString() {
+    return this.id;
+  }
 }

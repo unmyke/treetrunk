@@ -4,10 +4,19 @@ import { PostId } from './PostId';
 import { convertDate } from 'src/infra/support/dateHelpers';
 
 export class Post extends BaseEntity {
-  constructor({ id = new PostId(), name, pieceRates = [] }) {
-    super(id);
+  constructor({
+    postId = new PostId(),
+    name,
+    pieceRate,
+    pieceRateDate = new Date(),
+    pieceRates = []
+  }) {
+    super(postId);
     this.name = name;
     this.pieceRates = pieceRates;
+    if (pieceRate !== undefined) {
+      this.addPieceRate(pieceRate, pieceRateDate);
+    }
   }
 
   addPieceRate(value, date) {

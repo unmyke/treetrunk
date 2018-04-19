@@ -23,7 +23,7 @@ describe('Domain :: entities :: Post', () => {
     context('when contruct with only person name', () => {
       it('should be instance of Post', () => {
         expect(post).toBeInstanceOf(Post);
-        expect(post.id).toBeInstanceOf(PostId);
+        expect(post.postId).toBeInstanceOf(PostId);
         expect(post.pieceRates).toHaveLength(0);
       });
     });

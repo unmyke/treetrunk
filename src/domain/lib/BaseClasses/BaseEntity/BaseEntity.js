@@ -1,7 +1,8 @@
 import { BaseId } from '../BaseId';
+import { lowercaseFirstLetter } from 'src/infra/support/dateHelpers/changeCaseFirstLetter';
 
 export class BaseEntity {
   constructor(id = new BaseId()) {
-    this.id = id;
+    this[lowercaseFirstLetter(id.constructor.name)] = id;
   }
 }

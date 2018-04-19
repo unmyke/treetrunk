@@ -13,7 +13,7 @@ export class Seller extends BaseEntity {
   }
 
   get fullName() {
-    return this.personName.fullName();
+    return this.personName.fullName;
   }
 
   get surname() {

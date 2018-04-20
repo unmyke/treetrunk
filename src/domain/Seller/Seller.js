@@ -1,9 +1,9 @@
-import { BaseEntity } from '../lib/BaseClasses';
-import { PersonName } from '../lib/ValueObjects';
-import { Appointment } from './Appointment';
-import { SellerId } from './SellerId';
-import { convertDate } from 'src/infra/support/dateHelpers';
-import { differenceInMonths } from 'date-fns';
+import { BaseEntity } from "../lib/BaseClasses";
+import { PersonName } from "../lib/ValueObjects";
+import { Appointment } from "./Appointment";
+import { SellerId } from "./SellerId";
+import { convertDate } from "src/infra/support/dateHelpers";
+import { differenceInMonths } from "date-fns";
 
 export class Seller extends BaseEntity {
   constructor({
@@ -11,18 +11,12 @@ export class Seller extends BaseEntity {
     surname,
     firstName,
     middleName,
-    phone,
-    postId,
-    appointDate = new Date(),
-    appointments = []
+    phone
   }) {
     super(sellerId);
     this.personName = new PersonName({ surname, firstName, middleName });
     this.phone = phone;
-    this.appointments = appointments;
-    if (postId !== undefined) {
-      this.appointToPostId(postId, appointDate);
-    }
+    this.appointments = [];
   }
 
   get fullName() {
@@ -41,12 +35,12 @@ export class Seller extends BaseEntity {
     return this.personName.middleName;
   }
 
-  appointToPostId(postId, date) {
-    const previousPostId = this.getPostIdAtDate(date);
+  appointToPostIdAt(postId, date) {
+    const previousPostId = this.getPostIdAt(date);
 
     if (previousPostId === postId) {
-      const error = new Error('Validation Error');
-      error.details = ['Seller already have this post'];
+      const error = new Error("Validation Error");
+      error.details = ["Seller already have this post"];
       throw error;
     }
 
@@ -56,8 +50,8 @@ export class Seller extends BaseEntity {
     );
   }
 
-  getPostIdAtDate(rawDate) {
-    if (this.appointments.length === 0) {
+  getPostIdAt(rawDate) {
+    if (!this.isRecruited()) {
       return;
     }
 
@@ -82,38 +76,51 @@ export class Seller extends BaseEntity {
     return postId;
   }
 
-  deleteAppointmentToPostIdAtDate(postId, date) {
-    const error = new Error('Validation Error');
-    error.details = ['Seller have not such appointment to this postId'];
-
+  deleteAppointmentToPostIdAt(postId, date) {
+    if (!this.isRecruited()) {
+      return;
+    }
     const appointmentToDelete = new Appointment({ postId, date });
-
     const filteredAppointments = this.appointments.filter(
       appointment => !appointment.equals(appointmentToDelete)
     );
     if (this.appointments.length === filteredAppointments.length) {
-      throw error;
+      return;
     }
 
     this.appointments = filteredAppointments;
   }
 
-  editAppointment(postIdToEdit, dateToEdit, postId, date) {
-    this.deleteAppointmentToPostIdAtDate(postIdToEdit, dateToEdit);
-    this.appointToPostId(postId, date);
+  editAppointmentAt(postIdToEdit, dateToEdit, postId, date) {
+    if (!this.isRecruited()) {
+      return;
+    }
+
+    this.deleteAppointmentToPostIdAt(postIdToEdit, dateToEdit);
+    this.appointToPostIdAt(postId, date);
   }
 
   seniority(rawDate = new Date()) {
-    const error = new Error('Validation Error');
-    error.details = ['Seniority can not be count before seller\'s appointment'];
-    const date = convertDate(rawDate);
-    if (date < this.recruitedAt()) {
-      throw error;
+    if (!this.isRecruited(rawDate)) {
+      return;
     }
-    return differenceInMonths(date, this.recruitedAt());
+
+    const date = convertDate(rawDate);
+    return differenceInMonths(date, this.recruitedAt(rawDate));
   }
 
-  recruitedAt() {
+  isRecruited(rawDate = new Date()) {
+    const [firstAppointment] = this.appointments;
+    const date = convertDate(rawDate);
+
+    return !!firstAppointment && firstAppointment.date <= date;
+  }
+
+  recruitedAt(rawDate) {
+    if (!this.isRecruited(rawDate)) {
+      return;
+    }
+
     const [firstAppointment] = this.appointments;
     return firstAppointment.date;
   }

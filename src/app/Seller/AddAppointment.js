@@ -1,6 +1,6 @@
 import { Operation } from '../lib/Operation';
 
-export class CreateSeller extends Operation {
+export class AddSellerAppointment extends Operation {
   async execute({ sellerId, postId, appointDate }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const { repositories: { Seller: repo }, domain: { commonTypes: { PostId } } } = this;
@@ -23,4 +23,4 @@ export class CreateSeller extends Operation {
   }
 }
 
-CreateSeller.setOutputs([ 'SUCCESS', 'ERROR', 'VALIDATION_ERROR' ]);
+AddSellerAppointment.setOutputs([ 'SUCCESS', 'ERROR', 'VALIDATION_ERROR' ]);

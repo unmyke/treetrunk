@@ -1,5 +1,6 @@
 export class BaseRepository {
-  constructor({ entities }) {
+  constructor({ domain: { entities, commonTypes} }) {
     this.entities = entities;
+    this.commonTypes = commonTypes;
   }
 }

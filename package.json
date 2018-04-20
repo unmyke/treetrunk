@@ -43,8 +43,7 @@
     "sequelize-cli": "^4.0.0"
   },
   "dependencies": {
-    "awilix": "^3.0.7",
-    "awilix-express": "^1.0.0",
+    "bottle": "^0.2.0",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
     "date-fns": "^1.29.0",

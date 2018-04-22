@@ -1,8 +1,8 @@
 export const PieceRateSerializer = {
-  serialize: ({ value, date }) => {
+  serialize: ({ value, day }) => {
     return {
       value,
-      date,
+      day,
     };
   }
 };

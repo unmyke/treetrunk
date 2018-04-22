@@ -1,3 +1,3 @@
-import { BaseId } from '../lib/BaseClasses';
+import { BaseId } from '../_lib/BaseClasses';
 
 export class SellerId extends BaseId {}

@@ -1,8 +1,8 @@
 const valueEquality = (value1, value2) => {
-  if (value1 instanceof BaseValue || value1 instanceof Date) {
+  if (value1 instanceof BaseValue) {
     return value1.equals(value2);
   }
-  return value1 === value2;
+  return value1.valueOf() === value2.valueOf();
 };
 
 export class BaseValue {

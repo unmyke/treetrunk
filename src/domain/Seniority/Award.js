@@ -1,11 +1,10 @@
-import { BaseValue } from '../lib/BaseClasses';
-import { addDateAccessors } from '../lib/functions';
+import { BaseValue } from '../_lib/BaseClasses';
+import { Day } from '../_lib/ValueObjects';
 
 export class Award extends BaseValue {
-  constructor({ value, date = new Date() }) {
-    this.value = vlaue;
-    this.date = date;
+  constructor({ value, day = new Day() }) {
+    super();
+    this.value = value;
+    this.day = day;
   }
 }
-
-addDateAccessors(Award);

@@ -1,9 +1,7 @@
-import { BaseEntity } from "../lib/BaseClasses";
-import { PersonName } from "../lib/ValueObjects";
-import { Appointment } from "./Appointment";
-import { SellerId } from "./SellerId";
-import { convertDate } from "src/infra/support/dateHelpers";
-import { differenceInMonths } from "date-fns";
+import { BaseEntity } from '../_lib/BaseClasses';
+import { PersonName, Day } from '../_lib/ValueObjects';
+import { Appointment } from './Appointment';
+import { SellerId } from './SellerId';
 
 export class Seller extends BaseEntity {
   constructor({
@@ -35,40 +33,38 @@ export class Seller extends BaseEntity {
     return this.personName.middleName;
   }
 
-  appointToPostIdAt(postId, date) {
-    const previousPostId = this.getPostIdAt(date);
+  appointToPostIdAt(postId, day) {
+    const previousPostId = this.getPostIdAt(day);
 
     if (previousPostId === postId) {
-      const error = new Error("Validation Error");
-      error.details = ["Seller already have this post"];
+      const error = new Error('Validation Error');
+      error.details = ['Seller already have this post'];
       throw error;
     }
 
-    const appointment = new Appointment({ postId, date });
+    const appointment = new Appointment({ postId, day });
     this.appointments = [...this.appointments, appointment].sort(
-      (a, b) => a.date > b.date
+      (a, b) => a.day > b.day
     );
   }
 
-  getPostIdAt(rawDate) {
+  getPostIdAt(day) {
     if (!this.isRecruited()) {
       return;
     }
 
-    if (rawDate === undefined) {
+    if (day === undefined) {
       return this.appointments[this.appointments.length - 1].postId;
     }
 
-    const date = convertDate(rawDate);
-
     const [firstAppointment, ...restAppointments] = this.appointments;
-    if (firstAppointment.date > date) {
+    if (firstAppointment.day > day) {
       return;
     }
 
     const { postId } = restAppointments.reduce(
       (currentAppointment, appointment) => {
-        return appointment.date <= date ? appointment : currentAppointment;
+        return appointment.day <= day ? appointment : currentAppointment;
       },
       firstAppointment
     );
@@ -76,11 +72,11 @@ export class Seller extends BaseEntity {
     return postId;
   }
 
-  deleteAppointmentToPostIdAt(postId, date) {
+  deleteAppointmentToPostIdAt(postId, day) {
     if (!this.isRecruited()) {
       return;
     }
-    const appointmentToDelete = new Appointment({ postId, date });
+    const appointmentToDelete = new Appointment({ postId, day });
     const filteredAppointments = this.appointments.filter(
       appointment => !appointment.equals(appointmentToDelete)
     );
@@ -91,37 +87,34 @@ export class Seller extends BaseEntity {
     this.appointments = filteredAppointments;
   }
 
-  editAppointmentAt(postIdToEdit, dateToEdit, postId, date) {
+  editAppointmentAt(postIdToEdit, dayToEdit, postId, day) {
     if (!this.isRecruited()) {
       return;
     }
 
-    this.deleteAppointmentToPostIdAt(postIdToEdit, dateToEdit);
-    this.appointToPostIdAt(postId, date);
+    this.deleteAppointmentToPostIdAt(postIdToEdit, dayToEdit);
+    this.appointToPostIdAt(postId, day);
   }
 
-  seniority(rawDate = new Date()) {
-    if (!this.isRecruited(rawDate)) {
+  seniority(day = new Day()) {
+    if (!this.isRecruited(day)) {
       return;
     }
 
-    const date = convertDate(rawDate);
-    return differenceInMonths(date, this.recruitedAt(rawDate));
+    return day.differenceInMonths(this.recruitedAt(day));
   }
 
-  isRecruited(rawDate = new Date()) {
+  isRecruited(day = new Day()) {
     const [firstAppointment] = this.appointments;
-    const date = convertDate(rawDate);
-
-    return !!firstAppointment && firstAppointment.date <= date;
+    return !!firstAppointment && firstAppointment.day <= day;
   }
 
-  recruitedAt(rawDate) {
-    if (!this.isRecruited(rawDate)) {
+  recruitedAt(day) {
+    if (!this.isRecruited(day)) {
       return;
     }
 
     const [firstAppointment] = this.appointments;
-    return firstAppointment.date;
+    return firstAppointment.day;
   }
 }

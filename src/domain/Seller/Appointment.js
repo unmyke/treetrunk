@@ -1,12 +1,9 @@
-import { BaseValue } from '../lib/BaseClasses';
-import { addDateAccessors } from '../lib/functions';
+import { BaseValue } from '../_lib/BaseClasses';
 
 export class Appointment extends BaseValue {
-  constructor({ postId, date }) {
+  constructor({ postId, day }) {
     super();
     this.postId = postId;
-    this.date = date;
+    this.day = day;
   }
 }
-
-addDateAccessors(Appointment);

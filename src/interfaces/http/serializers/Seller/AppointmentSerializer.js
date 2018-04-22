@@ -1,4 +1,4 @@
-import { IdSerializer } from '../lib/IdSerializer';
+import { IdSerializer } from '../_lib/IdSerializer';
 
 export const AppointmentSerializer = {
   serialize: ({ postId, date }) => {

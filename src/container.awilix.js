@@ -16,7 +16,7 @@ import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
 import { logger } from './infra/logging/logger';
 import { lowercaseFirstLetter } from './infra/support/changeCaseFirstLetter';
-// import { Operation } from './app/lib/Operation';
+// import { Operation } from './app/_lib/Operation';
 // import * as repositories from './infra/repositories';
 import { db } from './infra/database/models';
 const { database, models } = db;

@@ -1,4 +1,4 @@
-import { SequelizeRepository } from './lib/SequelizeRepository';
+import { SequelizeRepository } from './_lib/SequelizeRepository';
 
 export class SellerRepository extends SequelizeRepository {
   async add({ sellerId, personName, phone, appointments }) {

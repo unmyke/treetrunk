@@ -1,4 +1,4 @@
-import { IdSerializer } from '../lib';
+import { IdSerializer } from '../_lib';
 import { PieceRateSerializer } from './PieceRateSerializer';
 
 export const PostSerializer = {

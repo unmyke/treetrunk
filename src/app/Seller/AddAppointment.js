@@ -1,4 +1,4 @@
-import { Operation } from '../lib/Operation';
+import { Operation } from '../_lib/Operation';
 
 export class AddSellerAppointment extends Operation {
   async execute({ sellerId, postId, appointDate }) {

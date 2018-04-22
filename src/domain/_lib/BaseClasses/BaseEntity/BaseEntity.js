@@ -1,5 +1,5 @@
 import { BaseId } from '../BaseId';
-import { lowercaseFirstLetter } from 'src/infra/support/dateHelpers/changeCaseFirstLetter';
+import { lowercaseFirstLetter } from 'src/infra/support/changeCaseFirstLetter';
 
 export class BaseEntity {
   constructor(id = new BaseId()) {

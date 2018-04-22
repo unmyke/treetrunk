@@ -4,7 +4,7 @@ import { BaseId } from '.';
 const id = uuidv4();
 const { constructor: idConstructor } = id;
 
-describe('Domain :: lib :: BaseId', () => {
+describe('Domain :: lib :: BaseClasses:: BaseId', () => {
 
   context('when construct without argument', () => {
     it('should be uuidv4', () => {

@@ -1,14 +1,14 @@
-import { BaseEntity } from '../lib/BaseClasses';
+import { BaseEntity } from '../_lib/BaseClasses';
+import { Day } from '../_lib/ValueObjects';
 import { PieceRate } from './PieceRate';
 import { PostId } from './PostId';
-import { convertDate } from 'src/infra/support/dateHelpers';
 
 export class Post extends BaseEntity {
   constructor({
     postId = new PostId(),
     name,
     pieceRate,
-    pieceRateDate = new Date(),
+    pieceRateDate = new Day(),
     pieceRates = []
   }) {
     super(postId);
@@ -19,24 +19,23 @@ export class Post extends BaseEntity {
     }
   }
 
-  addPieceRate(value, date) {
-    const pieceRate = new PieceRate({ value, date });
-    this.pieceRates = [ ...this.pieceRates, pieceRate ].sort((a, b) => a.date > b.date);
+  addPieceRate(value, day) {
+    const pieceRate = new PieceRate({ value, day });
+    this.pieceRates = [ ...this.pieceRates, pieceRate ].sort((a, b) => a.day > b.day);
   }
 
-  getPieceRateAtDate(rawDate) {
-    const date = convertDate(rawDate);
+  getPieceRateAtDate(day) {
     if (this.pieceRates.length === 0) {
       return;
     }
 
     const [ firstPieceRate, ...restPieceRates ] = this.pieceRates;
-    if (firstPieceRate.date > date) {
+    if (firstPieceRate.day > day) {
       return;
     }
 
     const { value } = restPieceRates.reduce((currentPieceRate, appointment) => {
-      return appointment.date <= date ? appointment : currentPieceRate;
+      return appointment.day <= day ? appointment : currentPieceRate;
     }, firstPieceRate);
 
     return value;

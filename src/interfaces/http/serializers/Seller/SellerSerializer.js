@@ -1,4 +1,4 @@
-import { IdSerializer } from '../lib';
+import { IdSerializer } from '../_lib';
 import { AppointmentSerializer } from './AppointmentSerializer';
 import { PersonNameSerializer } from './PersonNameSerializer';
 

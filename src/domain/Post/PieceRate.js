@@ -1,12 +1,9 @@
-import { BaseValue } from '../lib/BaseClasses';
-import { addDateAccessors } from '../lib/functions';
+import { BaseValue } from '../_lib/BaseClasses';
 
 export class PieceRate extends BaseValue {
-  constructor({ value, date }) {
+  constructor({ value, day }) {
     super();
     this.value = value;
-    this.date = date;
+    this.day = day;
   }
 }
-
-addDateAccessors(PieceRate);

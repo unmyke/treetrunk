@@ -25,5 +25,5 @@ export class Operation extends EventEmitter {
   }
 }
 
-const createOutputs = outputsArray =>
+const createOutputs = (outputsArray) =>
   outputsArray.reduce((obj, output) => ({ ...obj, [output]: output }), {});

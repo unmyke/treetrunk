@@ -14,19 +14,26 @@
     "babel-node": "babel-node",
     "build": "NODE_ENV=production babel src --out-dir dist --source-maps",
     "start": "nodemon --exec yarn run babel-node -- ./cluster.js",
-    "dev": "NODE_PATH=. NODE_ENV=development nodemon --exec yarn run babel-node -- ./index.js",
+    "dev":
+      "NODE_PATH=. NODE_ENV=development nodemon --exec yarn run babel-node -- ./index.js",
     "lint": "eslint {src,config}/**/*.js",
     "sequelize": "NODE_PATH=. sequelize",
-    "sequelize:migrate": "yarn run sequelize db:migrate --env development && yarn run sequelize db:migrate --env test",
-    "sequelize:migrate:undoAll": "yarn run sequelize db:migrate:undo:all --env development && yarn run sequelize db:migrate:undo:all --env test",
-    "sequelize:re-migrate": "yarn run sequelize:migrate:undoAll && yarn run sequelize:migrate",
+    "sequelize:migrate":
+      "yarn run sequelize db:migrate --env development && yarn run sequelize db:migrate --env test",
+    "sequelize:migrate:undoAll":
+      "yarn run sequelize db:migrate:undo:all --env development && yarn run sequelize db:migrate:undo:all --env test",
+    "sequelize:re-migrate":
+      "yarn run sequelize:migrate:undoAll && yarn run sequelize:migrate",
     "console": "NODE_PATH=. babel-node src/interfaces/console/index.js",
-    "pm2": "pm2"
+    "pm2": "pm2",
+    "precommit": "lint-staged",
+    "prettier": "prettier"
   },
   "jest": {
-    "setupFiles": [
-      "jest-plugin-context/setup"
-    ]
+    "setupFiles": ["jest-plugin-context/setup"]
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -37,9 +44,13 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "husky": "^0.14.3",
     "jest": "^22.4.3",
     "jest-plugin-context": "^2.9.0",
-    "prettier": "1.12.0",
+    "lint-staged": "^7.0.4",
+    "prettier": "^1.12.1",
     "sequelize-cli": "^4.0.0"
   },
   "dependencies": {

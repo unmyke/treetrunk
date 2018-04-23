@@ -1,5 +1,3 @@
 import { BaseId } from './BaseId';
 
-export {
-  BaseId,
-};
+export { BaseId };

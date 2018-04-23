@@ -23,9 +23,7 @@ const SellersController = {
 
     getAllSellers
       .on(SUCCESS, (sellers) => {
-        res
-          .status(Status.OK)
-          .json(sellers.map(sellerSerializer.serialize));
+        res.status(Status.OK).json(sellers.map(sellerSerializer.serialize));
       })
       .on(ERROR, next);
 
@@ -39,9 +37,7 @@ const SellersController = {
 
     getSeller
       .on(SUCCESS, (seller) => {
-        res
-          .status(Status.OK)
-          .json(sellerSerializer.serialize(seller));
+        res.status(Status.OK).json(sellerSerializer.serialize(seller));
       })
       .on(NOT_FOUND, (error) => {
         res.status(Status.NOT_FOUND).json({
@@ -60,9 +56,7 @@ const SellersController = {
 
     createSeller
       .on(SUCCESS, (seller) => {
-        res
-          .status(Status.CREATED)
-          .json(sellerSerializer.serialize(seller));
+        res.status(Status.CREATED).json(sellerSerializer.serialize(seller));
       })
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({
@@ -77,13 +71,16 @@ const SellersController = {
 
   update(req, res, next) {
     const { updateSeller, sellerSerializer } = req;
-    const { SUCCESS, ERROR, VALIDATION_ERROR, NOT_FOUND } = updateSeller.outputs;
+    const {
+      SUCCESS,
+      ERROR,
+      VALIDATION_ERROR,
+      NOT_FOUND
+    } = updateSeller.outputs;
 
     updateSeller
       .on(SUCCESS, (seller) => {
-        res
-          .status(Status.ACCEPTED)
-          .json(sellerSerializer.serialize(seller));
+        res.status(Status.ACCEPTED).json(sellerSerializer.serialize(seller));
       })
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({
@@ -104,7 +101,7 @@ const SellersController = {
 
   delete(req, res, next) {
     const { deleteSeller } = req;
-    const { SUCCESS, ERROR,  NOT_FOUND } = deleteSeller.outputs;
+    const { SUCCESS, ERROR, NOT_FOUND } = deleteSeller.outputs;
 
     deleteSeller
       .on(SUCCESS, () => {

@@ -18,13 +18,17 @@ describe('Domain :: lib :: changeCaseFirstLetter', () => {
 
     context('when word with lowercased first letter', () => {
       it('should returns word with uppercased first letter', () => {
-        expect(uppercaseFirstLetter(lowercasedFirstLetterWord)).toBe('LOWERCASEDFIRSTLETTERWORD');
+        expect(uppercaseFirstLetter(lowercasedFirstLetterWord)).toBe(
+          'LOWERCASEDFIRSTLETTERWORD'
+        );
       });
     });
 
     context('when word with lowercased first two letters', () => {
       it('should returns word with uppercased first letter and lowercased second letter', () => {
-        expect(uppercaseFirstLetter(lowercasedFirstTwoLetterWord)).toBe('LoWERCASEDFIRSTTWOLETTERWORD');
+        expect(uppercaseFirstLetter(lowercasedFirstTwoLetterWord)).toBe(
+          'LoWERCASEDFIRSTTWOLETTERWORD'
+        );
       });
     });
 
@@ -44,13 +48,17 @@ describe('Domain :: lib :: changeCaseFirstLetter', () => {
 
     context('when word with uppercased first letter', () => {
       it('should returns word with lowercased first letter', () => {
-        expect(lowercaseFirstLetter(uppercasedFirstLetterWord)).toBe('uppercasedfirstletterword');
+        expect(lowercaseFirstLetter(uppercasedFirstLetterWord)).toBe(
+          'uppercasedfirstletterword'
+        );
       });
     });
 
     context('when word with uppercased first two letters', () => {
       it('should returns word with lowercased first letter and lowercased second letter', () => {
-        expect(lowercaseFirstLetter(uppercasedFirstTwoLetterWord)).toBe('uPpercasedfirsttwoletterword');
+        expect(lowercaseFirstLetter(uppercasedFirstTwoLetterWord)).toBe(
+          'uPpercasedfirsttwoletterword'
+        );
       });
     });
 

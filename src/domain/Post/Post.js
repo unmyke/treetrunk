@@ -1,7 +1,7 @@
-import { BaseEntity } from "../_lib/BaseClasses";
-import { Day } from "../_lib/ValueObjects";
-import { PieceRate } from "./PieceRate";
-import { PostId } from "./PostId";
+import { BaseEntity } from '../_lib/BaseClasses';
+import { Day } from '../_lib/ValueObjects';
+import { PieceRate } from './PieceRate';
+import { PostId } from './PostId';
 
 export class Post extends BaseEntity {
   constructor({ postId = new PostId(), name, pieceRates = [] }) {
@@ -14,8 +14,8 @@ export class Post extends BaseEntity {
     const previuosPieceRate = this.getPieceRateAt(day);
     const pieceRate = new PieceRate({ value, day });
     if (previuosPieceRate.equals(pieceRate)) {
-      const error = new Error("Validation Error");
-      error.details = ["Post already have this pieceRate"];
+      const error = new Error('Validation Error');
+      error.details = ['Post already have this pieceRate'];
       throw error;
     }
     this.pieceRates = [...this.pieceRates, pieceRate].sort(
@@ -47,7 +47,7 @@ export class Post extends BaseEntity {
 
     const pieceRateToDelete = new PieceRate({ value, day });
     const filteredPieceRates = this.pieceRates.filter(
-      pieceRate => !pieceRate.equals(pieceRateToDelete)
+      (pieceRate) => !pieceRate.equals(pieceRateToDelete)
     );
     if (this.pieceRates.length === filteredPieceRates.length) {
       return;

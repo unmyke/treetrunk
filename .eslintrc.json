@@ -2,18 +2,20 @@
   "env": {
     "node": true,
     "es6": true,
-    "mocha": true
+    "jest": true
   },
   "parserOptions": {
     "ecmaVersion": 2017
   },
-  "extends": "eslint:recommended",
+  "plugins": ["prettier"],
+  "extends": ["plugin:prettier/recommended"],
   "rules": {
     "comma-spacing": ["error", { "before": false, "after": true }],
     "indent": ["error", 2],
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
-    "semi": ["error", "always"]
+    "semi": ["error", "always"],
+    "prettier/prettier": "error"
   },
   "parser": "babel-eslint"
 }

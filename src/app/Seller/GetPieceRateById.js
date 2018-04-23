@@ -10,7 +10,7 @@ export class GetPieceRateBySellerId extends Operation {
       const postId = seller.getPostIdAt(date);
       const post = await postRepo.getById(postId);
       const { value } = post.getPieceRateAt(date);
-  
+
       this.emit(SUCCESS, value);
     } catch (error) {
       if (error.message === 'ValidationError') {
@@ -22,4 +22,4 @@ export class GetPieceRateBySellerId extends Operation {
   }
 }
 
-GetPieceRateBySellerId.setOutputs([ 'SUCCESS', 'ERROR', 'VALIDATION_ERROR' ]);
+GetPieceRateBySellerId.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);

@@ -1,5 +1,3 @@
 import { IdSerializer } from './IdSerializer';
 
-export {
-  IdSerializer,
-};
+export { IdSerializer };

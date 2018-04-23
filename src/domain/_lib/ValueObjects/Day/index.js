@@ -1,5 +1,3 @@
 import { Day } from './Day';
 
-export {
-  Day,
-};
+export { Day };

@@ -1,7 +1,7 @@
 import { Post } from './Post';
 import { PostId } from './PostId';
 import { PieceRate } from './PieceRate';
-import { Day } from '../_lib/ValueObjects'
+import { Day } from '../_lib/ValueObjects';
 
 const name = 'Флорист';
 
@@ -15,7 +15,7 @@ const pieceRate2day = new Day({ value: new Date('2018.02.20 11:00') });
 const pieceRate3day = new Day({ value: new Date('2018.03.14 11:00') });
 
 describe('Domain :: entities :: Post', () => {
-  let post; 
+  let post;
   beforeEach(() => {
     post = new Post({ name });
   });
@@ -45,8 +45,7 @@ describe('Domain :: entities :: Post', () => {
 
         try {
           post.addPieceRate(pieceRate1value, pieceRate1day);
-        }
-        catch(e) {
+        } catch (e) {
           expect(e.details).toEqual(['Post already have this pieceRate']);
           expect(post.pieceRates).toHaveLength(1);
         }
@@ -59,8 +58,7 @@ describe('Domain :: entities :: Post', () => {
 
         try {
           post.addPieceRate(pieceRate1value, newDay);
-        }
-        catch(e) {
+        } catch (e) {
           expect(e.details).toEqual(['Post already have this pieceRate']);
           expect(post.pieceRates).toHaveLength(1);
         }
@@ -75,45 +73,45 @@ describe('Domain :: entities :: Post', () => {
       post.addPieceRate(pieceRate1value, pieceRate1day);
     });
 
-    context('when requested before any pieceRate added to post, () => {
+    context('when requested before any pieceRate added to post', () => {
       it('should return undefined', () => {
         expect(post.getPieceRateAt(pieceRate1day.subDays(1))).toBeUndefined();
       });
     });
 
     context('when requested past pieceRate', () => {
-      it('should return pieceRate\'s value belongs to that dateRange', () => {
+      it("should return pieceRate's value belongs to that dateRange", () => {
         expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
       });
     });
 
     context('when requested current pieceRate associated with post', () => {
-      it('should return last pieceRate\'s value', () => {
+      it("should return last pieceRate's value", () => {
         expect(post.getPieceRateAt(newDay)).toBe(pieceRate3value);
       });
     });
   });
 
-  describe("#deletePieceRateAt", () => {
+  describe('#deletePieceRateAt', () => {
     beforeEach(() => {
       post.addPieceRate(pieceRate2value, pieceRate2day);
       post.addPieceRate(pieceRate3value, pieceRate3day);
       post.addPieceRate(pieceRate1value, pieceRate1day);
     });
 
-    context("when post has no pieceRates", () => {
-      it("should return undefined", () => {
+    context('when post has no pieceRates', () => {
+      it('should return undefined', () => {
         expect(post.getPieceRateAt(pieceRate1day.subDays(1))).toBeUndefined();
       });
     });
 
-    context("when day equal second pieceRate day", () => {
+    context('when day equal second pieceRate day', () => {
       it("should return second pieceRate's value", () => {
         expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
       });
     });
 
-    context("when day after third pieceRate day", () => {
+    context('when day after third pieceRate day', () => {
       it("should return third pieceRate's value", () => {
         expect(post.getPieceRateAt(newDay)).toBe(pieceRate3value);
       });

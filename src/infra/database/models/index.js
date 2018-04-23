@@ -5,7 +5,7 @@ import { config } from 'config';
 const { db: dbConfig } = config;
 let db;
 
-if(dbConfig) {
+if (dbConfig) {
   const sequelize = new Sequelize(dbConfig);
 
   db = ModelsLoader.load({

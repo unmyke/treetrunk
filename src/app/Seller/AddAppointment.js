@@ -3,7 +3,12 @@ import { Operation } from '../_lib/Operation';
 export class AddSellerAppointment extends Operation {
   async execute({ sellerId, postId, appointDate }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
-    const { repositories: { Seller: repo }, domain: { commonTypes: { PostId } } } = this;
+    const {
+      repositories: { Seller: repo },
+      domain: {
+        commonTypes: { PostId }
+      }
+    } = this;
 
     const seller = repo.getById(sellerId);
     const postIdObj = new PostId({ id: postId });
@@ -23,4 +28,4 @@ export class AddSellerAppointment extends Operation {
   }
 }
 
-AddSellerAppointment.setOutputs([ 'SUCCESS', 'ERROR', 'VALIDATION_ERROR' ]);
+AddSellerAppointment.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);

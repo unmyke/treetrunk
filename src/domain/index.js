@@ -3,10 +3,10 @@ import { Post, PostId } from './Post';
 
 export const entities = {
   Seller,
-  Post,
+  Post
 };
 
 export const commonTypes = {
   SellerId,
-  PostId,
+  PostId
 };

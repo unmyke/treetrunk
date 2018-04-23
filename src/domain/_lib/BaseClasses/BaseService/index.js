@@ -1,5 +1,3 @@
 import { BaseService } from './BaseService';
 
-export {
-  BaseService
-};
+export { BaseService };

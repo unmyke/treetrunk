@@ -1,9 +1,22 @@
 import { Operation } from '../_lib/Operation';
 
 export class CreateSeller extends Operation {
-  async execute({ surname, firstName, middleName, phone, postId, appointDate }) {
+  async execute({
+    surname,
+    firstName,
+    middleName,
+    phone,
+    postId,
+    appointDate
+  }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
-    const { repositories: { Seller: repo }, domain: { entities: { Seller }, commonTypes: { PostId } } } = this;
+    const {
+      repositories: { Seller: repo },
+      domain: {
+        entities: { Seller },
+        commonTypes: { PostId }
+      }
+    } = this;
 
     const seller = new Seller({ surname, firstName, middleName, phone });
     const postIdObj = new PostId({ id: postId });
@@ -23,4 +36,4 @@ export class CreateSeller extends Operation {
   }
 }
 
-CreateSeller.setOutputs([ 'SUCCESS', 'ERROR', 'VALIDATION_ERROR' ]);
+CreateSeller.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);

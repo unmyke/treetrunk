@@ -1,7 +1,8 @@
 import Status from 'http-status';
 
 /* istanbul ignore next */
-export const errorHandler = (err, req, res, next) => { // eslint-disable-line no-unused-vars
+export const errorHandler = (err, req, res, next) => {
+  // eslint-disable-line no-unused-vars
   const { logger } = req.container.cradle;
 
   logger.error(err);

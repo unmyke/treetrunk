@@ -10,7 +10,7 @@ import {
   endOfYear as endOfYearFNS,
   differenceInMonths as differenceInMonthsFNS,
   addDays as addDaysFNS,
-  subDays as subDaysFNS,
+  subDays as subDaysFNS
 } from 'date-fns';
 
 const ru = require('date-fns/locale/ru');
@@ -24,26 +24,24 @@ function isMinusZero(value) {
     return false;
   }
 
-  return 1/value === -Infinity;
+  return 1 / value === -Infinity;
 }
 
 export class Day extends BaseValue {
-
   // Errors
 
-  static errorNotADate   = makeError('ValidationError', 'Not A Date');
-  static errorNotADay    = makeError('ValidationError', 'Not A Day');
+  static errorNotADate = makeError('ValidationError', 'Not A Date');
+  static errorNotADay = makeError('ValidationError', 'Not A Day');
   static errorNotANumber = makeError('ValidationError', 'Not A Number');
-
 
   // Factories
 
   static createStartOfWeek(date) {
-    return this._dayFactory(date, startOfWeekFNS, {weekStartsOn: 1});
+    return this._dayFactory(date, startOfWeekFNS, { weekStartsOn: 1 });
   }
 
   static createEndOfWeek(date) {
-    return this._dayFactory(date, endOfWeekFNS, {weekStartsOn: 1});
+    return this._dayFactory(date, endOfWeekFNS, { weekStartsOn: 1 });
   }
 
   static createStartOfMonth(date) {
@@ -70,11 +68,11 @@ export class Day extends BaseValue {
     return this._dayFactory(date, endOfYearFNS);
   }
 
-  static _dayFactory(date = new Date, dateGetter, dateGetterProps) {
+  static _dayFactory(date = new Date(), dateGetter, dateGetterProps) {
     if (!isValidDate(date)) {
       throw this.errorNotADate;
     }
-  
+
     return new Day({ value: dateGetter(date, dateGetterProps) });
   }
 
@@ -105,23 +103,23 @@ export class Day extends BaseValue {
     if (!this.isValid()) {
       return this.constructor.errorNotADay.details[0];
     }
-    
+
     return formatFNS(this.value, formatString, { locale: ru });
   }
-  
+
   addDays(num = 0) {
-    if (typeof(num) !== 'number') {
+    if (typeof num !== 'number') {
       throw this.constructor.errorNotANumber;
     }
-    
+
     return new Day({ value: addDaysFNS(this.value, num) });
   }
 
   subDays(num = 0) {
-    if (typeof(num) !== 'number') {
+    if (typeof num !== 'number') {
       throw this.constructor.errorNotANumber;
     }
-    
+
     return new Day({ value: subDaysFNS(this.value, num) });
   }
 
@@ -133,7 +131,7 @@ export class Day extends BaseValue {
     return parseInt((this - day) / 86400000);
   }
 
-  differenceInMonths (day) {
+  differenceInMonths(day) {
     if (day.constructor !== this.constructor || !day.isValid()) {
       throw this.constructor.errorNotADay;
     }

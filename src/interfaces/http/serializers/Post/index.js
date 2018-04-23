@@ -1,5 +1,3 @@
-import { PostSerializer  } from './PostSerializer';
+import { PostSerializer } from './PostSerializer';
 
-export {
-  PostSerializer,
-};
+export { PostSerializer };

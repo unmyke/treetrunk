@@ -13,12 +13,14 @@ export class SeniorityType extends BaseEntity {
 
   addAwardAt(value, day = new Day()) {
     const award = new Award({ value, day });
-    this.awards = [ ...this.awards, award ].sort((a, b) => a.day > b.day);
+    this.awards = [...this.awards, award].sort((a, b) => a.day > b.day);
   }
 
   deleteAwardAt(value, day = new Day()) {
     const awardToDelete = new Award({ value, day });
-    const filteredAwards = this.awards.filter(award => award.equals(awardToDelete));
+    const filteredAwards = this.awards.filter((award) =>
+      award.equals(awardToDelete)
+    );
 
     if (filteredAwards.length === this.awards.length) {
       throw new Error('NotFound');

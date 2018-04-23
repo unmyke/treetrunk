@@ -33,6 +33,6 @@ export const makeValidator = () => {
     }
     return null;
   };
-  
+
   return entityValidator;
 };

@@ -5,7 +5,6 @@ const id = new BaseId();
 const { constructor: idConstructor } = id;
 
 describe('Domain :: lib :: BaseClasses:: BaseEntity', () => {
-
   context('when construct without argument', () => {
     it('should be instance of BaseEntity', () => {
       const idObj = new BaseEntity();

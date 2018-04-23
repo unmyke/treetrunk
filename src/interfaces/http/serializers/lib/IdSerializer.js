@@ -1,3 +1,3 @@
 export const IdSerializer = {
-  serialize: ({ id }) => id,
+  serialize: ({ id }) => id
 };

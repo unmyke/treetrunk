@@ -19,9 +19,11 @@ export class BaseValue {
     const valuePropNames = Object.getOwnPropertyNames(value).sort();
 
     return thisPropNames.reduce((isEqual, propertyName, index) => {
-      return isEqual &&
+      return (
+        isEqual &&
         propertyName === valuePropNames[index] &&
-        valueEquality(this[propertyName], value[propertyName]);
+        valueEquality(this[propertyName], value[propertyName])
+      );
     }, true);
   }
 }

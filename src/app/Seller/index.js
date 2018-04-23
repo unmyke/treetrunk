@@ -1,5 +1,3 @@
 import { CreateSeller } from './CreateSeller';
 
-export {
-  CreateSeller,
-};
+export { CreateSeller };

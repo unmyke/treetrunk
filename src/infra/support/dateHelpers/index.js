@@ -1,6 +1,7 @@
 import { startOfDay } from 'date-fns';
 
-export const isValidDate = (date = new Date('Invalid Date')) => date.constructor.name === 'Date' && !isNaN(date.getTime());
+export const isValidDate = (date = new Date('Invalid Date')) =>
+  date.constructor.name === 'Date' && !isNaN(date.getTime());
 
 export const convertDate = (date) => {
   if (date === undefined) {

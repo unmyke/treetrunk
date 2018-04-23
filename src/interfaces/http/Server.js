@@ -12,12 +12,11 @@ export class Server {
 
   start() {
     return new Promise((resolve) => {
-      const http = this.express
-        .listen(this.config.web.port, () => {
-          const { port } = http.address();
-          this.logger.info(`[p ${process.pid}] Listening at port ${port}`);
-          resolve();
-        });
+      const http = this.express.listen(this.config.web.port, () => {
+        const { port } = http.address();
+        this.logger.info(`[p ${process.pid}] Listening at port ${port}`);
+        resolve();
+      });
     });
   }
 }

@@ -9,7 +9,11 @@ export const ModelsLoader = {
     fs
       .readdirSync(baseFolder)
       .filter((file) => {
-        return (file.indexOf('.') !== 0) && (file !== indexFile) && (file.slice(-3) === '.js');
+        return (
+          file.indexOf('.') !== 0 &&
+          file !== indexFile &&
+          file.slice(-3) === '.js'
+        );
       })
       .forEach((file) => {
         const model = sequelize['import'](path.join(baseFolder, file));
@@ -18,7 +22,7 @@ export const ModelsLoader = {
       });
 
     Object.keys(loaded.models).forEach((modelName) => {
-      if(loaded.models[modelName].associate) {
+      if (loaded.models[modelName].associate) {
         loaded.models[modelName].associate(loaded.models);
       }
     });

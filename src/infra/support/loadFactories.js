@@ -5,7 +5,7 @@ export const loadFactories = ({ factoryGirl, baseFolder, models }) => {
   fs
     .readdirSync(baseFolder)
     .filter((file) => {
-      return (file.indexOf('.') !== 0) && (file.slice(-3) === '.js');
+      return file.indexOf('.') !== 0 && file.slice(-3) === '.js';
     })
     .map((file) => file.split('.')[0])
     .forEach((file) => {

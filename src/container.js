@@ -29,7 +29,7 @@ import { containerMiddleware } from './interfaces/http/utils/bottle-express';
 const bottle = new Bottle();
 
 bottle.constant('config', config);
-bottle.factory('app', container => new Application(container));
+bottle.factory('app', (container) => new Application(container));
 
 bottle.constant('domain', domain);
 
@@ -41,11 +41,15 @@ bottle.factory('repositories', ({ models, mappers, makeValidator }) => {
   return result;
 });
 
-bottle.factory('services', container => {
+bottle.factory('services', (container) => {
   const result = Object.keys(services).reduce((acc, entityName) => {
     const Operations = services[entityName];
     const operations = Object.keys(Operations).reduce((acc, operationName) => {
-      return { ...acc, [lowercaseFirstLetter(operationName)]: () => new Operations[operationName](container) };
+      return {
+        ...acc,
+        [lowercaseFirstLetter(operationName)]: () =>
+          new Operations[operationName](container)
+      };
     }, {});
     return { ...acc, [entityName]: operations };
   }, {});
@@ -72,12 +76,14 @@ bottle.constant('serializers', serializers);
 
 bottle.constant('makeValidator', makeValidator);
 
-bottle.factory('server', container => new Server(container));
-bottle.factory('logger', container => logger(container));
-bottle.factory('router', container => router(container));
-bottle.factory('containerMiddleware', container => containerMiddleware(container));
+bottle.factory('server', (container) => new Server(container));
+bottle.factory('logger', (container) => logger(container));
+bottle.factory('router', (container) => router(container));
+bottle.factory('containerMiddleware', (container) =>
+  containerMiddleware(container)
+);
 
-bottle.factory('loggerMiddleware', container => loggerMiddleware(container));
+bottle.factory('loggerMiddleware', (container) => loggerMiddleware(container));
 bottle.constant(
   'errorHandler',
   config.production ? errorHandler : devErrorHandler

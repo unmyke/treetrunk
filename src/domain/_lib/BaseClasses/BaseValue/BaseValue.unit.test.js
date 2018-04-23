@@ -25,7 +25,6 @@ class AnotherConcreteValue extends BaseValue {
 }
 
 describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
-
   context('when two instance reference to same object', () => {
     it('should be equal', () => {
       const valueObject = new BaseValue();
@@ -37,7 +36,6 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
 
   context('when two instance of same class have equals attributes', () => {
     it('should be equal', () => {
-
       const valueObject = new ConcreteValue(props);
       const equalValueObject = new ConcreteValue(props);
 
@@ -46,7 +44,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
   });
 
   context('when two instance of same class have non-equals attributes', () => {
-    it('shouldn\'t be equal', () => {
+    it("shouldn't be equal", () => {
       const valueObject = new ConcreteValue(props);
       const anotherValueObject = new ConcreteValue(anotherProps);
 
@@ -55,7 +53,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
   });
 
   context('when two instance of different class have equals attributes', () => {
-    it('shouldn\'t be equal', () => {
+    it("shouldn't be equal", () => {
       const valueObject = new ConcreteValue(props);
       const anotherValueObject = new AnotherConcreteValue(props);
 
@@ -63,17 +61,19 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
     });
   });
 
-  context('when two instance of different class have non-equals attributes', () => {
-    it('shouldn\'t be equal', () => {
-      const valueObject = new ConcreteValue(props);
-      const anotherValueObject = new AnotherConcreteValue(anotherProps);
+  context(
+    'when two instance of different class have non-equals attributes',
+    () => {
+      it("shouldn't be equal", () => {
+        const valueObject = new ConcreteValue(props);
+        const anotherValueObject = new AnotherConcreteValue(anotherProps);
 
-      expect(valueObject.equals(anotherValueObject)).toBeFalsy();
-    });
-  });
+        expect(valueObject.equals(anotherValueObject)).toBeFalsy();
+      });
+    }
+  );
 
-  context('when value objects include value objects that and are' , () => {
-
+  context('when value objects include value objects that and are', () => {
     class CompositeValue extends BaseValue {
       constructor({ valueObj, attr1, attr2 }) {
         super();
@@ -88,7 +88,6 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
 
     context('equal', () => {
       it('should be equal', () => {
-
         const valueObject1 = new CompositeValue({ ...props, valueObj });
         const valueObject2 = new CompositeValue({ ...props, valueObj });
 
@@ -98,9 +97,11 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
 
     context('not equal', () => {
       it('should not be equal', () => {
-
         const valueObject1 = new CompositeValue({ ...props, valueObj });
-        const valueObject2 = new CompositeValue({ ...props, valueObj : anotherValueObj });
+        const valueObject2 = new CompositeValue({
+          ...props,
+          valueObj: anotherValueObj
+        });
 
         expect(valueObject1.equals(valueObject2)).toBeFalsy();
       });

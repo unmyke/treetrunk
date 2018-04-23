@@ -6,16 +6,22 @@ import compression from 'compression';
 import methodOverride from 'method-override';
 import { createControllerRoutes as controller } from './utils/createControllerRoutes';
 
-export const router = ({ config, containerMiddleware, loggerMiddleware, errorHandler, swaggerMiddleware }) => {
+export const router = ({
+  config,
+  containerMiddleware,
+  loggerMiddleware,
+  errorHandler,
+  swaggerMiddleware
+}) => {
   const router = Router();
 
   /* istanbul ignore if */
-  if(config.env === 'development') {
+  if (config.env === 'development') {
     router.use(statusMonitor());
   }
 
   /* istanbul ignore if */
-  if(config.env !== 'test') {
+  if (config.env !== 'test') {
     router.use(loggerMiddleware);
   }
 

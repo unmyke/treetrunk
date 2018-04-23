@@ -5,29 +5,26 @@ import { makeError } from 'src/infra/support/makeError';
 const isValidDay = (day) => day && day.constructor === Day && day.isValid();
 
 export class DayRange extends BaseValue {
-
-
   // Errors
 
-  static errorNotADay      = Day.errorNotADay;
-  static errorNotADate     = Day.errorNotADate;
-  static errorNotANumber   = Day.errorNotANumber;
+  static errorNotADay = Day.errorNotADay;
+  static errorNotADate = Day.errorNotADate;
+  static errorNotANumber = Day.errorNotANumber;
   static errorNotADayRange = makeError('ValidationError', 'Not A DayRage');
-
 
   // Factories
 
   static createWeek(day) {
     return this._dayRangeFactory(day, 'Week');
-  }  
+  }
 
   static createMonth(day) {
     return this._dayRangeFactory(day, 'Month');
-  }  
+  }
 
   static createQuarter(day) {
     return this._dayRangeFactory(day, 'Quarter');
-  }  
+  }
 
   static createYear(day) {
     return this._dayRangeFactory(day, 'Year');
@@ -36,21 +33,23 @@ export class DayRange extends BaseValue {
   static _dayRangeFactory(day = new Day(), rangeName) {
     if (!isValidDay(day)) {
       throw this.errorNotADay;
-    }  
+    }
 
-    return new DayRange({ start: day[`startOf${rangeName}`](), end: day[`endOf${rangeName}`]() });
+    return new DayRange({
+      start: day[`startOf${rangeName}`](),
+      end: day[`endOf${rangeName}`]()
+    });
   }
-
 
   // Instance methods
 
   constructor({ start, end } = {}) {
     super();
     this.start = start;
-    this.end   = end;
+    this.end = end;
   }
 
-  [Symbol.iterator] = function* () {
+  [Symbol.iterator] = function*() {
     if (!this.isValid()) {
       return undefined;
     }
@@ -58,8 +57,8 @@ export class DayRange extends BaseValue {
     do {
       yield curDay;
       curDay = curDay.addDays(1);
-    } while(curDay < this.end);
-  }
+    } while (curDay < this.end);
+  };
 
   get length() {
     if (!this.isValid()) {
@@ -73,7 +72,7 @@ export class DayRange extends BaseValue {
     if (!this.isValid() && isValidDay(day)) {
       throw this.constructor.errorNotADay;
     }
-    return  day >= this.start && day <= this.end;
+    return day >= this.start && day <= this.end;
   }
 
   toString() {
@@ -93,6 +92,8 @@ export class DayRange extends BaseValue {
   }
 
   isValid() {
-    return isValidDay(this.start) && isValidDay(this.end) && this.end >= this.start;
+    return (
+      isValidDay(this.start) && isValidDay(this.end) && this.end >= this.start
+    );
   }
 }

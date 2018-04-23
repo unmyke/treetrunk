@@ -20,8 +20,8 @@ describe('Domain :: entities :: Post', () => {
     post = new Post({ name });
   });
 
-  describe('#construcor', () => {
-    context('when contruct with only person name', () => {
+  describe('#constructor', () => {
+    context('when construct with only person name', () => {
       it('should be instance of Post', () => {
         expect(post).toBeInstanceOf(Post);
         expect(post.postId).toBeInstanceOf(PostId);
@@ -32,14 +32,14 @@ describe('Domain :: entities :: Post', () => {
 
   describe('#addPieceRate', () => {
     context('when add one value', () => {
-      it('should have pieceRates length qual 1', () => {
+      it('should have pieceRates length equal 1', () => {
         post.addPieceRate(pieceRate1value, pieceRate1day);
 
         expect(post.pieceRates).toHaveLength(1);
       });
     });
 
-    context('when add to same value by same day', () => {
+    context('when add same value at same day', () => {
       it('should throw exeption', () => {
         post.addPieceRate(pieceRate1value, pieceRate1day);
 
@@ -53,7 +53,7 @@ describe('Domain :: entities :: Post', () => {
       });
     });
 
-    context('when add to same value, different day, but previous value is same', () => {
+    context('when add same value at different day', () => {
       it('should throw exeption', () => {
         post.addPieceRate(pieceRate1value, pieceRate1day);
 
@@ -66,39 +66,56 @@ describe('Domain :: entities :: Post', () => {
         }
       });
     });
-
-    context('when add to different value, different day, but previous value is same', () => {
-      it('should have pieceRates length qual 2', () => {
-        post.addPieceRate(pieceRate2value, pieceRate2day);
-        post.addPieceRate(pieceRate1value, pieceRate1day);
-
-        expect(post.pieceRates).toHaveLength(2);
-      });
-    });
   });
 
-  describe('#getPieceRateAtDate', () => {
+  describe('#getPieceRateAt', () => {
     beforeEach(() => {
       post.addPieceRate(pieceRate2value, pieceRate2day);
       post.addPieceRate(pieceRate3value, pieceRate3day);
       post.addPieceRate(pieceRate1value, pieceRate1day);
     });
 
-    context('when day before first pieceRate', () => {
+    context('when requested before any pieceRate added to post, () => {
       it('should return undefined', () => {
-        expect(post.getPieceRateAtDate(pieceRate1day.subDays(1))).toBeUndefined();
+        expect(post.getPieceRateAt(pieceRate1day.subDays(1))).toBeUndefined();
       });
     });
 
-    context('when day equal second pieceRate day', () => {
-      it('should return second pieceRate\'s value', () => {
-        expect(post.getPieceRateAtDate(pieceRate2day)).toBe(pieceRate2value);
+    context('when requested past pieceRate', () => {
+      it('should return pieceRate\'s value belongs to that dateRange', () => {
+        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
       });
     });
 
-    context('when day after third pieceRate day', () => {
-      it('should return third pieceRate\'s value', () => {
-        expect(post.getPieceRateAtDate(newDay)).toBe(pieceRate3value);
+    context('when requested current pieceRate associated with post', () => {
+      it('should return last pieceRate\'s value', () => {
+        expect(post.getPieceRateAt(newDay)).toBe(pieceRate3value);
+      });
+    });
+  });
+
+  describe("#deletePieceRateAt", () => {
+    beforeEach(() => {
+      post.addPieceRate(pieceRate2value, pieceRate2day);
+      post.addPieceRate(pieceRate3value, pieceRate3day);
+      post.addPieceRate(pieceRate1value, pieceRate1day);
+    });
+
+    context("when post has no pieceRates", () => {
+      it("should return undefined", () => {
+        expect(post.getPieceRateAt(pieceRate1day.subDays(1))).toBeUndefined();
+      });
+    });
+
+    context("when day equal second pieceRate day", () => {
+      it("should return second pieceRate's value", () => {
+        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
+      });
+    });
+
+    context("when day after third pieceRate day", () => {
+      it("should return third pieceRate's value", () => {
+        expect(post.getPieceRateAt(newDay)).toBe(pieceRate3value);
       });
     });
   });

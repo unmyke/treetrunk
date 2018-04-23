@@ -1,26 +1,15 @@
 import { DayRange } from '.';
 import { Day } from '../Day';
-import { startOfDay, endOfDay, subMilliseconds, addMilliseconds, addDays, startOfMonth, endOfMonth } from 'date-fns';
 
 const validStartDate = new Date(2018, 0, 1, 12, 3, 4, 4);
 const validEndDate1  = new Date(2018, 0, 2, 14, 5, 5, 2);
 const validEndDate2  = new Date(2018, 0, 1,  0, 5, 5, 2);
 const validEndDate3  = new Date(2018, 1, 1,  0, 5, 5, 2);
 
-const expectedStartDate = startOfDay(validStartDate);
-const expectedEndDate1  = startOfDay(validEndDate1);
-const expectedEndDate2  = startOfDay(validEndDate2);
-const expectedEndDate3  = startOfDay(validEndDate3);
-
 const validStartDay = new Day({ value: validStartDate });
 const validEndDay1  = new Day({ value: validEndDate1 });
 const validEndDay2  = new Day({ value: validEndDate2 });
 const validEndDay3  = new Day({ value: validEndDate3 });
-
-const expectedStartDay = new Day({ value: expectedStartDate });
-const expectedEndDay1  = new Day({ value: expectedEndDate1 });
-const expectedEndDay2  = new Day({ value: expectedEndDate2 });
-const expectedEndDay3  = new Day({ value: expectedEndDate3 });
 
 describe("Domain :: lib :: valueObjects :: DayRange", () => {
   describe("DayRange#createMonth", () => {
@@ -28,14 +17,17 @@ describe("Domain :: lib :: valueObjects :: DayRange", () => {
       it('return instance of DayRange, that represence month of this day', () => {
         const dayRange = DayRange.createMonth(validStartDay);
 
-        const expectedDayRange = new DayRange({ start: validStartDay.startOfMonth(), end: validStartDay.endOfMonth() });
+        const expectedStartDay = new Day({ value: new Date(new Date(2018, 0, 1, 0, 0, 0, 0)) });
+        const expectedEndDay = new Day({ value: new Date(new Date(2018, 0, 31, 0, 0, 0, 0)) });
+
+        const expectedDayRange = new DayRange({ start: expectedStartDay, end: expectedEndDay });
 
         expect(dayRange).toEqual(expectedDayRange);
       });
     });
 
     context('input day is undefined', () => {
-      it('return inctance of DayRange, that represence current month', () => {
+      it('return instance of DayRange, that represence current month', () => {
         const dayRange = DayRange.createMonth();
         const start = Day.createStartOfMonth();
         const end = Day.createEndOfMonth();
@@ -71,15 +63,15 @@ describe("Domain :: lib :: valueObjects :: DayRange", () => {
       });
 
       it('should returns start day without time', () => {
-        expect(dayRange1.start).toEqual(expectedStartDay);
-        expect(dayRange2.start).toEqual(expectedStartDay);
-        expect(dayRange3.start).toEqual(expectedStartDay);
+        expect(dayRange1.start).toEqual(validStartDay);
+        expect(dayRange2.start).toEqual(validStartDay);
+        expect(dayRange3.start).toEqual(validStartDay);
       });
 
       it('should returns end day without time', () => {
-        expect(dayRange1.end).toEqual(expectedEndDay1);
-        expect(dayRange2.end).toEqual(expectedEndDay2);
-        expect(dayRange3.end).toEqual(expectedEndDay3);
+        expect(dayRange1.end).toEqual(validEndDay1);
+        expect(dayRange2.end).toEqual(validEndDay2);
+        expect(dayRange3.end).toEqual(validEndDay3);
       });
     });
   });
@@ -120,8 +112,8 @@ describe("Domain :: lib :: valueObjects :: DayRange", () => {
         const dayRange1 = new DayRange({ start: validStartDay, end: validEndDay1 });
         const dayRange2 = new DayRange({ start: validStartDay, end: validEndDay2 });
 
-        expect(dayRange1.contains(new Day({ value: endOfDay(dayRange1.start) }))).toBeTruthy();
-        expect(dayRange2.contains(new Day({ value: endOfDay(dayRange2.end) }))).toBeTruthy();
+        expect(dayRange1.contains(validStartDay)).toBeTruthy();
+        expect(dayRange2.contains(validEndDay2)).toBeTruthy();
       });
     });
 
@@ -129,8 +121,8 @@ describe("Domain :: lib :: valueObjects :: DayRange", () => {
       it('should returns false', () => {
         const dayRange = new DayRange({ start: validStartDay, end: validEndDay3 });
 
-        expect(dayRange.contains(new Day({ value: subMilliseconds(startOfDay(dayRange.start), 1) }))).toBeFalsy();
-        expect(dayRange.contains(new Day({ value: addMilliseconds(endOfDay(dayRange.end), 1) }))).toBeFalsy();
+        expect(dayRange.contains(validStartDay.prev())).toBeFalsy();
+        expect(dayRange.contains(validEndDay3.next())).toBeFalsy();
       });
     });
   });
@@ -142,7 +134,7 @@ describe("Domain :: lib :: valueObjects :: DayRange", () => {
       let expectedDay = dayRange.start;
       for (let day of dayRange) {
         expect(day).toEqual(expectedDay);
-        expectedDay = new Day({ value: addDays(expectedDay, 1) });
+        expectedDay = expectedDay.next();
       }
     });
   });

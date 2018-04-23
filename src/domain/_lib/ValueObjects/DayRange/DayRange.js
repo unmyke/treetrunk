@@ -1,5 +1,4 @@
 import { BaseValue } from '../../BaseClasses';
-// import { addDays, isValidDay, difference, format } from 'src/infra/support/dayHelpers';
 import { Day } from '../Day';
 import { makeError } from 'src/infra/support/makeError';
 
@@ -18,23 +17,23 @@ export class DayRange extends BaseValue {
 
   // Factories
 
-  static createWeek(day = new Day()) {
+  static createWeek(day) {
     return this._dayRangeFactory(day, 'Week');
   }  
 
-  static createMonth(day = new Day()) {
+  static createMonth(day) {
     return this._dayRangeFactory(day, 'Month');
   }  
 
-  static createQuarter(day = new Day()) {
+  static createQuarter(day) {
     return this._dayRangeFactory(day, 'Quarter');
   }  
 
-  static createYear(day = new Day()) {
+  static createYear(day) {
     return this._dayRangeFactory(day, 'Year');
   }
 
-  static _dayRangeFactory(day = new Day, rangeName) {
+  static _dayRangeFactory(day = new Day(), rangeName) {
     if (!isValidDay(day)) {
       throw this.errorNotADay;
     }  

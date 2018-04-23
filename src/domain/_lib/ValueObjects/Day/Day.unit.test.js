@@ -1,20 +1,4 @@
 import { Day } from '.';
-import {
-  addMonths as addMonthsFNS,
-  subDays as subDaysFNS,
-  addDays as addDaysFNS,
-  format as formatFNS,
-  startOfDay as startOfDayFNS,
-  endOfDay as endOfDayFNS,
-  startOfWeek as startOfWeekFNS,
-  endOfWeek as endOfWeekFNS,
-  startOfMonth as startOfMonthFNS,
-  endOfMonth as endOfMonthFNS,
-  startOfQuarter as startOfQuarterFNS,
-  endOfQuarter as endOfQuarterFNS,
-  startOfYear as startOfYearFNS,
-  endOfYear as endOfYearFNS,
-} from 'date-fns';
 
 const { errorNotADate, errorNotADay, errorNotANumber } = Day;
 
@@ -34,10 +18,12 @@ describe("Domain :: lib :: valueObjects :: Day", () => {
     context('when pass undefined', () => {
       it('return new inctance of Day, that represence  today\'s start of week', () => {
         const date = new Date();
-        const day = Day.createStartOfWeek();
-        const expectedDay = new Day({ value: startOfWeekFNS(date, {weekStartsOn: 1}) });
+        const curDayOfWeek = date.getDay();
+        const monday = new Date(date.valueOf() - (curDayOfWeek - 1) * (24 * 60 * 60 * 1000));
 
-        expect(day).toEqual(expectedDay);
+        const expectedDay = new Day({ value: monday });
+
+        expect(Day.createStartOfWeek()).toEqual(expectedDay);
       });
     });
 
@@ -68,10 +54,12 @@ describe("Domain :: lib :: valueObjects :: Day", () => {
     context('when pass undefined', () => {
       it('return new inctance of Day, that represence  today\'s end of week', () => {
         const date = new Date();
-        const day = Day.createEndOfWeek();
-        const expectedDay = new Day({ value: endOfWeekFNS(date, {weekStartsOn: 1}) });
+        const curDayOfWeek = date.getDay();
+        const sunday = new Date(date.valueOf() + ((7 - curDayOfWeek) % 7) * (24 * 60 * 60 * 1000));
+        
+        const expectedDay = new Day({ value: sunday });
 
-        expect(day).toEqual(expectedDay);
+        expect(Day.createEndOfWeek()).toEqual(expectedDay);
       });
     });
 
@@ -204,25 +192,25 @@ describe("Domain :: lib :: valueObjects :: Day", () => {
 
     context('when pass start Of date', () => {
       it('return true', () => {
-        expect(day.contains(startOfDayFNS(value))).toBeTruthy();
+        expect(day.contains(new Date(2017, 2, 10, 0, 0, 0, 0))).toBeTruthy();
       });
     });
 
     context('when pass end Of date', () => {
       it('return true', () => {
-        expect(day.contains(endOfDayFNS(value))).toBeTruthy();
+        expect(day.contains(new Date(2017, 2, 10, 23, 59, 59, 999))).toBeTruthy();
       });
     });
 
     context('when pass next date', () => {
       it('return false', () => {
-        expect(day.contains(startOfDayFNS(addDaysFNS(value, 1)))).toBeFalsy();
+        expect(day.contains(new Date(2017, 2, 11, 0, 0, 0, 0))).toBeFalsy();
       });
     });
 
     context('when pass previous date', () => {
       it('return false', () => {
-        expect(day.contains(endOfDayFNS(subDaysFNS(value, 1)))).toBeFalsy();
+        expect(day.contains(new Date(2017, 2, 9, 23, 59, 59, 999))).toBeFalsy();
       });
     });
 
@@ -408,72 +396,78 @@ describe("Domain :: lib :: valueObjects :: Day", () => {
   });
   
   describe('#differenceInMonths', () => {
-    const value = new Date();
-    const today = new Day({ value });
+    const value = new Date('2018-03-01 07:16:59 GMT+0800 (+08)');
+    const day = new Day({ value });
   
-    context('when passed right day is not a day', () => {
+    context('when passed day is not a day', () => {
       it('throw error', () => {
-        expect(() => today.differenceInMonths('incorrect input')).toThrow(errorNotADay);
+        expect(() => day.differenceInMonths('incorrect input')).toThrow(errorNotADay);
+      });
+    });
+  
+    context('when passed day is incorrect day', () => {
+      it('throw error', () => {
+        expect(() => day.differenceInMonths(new Day({ value: new Date('Incorrect date') }))).toThrow(errorNotADay);
       });
     });
   
     context('when passed days are the same day', () => {
       it('return 0', () => {
-        expect(today.differenceInMonths(today)).toBe(0);
+        expect(day.differenceInMonths(day)).toBe(0);
       });
     });
   
     context('when pass another instance of same day', () => {
       it('return 0', () => {
-        const addedValue = new Date();
-        const sameDay = new Day({ value: addedValue });
+        const sameValue = new Date('2018-03-01 07:16:59 GMT+0800 (+08)');
+        const sameDay = new Day({ value: sameValue });
   
-        expect(sameDay.differenceInMonths(today)).toBe(0);
+        expect(sameDay.differenceInMonths(day)).toBe(0);
       });
     });
   
-    context('when pass left day is next month of right date', () => {
+    context('when pass next month date', () => {
       it('return -1', () => {
-        const nextMonthDayValue = addMonthsFNS(value, 1);
+        const nextMonthDayValue = new Date('2018-04-01 07:16:59 GMT+0800 (+08)');
         const nextMonthDay = new Day({ value: nextMonthDayValue });
   
-        expect(today.differenceInMonths(nextMonthDay)).toBe(-1);
+        expect(day.differenceInMonths(nextMonthDay)).toBe(-1);
       });
     });
   
-    context('when pass right day is next month of left date', () => {
+    context('when pass month of left date', () => {
       it('return 1', () => {
-        const nextMonthDayValue = addMonthsFNS(value, 1);
-        const nextMonthDay = new Day({ value: nextMonthDayValue });
+        const prevMonthDayValue = new Date('2018-02-01 07:16:59 GMT+0800 (+08)');
+        const prevMonthDay = new Day({ value: prevMonthDayValue });
   
-        expect(nextMonthDay.differenceInMonths(today)).toBe(1);
+        expect(day.differenceInMonths(prevMonthDay)).toBe(1);
       });
     });
   
-    context('when pass left day is early than next month of right date', () => {
+    context('when pass end of current month', () => {
       it('return 0', () => {
-        const nextMonthDayValue = subDaysFNS(addMonthsFNS(value, 1), 1);
+        const nextMonthDayValue = new Date('2018-03-30 23:59:59 GMT+0800 (+08)');
         const nextMonthDay = new Day({ value: nextMonthDayValue });
   
-        expect(today.differenceInMonths(nextMonthDay)).toBe(0);
+        expect(day.differenceInMonths(nextMonthDay)).toBe(0);
       });
     });
   
-    context('when pass right day is early than next month of left date', () => {
+    context('when pass previous month day, but difference less one month', () => {
       it('return 0', () => {
-        const nextMonthDayValue = subDaysFNS(addMonthsFNS(value, 1), 1);
-        const nextMonthDay = new Day({ value: nextMonthDayValue });
+        const prevMonthDayValue = new Date('2018-02-02 00:00:00 GMT+0800 (+08)');
+        const prevMonthDay = new Day({ value: prevMonthDayValue });
   
-        expect(nextMonthDay.differenceInMonths(today)).toBe(0);
+        expect(day.differenceInMonths(prevMonthDay)).toBe(0);
       });
     });
   
-    context('when pass right day is 15 months after left date', () => {
-      it('return 15', () => {
-        const nextMonthsDayValue = addMonthsFNS(value, 15);
-        const nextMonthsMonthDay = new Day({ value: nextMonthsDayValue });
+    context('when pass day 7 months before', () => {
+      it('return 7', () => {
+        const beforeMonthsDayValue = new Date('2017-08-01 07:16:59 GMT+0800 (+08)');
+        const beforeMonthsDay = new Day({ value: beforeMonthsDayValue });
   
-        expect(nextMonthsMonthDay.differenceInMonths(today)).toBe(15);
+        expect(day.differenceInMonths(beforeMonthsDay)).toBe(7);
       });
     });
   });
@@ -509,20 +503,20 @@ describe("Domain :: lib :: valueObjects :: Day", () => {
   describe('#format', () => {
     context('when pass correct day without format', () => {
       it('return default date format', () => {
-        const value = new Date();
+        const value = new Date('2018-03-08 23:59:59 GMT+0800');
         const day = new Day({ value })
   
-        expect(day.format()).toBe(formatFNS(startOfDayFNS(value)));
+        expect(day.format()).toBe('08.03.2018');
       });
     });
   
     context('when pass correct day with format', () => {
       it('return formated date', () => {
-        const value = new Date();
-        const formatString = 'MM.DD.YYYY';
+        const value = new Date('2015-12-21 00:00:00 GMT+0800');
+        const formatString = 'DD MMMM YYYY';
         const day = new Day({ value })
   
-        expect(day.format(formatString)).toBe(formatFNS(startOfDayFNS(value), formatString));
+        expect(day.format(formatString)).toBe('21 декабря 2015');
       });
     });
   

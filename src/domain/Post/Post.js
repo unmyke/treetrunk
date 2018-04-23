@@ -1,15 +1,8 @@
-<<<<<<< Updated upstream
-import { BaseEntity } from '../_lib/BaseClasses';
-import { Day } from '../_lib/ValueObjects';
-import { PieceRate } from './PieceRate';
-import { PostId } from './PostId';
-=======
 import { BaseEntity } from "../_lib/BaseClasses";
 import { Day } from "../_lib/ValueObjects";
 import { PieceRate } from "./PieceRate";
 import { PostId } from "./PostId";
 import { makeError } from "src/infra/support/makeError";
->>>>>>> Stashed changes
 
 export class Post extends BaseEntity {
   // Errors
@@ -32,15 +25,8 @@ export class Post extends BaseEntity {
   addPieceRate(value, day) {
     const previuosPieceRate = this.getPieceRateAt(day);
     const pieceRate = new PieceRate({ value, day });
-<<<<<<< Updated upstream
-    if (previuosPieceRate.equals(pieceRate)) {
-      const error = new Error('Validation Error');
-      error.details = ['Post already have this pieceRate'];
-      throw error;
-=======
     if (previuosPieceRate === pieceRate) {
       throw this.constructor.errorDuplication;
->>>>>>> Stashed changes
     }
     this.pieceRates = [...this.pieceRates, pieceRate].sort(
       (a, b) => a.day > b.day

@@ -93,28 +93,13 @@ describe('Domain :: entities :: Post', () => {
     });
   });
 
-<<<<<<< Updated upstream
-  describe('#deletePieceRateAt', () => {
-=======
   describe("#deletePieceRate", () => {
->>>>>>> Stashed changes
     beforeEach(() => {
       post.addPieceRate(pieceRate2value, pieceRate2day);
       post.addPieceRate(pieceRate3value, pieceRate3day);
       post.addPieceRate(pieceRate1value, pieceRate1day);
     });
 
-<<<<<<< Updated upstream
-    context('when post has no pieceRates', () => {
-      it('should return undefined', () => {
-        expect(post.getPieceRateAt(pieceRate1day.subDays(1))).toBeUndefined();
-      });
-    });
-
-    context('when day equal second pieceRate day', () => {
-      it("should return second pieceRate's value", () => {
-        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
-=======
     context("when delete existing pieceRate", () => {
       it("should decrease pieceRates length", () => {
         expect(post.pieceRates).toHaveLength(3);
@@ -137,16 +122,10 @@ describe('Domain :: entities :: Post', () => {
           ]);
           expect(seller.appointments).toHaveLength(2);  
         }
->>>>>>> Stashed changes
       });
     });
   });
 
-<<<<<<< Updated upstream
-    context('when day after third pieceRate day', () => {
-      it("should return third pieceRate's value", () => {
-        expect(post.getPieceRateAt(newDay)).toBe(pieceRate3value);
-=======
   describe("#editPieceRate", () => {
     beforeEach(() => {
       post.addPieceRate(pieceRate1value, pieceRate1day);
@@ -169,7 +148,6 @@ describe('Domain :: entities :: Post', () => {
         expect(post.pieceRates).toHaveLength(1);
         expect(post.getPieceRateAt(pieceRate1day)).toEqual(undefined);
         expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate1value);
->>>>>>> Stashed changes
       });
     });
   });

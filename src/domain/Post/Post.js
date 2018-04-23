@@ -1,9 +1,28 @@
+<<<<<<< Updated upstream
 import { BaseEntity } from '../_lib/BaseClasses';
 import { Day } from '../_lib/ValueObjects';
 import { PieceRate } from './PieceRate';
 import { PostId } from './PostId';
+=======
+import { BaseEntity } from "../_lib/BaseClasses";
+import { Day } from "../_lib/ValueObjects";
+import { PieceRate } from "./PieceRate";
+import { PostId } from "./PostId";
+import { makeError } from "src/infra/support/makeError";
+>>>>>>> Stashed changes
 
 export class Post extends BaseEntity {
+  // Errors
+
+  static errorDuplication = makeError(
+    "OperationError",
+    "Post already have this pieceRate"
+  );
+  static errorNoPieceRates = makeError(
+    "OperationError",
+    "Post have not such pieceRate"
+  );
+
   constructor({ postId = new PostId(), name, pieceRates = [] }) {
     super(postId);
     this.name = name;
@@ -13,26 +32,28 @@ export class Post extends BaseEntity {
   addPieceRate(value, day) {
     const previuosPieceRate = this.getPieceRateAt(day);
     const pieceRate = new PieceRate({ value, day });
+<<<<<<< Updated upstream
     if (previuosPieceRate.equals(pieceRate)) {
       const error = new Error('Validation Error');
       error.details = ['Post already have this pieceRate'];
       throw error;
+=======
+    if (previuosPieceRate === pieceRate) {
+      throw this.constructor.errorDuplication;
+>>>>>>> Stashed changes
     }
     this.pieceRates = [...this.pieceRates, pieceRate].sort(
       (a, b) => a.day > b.day
     );
   }
 
-  getPieceRateAt(day) {
-    if (!this.hasPieceRate()) {
+  getPieceRateAt(day = new Day()) {
+    if (!this.hasPieceRate(day)) {
       return;
     }
 
     const [firstPieceRate, ...restPieceRates] = this.pieceRates;
-    if (firstPieceRate.day > day) {
-      return;
-    }
-
+   
     const { value } = restPieceRates.reduce((currentPieceRate, appointment) => {
       return appointment.day <= day ? appointment : currentPieceRate;
     }, firstPieceRate);
@@ -40,23 +61,25 @@ export class Post extends BaseEntity {
     return value;
   }
 
-  deletePieceRate(value, day) {
-    if (!this.hasPieceRate()) {
-      return;
-    }
+  editPieceRate(pieceRateToEdit, dayToEdit, pieceRate, day) {
+    this.deletePieceRate(pieceRateToEdit, dayToEdit);
+    this.addPieceRate(pieceRate, day);
+  }
 
+  deletePieceRate(value, day) {
     const pieceRateToDelete = new PieceRate({ value, day });
     const filteredPieceRates = this.pieceRates.filter(
       (pieceRate) => !pieceRate.equals(pieceRateToDelete)
     );
     if (this.pieceRates.length === filteredPieceRates.length) {
-      return;
+      this.constructor.errorNoPieceRates;
     }
 
     this.pieceRates = filteredPieceRates;
   }
 
-  hasPieceRate() {
-    return this.pieceRates.length !== 0;
+  hasPieceRate(day) {
+    const [firstPieceRate] = this.pieceRates;
+    return !!firstPieceRate && firstPieceRate.day <= day;
   }
 }

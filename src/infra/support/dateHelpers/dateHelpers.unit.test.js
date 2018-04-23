@@ -5,7 +5,7 @@ const undefinedDate = undefined;
 const invalidDate = new Date('Invalid Date');
 const notDate = '';
 
-const expectedValidDate = startOfDay(validDate);
+const expectedValidDate = new Date(2018, 0, 1, 0, 0, 0, 0);
 const expectedInvalidDate = new Date('Invalid Date');
 
 describe('Domain :: lib :: dateHelpers', () => {

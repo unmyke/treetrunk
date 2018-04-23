@@ -1,4 +1,3 @@
-import { startOfDay } from "date-fns";
 import { Contact, PersonName, Day } from "../_lib/ValueObjects";
 import { Seller } from "./Seller";
 import { SellerId } from "./SellerId";
@@ -174,9 +173,7 @@ describe("Domain :: entities :: Seller", () => {
         );
 
         expect(seller.appointments).toHaveLength(1);
-        expect(seller.appointments[0].day).toEqual(
-          new Day({ value: startOfDay(appointmentDay1) })
-        );
+        expect(seller.appointments[0].day).toEqual(appointmentDay1);
         expect(seller.getPostIdAt()).toBe(seniorFloristPost.postId);
       });
     });

@@ -1,16 +1,15 @@
 import { DayRange } from '.';
 import { Day } from '../Day';
-import { startOfDay, endOfDay, subMilliseconds, addMilliseconds, addDays, startOfMonth, endOfMonth } from 'date-fns';
 
 const validStartDate = new Date(2018, 0, 1, 12, 3, 4, 4);
 const validEndDate1  = new Date(2018, 0, 2, 14, 5, 5, 2);
 const validEndDate2  = new Date(2018, 0, 1,  0, 5, 5, 2);
 const validEndDate3  = new Date(2018, 1, 1,  0, 5, 5, 2);
 
-const expectedStartDate = startOfDay(validStartDate);
-const expectedEndDate1  = startOfDay(validEndDate1);
-const expectedEndDate2  = startOfDay(validEndDate2);
-const expectedEndDate3  = startOfDay(validEndDate3);
+const expectedStartDate = new Date(2018, 0, 1, 0, 0, 0, 0);
+const expectedEndDate1  = new Date(2018, 0, 2, 0, 0, 0, 0);
+const expectedEndDate2  = new Date(2018, 0, 1, 0, 0, 0, 0);
+const expectedEndDate3  = new Date(2018, 1, 1, 0, 0, 0, 0);
 
 const validStartDay = new Day({ value: validStartDate });
 const validEndDay1  = new Day({ value: validEndDate1 });
@@ -28,14 +27,17 @@ describe("Domain :: lib :: valueObjects :: DayRange", () => {
       it('return instance of DayRange, that represence month of this day', () => {
         const dayRange = DayRange.createMonth(validStartDay);
 
-        const expectedDayRange = new DayRange({ start: validStartDay.startOfMonth(), end: validStartDay.endOfMonth() });
+        const expectedStartDay = new Day({ value: new Date(new Date(2018, 0, 1, 0, 0, 0, 0)) });
+        const expectedEndDay = new Day({ value: new Date(new Date(2018, 0, 31, 0, 0, 0, 0)) });
+
+        const expectedDayRange = new DayRange({ start: expectedStartDay, end: expectedEndDay });
 
         expect(dayRange).toEqual(expectedDayRange);
       });
     });
 
     context('input day is undefined', () => {
-      it('return inctance of DayRange, that represence current month', () => {
+      it('return instance of DayRange, that represence current month', () => {
         const dayRange = DayRange.createMonth();
         const start = Day.createStartOfMonth();
         const end = Day.createEndOfMonth();

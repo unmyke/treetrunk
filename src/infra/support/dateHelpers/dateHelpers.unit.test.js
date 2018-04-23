@@ -1,5 +1,4 @@
 import { isValidDate, convertDate } from '.';
-import { startOfDay, endOfDay, subMilliseconds, addMilliseconds } from 'date-fns';
 
 const validDate = new Date(2018, 0, 1, 12, 3, 4, 4);
 const undefinedDate = undefined;

@@ -13,6 +13,8 @@ import {
   subDays as subDaysFNS,
 } from 'date-fns';
 
+const ru = require('date-fns/locale/ru');
+
 import { BaseValue } from '../../BaseClasses';
 import { isValidDate, convertDate } from 'src/infra/support/dateHelpers';
 import { makeError } from 'src/infra/support/makeError';
@@ -99,12 +101,12 @@ export class Day extends BaseValue {
     return convertDate(date).valueOf() === this.valueOf();
   }
 
-  format(formatString) {
+  format(formatString = 'DD.MM.YYYY') {
     if (!this.isValid()) {
       return this.constructor.errorNotADay.details[0];
     }
     
-    return formatFNS(this.value, formatString);
+    return formatFNS(this.value, formatString, { locale: ru });
   }
   
   addDays(num = 0) {

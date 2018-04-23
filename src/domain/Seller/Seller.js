@@ -64,7 +64,7 @@ export class Seller extends BaseEntity {
 
   getPostIdAt(day = new Day()) {
     if (!this.isRecruited(day)) {
-      throw this.constructor.errorNoAppointments;
+      return;
     }
 
     const [firstAppointment, ...restAppointments] = this.appointments;
@@ -98,7 +98,7 @@ export class Seller extends BaseEntity {
 
   seniority(day = new Day()) {
     if (!this.isRecruited(day)) {
-      throw this.constructor.errorNoAppointments;
+      return;
     }
 
     return day.differenceInMonths(this.recruitedAt(day));

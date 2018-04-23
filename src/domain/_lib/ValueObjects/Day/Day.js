@@ -174,6 +174,14 @@ export class Day extends BaseValue {
     return this.constructor.createEndOfYear(this.value);
   }
 
+  next() {
+    return this.addDays(1);
+  }
+
+  prev() {
+    return this.subDays(1);
+  }
+
   toString() {
     if (!this.isValid()) {
       return this.constructor.errorNotADay.message[0];

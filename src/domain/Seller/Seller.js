@@ -1,9 +1,21 @@
-import { BaseEntity } from '../_lib/BaseClasses';
-import { PersonName, Day } from '../_lib/ValueObjects';
-import { Appointment } from './Appointment';
-import { SellerId } from './SellerId';
+import { BaseEntity } from "../_lib/BaseClasses";
+import { PersonName, Day } from "../_lib/ValueObjects";
+import { Appointment } from "./Appointment";
+import { SellerId } from "./SellerId";
+import { makeError } from "src/infra/support/makeError";
 
 export class Seller extends BaseEntity {
+  // Errors
+
+  static errorDuplication = makeError(
+    "OperationError",
+    "Seller already have this post"
+  );
+  static errorNoAppointments = makeError(
+    "OperationError",
+    "Seller have not such appointment to this postId"
+  );
+
   constructor({
     sellerId = new SellerId(),
     surname,
@@ -12,7 +24,11 @@ export class Seller extends BaseEntity {
     phone
   }) {
     super(sellerId);
-    this.personName = new PersonName({ surname, firstName, middleName });
+    this.personName = new PersonName({
+      surname,
+      firstName,
+      middleName
+    });
     this.phone = phone;
     this.appointments = [];
   }
@@ -37,9 +53,7 @@ export class Seller extends BaseEntity {
     const previousPostId = this.getPostIdAt(day);
 
     if (previousPostId === postId) {
-      const error = new Error('Validation Error');
-      error.details = ['Seller already have this post'];
-      throw error;
+      throw this.constructor.errorDuplication;
     }
 
     const appointment = new Appointment({ postId, day });
@@ -48,19 +62,12 @@ export class Seller extends BaseEntity {
     );
   }
 
-  getPostIdAt(day) {
-    if (!this.isRecruited()) {
-      return;
-    }
-
-    if (day === undefined) {
-      return this.appointments[this.appointments.length - 1].postId;
+  getPostIdAt(day = new Day()) {
+    if (!this.isRecruited(day)) {
+      throw this.constructor.errorNoAppointments;
     }
 
     const [firstAppointment, ...restAppointments] = this.appointments;
-    if (firstAppointment.day > day) {
-      return;
-    }
 
     const { postId } = restAppointments.reduce(
       (currentAppointment, appointment) => {
@@ -73,45 +80,38 @@ export class Seller extends BaseEntity {
   }
 
   deleteAppointmentToPostIdAt(postId, day) {
-    if (!this.isRecruited()) {
-      return;
-    }
     const appointmentToDelete = new Appointment({ postId, day });
     const filteredAppointments = this.appointments.filter(
       appointment => !appointment.equals(appointmentToDelete)
     );
     if (this.appointments.length === filteredAppointments.length) {
-      return;
+      throw this.constructor.errorNoAppointments;
     }
 
     this.appointments = filteredAppointments;
   }
 
   editAppointmentAt(postIdToEdit, dayToEdit, postId, day) {
-    if (!this.isRecruited()) {
-      return;
-    }
-
     this.deleteAppointmentToPostIdAt(postIdToEdit, dayToEdit);
     this.appointToPostIdAt(postId, day);
   }
 
   seniority(day = new Day()) {
     if (!this.isRecruited(day)) {
-      return;
+      throw this.constructor.errorNoAppointments;
     }
 
     return day.differenceInMonths(this.recruitedAt(day));
   }
 
-  isRecruited(day = new Day()) {
+  isRecruited(day) {
     const [firstAppointment] = this.appointments;
     return !!firstAppointment && firstAppointment.day <= day;
   }
 
-  recruitedAt(day) {
+  recruitedAt(day = new Day()) {
     if (!this.isRecruited(day)) {
-      return;
+      throw this.constructor.errorNoAppointments;
     }
 
     const [firstAppointment] = this.appointments;

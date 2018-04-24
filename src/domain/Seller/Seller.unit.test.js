@@ -32,25 +32,35 @@ describe('Domain :: entities :: Seller', () => {
       expect(seller.phone).toBe(phone);
       expect(seller.appointments).toHaveLength(0);
     });
+    it('should have set points', () => {
+      expect(seller.seniorityAt(appointmentDay1)).toBeUndefined();
+      expect(seller.isRecruitedAt()).toBe(false);
+      expect(seller.recruitDay).toBeUndefined();
+    });
   });
 
   describe('#addAppointment', () => {
-    context('when appoint to one postId', () => {
-      it('should have appointments length equal to 1', () => {
-        try {
-          seller.addAppointment(floristPost.postId, appointmentDay1);
-        } catch (e) {
-          console.log(e);
-        }
+    beforeEach(() => {
+      seller.addAppointment(floristPost.postId, appointmentDay1);
+    });
 
+    context('when seller appointed to postId', () => {
+      it('should recruit seller', () => {
+        expect(seller.isRecruitedAt()).toBe(true);
+        expect(seller.recruitDay).toBe(appointmentDay1);
+      });
+
+      it('should return seniority not undefined', () => {
+        expect(seller.seniorityAt(appointmentDay1)).not.toBeUndefined();
+      });
+
+      it('should have appointments length equal to 1', () => {
         expect(seller.appointments).toHaveLength(1);
       });
     });
 
-    context('when appoint to same postId by same date', () => {
+    context('when appoint to same postId at same date', () => {
       it('should throw exeption', () => {
-        seller.addAppointment(floristPost.postId, appointmentDay1);
-
         try {
           seller.addAppointment(floristPost.postId, appointmentDay1);
         } catch (e) {
@@ -60,33 +70,16 @@ describe('Domain :: entities :: Seller', () => {
       });
     });
 
-    context(
-      'when appoint to same postId, different date, but previous postId is same',
-      () => {
-        it('should throw exeption', () => {
-          seller.addAppointment(floristPost.postId, appointmentDay1);
-
-          try {
-            seller.addAppointment(floristPost.postId, newDay);
-          } catch (e) {
-            expect(e.details).toEqual(['Seller already have this post']);
-            expect(seller.appointments).toHaveLength(1);
-          }
-        });
-      },
-    );
-
-    context(
-      'when appoint to different postId, different date, but previous postId is same',
-      () => {
-        it('should have appointments length equal 2', () => {
-          seller.addAppointment(seniorFloristPost.postId, appointmentDay2);
-          seller.addAppointment(floristPost.postId, appointmentDay1);
-
-          expect(seller.appointments).toHaveLength(2);
-        });
-      },
-    );
+    context('when appoint to same postId at another date', () => {
+      it('should throw exeption', () => {
+        try {
+          seller.addAppointment(floristPost.postId, newDay);
+        } catch (e) {
+          expect(e.details).toEqual(['Seller already have this post']);
+          expect(seller.appointments).toHaveLength(1);
+        }
+      });
+    });
   });
 
   describe('#getPostIdAt', () => {
@@ -96,22 +89,22 @@ describe('Domain :: entities :: Seller', () => {
       seller.addAppointment(floristPost.postId, appointmentDay1);
     });
 
-    context('when date before first appointment', () => {
-      it('should return undefined', () => {
+    context('when requested before first appointment', () => {
+      it('should return postId undefined', () => {
         expect(seller.getPostIdAt(appointmentDay1.subDays(1))).toBeUndefined();
       });
     });
 
-    context('when date equal second appointment date', () => {
-      it("should return second appointment's postId", () => {
+    context('when requested past postId', () => {
+      it('should return postId appointed at that day', () => {
         expect(seller.getPostIdAt(appointmentDay2)).toBe(
           seniorFloristPost.postId,
         );
       });
     });
 
-    context('when date after third appointment date', () => {
-      it("should return third appointment's postId", () => {
+    context('when requested current postId associated with seller', () => {
+      it('should return last postId', () => {
         expect(seller.getPostIdAt(newDay)).toBe(floristPost.postId);
       });
     });

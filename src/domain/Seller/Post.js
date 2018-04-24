@@ -1,19 +1,19 @@
-import { BaseEntity } from "../_lib/BaseClasses";
-import { Day } from "../_lib/ValueObjects";
-import { PieceRate } from "./PieceRate";
-import { PostId } from "./PostId";
-import { makeError } from "src/infra/support/makeError";
+import { BaseEntity } from '../_lib/BaseClasses';
+import { Day } from '../_lib/ValueObjects';
+import { PieceRate } from './PieceRate';
+import { PostId } from './PostId';
+import { makeError } from 'src/infra/support/makeError';
 
 export class Post extends BaseEntity {
   // Errors
 
   static errorDuplication = makeError(
-    "OperationError",
-    "Post already have this pieceRate"
+    'OperationError',
+    'Post already have this pieceRate',
   );
   static errorNoPieceRates = makeError(
-    "OperationError",
-    "Post have not such pieceRate"
+    'OperationError',
+    'Post have not such pieceRate',
   );
 
   constructor({ postId = new PostId(), name, pieceRates = [] }) {
@@ -29,7 +29,7 @@ export class Post extends BaseEntity {
       throw this.constructor.errorDuplication;
     }
     this.pieceRates = [...this.pieceRates, pieceRate].sort(
-      (a, b) => a.day > b.day
+      (a, b) => a.day > b.day,
     );
   }
 
@@ -39,7 +39,7 @@ export class Post extends BaseEntity {
     }
 
     const [firstPieceRate, ...restPieceRates] = this.pieceRates;
-   
+
     const { value } = restPieceRates.reduce((currentPieceRate, appointment) => {
       return appointment.day <= day ? appointment : currentPieceRate;
     }, firstPieceRate);
@@ -55,7 +55,7 @@ export class Post extends BaseEntity {
   deletePieceRate(value, day) {
     const pieceRateToDelete = new PieceRate({ value, day });
     const filteredPieceRates = this.pieceRates.filter(
-      (pieceRate) => !pieceRate.equals(pieceRateToDelete)
+      (pieceRate) => !pieceRate.equals(pieceRateToDelete),
     );
     if (this.pieceRates.length === filteredPieceRates.length) {
       this.constructor.errorNoPieceRates;

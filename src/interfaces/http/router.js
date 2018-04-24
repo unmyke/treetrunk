@@ -11,7 +11,7 @@ export const router = ({
   containerMiddleware,
   loggerMiddleware,
   errorHandler,
-  swaggerMiddleware
+  swaggerMiddleware,
 }) => {
   const router = Router();
 

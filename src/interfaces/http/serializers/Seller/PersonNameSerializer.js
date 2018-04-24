@@ -3,7 +3,7 @@ export const PersonNameSerializer = {
     return {
       surname,
       firstName,
-      middleName
+      middleName,
     };
-  }
+  },
 };

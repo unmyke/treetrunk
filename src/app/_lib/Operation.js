@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 export class Operation extends EventEmitter {
   static setOutputs(outputs) {
     Object.defineProperty(this.prototype, 'outputs', {
-      value: createOutputs(outputs)
+      value: createOutputs(outputs),
     });
   }
 
@@ -20,7 +20,7 @@ export class Operation extends EventEmitter {
     }
 
     throw new Error(
-      `Invalid output "${output}" to operation ${this.constructor.name}.`
+      `Invalid output "${output}" to operation ${this.constructor.name}.`,
     );
   }
 }

@@ -7,6 +7,6 @@ export const SellerSerializer = {
     id: IdSerializer.serialize(id),
     personName: PersonNameSerializer.serialize(personName),
     phone,
-    appointments: appointments.map(AppointmentSerializer.serialize)
-  })
+    appointments: appointments.map(AppointmentSerializer.serialize),
+  }),
 };

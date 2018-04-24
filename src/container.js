@@ -48,7 +48,7 @@ bottle.factory('services', (container) => {
       return {
         ...acc,
         [lowercaseFirstLetter(operationName)]: () =>
-          new Operations[operationName](container)
+          new Operations[operationName](container),
       };
     }, {});
     return { ...acc, [entityName]: operations };
@@ -80,13 +80,13 @@ bottle.factory('server', (container) => new Server(container));
 bottle.factory('logger', (container) => logger(container));
 bottle.factory('router', (container) => router(container));
 bottle.factory('containerMiddleware', (container) =>
-  containerMiddleware(container)
+  containerMiddleware(container),
 );
 
 bottle.factory('loggerMiddleware', (container) => loggerMiddleware(container));
 bottle.constant(
   'errorHandler',
-  config.production ? errorHandler : devErrorHandler
+  config.production ? errorHandler : devErrorHandler,
 );
 bottle.constant('swaggerMiddleware', swaggerMiddleware);
 

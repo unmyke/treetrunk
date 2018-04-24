@@ -10,7 +10,7 @@ if (dbConfig) {
 
   db = ModelsLoader.load({
     sequelize,
-    baseFolder: __dirname
+    baseFolder: __dirname,
   });
 } else {
   /* eslint-disable no-console */

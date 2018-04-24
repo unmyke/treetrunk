@@ -18,15 +18,15 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
         const dayRange = DayRange.createMonth(validStartDay);
 
         const expectedStartDay = new Day({
-          value: new Date(new Date(2018, 0, 1, 0, 0, 0, 0))
+          value: new Date(new Date(2018, 0, 1, 0, 0, 0, 0)),
         });
         const expectedEndDay = new Day({
-          value: new Date(new Date(2018, 0, 31, 0, 0, 0, 0))
+          value: new Date(new Date(2018, 0, 31, 0, 0, 0, 0)),
         });
 
         const expectedDayRange = new DayRange({
           start: expectedStartDay,
-          end: expectedEndDay
+          end: expectedEndDay,
         });
 
         expect(dayRange).toEqual(expectedDayRange);
@@ -50,7 +50,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
           const day = new Day({ value: '' });
 
           expect(() => DayRange.createMonth(day)).toThrow(
-            DayRange.errorNotADay
+            DayRange.errorNotADay,
           );
         });
       });
@@ -61,15 +61,15 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when get valid input arguments', () => {
       const dayRange1 = new DayRange({
         start: validStartDay,
-        end: validEndDay1
+        end: validEndDay1,
       });
       const dayRange2 = new DayRange({
         start: validStartDay,
-        end: validEndDay2
+        end: validEndDay2,
       });
       const dayRange3 = new DayRange({
         start: validStartDay,
-        end: validEndDay3
+        end: validEndDay3,
       });
 
       it('should be valid', () => {
@@ -96,7 +96,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when end day is next day of start day', () => {
       const dayRange = new DayRange({
         start: validStartDay,
-        end: validEndDay1
+        end: validEndDay1,
       });
       it('should returns 2', () => {
         expect(dayRange.length).toBe(2);
@@ -106,7 +106,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when end day equals start day', () => {
       const dayRange = new DayRange({
         start: validStartDay,
-        end: validEndDay2
+        end: validEndDay2,
       });
       it('should return 1', () => {
         expect(dayRange.length).toBe(1);
@@ -116,7 +116,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when end day is 31 day later then start day', () => {
       const dayRange = new DayRange({
         start: validStartDay,
-        end: validEndDay3
+        end: validEndDay3,
       });
       it('should returns 32', () => {
         expect(dayRange.length).toBe(32);
@@ -126,7 +126,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when day range incorrect', () => {
       const dayRange = new DayRange({
         start: validEndDay3,
-        end: validStartDay
+        end: validStartDay,
       });
       it('should throw error', () => {
         expect(() => dayRange.length).toThrow(DayRange.errorNotANumber);
@@ -139,11 +139,11 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
       it('should returns true', () => {
         const dayRange1 = new DayRange({
           start: validStartDay,
-          end: validEndDay1
+          end: validEndDay1,
         });
         const dayRange2 = new DayRange({
           start: validStartDay,
-          end: validEndDay2
+          end: validEndDay2,
         });
 
         expect(dayRange1.contains(validStartDay)).toBeTruthy();
@@ -155,7 +155,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
       it('should returns false', () => {
         const dayRange = new DayRange({
           start: validStartDay,
-          end: validEndDay3
+          end: validEndDay3,
         });
 
         expect(dayRange.contains(validStartDay.prev())).toBeFalsy();
@@ -168,7 +168,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     it('should be iterator', () => {
       const dayRange = new DayRange({
         start: validStartDay,
-        end: validEndDay3
+        end: validEndDay3,
       });
 
       let expectedDay = dayRange.start;
@@ -191,7 +191,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when start day more than end day', () => {
       const dayRange = new DayRange({
         start: validEndDay1,
-        end: validStartDay
+        end: validStartDay,
       });
 
       it('return false', () => {
@@ -202,7 +202,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when start day argument is not a day', () => {
       const dayRange = new DayRange({
         start: 'invalidStartDay',
-        end: validEndDay1
+        end: validEndDay1,
       });
 
       it('return false', () => {
@@ -213,7 +213,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when end day argument is not a day', () => {
       const dayRange = new DayRange({
         start: validStartDay,
-        end: 'invalidEndDate'
+        end: 'invalidEndDate',
       });
 
       it('return false', () => {
@@ -224,7 +224,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when start day and end day arguments are not a day', () => {
       const dayRange = new DayRange({
         start: 'invalidStartDay',
-        end: 'invalidEndDate'
+        end: 'invalidEndDate',
       });
 
       it('return false', () => {
@@ -235,7 +235,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when start day argument is invalid day', () => {
       const dayRange = new DayRange({
         start: new Date('invalidStartDay'),
-        end: validEndDay1
+        end: validEndDay1,
       });
 
       it('return false', () => {
@@ -246,7 +246,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when end day argument is invalid day', () => {
       const dayRange = new DayRange({
         start: validStartDay,
-        end: new Date('invalidEndDate')
+        end: new Date('invalidEndDate'),
       });
 
       it('return false', () => {
@@ -257,7 +257,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
     context('when start day and end day arguments are invalid day', () => {
       const dayRange = new DayRange({
         start: new Date('invalidStartDay'),
-        end: new Date('invalidEndDate')
+        end: new Date('invalidEndDate'),
       });
 
       it('return false', () => {

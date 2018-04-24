@@ -3,5 +3,5 @@ import swaggerDocument from './swagger.json';
 
 export const swaggerMiddleware = [
   SwaggerUi.serve,
-  SwaggerUi.setup(swaggerDocument)
+  SwaggerUi.setup(swaggerDocument),
 ];

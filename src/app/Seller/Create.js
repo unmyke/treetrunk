@@ -7,15 +7,15 @@ export class CreateSeller extends Operation {
     middleName,
     phone,
     postId,
-    appointDate
+    appointDate,
   }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
       repositories: { Seller: repo },
       domain: {
         entities: { Seller },
-        commonTypes: { PostId }
-      }
+        commonTypes: { PostId },
+      },
     } = this;
 
     const seller = new Seller({ surname, firstName, middleName, phone });

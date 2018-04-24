@@ -10,7 +10,7 @@ import {
   endOfYear as endOfYearFNS,
   differenceInMonths as differenceInMonthsFNS,
   addDays as addDaysFNS,
-  subDays as subDaysFNS
+  subDays as subDaysFNS,
 } from 'date-fns';
 
 const ru = require('date-fns/locale/ru');

@@ -19,7 +19,7 @@ export class SeniorityType extends BaseEntity {
   deleteAwardAt(value, day = new Day()) {
     const awardToDelete = new Award({ value, day });
     const filteredAwards = this.awards.filter((award) =>
-      award.equals(awardToDelete)
+      award.equals(awardToDelete),
     );
 
     if (filteredAwards.length === this.awards.length) {

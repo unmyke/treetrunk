@@ -37,7 +37,7 @@ export class DayRange extends BaseValue {
 
     return new DayRange({
       start: day[`startOf${rangeName}`](),
-      end: day[`endOf${rangeName}`]()
+      end: day[`endOf${rangeName}`](),
     });
   }
 

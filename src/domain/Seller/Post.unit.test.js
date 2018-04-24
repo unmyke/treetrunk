@@ -1,4 +1,4 @@
-import { startOfDay } from "date-fns";
+import { startOfDay } from 'date-fns';
 import { Post } from './Post';
 import { PostId } from './PostId';
 import { PieceRate } from './PieceRate';
@@ -93,58 +93,66 @@ describe('Domain :: entities :: Post', () => {
     });
   });
 
-  describe("#deletePieceRate", () => {
+  describe('#deletePieceRate', () => {
     beforeEach(() => {
       post.addPieceRate(pieceRate2value, pieceRate2day);
       post.addPieceRate(pieceRate3value, pieceRate3day);
       post.addPieceRate(pieceRate1value, pieceRate1day);
     });
 
-    context("when delete existing pieceRate", () => {
-      it("should decrease pieceRates length", () => {
+    context('when delete existing pieceRate', () => {
+      it('should decrease pieceRates length', () => {
         expect(post.pieceRates).toHaveLength(3);
 
         post.deletePieceRate(pieceRate3value, pieceRate3day);
-        
+
         expect(post.pieceRates).toHaveLength(2);
       });
     });
 
-    context("when delete post twice", () => {
-      it("should throw exeption", () => {
+    context('when delete post twice', () => {
+      it('should throw exeption', () => {
         post.deletePieceRate(pieceRate3value, pieceRate3day);
 
         try {
           post.deletePieceRate(pieceRate3value, pieceRate3day);
         } catch (e) {
-          expect(e.details).toEqual([
-            "Post have not such pieceRate"
-          ]);
-          expect(seller.appointments).toHaveLength(2);  
+          expect(e.details).toEqual(['Post have not such pieceRate']);
+          expect(seller.appointments).toHaveLength(2);
         }
       });
     });
   });
 
-  describe("#editPieceRate", () => {
+  describe('#editPieceRate', () => {
     beforeEach(() => {
       post.addPieceRate(pieceRate1value, pieceRate1day);
     });
 
-    context("when appointment has created with wrong pieceRate", () => {
-      it("should change associated pieceRate", () => {
-        post.editPieceRate(pieceRate1value, pieceRate1day, pieceRate2value, pieceRate1day);
+    context('when appointment has created with wrong pieceRate', () => {
+      it('should change associated pieceRate', () => {
+        post.editPieceRate(
+          pieceRate1value,
+          pieceRate1day,
+          pieceRate2value,
+          pieceRate1day,
+        );
 
         expect(post.pieceRates[0].day).toEqual(
-          new Day({ value: startOfDay(pieceRate1day) })
+          new Day({ value: startOfDay(pieceRate1day) }),
         );
         expect(post.getPieceRateAt()).toBe(pieceRate2value);
       });
     });
 
-    context("when pieceRate has created with wrong date", () => {
-      it("should change associated date", () => {
-        post.editPieceRate(pieceRate1value, pieceRate1day, pieceRate1value, pieceRate2day);
+    context('when pieceRate has created with wrong date', () => {
+      it('should change associated date', () => {
+        post.editPieceRate(
+          pieceRate1value,
+          pieceRate1day,
+          pieceRate1value,
+          pieceRate2day,
+        );
         expect(post.pieceRates).toHaveLength(1);
         expect(post.getPieceRateAt(pieceRate1day)).toEqual(undefined);
         expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate1value);

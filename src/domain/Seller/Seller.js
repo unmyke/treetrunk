@@ -9,11 +9,11 @@ export class Seller extends BaseEntity {
 
   static errorDuplication = makeError(
     'OperationError',
-    'Seller already have this post'
+    'Seller already have this post',
   );
   static errorNoAppointments = makeError(
     'OperationError',
-    'Seller have not such appointment to this postId'
+    'Seller have not such appointment to this postId',
   );
 
   constructor({
@@ -21,13 +21,13 @@ export class Seller extends BaseEntity {
     surname,
     firstName,
     middleName,
-    phone
+    phone,
   }) {
     super(sellerId);
     this.personName = new PersonName({
       surname,
       firstName,
-      middleName
+      middleName,
     });
     this.phone = phone;
     this.appointments = [];
@@ -49,7 +49,7 @@ export class Seller extends BaseEntity {
     return this.personName.middleName;
   }
 
-  appointToPostIdAt(postId, day) {
+  addAppointment(postId, day) {
     const previousPostId = this.getPostIdAt(day);
 
     if (previousPostId === postId) {
@@ -58,12 +58,29 @@ export class Seller extends BaseEntity {
 
     const appointment = new Appointment({ postId, day });
     this.appointments = [...this.appointments, appointment].sort(
-      (a, b) => a.day > b.day
+      (a, b) => a.day > b.day,
     );
   }
 
+  deleteAppointment(postId, day) {
+    const appointmentToDelete = new Appointment({ postId, day });
+    const filteredAppointments = this.appointments.filter(
+      (appointment) => !appointment.equals(appointmentToDelete),
+    );
+    if (this.appointments.length === filteredAppointments.length) {
+      throw this.constructor.errorNoAppointments;
+    }
+
+    this.appointments = filteredAppointments;
+  }
+
+  editAppointment(postIdToEdit, dayToEdit, postId, day) {
+    this.deleteAppointment(postIdToEdit, dayToEdit);
+    this.addAppointment(postId, day);
+  }
+
   getPostIdAt(day = new Day()) {
-    if (!this.isRecruited(day)) {
+    if (!this.isRecruitedAt(day)) {
       return;
     }
 
@@ -73,48 +90,27 @@ export class Seller extends BaseEntity {
       (currentAppointment, appointment) => {
         return appointment.day <= day ? appointment : currentAppointment;
       },
-      firstAppointment
+      firstAppointment,
     );
 
     return postId;
   }
 
-  deleteAppointmentToPostIdAt(postId, day) {
-    const appointmentToDelete = new Appointment({ postId, day });
-    const filteredAppointments = this.appointments.filter(
-      (appointment) => !appointment.equals(appointmentToDelete)
-    );
-    if (this.appointments.length === filteredAppointments.length) {
-      throw this.constructor.errorNoAppointments;
-    }
-
-    this.appointments = filteredAppointments;
-  }
-
-  editAppointmentAt(postIdToEdit, dayToEdit, postId, day) {
-    this.deleteAppointmentToPostIdAt(postIdToEdit, dayToEdit);
-    this.appointToPostIdAt(postId, day);
-  }
-
-  seniority(day = new Day()) {
-    if (!this.isRecruited(day)) {
+  seniorityAt(day = new Day()) {
+    if (!this.isRecruitedAt(day)) {
       return;
     }
 
-    return day.differenceInMonths(this.recruitedAt(day));
+    return day.differenceInMonths(this.recruitDay);
   }
 
-  isRecruited(day) {
-    const [firstAppointment] = this.appointments;
-    return !!firstAppointment && firstAppointment.day <= day;
+  isRecruitedAt(day = new Date()) {
+    const recruitDay = this.recruitDay;
+    return !!recruitDay && recruitDay <= day;
   }
 
-  recruitedAt(day = new Day()) {
-    if (!this.isRecruited(day)) {
-      throw this.constructor.errorNoAppointments;
-    }
-
+  get recruitDay() {
     const [firstAppointment] = this.appointments;
-    return firstAppointment.day;
+    return firstAppointment && firstAppointment.day;
   }
 }

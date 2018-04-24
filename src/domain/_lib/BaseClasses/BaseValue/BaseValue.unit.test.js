@@ -70,7 +70,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
 
         expect(valueObject.equals(anotherValueObject)).toBeFalsy();
       });
-    }
+    },
   );
 
   context('when value objects include value objects that and are', () => {
@@ -100,7 +100,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
         const valueObject1 = new CompositeValue({ ...props, valueObj });
         const valueObject2 = new CompositeValue({
           ...props,
-          valueObj: anotherValueObj
+          valueObj: anotherValueObj,
         });
 
         expect(valueObject1.equals(valueObject2)).toBeFalsy();

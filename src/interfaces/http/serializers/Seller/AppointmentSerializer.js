@@ -4,7 +4,7 @@ export const AppointmentSerializer = {
   serialize: ({ postId, date }) => {
     return {
       postId: IdSerializer.serialize(postId),
-      date
+      date,
     };
-  }
+  },
 };

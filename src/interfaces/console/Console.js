@@ -6,11 +6,11 @@ export const Console = {
     const { expose } = options;
 
     const repl = REPL.start({
-      eval: promisableEval
+      eval: promisableEval,
     });
 
     Object.assign(repl.context, expose);
-  }
+  },
 };
 
 function promisableEval(cmd, context, filename, callback) {

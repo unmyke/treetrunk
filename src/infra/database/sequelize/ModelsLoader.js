@@ -30,5 +30,5 @@ export const ModelsLoader = {
     loaded.database = sequelize;
 
     return loaded;
-  }
+  },
 };

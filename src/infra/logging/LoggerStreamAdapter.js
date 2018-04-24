@@ -3,7 +3,7 @@ export const LoggerStreamAdapter = {
     return {
       write(message) {
         logger.info(message.slice(0, -1));
-      }
+      },
     };
-  }
+  },
 };

@@ -5,6 +5,6 @@ export const PostSerializer = {
   serialize: ({ id, name, pieceRates }) => ({
     id: IdSerializer.serialize(id),
     name,
-    appointments: pieceRates.map(PieceRateSerializer.serialize)
-  })
+    appointments: pieceRates.map(PieceRateSerializer.serialize),
+  }),
 };

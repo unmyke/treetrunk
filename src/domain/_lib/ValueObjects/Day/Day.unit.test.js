@@ -19,7 +19,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
         const date = new Date();
         const curDayOfWeek = date.getDay();
         const monday = new Date(
-          date.valueOf() - (curDayOfWeek - 1) * (24 * 60 * 60 * 1000)
+          date.valueOf() - (curDayOfWeek - 1) * (24 * 60 * 60 * 1000),
         );
 
         const expectedDay = new Day({ value: monday });
@@ -31,7 +31,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass incorrect date', () => {
       it('throw exeption', () => {
         expect(() => Day.createStartOfWeek(new Date('Incorrect Date'))).toThrow(
-          errorNotADate
+          errorNotADate,
         );
       });
     });
@@ -39,7 +39,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass not a date', () => {
       it('throw exeption', () => {
         expect(() => Day.createStartOfWeek('Incorrect input')).toThrow(
-          errorNotADate
+          errorNotADate,
         );
       });
     });
@@ -61,7 +61,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
         const date = new Date();
         const curDayOfWeek = date.getDay();
         const sunday = new Date(
-          date.valueOf() + ((7 - curDayOfWeek) % 7) * (24 * 60 * 60 * 1000)
+          date.valueOf() + ((7 - curDayOfWeek) % 7) * (24 * 60 * 60 * 1000),
         );
 
         const expectedDay = new Day({ value: sunday });
@@ -73,7 +73,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass incorrect date', () => {
       it('throw exeption', () => {
         expect(() => Day.createEndOfWeek(new Date('Incorrect Date'))).toThrow(
-          errorNotADate
+          errorNotADate,
         );
       });
     });
@@ -81,7 +81,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass not a date', () => {
       it('throw exeption', () => {
         expect(() => Day.createEndOfWeek('Incorrect input')).toThrow(
-          errorNotADate
+          errorNotADate,
         );
       });
     });
@@ -210,7 +210,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass end Of date', () => {
       it('return true', () => {
         expect(
-          day.contains(new Date(2017, 2, 10, 23, 59, 59, 999))
+          day.contains(new Date(2017, 2, 10, 23, 59, 59, 999)),
         ).toBeTruthy();
       });
     });
@@ -415,7 +415,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when passed day is not a day', () => {
       it('throw error', () => {
         expect(() => day.differenceInMonths('incorrect input')).toThrow(
-          errorNotADay
+          errorNotADay,
         );
       });
     });
@@ -423,7 +423,9 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when passed day is incorrect day', () => {
       it('throw error', () => {
         expect(() =>
-          day.differenceInMonths(new Day({ value: new Date('Incorrect date') }))
+          day.differenceInMonths(
+            new Day({ value: new Date('Incorrect date') }),
+          ),
         ).toThrow(errorNotADay);
       });
     });
@@ -446,7 +448,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass next month date', () => {
       it('return -1', () => {
         const nextMonthDayValue = new Date(
-          '2018-04-01 07:16:59 GMT+0800 (+08)'
+          '2018-04-01 07:16:59 GMT+0800 (+08)',
         );
         const nextMonthDay = new Day({ value: nextMonthDayValue });
 
@@ -457,7 +459,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass month of left date', () => {
       it('return 1', () => {
         const prevMonthDayValue = new Date(
-          '2018-02-01 07:16:59 GMT+0800 (+08)'
+          '2018-02-01 07:16:59 GMT+0800 (+08)',
         );
         const prevMonthDay = new Day({ value: prevMonthDayValue });
 
@@ -468,7 +470,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass end of current month', () => {
       it('return 0', () => {
         const nextMonthDayValue = new Date(
-          '2018-03-30 23:59:59 GMT+0800 (+08)'
+          '2018-03-30 23:59:59 GMT+0800 (+08)',
         );
         const nextMonthDay = new Day({ value: nextMonthDayValue });
 
@@ -481,19 +483,19 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       () => {
         it('return 0', () => {
           const prevMonthDayValue = new Date(
-            '2018-02-02 00:00:00 GMT+0800 (+08)'
+            '2018-02-02 00:00:00 GMT+0800 (+08)',
           );
           const prevMonthDay = new Day({ value: prevMonthDayValue });
 
           expect(day.differenceInMonths(prevMonthDay)).toBe(0);
         });
-      }
+      },
     );
 
     context('when pass day 7 months before', () => {
       it('return 7', () => {
         const beforeMonthsDayValue = new Date(
-          '2017-08-01 07:16:59 GMT+0800 (+08)'
+          '2017-08-01 07:16:59 GMT+0800 (+08)',
         );
         const beforeMonthsDay = new Day({ value: beforeMonthsDayValue });
 

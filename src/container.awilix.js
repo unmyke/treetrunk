@@ -27,25 +27,25 @@ export const container = createContainer();
 container
   .register({
     app: asClass(Application).singleton(),
-    server: asClass(Server).singleton()
+    server: asClass(Server).singleton(),
   })
   .register({
     router: asFunction(router).singleton(),
-    logger: asFunction(logger).singleton()
+    logger: asFunction(logger).singleton(),
   })
   .register({
-    config: asValue(config)
+    config: asValue(config),
   });
 
 // Middlewares
 container
   .register({
-    loggerMiddleware: asFunction(loggerMiddleware).singleton()
+    loggerMiddleware: asFunction(loggerMiddleware).singleton(),
   })
   .register({
     containerMiddleware: asValue(scopePerRequest(container)),
     errorHandler: asValue(config.production ? errorHandler : devErrorHandler),
-    swaggerMiddleware: asValue([swaggerMiddleware])
+    swaggerMiddleware: asValue([swaggerMiddleware]),
   });
 
 // Repositories
@@ -56,7 +56,7 @@ container
 // Database
 container.register({
   database: asValue(database),
-  models: asValue(models)
+  models: asValue(models),
 });
 
 // Operations
@@ -64,8 +64,8 @@ Object.keys(services).forEach((entityName) => {
   Object.keys(services[entityName]).forEach((operation) => {
     container.register({
       [`services.${entityName}.${lowercaseFirstLetter(operation)}`]: asClass(
-        services[entityName][operation]
-      )
+        services[entityName][operation],
+      ),
     });
   });
 });
@@ -74,7 +74,7 @@ Object.keys(services).forEach((entityName) => {
 Object.keys(serializers).forEach((entityName) => {
   container.register({
     [`serializers.${lowercaseFirstLetter(entityName)}`]: asValue(
-      serializers[entityName]
-    )
+      serializers[entityName],
+    ),
   });
 });

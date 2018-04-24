@@ -4,5 +4,5 @@ import { Console } from './Console';
 import { container } from 'src/container';
 
 Console.start({
-  expose: { container }
+  expose: { container },
 });

@@ -22,12 +22,14 @@ describe('Domain :: entities :: Post', () => {
   });
 
   describe('#constructor', () => {
-    context('when construct with just name', () => {
-      it('should be instance of Post', () => {
-        expect(post).toBeInstanceOf(Post);
-        expect(post.postId).toBeInstanceOf(PostId);
-        expect(post.pieceRates).toHaveLength(0);
-      });
+    it('should be instance of Post', () => {
+      expect(post).toBeInstanceOf(Post);
+      expect(post.postId).toBeInstanceOf(PostId);
+      expect(post.pieceRates).toHaveLength(0);
+    });
+
+    it('should have no pieceRate', () => {
+      expect(post.getPieceRateAt()).toBeUndefined();
     });
   });
 

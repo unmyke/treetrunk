@@ -1,6 +1,6 @@
 import { Operation } from '../lib/Operation';
 
-export class GetPieceRateBySellerId extends Operation {
+export class GetPostPieceRateById extends Operation {
   async execute({ sellerId, date }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const { Seller: sellerRepo, Post: postRepo } = this.repositories;
@@ -22,4 +22,4 @@ export class GetPieceRateBySellerId extends Operation {
   }
 }
 
-GetPieceRateBySellerId.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+GetPostPieceRateById.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);

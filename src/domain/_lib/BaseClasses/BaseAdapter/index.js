@@ -1,0 +1,1 @@
+import { BaseAdapter } from './BaseAdapter';

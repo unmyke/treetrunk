@@ -2,16 +2,16 @@ import uuidv4 from 'uuid/v4';
 import { BaseValue } from '../BaseValue';
 
 export class BaseId extends BaseValue {
-  constructor(id = uuidv4()) {
+  constructor({ value } = { value: uuidv4() }) {
     super();
-    this.id = id;
+    this.value = value;
   }
 
   valueOf() {
-    return this.id;
+    return this.value;
   }
 
   toString() {
-    return this.id;
+    return this.value;
   }
 }

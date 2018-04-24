@@ -7,7 +7,13 @@ export class GetSellerById extends Operation {
       Seller: sellerManagementService,
       Workshift: workshiftManagementService,
     } = this.domainServices;
+    const { Seller: sellerRepo, Post: postRepo } = this.repositories;
 
+    const _seller = sellerRepo.getById(sellerId);
+    //sellerManagementService.getSellerById(sellerId);
+    const post = sellerManagementService.getSellerPost(_seller);
+    const workshifts = sellerManagementService.getSellerWorkshifts(_seller);
+    const seller = { _seller, post, workshifts };
     try {
       this.emit(SUCCESS, seller);
     } catch (error) {

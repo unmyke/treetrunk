@@ -31,7 +31,14 @@ const bottle = new Bottle();
 bottle.constant('config', config);
 bottle.factory('app', (container) => new Application(container));
 
-bottle.constant('domain', domain);
+bottle.constant('domain.entities', domain.entities);
+bottle.constant('domain.commonTypes', domain.commonTypes);
+bottle.factory('domain.service', (container) => {
+  return Object.keys(domain.services).reduce((acc, serviceName) => {
+    const service = new domain.services[serviceName](container);
+    return { ...acc, [serviceName]: service };
+  }, {});
+});
 
 bottle.factory('repositories', ({ models, mappers, makeValidator }) => {
   const result = Object.keys(repositories).reduce((acc, repositoryName) => {

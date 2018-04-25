@@ -10,8 +10,8 @@ export class GetSellerById extends Operation {
       repositories: {
         Seller: sellerRepo,
         Post: postRepo,
-        Shop: shopRepo,
-        Workshift: workshiftRepo,
+        // Shop: shopRepo,
+        // Workshift: workshiftRepo,
       },
     } = this;
 
@@ -35,20 +35,20 @@ export class GetSellerById extends Operation {
       });
       sellerDTO.appointments = appointmentsDTO;
 
-      const workshifts = workshiftRepo.getBySellerId(sellerId);
-      const workshiftsDTO = workshifts.map((workshift) => {
-        const shop = shopRepo.getById(workshift.shopId);
-        const workshiftType = workshiftTypeRepo.getById(
-          workshift.workshiftTypeId
-        );
-        return {
-          workshiftId: workshiftId.value,
-          shopAddress: shop.address,
-          hours: workshift.getHoursBySellerId(sellerId),
-        };
-      });
+      // const workshifts = workshiftRepo.getBySellerId(sellerId);
+      // const workshiftsDTO = workshifts.map((workshift) => {
+      //   const shop = shopRepo.getById(workshift.shopId);
+      //   const workshiftType = workshiftTypeRepo.getById(
+      //     workshift.workshiftTypeId
+      //   );
+      //   return {
+      //     workshiftId: workshiftId.value,
+      //     shopAddress: shop.address,
+      //     hours: workshift.getHoursBySellerId(sellerId),
+      //   };
+      // });
 
-      sellerDTO.workshifts = workshiftsDTO;
+      // sellerDTO.workshifts = workshiftsDTO;
 
       this.emit(SUCCESS, sellerDTO);
     } catch (error) {

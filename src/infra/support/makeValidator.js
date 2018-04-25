@@ -1,5 +1,5 @@
 import validate from 'validate.js';
-import { isValidDay } from './dayHelpers';
+import { Day, DayRange } from 'src/domain/_lib/ValueObjects';
 
 export const makeValidator = () => {
   const entityValidator = (entity, options = { exception: false }) => {
@@ -21,15 +21,15 @@ export const makeValidator = () => {
   };
 
   validate.validators.dayObject = (value) => {
-    if (!value || !isValidDay(value)) {
-      return 'are not date';
+    if (!Day.isValid(value)) {
+      return Day.errorNotADayRange.details[0];
     }
     return null;
   };
 
   validate.validators.dayRangeObject = (value) => {
-    if (!value || !value.isValid()) {
-      return 'are not date range';
+    if (!DayRange.isValid(value)) {
+      return DayRange.errorNotADayRange.details[0];
     }
     return null;
   };

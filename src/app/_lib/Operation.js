@@ -7,11 +7,10 @@ export class Operation extends EventEmitter {
     });
   }
 
-  constructor({ repositories, domain, serializers }) {
+  constructor({ repositories, domain }) {
     super();
     this.domain = domain;
     this.repositories = repositories;
-    this.serializers = serializers;
   }
 
   on(output, handler) {
@@ -20,7 +19,7 @@ export class Operation extends EventEmitter {
     }
 
     throw new Error(
-      `Invalid output "${output}" to operation ${this.constructor.name}.`,
+      `Invalid output "${output}" to operation ${this.constructor.name}.`
     );
   }
 }

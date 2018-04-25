@@ -17,11 +17,11 @@ import { errorHandler } from './interfaces/http/errors/errorHandler';
 import { devErrorHandler } from './interfaces/http/errors/devErrorHandler';
 import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
-import * as serializers from './interfaces/http/serializers';
+// import * as serializers from './interfaces/http/serializers';
 
 import { db } from './infra/database/models';
 const { database, models } = db;
-import * as mappers from './infra/mappers';
+// import * as mappers from './infra/mappers';
 
 import { lowercaseFirstLetter } from './infra/support/changeCaseFirstLetter';
 import { containerMiddleware } from './interfaces/http/utils/bottle-express';
@@ -72,7 +72,7 @@ bottle.factory('services', (container) => {
 //   });
 // });
 
-bottle.constant('serializers', serializers);
+// bottle.constant('serializers', serializers);
 
 bottle.constant('makeValidator', makeValidator);
 
@@ -80,13 +80,13 @@ bottle.factory('server', (container) => new Server(container));
 bottle.factory('logger', (container) => logger(container));
 bottle.factory('router', (container) => router(container));
 bottle.factory('containerMiddleware', (container) =>
-  containerMiddleware(container),
+  containerMiddleware(container)
 );
 
 bottle.factory('loggerMiddleware', (container) => loggerMiddleware(container));
 bottle.constant(
   'errorHandler',
-  config.production ? errorHandler : devErrorHandler,
+  config.production ? errorHandler : devErrorHandler
 );
 bottle.constant('swaggerMiddleware', swaggerMiddleware);
 

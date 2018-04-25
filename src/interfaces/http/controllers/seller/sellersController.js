@@ -1,29 +1,29 @@
 import { Router } from 'express';
-import { inject } from 'awilix-express';
+import { injectService } from '../../utils/bottle-express';
 import Status from 'http-status';
 
 const SellersController = {
   get router() {
     const router = Router();
 
-    router.use(inject('serializers.seller'));
+    // router.use(inject('serializers.seller'));
 
-    router.get('/', inject('services.getAllSellers'), this.index);
-    router.get('/:id', inject('services.getSeller'), this.show);
-    router.post('/', inject('services.createSeller'), this.create);
-    router.put('/:id', inject('services.updateSeller'), this.update);
-    router.delete('/:id', inject('services.deleteSeller'), this.delete);
+    router.get('/', injectService('services.getAllSellers'), this.index);
+    router.get('/:id', injectService('services.getSeller'), this.show);
+    router.post('/', injectService('services.createSeller'), this.create);
+    router.put('/:id', injectService('services.updateSeller'), this.update);
+    router.delete('/:id', injectService('services.deleteSeller'), this.delete);
 
     return router;
   },
 
   index(req, res, next) {
-    const { getAllSellers, sellerSerializer } = req;
+    const { getAllSellers } = req;
     const { SUCCESS, ERROR } = getAllSellers.outputs;
 
     getAllSellers
       .on(SUCCESS, (sellers) => {
-        res.status(Status.OK).json(sellers.map(sellerSerializer.serialize));
+        res.status(Status.OK).json(sellers);
       })
       .on(ERROR, next);
 
@@ -31,13 +31,13 @@ const SellersController = {
   },
 
   show(req, res, next) {
-    const { getSeller, sellerSerializer } = req;
+    const { getSeller } = req;
 
     const { SUCCESS, ERROR, NOT_FOUND } = getSeller.outputs;
 
     getSeller
       .on(SUCCESS, (seller) => {
-        res.status(Status.OK).json(sellerSerializer.serialize(seller));
+        res.status(Status.OK).json(seller);
       })
       .on(NOT_FOUND, (error) => {
         res.status(Status.NOT_FOUND).json({
@@ -51,12 +51,12 @@ const SellersController = {
   },
 
   create(req, res, next) {
-    const { createSeller, sellerSerializer } = req;
+    const { createSeller } = req;
     const { SUCCESS, ERROR, VALIDATION_ERROR } = createSeller.outputs;
 
     createSeller
       .on(SUCCESS, (seller) => {
-        res.status(Status.CREATED).json(sellerSerializer.serialize(seller));
+        res.status(Status.CREATED).json(seller);
       })
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({
@@ -70,7 +70,7 @@ const SellersController = {
   },
 
   update(req, res, next) {
-    const { updateSeller, sellerSerializer } = req;
+    const { updateSeller } = req;
     const {
       SUCCESS,
       ERROR,
@@ -80,7 +80,7 @@ const SellersController = {
 
     updateSeller
       .on(SUCCESS, (seller) => {
-        res.status(Status.ACCEPTED).json(sellerSerializer.serialize(seller));
+        res.status(Status.ACCEPTED).json(seller);
       })
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({

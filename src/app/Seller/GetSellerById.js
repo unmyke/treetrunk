@@ -4,18 +4,53 @@ export class GetSellerById extends Operation {
   async execute({ sellerId: sellerIdValue }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
-      Seller: sellerManagementService,
-      Workshift: workshiftManagementService,
-    } = this.domainServices;
-    const { Seller: sellerRepo, Post: postRepo } = this.repositories;
+      domain: {
+        commonTypes: { SellerId },
+      },
+      repositories: {
+        Seller: sellerRepo,
+        Post: postRepo,
+        Shop: shopRepo,
+        Workshift: workshiftRepo,
+      },
+    } = this;
 
-    const _seller = sellerRepo.getById(sellerId);
-    //sellerManagementService.getSellerById(sellerId);
-    const post = sellerManagementService.getSellerPost(_seller);
-    const workshifts = sellerManagementService.getSellerWorkshifts(_seller);
-    const seller = { _seller, post, workshifts };
     try {
-      this.emit(SUCCESS, seller);
+      const sellerId = new SellerId({ value: sellerIdValue });
+      const seller = sellerRepo.getById(sellerId);
+      const sellerDTO = {
+        sellerId: sellerIdValue,
+        surname: seller.personName.surname,
+        firstName: seller.personName.firstName,
+        middleName: seller.personName.middleName,
+      };
+
+      const appointmentsDTO = seller.appointments.map(({ postId, day }) => {
+        const { name: postName } = postRepo.getById(postId.value);
+        return {
+          postId: postId.value,
+          postName,
+          date: day.value,
+        };
+      });
+      sellerDTO.appointments = appointmentsDTO;
+
+      const workshifts = workshiftRepo.getBySellerId(sellerId);
+      const workshiftsDTO = workshifts.map((workshift) => {
+        const shop = shopRepo.getById(workshift.shopId);
+        const workshiftType = workshiftTypeRepo.getById(
+          workshift.workshiftTypeId
+        );
+        return {
+          workshiftId: workshiftId.value,
+          shopAddress: shop.address,
+          hours: workshift.getHoursBySellerId(sellerId),
+        };
+      });
+
+      sellerDTO.workshifts = workshiftsDTO;
+
+      this.emit(SUCCESS, sellerDTO);
     } catch (error) {
       if (error.message === 'ValidationError') {
         return this.emit(VALIDATION_ERROR, error);
@@ -26,4 +61,4 @@ export class GetSellerById extends Operation {
   }
 }
 
-AddSellerAppointment.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+GetSellerById.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);

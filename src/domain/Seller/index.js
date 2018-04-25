@@ -9,4 +9,12 @@ import { SeniorityTypeId } from './SeniorityTypeId';
 
 import { SellerManagementService } from './SellerManagementService';
 
-export { Seller, SellerId, SeniorityType, SeniorityTypeId, Post, PostId };
+export {
+  Seller,
+  SellerId,
+  SeniorityType,
+  SeniorityTypeId,
+  Post,
+  PostId,
+  SellerManagementService,
+};

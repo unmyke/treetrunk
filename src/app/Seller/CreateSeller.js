@@ -12,10 +12,8 @@ export class CreateSeller extends Operation {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
       repositories: { Seller: repo },
-      domain: {
-        entities: { Seller },
-        commonTypes: { PostId },
-      },
+      entities: { Seller },
+      commonTypes: { PostId },
     } = this;
 
     const seller = new Seller({ surname, firstName, middleName, phone });

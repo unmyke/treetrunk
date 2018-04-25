@@ -4,9 +4,7 @@ export class GetSellerById extends Operation {
   async execute({ sellerId: sellerIdValue }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
-      domain: {
-        commonTypes: { SellerId },
-      },
+      commonTypes: { SellerId },
       repositories: {
         Seller: sellerRepo,
         Post: postRepo,

@@ -4,11 +4,13 @@ export class GetSellers extends Operation {
   async execute({ options }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
-      Seller: sellerRepo,
-      Post: postRepo,
-      SeniorityType: seniorityTypeRepo,
-    } = this.repositories;
-    const { Seller: sellerManagementService } = this.domain.services;
+      repositories: {
+        Seller: sellerRepo,
+        Post: postRepo,
+        SeniorityType: seniorityTypeRepo,
+      },
+      domainServices: { Seller: sellerManagementService },
+    } = this;
 
     try {
       const sellers = await sellerRepo.getAll(options);
@@ -23,20 +25,19 @@ export class GetSellers extends Operation {
         } = seller;
 
         const post = postRepo.getById(seller.getPostIdAt());
-        const { name, seniority, currenPieceRate } = post;
+        const { name, currentPieceRate } = post;
 
         const { currentAward } = sellerManagementService.getSellerSeniorityType(
           seller,
           seniorityTypes
         );
-        const { name, currenPieceRate } = post;
 
         const sellerDTO = {
           sellerId,
           fullName,
           name,
           seniority,
-          currenPieceRate,
+          currentPieceRate,
           recruitDate,
           currentAward,
         };

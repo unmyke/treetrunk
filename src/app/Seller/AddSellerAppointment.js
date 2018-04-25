@@ -5,9 +5,7 @@ export class AddSellerAppointment extends Operation {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
       repositories: { Seller: repo },
-      domain: {
-        commonTypes: { PostId },
-      },
+      commonTypes: { PostId },
     } = this;
 
     const seller = repo.getById(sellerId);

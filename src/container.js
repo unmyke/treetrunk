@@ -3,7 +3,8 @@ import Bottle from 'bottlejs';
 import { config } from 'config';
 import { Application } from './app/Application';
 
-import * as domain from './domain';
+import { entities, commonTypes, services as domainServices } from './domain';
+
 import * as repositories from './infra/repositories';
 import * as services from './app';
 import { makeValidator } from './infra/support/makeValidator';
@@ -30,12 +31,11 @@ const bottle = new Bottle();
 
 bottle.constant('config', config);
 bottle.factory('app', (container) => new Application(container));
-
-bottle.constant('domain.entities', domain.entities);
-bottle.constant('domain.commonTypes', domain.commonTypes);
-bottle.factory('domain.service', (container) => {
-  return Object.keys(domain.services).reduce((acc, serviceName) => {
-    const service = new domain.services[serviceName](container);
+bottle.constant('entities', entities);
+bottle.constant('commonTypes', commonTypes);
+bottle.factory('services.domain', (container) => {
+  return Object.keys(domainServices).reduce((acc, serviceName) => {
+    const service = new domainServices[serviceName](container);
     return { ...acc, [serviceName]: service };
   }, {});
 });
@@ -48,20 +48,31 @@ bottle.factory('repositories', ({ models, mappers, makeValidator }) => {
   return result;
 });
 
-bottle.factory('services', (container) => {
-  const result = Object.keys(services).reduce((acc, entityName) => {
-    const Operations = services[entityName];
-    const operations = Object.keys(Operations).reduce((acc, operationName) => {
-      return {
-        ...acc,
-        [lowercaseFirstLetter(operationName)]: () =>
-          new Operations[operationName](container),
-      };
+bottle.factory(
+  'services.app',
+  ({ repositories, domainServices, entities, commonTypes }) => {
+    const result = Object.keys(services).reduce((acc, entityName) => {
+      const Operations = services[entityName];
+      const operations = Object.keys(Operations).reduce(
+        (acc, operationName) => {
+          return {
+            ...acc,
+            [lowercaseFirstLetter(operationName)]: () =>
+              new Operations[operationName]({
+                repositories,
+                domainServices,
+                entities,
+                commonTypes,
+              }),
+          };
+        },
+        {}
+      );
+      return { ...acc, [entityName]: operations };
     }, {});
-    return { ...acc, [entityName]: operations };
-  }, {});
-  return result;
-});
+    return result;
+  }
+);
 
 // Object.keys(services).forEach((entityName) => {
 //   const Operations = services[entityName];

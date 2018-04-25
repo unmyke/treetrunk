@@ -7,10 +7,12 @@ export class Operation extends EventEmitter {
     });
   }
 
-  constructor({ repositories, domain }) {
+  constructor({ repositories, domainServices, entities, commonTypes }) {
     super();
-    this.domain = domain;
     this.repositories = repositories;
+    this.domainServices = domainServices;
+    this.entities = entities;
+    this.commonTypes = commonTypes;
   }
 
   on(output, handler) {

@@ -1,8 +1,6 @@
 import { BaseValue } from '../../BaseClasses';
 import { Day } from '../Day';
-import { makeError } from 'src/infra/support/makeError';
-
-const isValidDay = (day) => day && day.constructor === Day && day.isValid();
+import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
 
 export class DayRange extends BaseValue {
   // Errors
@@ -10,7 +8,6 @@ export class DayRange extends BaseValue {
   static errorNotADay = Day.errorNotADay;
   static errorNotADate = Day.errorNotADate;
   static errorNotANumber = Day.errorNotANumber;
-  static errorNotADayRange = makeError('ValidationError', 'Not A DayRage');
 
   // Factories
 
@@ -31,7 +28,7 @@ export class DayRange extends BaseValue {
   }
 
   static _dayRangeFactory(day = new Day(), rangeName) {
-    if (!isValidDay(day)) {
+    if (!Day.isValid(day)) {
       throw this.errorNotADay;
     }
 
@@ -39,6 +36,12 @@ export class DayRange extends BaseValue {
       start: day[`startOf${rangeName}`](),
       end: day[`endOf${rangeName}`](),
     });
+  }
+
+  //Validator
+
+  static isValid(dayRange) {
+    return dayRange && dayRange.constructor === DayRange && dayRange.isValid();
   }
 
   // Instance methods
@@ -69,7 +72,7 @@ export class DayRange extends BaseValue {
   }
 
   contains(day) {
-    if (!this.isValid() && isValidDay(day)) {
+    if (!this.isValid() && Day.isValid(day)) {
       throw this.constructor.errorNotADay;
     }
     return day >= this.start && day <= this.end;
@@ -93,7 +96,14 @@ export class DayRange extends BaseValue {
 
   isValid() {
     return (
-      isValidDay(this.start) && isValidDay(this.end) && this.end >= this.start
+      Day.isValid(this.start) && Day.isValid(this.end) && this.end >= this.start
     );
   }
 }
+
+addErrorDefinitionProperty(
+  DayRange,
+  'errorNotADayRange',
+  'ValidationError',
+  'Not A DayRage'
+);

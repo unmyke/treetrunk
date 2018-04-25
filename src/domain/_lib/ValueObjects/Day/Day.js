@@ -17,7 +17,7 @@ const ru = require('date-fns/locale/ru');
 
 import { BaseValue } from '../../BaseClasses';
 import { isValidDate, convertDate } from 'src/infra/support/dateHelpers';
-import { makeError } from 'src/infra/support/makeError';
+import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
 
 function isMinusZero(value) {
   if (value !== 0) {
@@ -28,12 +28,6 @@ function isMinusZero(value) {
 }
 
 export class Day extends BaseValue {
-  // Errors
-
-  static errorNotADate = makeError('ValidationError', 'Not A Date');
-  static errorNotADay = makeError('ValidationError', 'Not A Day');
-  static errorNotANumber = makeError('ValidationError', 'Not A Number');
-
   // Factories
 
   static createStartOfWeek(date) {
@@ -74,6 +68,12 @@ export class Day extends BaseValue {
     }
 
     return new Day({ value: dateGetter(date, dateGetterProps) });
+  }
+
+  //Validator
+
+  static isValid(day) {
+    return day && day.constructor === Day && day.isValid();
   }
 
   // Instance methods
@@ -200,3 +200,17 @@ export class Day extends BaseValue {
     return isValidDate(this.value);
   }
 }
+
+addErrorDefinitionProperty(
+  Day,
+  'errorNotADate',
+  'ValidationError',
+  'Not A Date'
+);
+addErrorDefinitionProperty(Day, 'errorNotADay', 'ValidationError', 'Not A Day');
+addErrorDefinitionProperty(
+  Day,
+  'errorNotANumber',
+  'ValidationError',
+  'Not A Number'
+);

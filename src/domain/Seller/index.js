@@ -1,5 +1,5 @@
-import { Seller } from 'Seller';
-import { SellerId } from 'SellerId';
+import { Seller } from './Seller';
+import { SellerId } from './SellerId';
 
 import { Post } from './Post';
 import { PostId } from './PostId';

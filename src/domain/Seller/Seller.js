@@ -1,21 +1,11 @@
 import { BaseEntity } from '../_lib/BaseClasses';
 import { PersonName, Day } from '../_lib/ValueObjects';
+import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
+
 import { Appointment } from './Appointment';
 import { SellerId } from './SellerId';
-import { makeError } from 'src/infra/support/makeError';
 
 export class Seller extends BaseEntity {
-  // Errors
-
-  static errorDuplication = makeError(
-    'OperationError',
-    'Seller already have this post',
-  );
-  static errorNoAppointments = makeError(
-    'OperationError',
-    'Seller have not such appointment to this postId',
-  );
-
   constructor({
     sellerId = new SellerId(),
     surname,
@@ -58,14 +48,14 @@ export class Seller extends BaseEntity {
 
     const appointment = new Appointment({ postId, day });
     this.appointments = [...this.appointments, appointment].sort(
-      (a, b) => a.day > b.day,
+      (a, b) => a.day > b.day
     );
   }
 
   deleteAppointment(postId, day) {
     const appointmentToDelete = new Appointment({ postId, day });
     const filteredAppointments = this.appointments.filter(
-      (appointment) => !appointment.equals(appointmentToDelete),
+      (appointment) => !appointment.equals(appointmentToDelete)
     );
     if (this.appointments.length === filteredAppointments.length) {
       throw this.constructor.errorNoAppointments;
@@ -90,7 +80,7 @@ export class Seller extends BaseEntity {
       (currentAppointment, appointment) => {
         return appointment.day <= day ? appointment : currentAppointment;
       },
-      firstAppointment,
+      firstAppointment
     );
 
     return postId;
@@ -114,3 +104,16 @@ export class Seller extends BaseEntity {
     return firstAppointment && firstAppointment.day;
   }
 }
+
+addErrorDefinitionProperty(
+  Seller,
+  'errorDuplication',
+  'OperationError',
+  'Seller already have this post'
+);
+addErrorDefinitionProperty(
+  Seller,
+  'errorNoAppointments',
+  'OperationError',
+  'Seller have not such appointment to this postId'
+);

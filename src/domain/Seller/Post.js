@@ -1,21 +1,11 @@
 import { BaseEntity } from '../_lib/BaseClasses';
 import { Day } from '../_lib/ValueObjects';
+import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
+
 import { PieceRate } from './PieceRate';
 import { PostId } from './PostId';
-import { makeError } from 'src/infra/support/makeError';
 
 export class Post extends BaseEntity {
-  // Errors
-
-  static errorDuplication = makeError(
-    'OperationError',
-    'Post already have this pieceRate',
-  );
-  static errorNoPieceRates = makeError(
-    'OperationError',
-    'Post have not such pieceRate',
-  );
-
   constructor({ postId = new PostId(), name, pieceRates = [] }) {
     super(postId);
     this.name = name;
@@ -29,7 +19,7 @@ export class Post extends BaseEntity {
       throw this.constructor.errorDuplication;
     }
     this.pieceRates = [...this.pieceRates, pieceRate].sort(
-      (a, b) => a.day > b.day,
+      (a, b) => a.day > b.day
     );
   }
 
@@ -55,7 +45,7 @@ export class Post extends BaseEntity {
   deletePieceRate(value, day) {
     const pieceRateToDelete = new PieceRate({ value, day });
     const filteredPieceRates = this.pieceRates.filter(
-      (pieceRate) => !pieceRate.equals(pieceRateToDelete),
+      (pieceRate) => !pieceRate.equals(pieceRateToDelete)
     );
     if (this.pieceRates.length === filteredPieceRates.length) {
       this.constructor.errorNoPieceRates;
@@ -69,3 +59,16 @@ export class Post extends BaseEntity {
     return !!firstPieceRate && firstPieceRate.day <= day;
   }
 }
+
+addErrorDefinitionProperty(
+  Post,
+  'errorDuplication',
+  'OperationError',
+  'Post already have this pieceRate'
+);
+addErrorDefinitionProperty(
+  Post,
+  'errorNoPieceRates',
+  'OperationError',
+  'Post have not such pieceRate'
+);

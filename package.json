@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "bottle": "^0.2.0",
+    "bottlejs": "^1.7.0",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
     "date-fns": "^1.29.0",
@@ -70,6 +71,7 @@
     "nodemon": "^1.17.3",
     "pm2": "^2.10.2",
     "sequelize": "^4.37.6",
-    "swagger-ui-express": "^3.0.8"
+    "swagger-ui-express": "^3.0.8",
+    "validate.js": "^0.12.0"
   }
 }

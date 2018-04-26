@@ -58,6 +58,10 @@ export class Post extends BaseEntity {
     const [firstPieceRate] = this.pieceRates;
     return !!firstPieceRate && firstPieceRate.day <= day;
   }
+
+  get currentPieceRate() {
+    return this.getPieceRateAt();
+  }
 }
 
 addErrorDefinitionProperty(

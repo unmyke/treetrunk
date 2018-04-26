@@ -90,7 +90,7 @@ describe('Domain :: entities :: Post', () => {
 
     context('when requested current pieceRate associated with post', () => {
       it("should return last pieceRate's value", () => {
-        expect(post.getPieceRateAt(newDay)).toBe(pieceRate3value);
+        expect(post.currentPieceRate).toBe(pieceRate3value);
       });
     });
   });
@@ -137,11 +137,11 @@ describe('Domain :: entities :: Post', () => {
           pieceRate1value,
           pieceRate1day,
           pieceRate2value,
-          pieceRate1day,
+          pieceRate1day
         );
 
         expect(post.pieceRates[0].day).toEqual(
-          new Day({ value: startOfDay(pieceRate1day) }),
+          new Day({ value: startOfDay(pieceRate1day) })
         );
         expect(post.getPieceRateAt()).toBe(pieceRate2value);
       });
@@ -153,7 +153,7 @@ describe('Domain :: entities :: Post', () => {
           pieceRate1value,
           pieceRate1day,
           pieceRate1value,
-          pieceRate2day,
+          pieceRate2day
         );
         expect(post.pieceRates).toHaveLength(1);
         expect(post.getPieceRateAt(pieceRate1day)).toEqual(undefined);

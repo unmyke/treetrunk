@@ -1,7 +1,7 @@
 export const PersonNameSerializer = {
-  serialize: ({ surname, firstName, middleName }) => {
+  serialize: ({ lastName, firstName, middleName }) => {
     return {
-      surname,
+      lastName,
       firstName,
       middleName,
     };

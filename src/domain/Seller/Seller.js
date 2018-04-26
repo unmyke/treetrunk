@@ -8,14 +8,14 @@ import { SellerId } from './SellerId';
 export class Seller extends BaseEntity {
   constructor({
     sellerId = new SellerId(),
-    surname,
+    lastName,
     firstName,
     middleName,
     phone,
   }) {
     super(sellerId);
     this.personName = new PersonName({
-      surname,
+      lastName,
       firstName,
       middleName,
     });
@@ -27,8 +27,8 @@ export class Seller extends BaseEntity {
     return this.personName.fullName;
   }
 
-  get surname() {
-    return this.personName.surname;
+  get lastName() {
+    return this.personName.lastName;
   }
 
   get firstName() {

@@ -8,6 +8,8 @@ import {
   SellerManagementService,
 } from './Seller';
 
+import { Day } from './_lib/ValueObjects';
+
 export const entities = {
   Seller,
   Post,
@@ -18,6 +20,7 @@ export const commonTypes = {
   SellerId,
   PostId,
   SeniorityTypeId,
+  Day,
 };
 
 export const services = {

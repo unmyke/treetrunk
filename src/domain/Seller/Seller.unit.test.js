@@ -4,7 +4,7 @@ import { SellerId } from './SellerId';
 import { Post } from './Post';
 import { Appointment } from './Appointment';
 
-const surname = 'Surname';
+const lastName = 'lastName';
 const firstName = 'Firstname';
 const middleName = 'Middlename';
 const phone = '55-66-00';
@@ -20,7 +20,7 @@ const appointmentDay3 = new Day({ value: new Date('2018.04.14 11:00') });
 describe('Domain :: entities :: Seller', () => {
   let seller;
   beforeEach(() => {
-    seller = new Seller({ surname, firstName, middleName, phone });
+    seller = new Seller({ lastName, firstName, middleName, phone });
   });
 
   describe('#constructor', () => {
@@ -28,7 +28,7 @@ describe('Domain :: entities :: Seller', () => {
       expect(seller).toBeInstanceOf(Seller);
       expect(seller.sellerId).toBeInstanceOf(SellerId);
       expect(seller.personName).toBeInstanceOf(PersonName);
-      expect(seller.fullName).toBe(`${surname} ${firstName} ${middleName}`);
+      expect(seller.fullName).toBe(`${lastName} ${firstName} ${middleName}`);
       expect(seller.phone).toBe(phone);
       expect(seller.appointments).toHaveLength(0);
     });
@@ -98,7 +98,7 @@ describe('Domain :: entities :: Seller', () => {
     context('when requested past postId', () => {
       it('should return postId appointed at that day', () => {
         expect(seller.getPostIdAt(appointmentDay2)).toBe(
-          seniorFloristPost.postId,
+          seniorFloristPost.postId
         );
       });
     });
@@ -155,7 +155,7 @@ describe('Domain :: entities :: Seller', () => {
           floristPost.postId,
           appointmentDay1,
           seniorFloristPost.postId,
-          appointmentDay1,
+          appointmentDay1
         );
 
         expect(seller.appointments).toHaveLength(1);
@@ -170,7 +170,7 @@ describe('Domain :: entities :: Seller', () => {
           floristPost.postId,
           appointmentDay1,
           floristPost.postId,
-          appointmentDay2,
+          appointmentDay2
         );
         expect(seller.appointments).toHaveLength(1);
         expect(seller.getPostIdAt(appointmentDay1)).toEqual(undefined);

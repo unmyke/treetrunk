@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import { ModelsLoader } from '../sequelize';
+import { ModelsLoader } from '../ModelsLoader';
 import { config } from 'config';
 
 const { db: dbConfig } = config;
@@ -11,6 +11,7 @@ if (dbConfig) {
   db = ModelsLoader.load({
     sequelize,
     baseFolder: __dirname,
+    DataTypes: Sequelize.DataTypes,
   });
 } else {
   /* eslint-disable no-console */

@@ -1,7 +1,7 @@
 'use strict';
 export default (sequelize, DataTypes) => {
-  var Appointment = sequelize.define(
-    'appointment',
+  var SellerAppointment = sequelize.define(
+    'sellerAppointment',
     {
       postId: {
         allowNull: false,
@@ -14,11 +14,11 @@ export default (sequelize, DataTypes) => {
     },
     {}
   );
-  Appointment.associate = function(models) {
-    Appointment.belongsTo(models.Seller, {
+  SellerAppointment.associate = function(models) {
+    SellerAppointment.belongsTo(models.Seller, {
       foreignKey: 'sellerId',
       targetKey: 'sellerId',
     });
   };
-  return Appointment;
+  return SellerAppointment;
 };

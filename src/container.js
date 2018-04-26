@@ -55,15 +55,15 @@ bottle.factory(
       const Operations = services[entityName];
       const operations = Object.keys(Operations).reduce(
         (acc, operationName) => {
+          const operation = new Operations[operationName]({
+            repositories,
+            domainServices,
+            entities,
+            commonTypes,
+          });
           return {
             ...acc,
-            [lowercaseFirstLetter(operationName)]: () =>
-              new Operations[operationName]({
-                repositories,
-                domainServices,
-                entities,
-                commonTypes,
-              }),
+            [lowercaseFirstLetter(operationName)]: operation,
           };
         },
         {}

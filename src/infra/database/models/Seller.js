@@ -51,7 +51,7 @@ export default (sequelize, DataTypes) => {
     }
   );
   Seller.associate = function(models) {
-    Seller.hasMany(models.Appointment, {
+    Seller.hasMany(models.SellerAppointment, {
       foreignKey: 'sellerId',
       sourceKey: 'sellerId',
     });

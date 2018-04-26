@@ -2,28 +2,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable(
-      'sellers',
+      'postPieceRates',
       {
-        sellerId: {
+        postId: {
           allowNull: false,
-          primaryKey: true,
           type: Sequelize.UUID,
         },
-        lastName: {
+        value: {
           allowNull: false,
-          type: Sequelize.STRING,
+          type: Sequelize.FLOAT,
         },
-        firstName: {
+        day: {
           allowNull: false,
-          type: Sequelize.STRING,
-        },
-        middleName: {
-          allowNull: false,
-          type: Sequelize.STRING,
-        },
-        phone: {
-          allowNull: false,
-          type: Sequelize.STRING,
+          type: Sequelize.DATE,
         },
         createdAt: {
           allowNull: false,
@@ -38,6 +29,6 @@ module.exports = {
     );
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('sellers');
+    return queryInterface.dropTable('postPieceRates');
   },
 };

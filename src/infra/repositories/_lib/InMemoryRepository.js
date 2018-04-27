@@ -16,12 +16,35 @@ export class InMemoryRepository extends BaseRepository {
     );
   }
 
-  updateById(id, props) {
-    this.store = this.store;
+  save(entity) {
+    const entityId = this._entityId(entity);
+    this.store = this.store.map((item) => {
+      return entityId.equals(this._entityId[item]) ? entity : item;
+    });
+  }
+
+  getAll(props) {
+    return this.store.reduce((acc, item) => {
+      return _compare(item, props) ? [...acc, item] : acc;
+    }, []);
+  }
+
+  count(props) {
+    return this.getAll(props).length;
   }
 
   _idPropName(id) {
     return lowercaseFirstLetter(id.constuctor.name);
+  }
+
+  _entityId(entity) {
+    return entity[lowercaseFirstLetter(`${entity.constuctor.name}Id`)];
+  }
+
+  _compare(entity, props) {
+    Object.keys(props).reduce((isEquals, key) => {
+      return isEquals && props[key] === entity[key];
+    }, true);
   }
 }
 

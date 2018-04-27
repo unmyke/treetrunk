@@ -11,7 +11,7 @@ export class CreateSeller extends Operation {
   }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
-      repositories: { Seller: repo },
+      repositories: { Seller: sellerRepo },
       entities: { Seller },
       commonTypes: { PostId },
     } = this;
@@ -21,7 +21,7 @@ export class CreateSeller extends Operation {
     seller.appointToPostId(postIdObj, appointDate);
 
     try {
-      const newSeller = await repo.add(seller);
+      const newSeller = await sellerRepo.add(seller);
 
       this.emit(SUCCESS, newSeller);
     } catch (error) {

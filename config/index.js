@@ -31,5 +31,5 @@ function loadDbConfig() {
 }
 
 function loadAppConfig() {
-  return require('./app');
+  return require('./application');
 }

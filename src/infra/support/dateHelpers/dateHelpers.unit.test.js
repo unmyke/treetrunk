@@ -53,7 +53,7 @@ describe('Domain :: lib :: dateHelpers', () => {
     context('when pass invalid date', () => {
       it('should be invalid date', () => {
         expect(convertDate(invalidDate).toString()).toEqual(
-          invalidDate.toString(),
+          invalidDate.toString()
         );
       });
     });

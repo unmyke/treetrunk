@@ -10,5 +10,11 @@ module.exports = {
       values: { name: 'уволен(а)' },
       callback: define,
     },
+    {
+      name: 'superSellerId',
+      ModelName: 'Seller',
+      values: { firstName: 'Super Seller' },
+      callback: define,
+    },
   ],
 };

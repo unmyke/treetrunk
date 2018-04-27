@@ -50,7 +50,7 @@ describe('Domain :: lib :: valueObjects :: DayRange', () => {
           const day = new Day({ value: '' });
 
           expect(() => DayRange.createMonth(day)).toThrow(
-            DayRange.errorNotADay,
+            DayRange.errorNotADay
           );
         });
       });

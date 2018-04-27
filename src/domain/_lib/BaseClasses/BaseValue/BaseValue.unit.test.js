@@ -70,7 +70,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
 
         expect(valueObject.equals(anotherValueObject)).toBeFalsy();
       });
-    },
+    }
   );
 
   context('when value objects include value objects that and are', () => {

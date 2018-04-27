@@ -19,7 +19,7 @@ describe('Domain :: lib :: changeCaseFirstLetter', () => {
     context('when word with lowercased first letter', () => {
       it('should returns word with uppercased first letter', () => {
         expect(uppercaseFirstLetter(lowercasedFirstLetterWord)).toBe(
-          'LOWERCASEDFIRSTLETTERWORD',
+          'LOWERCASEDFIRSTLETTERWORD'
         );
       });
     });
@@ -27,7 +27,7 @@ describe('Domain :: lib :: changeCaseFirstLetter', () => {
     context('when word with lowercased first two letters', () => {
       it('should returns word with uppercased first letter and lowercased second letter', () => {
         expect(uppercaseFirstLetter(lowercasedFirstTwoLetterWord)).toBe(
-          'LoWERCASEDFIRSTTWOLETTERWORD',
+          'LoWERCASEDFIRSTTWOLETTERWORD'
         );
       });
     });
@@ -49,7 +49,7 @@ describe('Domain :: lib :: changeCaseFirstLetter', () => {
     context('when word with uppercased first letter', () => {
       it('should returns word with lowercased first letter', () => {
         expect(lowercaseFirstLetter(uppercasedFirstLetterWord)).toBe(
-          'uppercasedfirstletterword',
+          'uppercasedfirstletterword'
         );
       });
     });
@@ -57,7 +57,7 @@ describe('Domain :: lib :: changeCaseFirstLetter', () => {
     context('when word with uppercased first two letters', () => {
       it('should returns word with lowercased first letter and lowercased second letter', () => {
         expect(lowercaseFirstLetter(uppercasedFirstTwoLetterWord)).toBe(
-          'uPpercasedfirsttwoletterword',
+          'uPpercasedfirsttwoletterword'
         );
       });
     });

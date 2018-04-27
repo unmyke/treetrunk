@@ -6,42 +6,52 @@ import { lowercaseFirstLetter } from 'src/infra/support/changeCaseFirstLetter';
 export class InMemoryRepository extends BaseRepository {
   store = [];
 
-  getById(id) {
+  async getById(id) {
     return this.store.find((item) => item[this._idPropName(id)].equals(id));
   }
 
-  deleteById(id) {
-    this.store = this.store.filter(
-      (item) => !item[this._idPropName(id)].equals(id)
-    );
-  }
-
-  save(entity) {
-    const entityId = this._entityId(entity);
-    this.store = this.store.map((item) => {
-      return entityId.equals(this._entityId[item]) ? entity : item;
-    });
-  }
-
-  getAll(props) {
+  async getAll(props) {
     return this.store.reduce((acc, item) => {
       return _compare(item, props) ? [...acc, item] : acc;
     }, []);
   }
 
-  count(props) {
+  async add(entity) {
+    const entityId = this._entityId(entity);
+    this.store.push(entity);
+    return entity;
+  }
+
+  async save(entity) {
+    const entityId = this._entityId(entity);
+
+    const index = this.store.findIndex(
+      (storedEntity) => this._entityId(storedEntity) === entityId
+    );
+    this.store[index] = entity;
+
+    return entity;
+  }
+
+  async remove(id) {
+    this.store = this.store.filter(
+      (item) => !item[this._idPropName(id)].equals(id)
+    );
+  }
+
+  async count(props) {
     return this.getAll(props).length;
   }
 
-  _idPropName(id) {
+  async _idPropName(id) {
     return lowercaseFirstLetter(id.constuctor.name);
   }
 
-  _entityId(entity) {
+  async _entityId(entity) {
     return entity[lowercaseFirstLetter(`${entity.constuctor.name}Id`)];
   }
 
-  _compare(entity, props) {
+  async _compare(entity, props) {
     Object.keys(props).reduce((isEquals, key) => {
       return isEquals && props[key] === entity[key];
     }, true);

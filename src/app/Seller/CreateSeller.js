@@ -11,7 +11,7 @@ export class CreateSeller extends Operation {
   }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
-      repositories: { Seller: sallerRepo },
+      repositories: { Seller: sellerRepo },
       entities: { Seller },
       commonTypes: { PostId },
     } = this;

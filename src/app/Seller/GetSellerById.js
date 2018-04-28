@@ -18,7 +18,7 @@ export class GetSellerById extends Operation {
       const seller = sellerRepo.getById(sellerId);
       const sellerDTO = {
         sellerId: sellerIdValue,
-        surname: seller.personName.surname,
+        lastName: seller.personName.lastName,
         firstName: seller.personName.firstName,
         middleName: seller.personName.middleName,
       };

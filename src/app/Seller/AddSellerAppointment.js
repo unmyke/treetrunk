@@ -1,19 +1,21 @@
 import { Operation } from '../_lib/Operation';
 
 export class AddSellerAppointment extends Operation {
-  async execute({ sellerId, postId, appointDate }) {
+  async execute({ sellerId: sellerIdValue, postId: postIdValue, appointDate }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
-      repositories: { Seller: repo },
-      commonTypes: { PostId },
+      repositories: { Seller: sellerRepo },
+      commonTypes: { PostId, SellerId },
     } = this;
 
-    const seller = repo.getById(sellerId);
-    const postIdObj = new PostId({ id: postId });
-    seller.appointToPostId(postIdObj, appointDate);
-
     try {
-      const newSeller = await repo.update(seller);
+      const sellerId = new SellerId({ value: sellerIdValue });
+      const seller = sellerRepo.getById(sellerId);
+
+      const postId = new PostId({ value: postIdValue });
+      seller.appointToPostId(postId, appointDate);
+
+      const newSeller = await sellerRepo.save(seller);
 
       this.emit(SUCCESS, newSeller);
     } catch (error) {

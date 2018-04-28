@@ -1,14 +1,7 @@
 import { Operation } from '../_lib/Operation';
 
 export class CreateSeller extends Operation {
-  async execute({
-    lastName,
-    firstName,
-    middleName,
-    phone,
-    postId: postIdValue,
-    appointDate,
-  }) {
+  async execute({ lastName, firstName, middleName, phone }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
       repositories: { Seller: sellerRepo },
@@ -18,8 +11,6 @@ export class CreateSeller extends Operation {
 
     try {
       const seller = new Seller({ lastName, firstName, middleName, phone });
-      const postId = new PostId({ value: postIdValue });
-      seller.appointToPostId(postIdObj, appointDate);
 
       const newSeller = await sallerRepo.add(seller);
 

@@ -2,13 +2,20 @@ import { Day } from '.';
 
 const { errorNotADate, errorNotADay, errorNotANumber } = Day;
 
+const getMonday = (date) =>
+  new Date(date.valueOf() - ((date.getDay() + 6) % 7) * (24 * 60 * 60 * 1000));
+const getSunday = (date) =>
+  new Date(date.valueOf() + ((7 - date.getDay()) % 7) * (24 * 60 * 60 * 1000));
+
 describe('Domain :: lib :: valueObjects :: Day', () => {
   describe('Day#createStartOfWeek', () => {
     context('when pass correct date', () => {
       it("return new inctance of Day, that represence  day's start of week", () => {
         const date = new Date('2018.04.12 12:45');
+        const monday = getMonday(date);
+        const expectedDay = new Day({ value: monday });
+
         const day = Day.createStartOfWeek(date);
-        const expectedDay = new Day({ value: new Date('2018.04.09 00:00') });
 
         expect(day).toEqual(expectedDay);
       });
@@ -16,12 +23,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
     context('when pass undefined', () => {
       it("return new inctance of Day, that represence  today's start of week", () => {
-        const date = new Date();
-        const curDayOfWeek = date.getDay();
-        const monday = new Date(
-          date.valueOf() - (curDayOfWeek - 1) * (24 * 60 * 60 * 1000)
-        );
-
+        const monday = getMonday(new Date());
         const expectedDay = new Day({ value: monday });
 
         expect(Day.createStartOfWeek()).toEqual(expectedDay);
@@ -49,8 +51,10 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass correct date', () => {
       it("return new inctance of Day, that represence  day's end of week", () => {
         const date = new Date('2018.04.12 12:45');
+        const sunday = getSunday(date);
+        const expectedDay = new Day({ value: sunday });
+
         const day = Day.createEndOfWeek(date);
-        const expectedDay = new Day({ value: new Date('2018.04.15 23:59:59') });
 
         expect(day).toEqual(expectedDay);
       });
@@ -60,11 +64,8 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       it("return new inctance of Day, that represence  today's end of week", () => {
         const date = new Date();
         const curDayOfWeek = date.getDay();
-        const sunday = new Date(
-          date.valueOf() + ((7 - curDayOfWeek) % 7) * (24 * 60 * 60 * 1000)
-        );
 
-        const expectedDay = new Day({ value: sunday });
+        const expectedDay = new Day({ value: getSunday(date) });
 
         expect(Day.createEndOfWeek()).toEqual(expectedDay);
       });

@@ -24,55 +24,44 @@ import { db } from './infra/database/models';
 const { database, models } = db;
 // import * as mappers from './infra/mappers';
 
-import { lowercaseFirstLetter } from './infra/support/changeCaseFirstLetter';
 import { containerMiddleware } from './interfaces/http/utils/bottle-express';
+import { lowercaseFirstLetter } from './infra/support/changeCaseFirstLetter';
 
 const bottle = new Bottle();
 
 bottle.constant('config', config);
 bottle.factory('app', (container) => new Application(container));
-bottle.constant('entities', entities);
-bottle.constant('commonTypes', commonTypes);
-bottle.factory('services.domain', (container) => {
-  return Object.keys(domainServices).reduce((acc, serviceName) => {
-    const service = new domainServices[serviceName](container);
-    return { ...acc, [serviceName]: service };
+bottle.factory('domain.entities', () => entities);
+bottle.factory('domain.commonTypes', () => commonTypes);
+bottle.factory('domain.services', (container) => {
+  return Object.keys(domainServices).reduce((acc, domainServiceName) => {
+    const domainService = new domainServices[domainServiceName](container);
+    return { ...acc, [domainServiceName]: domainService };
   }, {});
 });
 
-bottle.factory('repositories', ({ models, mappers, makeValidator }) => {
+bottle.factory('repositories', (container) => {
   const result = Object.keys(repositories).reduce((acc, repositoryName) => {
-    const repository = new Repository({ Model, mapper, makeValidator });
-    return { ...acc, [entityName]: repository };
+    const repository = new repositories[repositoryName](container);
+    return { ...acc, [repositoryName]: repository };
   }, {});
   return result;
 });
 
-bottle.factory(
-  'services.app',
-  ({ repositories, domainServices, entities, commonTypes }) => {
-    const result = Object.keys(services).reduce((acc, entityName) => {
-      const Operations = services[entityName];
-      const operations = Object.keys(Operations).reduce(
-        (acc, operationName) => {
-          const operation = new Operations[operationName]({
-            repositories,
-            domainServices,
-            entities,
-            commonTypes,
-          });
-          return {
-            ...acc,
-            [lowercaseFirstLetter(operationName)]: operation,
-          };
-        },
-        {}
-      );
-      return { ...acc, [entityName]: operations };
+bottle.factory('services', (container) => {
+  const result = Object.keys(services).reduce((acc, entityName) => {
+    const Operations = services[entityName];
+    const operations = Object.keys(Operations).reduce((acc, operationName) => {
+      const operation = new Operations[operationName](container);
+      return {
+        ...acc,
+        [lowercaseFirstLetter(operationName)]: operation,
+      };
     }, {});
-    return result;
-  }
-);
+    return { ...acc, [entityName]: operations };
+  }, {});
+  return result;
+});
 
 // Object.keys(services).forEach((entityName) => {
 //   const Operations = services[entityName];
@@ -110,13 +99,13 @@ bottle.constant('swaggerMiddleware', swaggerMiddleware);
 
 bottle.constant('database', database);
 bottle.constant('models', models);
-bottle.factory('mappers', ({ entities }) => {
-  const result = Object.keys(mappers).reduce((acc, mapperName) => {
-    const Entity = entities[mapperName];
-    const mapper = new mappers[mapperName](Entity);
-    return { ...acc, [mapperName]: mapper };
-  }, {});
-  return result;
-});
+// bottle.factory('mappers', ({ entities }) => {
+//   const result = Object.keys(mappers).reduce((acc, mapperName) => {
+//     const Entity = entities[mapperName];
+//     const mapper = new mappers[mapperName](Entity);
+//     return { ...acc, [mapperName]: mapper };
+//   }, {});
+//   return result;
+// });
 
 export const container = bottle.container;

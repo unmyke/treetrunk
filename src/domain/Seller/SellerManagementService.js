@@ -2,8 +2,6 @@ import { BaseService } from '../_lib/BaseClasses';
 import { Day } from '../_lib/ValueObjects';
 
 export class SellerManagementService extends BaseService {
-  getSellerById(sellerId) {}
-
   getSellerPost(seller, posts) {
     const postId = seller.getPostIdAt();
     const post = posts.find((p) => p.postId.equals(postId));

@@ -13,7 +13,7 @@ export class AddSellerAppointment extends Operation {
       const seller = sellerRepo.getById(sellerId);
 
       const postId = new PostId({ value: postIdValue });
-      seller.appointToPostId(postId, appointDate);
+      seller.addAppointment(postId, appointDate);
 
       const newSeller = await sellerRepo.save(seller);
 

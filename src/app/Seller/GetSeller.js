@@ -1,8 +1,8 @@
 import { Operation } from '../_lib/Operation';
 
-export class GetSellerById extends Operation {
+export class GetSeller extends Operation {
   async execute({ sellerId: sellerIdValue }) {
-    const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
+    const { SUCCESS, ERROR, NOT_FOUND } = this.outputs;
     const {
       commonTypes: { SellerId },
       repositories: {
@@ -15,7 +15,7 @@ export class GetSellerById extends Operation {
 
     try {
       const sellerId = new SellerId({ value: sellerIdValue });
-      const seller = sellerRepo.getById(sellerId);
+      const seller = await sellerRepo.getById(sellerId);
       const sellerDTO = {
         sellerId: sellerIdValue,
         lastName: seller.personName.lastName,
@@ -50,8 +50,8 @@ export class GetSellerById extends Operation {
 
       this.emit(SUCCESS, sellerDTO);
     } catch (error) {
-      if (error.message === 'ValidationError') {
-        return this.emit(VALIDATION_ERROR, error);
+      if (error.message === 'NOT_FOUND') {
+        return this.emit(NOT_FOUND, error);
       }
 
       this.emit(ERROR, error);
@@ -59,4 +59,4 @@ export class GetSellerById extends Operation {
   }
 }
 
-GetSellerById.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+GetSeller.setOutputs(['SUCCESS', 'ERROR', 'NOT_FOUND']);

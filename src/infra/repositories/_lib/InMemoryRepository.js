@@ -7,13 +7,25 @@ export class InMemoryRepository extends BaseRepository {
   store = [];
 
   async getById(id) {
-    return this.store.find((item) => item[this._idPropName(id)].equals(id));
+    const entity = this.store.find((item) =>
+      item[this._idPropName(id)].equals(id)
+    );
+
+    if (entity === undefined) {
+      throw new Error('NOT_FOUND');
+    }
+
+    return entity;
   }
 
   async getAll(props) {
     return this.store.reduce((acc, item) => {
-      return _compare(item, props) ? [...acc, item] : acc;
+      return this._compare(item, props) ? [...acc, item] : acc;
     }, []);
+  }
+
+  async getOne(props) {
+    return this.getAll(props)[0];
   }
 
   async add(entity) {
@@ -44,11 +56,11 @@ export class InMemoryRepository extends BaseRepository {
   }
 
   async _idPropName(id) {
-    return lowercaseFirstLetter(id.constuctor.name);
+    return lowercaseFirstLetter(id.constructor.name);
   }
 
   async _entityId(entity) {
-    return entity[lowercaseFirstLetter(`${entity.constuctor.name}Id`)];
+    return entity[lowercaseFirstLetter(`${entity.constructor.name}Id`)];
   }
 
   async _compare(entity, props) {

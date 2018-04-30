@@ -39,6 +39,15 @@ export class Seller extends BaseEntity {
     return this.personName.middleName;
   }
 
+  get recruitDay() {
+    const [firstAppointment] = this.appointments;
+    if (firstAppointment === undefined) {
+      return { value: undefined };
+    }
+
+    return firstAppointment.day;
+  }
+
   addAppointment(postId, day) {
     const previousPostId = this.getPostIdAt(day);
 
@@ -97,11 +106,6 @@ export class Seller extends BaseEntity {
   isRecruitedAt(day = new Date()) {
     const recruitDay = this.recruitDay;
     return !!recruitDay && recruitDay <= day;
-  }
-
-  get recruitDay() {
-    const [firstAppointment] = this.appointments;
-    return firstAppointment && firstAppointment.day;
   }
 }
 

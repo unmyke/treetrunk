@@ -52,10 +52,10 @@ bottle.factory('services', (container) => {
   const result = Object.keys(services).reduce((acc, entityName) => {
     const Operations = services[entityName];
     const operations = Object.keys(Operations).reduce((acc, operationName) => {
-      const operation = new Operations[operationName](container);
       return {
         ...acc,
-        [lowercaseFirstLetter(operationName)]: operation,
+        [lowercaseFirstLetter(operationName)]: () =>
+          new Operations[operationName](container),
       };
     }, {});
     return { ...acc, [entityName]: operations };

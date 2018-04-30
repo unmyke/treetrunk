@@ -1,6 +1,6 @@
 import { Operation } from '../_lib/Operation';
 
-export class CreateSeller extends Operation {
+export class UpdateSeller extends Operation {
   async execute({ lastName, firstName, middleName, phone }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
@@ -25,4 +25,4 @@ export class CreateSeller extends Operation {
   }
 }
 
-CreateSeller.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+UpdateSeller.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);

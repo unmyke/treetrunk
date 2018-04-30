@@ -8,30 +8,31 @@ const SellersController = {
 
     // router.use(inject('serializers.seller'));
 
-    router.get('/', injectService('services.getAllSellers'), this.index);
-    router.get('/:id', injectService('services.getSeller'), this.show);
-    router.post('/', injectService('services.createSeller'), this.create);
-    router.put('/:id', injectService('services.updateSeller'), this.update);
-    router.delete('/:id', injectService('services.deleteSeller'), this.delete);
+    router.get('/', injectService('Seller', 'getSellers'), this.index);
+    router.get('/:id', injectService('Seller', 'getSeller'), this.show);
+    router.post('/', injectService('Seller', 'createSeller'), this.create);
+    router.put('/:id', injectService('Seller', 'updateSeller'), this.update);
+    router.delete('/:id', injectService('Seller', 'deleteSeller'), this.delete);
 
     return router;
   },
 
   index(req, res, next) {
-    const { getAllSellers } = req;
-    const { SUCCESS, ERROR } = getAllSellers.outputs;
+    const { getSellers } = req;
+    const { SUCCESS, ERROR } = getSellers.outputs;
 
-    getAllSellers
+    getSellers
       .on(SUCCESS, (sellers) => {
         res.status(Status.OK).json(sellers);
       })
       .on(ERROR, next);
 
-    getAllSellers.execute();
+    getSellers.execute();
   },
 
   show(req, res, next) {
     const { getSeller } = req;
+    console.log(getSeller);
 
     const { SUCCESS, ERROR, NOT_FOUND } = getSeller.outputs;
 

@@ -12,9 +12,6 @@ export class Operation extends EventEmitter {
     domain: { services: domainServices, entities, commonTypes },
   }) {
     super();
-    console.log(domainServices);
-    console.log(entities);
-    console.log(commonTypes);
     this.repositories = repositories;
     this.domainServices = domainServices;
     this.entities = entities;

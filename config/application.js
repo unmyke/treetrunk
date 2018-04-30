@@ -1,5 +1,5 @@
 function define(Class, id) {
-  Class.defineProperty(Class, this.name, { value: id });
+  Object.defineProperty(Class, this.name, { value: id });
 }
 
 module.exports = {
@@ -8,12 +8,6 @@ module.exports = {
       name: 'quitPostId',
       ModelName: 'Post',
       values: { name: 'уволен(а)' },
-      callback: define,
-    },
-    {
-      name: 'superSellerId',
-      ModelName: 'Seller',
-      values: { firstName: 'Super Seller' },
       callback: define,
     },
   ],

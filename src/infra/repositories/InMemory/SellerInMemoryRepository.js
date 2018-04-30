@@ -1,6 +1,6 @@
-import { InMemoryRepository } from './_lib/InMemoryRepository';
+import { InMemoryRepository } from '../_lib/InMemoryRepository';
 
-export class PostInMemoryRepository extends InMemoryRepository {
+export class SellerInMemoryRepository extends InMemoryRepository {
   // appointments = [];
   // async add(seller) {
   //   const { sellerId, personName, phone, appointments } = seller;

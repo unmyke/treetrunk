@@ -3,13 +3,15 @@ export class Application {
     server,
     database,
     logger,
-    services: Initializer,
+    services: {
+      Initializer: { initializeApplication },
+    },
     config: { app: appConfig },
   }) {
     this.server = server;
     this.database = database;
     this.logger = logger;
-    this.Initializer = Initializer;
+    this.initializeApplication = initializeApplication();
     this.appConfig = appConfig;
 
     if (database && database.options.logging) {
@@ -21,14 +23,20 @@ export class Application {
       await this.database.authenticate();
     }
 
-    const { SUCCESS, ERROR } = this.Initializer.outputs;
+    const {
+      SUCCESS,
+      INITIALIZE_ERROR,
+      ERROR,
+    } = this.initializeApplication.outputs;
 
-    this.Initializer.on(SUCCESS, async () => {
-      await this.server.start();
-    }).on(INITIALIZE_ERROR, (error) => {
-      console.log('Can not initialize');
-    });
+    this.initializeApplication
+      .on(SUCCESS, async () => {
+        await this.server.start();
+      })
+      .on(INITIALIZE_ERROR, (error) => {
+        console.log('Can not initialize');
+      });
 
-    this.Initializer.execute();
+    this.initializeApplication.execute({ config: this.appConfig });
   }
 }

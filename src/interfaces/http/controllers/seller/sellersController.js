@@ -9,10 +9,23 @@ const SellersController = {
     // router.use(inject('serializers.seller'));
 
     router.get('/', injectService('Seller', 'getSellers'), this.index);
-    router.get('/:id', injectService('Seller', 'getSeller'), this.show);
+    router.get('/:sellerId', injectService('Seller', 'getSeller'), this.show);
     router.post('/', injectService('Seller', 'createSeller'), this.create);
-    router.put('/:id', injectService('Seller', 'updateSeller'), this.update);
-    router.delete('/:id', injectService('Seller', 'deleteSeller'), this.delete);
+    router.put(
+      '/:sellerId',
+      injectService('Seller', 'updateSeller'),
+      this.update
+    );
+    router.delete(
+      '/:sellerId',
+      injectService('Seller', 'deleteSeller'),
+      this.delete
+    );
+    router.post(
+      '/:sellerId/appointments',
+      injectService('Seller', 'createSellerAppointment'),
+      this.createAppointment
+    );
 
     return router;
   },
@@ -32,7 +45,6 @@ const SellersController = {
 
   show(req, res, next) {
     const { getSeller } = req;
-    console.log(getSeller);
 
     const { SUCCESS, ERROR, NOT_FOUND } = getSeller.outputs;
 
@@ -48,7 +60,8 @@ const SellersController = {
       })
       .on(ERROR, next);
 
-    getSeller.execute(Number(req.params.id));
+    console.log(req.params.sellerId);
+    getSeller.execute(req.params.sellerId);
   },
 
   create(req, res, next) {
@@ -97,7 +110,7 @@ const SellersController = {
       })
       .on(ERROR, next);
 
-    updateSeller.execute(Number(req.params.id), req.body);
+    updateSeller.execute(req.params.sellerId, req.body);
   },
 
   delete(req, res, next) {
@@ -116,7 +129,30 @@ const SellersController = {
       })
       .on(ERROR, next);
 
-    deleteSeller.execute(Number(req.params.id));
+    deleteSeller.execute(req.params.sellerId);
+  },
+
+  createAppointment(req, res, next) {
+    const { createSellerAppointment } = req;
+    const {
+      SUCCESS,
+      ERROR,
+      VALIDATION_ERROR,
+    } = createSellerAppointment.outputs;
+
+    createSellerAppointment
+      .on(SUCCESS, (seller) => {
+        res.status(Status.CREATED).json(seller);
+      })
+      .on(VALIDATION_ERROR, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'ValidationError',
+          details: error.details,
+        });
+      })
+      .on(ERROR, next);
+
+    createSellerAppointment.execute(req.params.sellerId, req.body);
   },
 };
 

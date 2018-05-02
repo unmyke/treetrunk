@@ -8,11 +8,26 @@ const PostsController = {
 
     // router.use(inject('serializers.post'));
 
-    router.get('/', injectService('Seller', 'getPosts'), this.index);
-    router.get('/:id', injectService('Seller', 'getPost'), this.show);
-    router.post('/', injectService('Seller', 'createPost'), this.create);
-    router.put('/:id', injectService('Seller', 'updatePost'), this.update);
-    router.delete('/:id', injectService('Seller', 'deletePost'), this.delete);
+    router.get('/', injectService('Post', 'getPosts'), this.index);
+    router.get('/:postId', injectService('Post', 'getPost'), this.show);
+    router.post('/', injectService('Post', 'createPost'), this.create);
+    router.put('/:postId', injectService('Post', 'updatePost'), this.update);
+    router.delete('/:postId', injectService('Post', 'deletePost'), this.delete);
+    router.post(
+      '/:postId/piecerates',
+      injectService('Post', 'createPostPieceRate'),
+      this.createPieceRate
+    );
+    router.put(
+      '/:postId/piecerates',
+      injectService('Post', 'updatePostPieceRate'),
+      this.updatePieceRate
+    );
+    router.delete(
+      '/:postId/piecerates',
+      injectService('Post', 'deletePostPieceRate'),
+      this.deletePieceRate
+    );
 
     return router;
   },
@@ -32,7 +47,6 @@ const PostsController = {
 
   show(req, res, next) {
     const { getPost } = req;
-    console.log(getPost);
 
     const { SUCCESS, ERROR, NOT_FOUND } = getPost.outputs;
 
@@ -48,7 +62,7 @@ const PostsController = {
       })
       .on(ERROR, next);
 
-    getPost.execute(Number(req.params.id));
+    getPost.execute(req.params.postId);
   },
 
   create(req, res, next) {
@@ -92,7 +106,7 @@ const PostsController = {
       })
       .on(ERROR, next);
 
-    updatePost.execute(Number(req.params.id), req.body);
+    updatePost.execute(req.params.postId, req.body);
   },
 
   delete(req, res, next) {
@@ -111,7 +125,75 @@ const PostsController = {
       })
       .on(ERROR, next);
 
-    deletePost.execute(Number(req.params.id));
+    deletePost.execute(req.params.postId);
+  },
+
+  createPieceRate(req, res, next) {
+    const { createPostPieceRate } = req;
+    const { SUCCESS, ERROR, VALIDATION_ERROR } = createPostPieceRate.outputs;
+
+    createPostPieceRate
+      .on(SUCCESS, (post) => {
+        res.status(Status.CREATED).json(post);
+      })
+      .on(VALIDATION_ERROR, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'ValidationError',
+          details: error.details,
+        });
+      })
+      .on(ERROR, next);
+
+    createPostPieceRate.execute(req.params.postId, req.body);
+  },
+
+  updatePieceRate(req, res, next) {
+    const { updatePostPieceRate } = req;
+    const {
+      SUCCESS,
+      ERROR,
+      VALIDATION_ERROR,
+      NOT_FOUND,
+    } = updatePostPieceRate.outputs;
+
+    updatePostPieceRate
+      .on(SUCCESS, (post) => {
+        res.status(Status.ACCEPTED).json(post);
+      })
+      .on(VALIDATION_ERROR, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'ValidationError',
+          details: error.details,
+        });
+      })
+      .on(NOT_FOUND, (error) => {
+        res.status(Status.NOT_FOUND).json({
+          type: 'NotFoundError',
+          details: error.details,
+        });
+      })
+      .on(ERROR, next);
+
+    updatePostPieceRate.execute(req.params.postId, req.body);
+  },
+
+  deletePieceRate(req, res, next) {
+    const { deletePostPieceRate } = req;
+    const { SUCCESS, ERROR, NOT_FOUND } = deletePostPieceRate.outputs;
+
+    deletePostPieceRate
+      .on(SUCCESS, () => {
+        res.status(Status.ACCEPTED).end();
+      })
+      .on(NOT_FOUND, (error) => {
+        res.status(Status.NOT_FOUND).json({
+          type: 'NotFoundError',
+          details: error.details,
+        });
+      })
+      .on(ERROR, next);
+
+    deletePostPieceRate.execute(req.params.postId), req.body;
   },
 };
 

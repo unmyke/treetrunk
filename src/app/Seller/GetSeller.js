@@ -1,7 +1,7 @@
 import { Operation } from '../_lib/Operation';
 
 export class GetSeller extends Operation {
-  async execute({ sellerId: sellerIdValue }) {
+  async execute(sellerIdValue) {
     const { SUCCESS, ERROR, NOT_FOUND } = this.outputs;
     const {
       commonTypes: { SellerId },
@@ -23,14 +23,16 @@ export class GetSeller extends Operation {
         middleName: seller.personName.middleName,
       };
 
-      const appointmentsDTO = seller.appointments.map(({ postId, day }) => {
-        const { name: postName } = postRepo.getById(postId.value);
-        return {
-          postId: postId.value,
-          postName,
-          date: day.value,
-        };
-      });
+      const appointmentsDTO = seller.appointments.map(
+        async ({ postId, day }) => {
+          const { name: postName } = await postRepo.getById(postId.value);
+          return {
+            postId: postId.value,
+            postName,
+            date: day.value,
+          };
+        }
+      );
       sellerDTO.appointments = appointmentsDTO;
 
       // const workshifts = workshiftRepo.getBySellerId(sellerId);

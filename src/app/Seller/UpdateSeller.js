@@ -1,20 +1,23 @@
 import { Operation } from '../_lib/Operation';
 
 export class UpdateSeller extends Operation {
-  async execute({ lastName, firstName, middleName, phone }) {
+  async execute(sellerIdValue, { lastName, firstName, middleName, phone }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
       repositories: { Seller: sellerRepo },
       entities: { Seller },
-      commonTypes: { PostId },
+      commonTypes: { SellerId },
     } = this;
 
     try {
-      const seller = new Seller({ lastName, firstName, middleName, phone });
+      const sellerId = new SellerId({ value: sellerIdValue });
+      const seller = await sellerRepo.getById(sellerId);
 
-      const newSeller = await sellerRepo.add(seller);
+      seller.update({ lastName, firstName, middleName, phone });
 
-      this.emit(SUCCESS, newSeller);
+      const updatedSeller = await sellerRepo.save(seller);
+
+      this.emit(SUCCESS, updatedSeller);
     } catch (error) {
       if (error.message === 'ValidationError') {
         return this.emit(VALIDATION_ERROR, error);

@@ -6,10 +6,20 @@ import { lowercaseFirstLetter } from 'src/infra/support/changeCaseFirstLetter';
 export class InMemoryRepository extends BaseRepository {
   store = [];
 
+  async getAll(props) {
+    return this.store.reduce((acc, item) => {
+      return this._compare(item, props) ? [...acc, item] : acc;
+    }, []);
+  }
+
+  async getOne(props) {
+    return await this.getAll(props)[0];
+  }
+
   async getById(id) {
-    const entity = this.store.find((item) =>
-      item[this._idPropName(id)].equals(id)
-    );
+    const entity = this.store.find((item) => {
+      return id.equals(item[this._idPropName(id)]);
+    });
 
     if (entity === undefined) {
       throw new Error('NOT_FOUND');
@@ -18,18 +28,19 @@ export class InMemoryRepository extends BaseRepository {
     return entity;
   }
 
-  async getAll(props) {
-    return this.store.reduce((acc, item) => {
-      return this._compare(item, props) ? [...acc, item] : acc;
-    }, []);
-  }
+  async getByIds(ids) {
+    const entity = this.store.find((item) => {
+      return ids.map((id) => this.getById(id));
+    });
 
-  async getOne(props) {
-    return this.getAll(props)[0];
+    if (entity === undefined) {
+      throw new Error('NOT_FOUND');
+    }
+
+    return entity;
   }
 
   async add(entity) {
-    const entityId = this._entityId(entity);
     this.store.push(entity);
     return entity;
   }
@@ -47,7 +58,7 @@ export class InMemoryRepository extends BaseRepository {
 
   async remove(id) {
     this.store = this.store.filter(
-      (item) => !item[this._idPropName(id)].equals(id)
+      (item) => !id.equals(item[this._idPropName(id)])
     );
   }
 
@@ -55,16 +66,17 @@ export class InMemoryRepository extends BaseRepository {
     return this.getAll(props).length;
   }
 
-  async _idPropName(id) {
+  _idPropName(id) {
     return lowercaseFirstLetter(id.constructor.name);
   }
 
-  async _entityId(entity) {
-    return entity[lowercaseFirstLetter(`${entity.constructor.name}Id`)];
+  _entityId(entity) {
+    const id = entity[lowercaseFirstLetter(`${entity.constructor.name}Id`)];
+    return id;
   }
 
-  async _compare(entity, props) {
-    Object.keys(props).reduce((isEquals, key) => {
+  _compare(entity, props) {
+    return Object.keys(props).reduce((isEquals, key) => {
       return isEquals && props[key] === entity[key];
     }, true);
   }

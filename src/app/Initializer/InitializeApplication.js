@@ -17,11 +17,9 @@ export class InitializeApplication extends Operation {
 
         let model;
 
-        await repo.getOne({ where: values }).then((v) => {
-          model = v;
-        });
+        model = await repo.getOne({ where: values });
 
-        if (!model) {
+        if (model === undefined) {
           const newModel = new Entity(values);
           model = await repo.add(newModel);
         }

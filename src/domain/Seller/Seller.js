@@ -48,6 +48,10 @@ export class Seller extends BaseEntity {
     return firstAppointment.day;
   }
 
+  get postIds() {
+    return [...new Set(...this.appointments.map(({ postId }) => postId))];
+  }
+
   addAppointment(postId, day) {
     const previousPostId = this.getPostIdAt(day);
 

@@ -14,9 +14,17 @@ export class GetSellers extends Operation {
 
     try {
       const sellers = await sellerRepo.getAll(props);
-      const seniorityTypes = seniorityTypeRepo.getAll();
+      const seniorityTypes = await seniorityTypeRepo.getAll();
+      const postIds = [
+        ...sellers.reduce(
+          (postIdsSet, seller) => new Set([...postIdsSet, ...seller.postIds]),
+          new Set()
+        ),
+      ];
+      const posts = await postRepo.getByIds(postIds);
+      console.log(posts);
 
-      const sellersDTO = sellers.map((seller) => {
+      const sellersDTO = sellers.map(async (seller) => {
         const {
           sellerId: { value: sellerId },
           fullName,
@@ -32,13 +40,13 @@ export class GetSellers extends Operation {
         };
 
         const postId = seller.getPostIdAt();
+        const {
+          name,
+          currentPieceRate,
+        } = sellerManagementService.getSellerPost(seller, posts);
 
-        if (postId) {
-          const post = postRepo.getById(seller.getPostIdAt());
-          const { name, currentPieceRate } = post;
-          sellerDTO.postName = name;
-          sellerDTO.currentPieceRate = currentPieceRate;
-        }
+        sellerDTO.postName = name;
+        sellerDTO.currentPieceRate = currentPieceRate;
 
         const seniorityType = sellerManagementService.getSellerSeniorityType(
           seller,

@@ -3,6 +3,9 @@ import { Day } from '../_lib/ValueObjects';
 
 export class SellerManagementService extends BaseService {
   getSellerPost(seller, posts) {
+    if (!posts) {
+      return [];
+    }
     const postId = seller.getPostIdAt();
     const post = posts.find((p) => p.postId.equals(postId));
   }

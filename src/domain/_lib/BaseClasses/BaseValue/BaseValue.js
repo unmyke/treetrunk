@@ -11,7 +11,7 @@ export class BaseValue {
       return true;
     }
 
-    if (value.constructor !== this.constructor) {
+    if (value === undefined || value.constructor !== this.constructor) {
       return false;
     }
 

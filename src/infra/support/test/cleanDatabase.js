@@ -5,17 +5,17 @@ export const cleanDatabase = () => {
   if (database) {
     return database
       .query('SET FOREIGN_KEY_CHECKS = 0')
-      .then(function() {
+      .then(() => {
         return database.sync({ force: true });
       })
-      .then(function() {
+      .then(() => {
         return database.query('SET FOREIGN_KEY_CHECKS = 1');
       })
       .then(
-        function() {
+        () => {
           console.log('Database synchronised.');
         },
-        function(err) {
+        (err) => {
           console.log(err);
         }
       );

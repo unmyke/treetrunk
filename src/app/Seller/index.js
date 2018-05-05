@@ -1,6 +1,6 @@
-import { CreateSeller } from './CreateSeller';
-import { AddSellerAppointment } from './AddSellerAppointment';
-import { GetSellerById } from './GetSellerById';
 import { GetSellers } from './GetSellers';
+import { GetSeller } from './GetSeller';
+import { CreateSeller } from './CreateSeller';
+import { CreateSellerAppointment } from './CreateSellerAppointment';
 
-export { CreateSeller, AddSellerAppointment, GetSellerById, GetSellers };
+export { GetSellers, GetSeller, CreateSeller, CreateSellerAppointment };

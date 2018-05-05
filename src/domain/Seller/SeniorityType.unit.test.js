@@ -24,7 +24,7 @@ describe('Domain :: entities :: SeniorityType', () => {
   });
 
   describe('#constructor', () => {
-    it('should be instance of SeniorityType', () => {
+    test('should be instance of SeniorityType', () => {
       expect(seniorityType).toBeInstanceOf(SeniorityType);
       expect(seniorityType.seniorityTypeId).toBeInstanceOf(SeniorityTypeId);
       expect(seniorityType.name).toBe(name);
@@ -32,14 +32,14 @@ describe('Domain :: entities :: SeniorityType', () => {
       expect(seniorityType.awards).toHaveLength(0);
     });
 
-    it('should have no award', () => {
+    test('should have no award', () => {
       expect(seniorityType.getAwardAt()).toBeUndefined();
     });
   });
 
   describe('#addAward', () => {
     context('when add one award value', () => {
-      it('should have awards length equal 1', () => {
+      test('should have awards length equal 1', () => {
         seniorityType.addAward(award1value, award1day);
 
         expect(seniorityType.awards).toHaveLength(1);
@@ -47,7 +47,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     });
 
     context('when add same award twice a day', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         seniorityType.addAward(award1value, award1day);
 
         try {
@@ -60,7 +60,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     });
 
     context('when add same award another day after', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         seniorityType.addAward(award1value, award1day);
 
         try {
@@ -81,7 +81,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     });
 
     context('when requested before any award added to seniorityType', () => {
-      it('should return undefined', () => {
+      test('should return undefined', () => {
         expect(seniorityType.getAwardAt(award1day.subDays(1))).toBeUndefined();
       });
     });
@@ -110,7 +110,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     });
 
     context('when delete existing award', () => {
-      it('should decrease awards length', () => {
+      test('should decrease awards length', () => {
         expect(seniorityType.awards).toHaveLength(3);
 
         seniorityType.deleteAward(award3value, award3day);
@@ -120,7 +120,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     });
 
     context('when delete seniorityType twice', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         seniorityType.deleteAward(award3value, award3day);
 
         try {
@@ -139,7 +139,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     });
 
     context('when appointment has created with wrong award', () => {
-      it('should change associated award', () => {
+      test('should change associated award', () => {
         seniorityType.editAward(award1value, award1day, award2value, award1day);
 
         expect(seniorityType.awards[0].day).toEqual(
@@ -150,7 +150,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     });
 
     context('when award has created with wrong date', () => {
-      it('should change associated date', () => {
+      test('should change associated date', () => {
         seniorityType.editAward(award1value, award1day, award1value, award2day);
         expect(seniorityType.awards).toHaveLength(1);
         expect(seniorityType.getAwardAt(award1day)).toEqual(undefined);

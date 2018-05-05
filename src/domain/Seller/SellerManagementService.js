@@ -2,16 +2,17 @@ import { BaseService } from '../_lib/BaseClasses';
 import { Day } from '../_lib/ValueObjects';
 
 export class SellerManagementService extends BaseService {
-  getSellerById(sellerId) {}
-
   getSellerPost(seller, posts) {
+    if (!posts) {
+      return [];
+    }
     const postId = seller.getPostIdAt();
     const post = posts.find((p) => p.postId.equals(postId));
   }
 
-  getSeniorityType(seller, seniorityTypes) {
+  getSellerSeniorityType(seller, seniorityTypes) {
     if (seniorityTypes.length === 0) {
-      retun;
+      return;
     }
 
     const seniority = seller.seniorityAt();

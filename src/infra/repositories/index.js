@@ -1,3 +1,3 @@
-import { SellerSequelizeRepository as Seller } from './SellerSequelizeRepository';
+import { Seller, Post, SeniorityType } from './InMemory';
 
-export { Seller };
+export { Seller, Post, SeniorityType };

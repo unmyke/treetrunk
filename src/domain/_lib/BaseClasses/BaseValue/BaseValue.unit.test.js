@@ -26,7 +26,7 @@ class AnotherConcreteValue extends BaseValue {
 
 describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
   context('when two instance reference to same object', () => {
-    it('should be equal', () => {
+    test('should be equal', () => {
       const valueObject = new BaseValue();
       const sameValueObject = valueObject;
 
@@ -35,7 +35,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
   });
 
   context('when two instance of same class have equals attributes', () => {
-    it('should be equal', () => {
+    test('should be equal', () => {
       const valueObject = new ConcreteValue(props);
       const equalValueObject = new ConcreteValue(props);
 
@@ -87,7 +87,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
     const anotherValueObj = new ConcreteValue(anotherProps);
 
     context('equal', () => {
-      it('should be equal', () => {
+      test('should be equal', () => {
         const valueObject1 = new CompositeValue({ ...props, valueObj });
         const valueObject2 = new CompositeValue({ ...props, valueObj });
 
@@ -96,7 +96,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
     });
 
     context('not equal', () => {
-      it('should not be equal', () => {
+      test('should not be equal', () => {
         const valueObject1 = new CompositeValue({ ...props, valueObj });
         const valueObject2 = new CompositeValue({
           ...props,

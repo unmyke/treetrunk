@@ -2,13 +2,20 @@ import { Day } from '.';
 
 const { errorNotADate, errorNotADay, errorNotANumber } = Day;
 
+const getMonday = (date) =>
+  new Date(date.valueOf() - ((date.getDay() + 6) % 7) * (24 * 60 * 60 * 1000));
+const getSunday = (date) =>
+  new Date(date.valueOf() + ((7 - date.getDay()) % 7) * (24 * 60 * 60 * 1000));
+
 describe('Domain :: lib :: valueObjects :: Day', () => {
   describe('Day#createStartOfWeek', () => {
     context('when pass correct date', () => {
       it("return new inctance of Day, that represence  day's start of week", () => {
         const date = new Date('2018.04.12 12:45');
+        const monday = getMonday(date);
+        const expectedDay = new Day({ value: monday });
+
         const day = Day.createStartOfWeek(date);
-        const expectedDay = new Day({ value: new Date('2018.04.09 00:00') });
 
         expect(day).toEqual(expectedDay);
       });
@@ -16,12 +23,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
     context('when pass undefined', () => {
       it("return new inctance of Day, that represence  today's start of week", () => {
-        const date = new Date();
-        const curDayOfWeek = date.getDay();
-        const monday = new Date(
-          date.valueOf() - (curDayOfWeek - 1) * (24 * 60 * 60 * 1000)
-        );
-
+        const monday = getMonday(new Date());
         const expectedDay = new Day({ value: monday });
 
         expect(Day.createStartOfWeek()).toEqual(expectedDay);
@@ -29,7 +31,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass incorrect date', () => {
-      it('throw exeption', () => {
+      test('throw exeption', () => {
         expect(() => Day.createStartOfWeek(new Date('Incorrect Date'))).toThrow(
           errorNotADate
         );
@@ -37,7 +39,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass not a date', () => {
-      it('throw exeption', () => {
+      test('throw exeption', () => {
         expect(() => Day.createStartOfWeek('Incorrect input')).toThrow(
           errorNotADate
         );
@@ -49,8 +51,10 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass correct date', () => {
       it("return new inctance of Day, that represence  day's end of week", () => {
         const date = new Date('2018.04.12 12:45');
+        const sunday = getSunday(date);
+        const expectedDay = new Day({ value: sunday });
+
         const day = Day.createEndOfWeek(date);
-        const expectedDay = new Day({ value: new Date('2018.04.15 23:59:59') });
 
         expect(day).toEqual(expectedDay);
       });
@@ -60,18 +64,15 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       it("return new inctance of Day, that represence  today's end of week", () => {
         const date = new Date();
         const curDayOfWeek = date.getDay();
-        const sunday = new Date(
-          date.valueOf() + ((7 - curDayOfWeek) % 7) * (24 * 60 * 60 * 1000)
-        );
 
-        const expectedDay = new Day({ value: sunday });
+        const expectedDay = new Day({ value: getSunday(date) });
 
         expect(Day.createEndOfWeek()).toEqual(expectedDay);
       });
     });
 
     context('when pass incorrect date', () => {
-      it('throw exeption', () => {
+      test('throw exeption', () => {
         expect(() => Day.createEndOfWeek(new Date('Incorrect Date'))).toThrow(
           errorNotADate
         );
@@ -79,7 +80,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass not a date', () => {
-      it('throw exeption', () => {
+      test('throw exeption', () => {
         expect(() => Day.createEndOfWeek('Incorrect input')).toThrow(
           errorNotADate
         );
@@ -95,7 +96,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     const undefinedDateParam = { value: undefined };
 
     context('when construct with no param', () => {
-      it('should be true', () => {
+      test('should be true', () => {
         const day = new Day();
 
         expect(day.isValid()).toBeTruthy();
@@ -103,7 +104,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when construct with date', () => {
-      it('should be true', () => {
+      test('should be true', () => {
         const day = new Day(correctDateParam);
 
         expect(day.isValid()).toBeTruthy();
@@ -111,15 +112,23 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when construct with empty param', () => {
-      it('should be false', () => {
+      test('should be false', () => {
         const day = new Day(emptyParam);
 
         expect(day.isValid()).toBeFalsy();
       });
     });
 
+    context('when construct with inccorect param', () => {
+      test('should be false', () => {
+        const day = new Day(incorrectParam);
+
+        expect(day.isValid()).toBeFalsy();
+      });
+    });
+
     context('when construct with undefined date param', () => {
-      it('should be false', () => {
+      test('should be false', () => {
         const day = new Day(undefinedDateParam);
 
         expect(day.isValid()).toBeFalsy();
@@ -127,7 +136,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when construct with incorrect date param', () => {
-      it('should be false', () => {
+      test('should be false', () => {
         const day = new Day(incorrectDateParam);
 
         expect(day.isValid()).toBeFalsy();
@@ -140,15 +149,13 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     const day = new Day({ value });
 
     context('when two days is the same day', () => {
-      it('return true', () => {
-        const equalDay = new Day({ value });
-
+      test('return true', () => {
         expect(day.equals(day)).toBeTruthy();
       });
     });
 
     context('when two days constructed same date', () => {
-      it('return true', () => {
+      test('return true', () => {
         const equalDay = new Day({ value });
 
         expect(day.equals(equalDay)).toBeTruthy();
@@ -156,7 +163,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when two days constructed same day, but diiferent time', () => {
-      it('return true', () => {
+      test('return true', () => {
         const anotherValue = new Date(2017, 2, 10, 23, 59, 59, 999);
         const equalDay = new Day({ value: anotherValue });
 
@@ -165,7 +172,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when two days constructed different dates', () => {
-      it('return false', () => {
+      test('return false', () => {
         const anotherValue = new Date(2017, 2, 9, 23, 59, 59, 999);
         const notEqualDay = new Day({ value: anotherValue });
 
@@ -174,7 +181,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when second day is not valid day', () => {
-      it('return false', () => {
+      test('return false', () => {
         const anotherValue = new Date('Invalid Date');
         const notEqualDay = new Day({ value: anotherValue });
 
@@ -183,7 +190,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when second day is not Day instance', () => {
-      it('return false', () => {
+      test('return false', () => {
         const anotherValue = new Date('Invalid Date');
 
         expect(day.equals(anotherValue)).toBeFalsy();
@@ -196,19 +203,19 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     const day = new Day({ value });
 
     context('when pass same date', () => {
-      it('return true', () => {
+      test('return true', () => {
         expect(day.contains(value)).toBeTruthy();
       });
     });
 
     context('when pass start Of date', () => {
-      it('return true', () => {
+      test('return true', () => {
         expect(day.contains(new Date(2017, 2, 10, 0, 0, 0, 0))).toBeTruthy();
       });
     });
 
     context('when pass end Of date', () => {
-      it('return true', () => {
+      test('return true', () => {
         expect(
           day.contains(new Date(2017, 2, 10, 23, 59, 59, 999))
         ).toBeTruthy();
@@ -216,31 +223,31 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass next date', () => {
-      it('return false', () => {
+      test('return false', () => {
         expect(day.contains(new Date(2017, 2, 11, 0, 0, 0, 0))).toBeFalsy();
       });
     });
 
     context('when pass previous date', () => {
-      it('return false', () => {
+      test('return false', () => {
         expect(day.contains(new Date(2017, 2, 9, 23, 59, 59, 999))).toBeFalsy();
       });
     });
 
     context('when pass not date', () => {
-      it('throw error', () => {
+      test('throw error', () => {
         expect(() => day.contains('')).toThrow();
       });
     });
 
     context('when pass undefined', () => {
-      it('throw error', () => {
+      test('throw error', () => {
         expect(() => day.contains('')).toThrow();
       });
     });
 
     context('when pass incorect date', () => {
-      it('throw error', () => {
+      test('throw error', () => {
         expect(() => day.contains(new Date('Invalid Date'))).toThrow();
       });
     });
@@ -251,7 +258,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     const day = new Day({ value });
 
     context('when add undefined', () => {
-      it('return new Day instance of same day', () => {
+      test('return new Day instance of same day', () => {
         const addedValue = new Date(2017, 0, 1, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -260,13 +267,13 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when add not a day', () => {
-      it('throw error', () => {
+      test('throw error', () => {
         expect(() => day.addDays('incorrect input')).toThrow(errorNotANumber);
       });
     });
 
     context('when add 0', () => {
-      it('return new Day instance of same day', () => {
+      test('return new Day instance of same day', () => {
         const addedValue = new Date(2017, 0, 1, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -275,7 +282,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when add 1', () => {
-      it('return new Day instance of next day', () => {
+      test('return new Day instance of next day', () => {
         const addedValue = new Date(2017, 0, 2, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -284,7 +291,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when add -1', () => {
-      it('return new Day instance of previous day', () => {
+      test('return new Day instance of previous day', () => {
         const addedValue = new Date(2017, 0, 0, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -293,7 +300,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when add 15', () => {
-      it('return new Day instance of 15 days later day', () => {
+      test('return new Day instance of 15 days later day', () => {
         const addedValue = new Date(2017, 0, 16, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -307,7 +314,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     const day = new Day({ value });
 
     context('when sub undefined', () => {
-      it('return new Day instance of same day', () => {
+      test('return new Day instance of same day', () => {
         const addedValue = new Date(2017, 0, 16, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -316,13 +323,13 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when sub not a day', () => {
-      it('throw error', () => {
+      test('throw error', () => {
         expect(() => day.subDays('incorrect input')).toThrow(errorNotANumber);
       });
     });
 
     context('when sub 0', () => {
-      it('return new Day instance of same day', () => {
+      test('return new Day instance of same day', () => {
         const addedValue = new Date(2017, 0, 16, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -331,7 +338,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when sub 1', () => {
-      it('return new Day instance of next day', () => {
+      test('return new Day instance of next day', () => {
         const addedValue = new Date(2017, 0, 15, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -340,7 +347,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when sub -1', () => {
-      it('return new Day instance of previous day', () => {
+      test('return new Day instance of previous day', () => {
         const addedValue = new Date(2017, 0, 17, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -349,7 +356,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when sub 15', () => {
-      it('return new Day instance of 15 days later day', () => {
+      test('return new Day instance of 15 days later day', () => {
         const addedValue = new Date(2017, 0, 1, 0, 0, 0, 4);
         const expectedDay = new Day({ value: addedValue });
 
@@ -363,19 +370,19 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     const today = new Day({ value });
 
     context('when passed right day is not a day', () => {
-      it('throw error', () => {
+      test('throw error', () => {
         expect(() => today.difference('incorrect input')).toThrow(errorNotADay);
       });
     });
 
     context('when passed days are the same day', () => {
-      it('return 0', () => {
+      test('return 0', () => {
         expect(today.difference(today)).toBe(0);
       });
     });
 
     context('when pass another instance of same day', () => {
-      it('return 0', () => {
+      test('return 0', () => {
         const addedValue = new Date();
         const sameDay = new Day({ value: addedValue });
 
@@ -384,7 +391,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass left day is next day of right date', () => {
-      it('return 1', () => {
+      test('return 1', () => {
         const yesterdayDay = today.subDays(1);
 
         expect(today.difference(yesterdayDay)).toBe(1);
@@ -392,7 +399,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass right day is next day of left date', () => {
-      it('return -1', () => {
+      test('return -1', () => {
         const yesterdayDay = today.subDays(1);
 
         expect(yesterdayDay.difference(today)).toBe(-1);
@@ -400,7 +407,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass right day is 15 days after left date', () => {
-      it('return 15', () => {
+      test('return 15', () => {
         const earlyDay = today.subDays(15);
 
         expect(today.difference(earlyDay)).toBe(15);
@@ -413,7 +420,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     const day = new Day({ value });
 
     context('when passed day is not a day', () => {
-      it('throw error', () => {
+      test('throw error', () => {
         expect(() => day.differenceInMonths('incorrect input')).toThrow(
           errorNotADay
         );
@@ -421,7 +428,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when passed day is incorrect day', () => {
-      it('throw error', () => {
+      test('throw error', () => {
         expect(() =>
           day.differenceInMonths(new Day({ value: new Date('Incorrect date') }))
         ).toThrow(errorNotADay);
@@ -429,13 +436,13 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when passed days are the same day', () => {
-      it('return 0', () => {
+      test('return 0', () => {
         expect(day.differenceInMonths(day)).toBe(0);
       });
     });
 
     context('when pass another instance of same day', () => {
-      it('return 0', () => {
+      test('return 0', () => {
         const sameValue = new Date('2018-03-01 07:16:59 GMT+0800 (+08)');
         const sameDay = new Day({ value: sameValue });
 
@@ -444,7 +451,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass next month date', () => {
-      it('return -1', () => {
+      test('return -1', () => {
         const nextMonthDayValue = new Date(
           '2018-04-01 07:16:59 GMT+0800 (+08)'
         );
@@ -455,7 +462,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass month of left date', () => {
-      it('return 1', () => {
+      test('return 1', () => {
         const prevMonthDayValue = new Date(
           '2018-02-01 07:16:59 GMT+0800 (+08)'
         );
@@ -466,7 +473,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass end of current month', () => {
-      it('return 0', () => {
+      test('return 0', () => {
         const nextMonthDayValue = new Date(
           '2018-03-30 23:59:59 GMT+0800 (+08)'
         );
@@ -479,7 +486,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context(
       'when pass previous month day, but difference less one month',
       () => {
-        it('return 0', () => {
+        test('return 0', () => {
           const prevMonthDayValue = new Date(
             '2018-02-02 00:00:00 GMT+0800 (+08)'
           );
@@ -491,7 +498,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     );
 
     context('when pass day 7 months before', () => {
-      it('return 7', () => {
+      test('return 7', () => {
         const beforeMonthsDayValue = new Date(
           '2017-08-01 07:16:59 GMT+0800 (+08)'
         );
@@ -504,7 +511,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
   describe('#isValidDay', () => {
     context('when pass correct day', () => {
-      it('return true', () => {
+      test('return true', () => {
         const day = new Day({ value: new Date() });
 
         expect(day.isValid()).toBeTruthy();
@@ -513,7 +520,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
     context('when pass incorrect day', () => {
       context('when pass day with incorrect value', () => {
-        it('return false', () => {
+        test('return false', () => {
           const day = new Day({ value: '' });
 
           expect(day.isValid()).toBeFalsy();
@@ -521,7 +528,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       });
 
       context('when pass day with incorrect date', () => {
-        it('return false', () => {
+        test('return false', () => {
           const day = new Day({ value: new Date('') });
 
           expect(day.isValid()).toBeFalsy();
@@ -532,7 +539,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
   describe('#format', () => {
     context('when pass correct day without format', () => {
-      it('return default date format', () => {
+      test('return default date format', () => {
         const value = new Date('2018-03-08 23:59:59 GMT+0800');
         const day = new Day({ value });
 
@@ -541,7 +548,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass correct day with format', () => {
-      it('return formated date', () => {
+      test('return formated date', () => {
         const value = new Date('2015-12-21 00:00:00 GMT+0800');
         const formatString = 'DD MMMM YYYY';
         const day = new Day({ value });
@@ -552,7 +559,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
     context('when pass incorrect day', () => {
       context('when pass day with incorrect value', () => {
-        it('return NaD error name', () => {
+        test('return NaD error name', () => {
           const day = new Day({ value: '' });
 
           expect(day.format()).toBe(errorNotADay.details[0]);
@@ -560,7 +567,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       });
 
       context('when pass day with incorrect date', () => {
-        it('return NaD error name', () => {
+        test('return NaD error name', () => {
           const day = new Day({ value: new Date('') });
 
           expect(day.format()).toBe(errorNotADay.details[0]);

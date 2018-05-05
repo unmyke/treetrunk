@@ -1,6 +1,6 @@
 'use strict';
 export default (sequelize, DataTypes) => {
-  var Post = sequelize.define(
+  let Post = sequelize.define(
     'post',
     {
       postId: {

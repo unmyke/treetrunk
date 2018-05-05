@@ -1,27 +1,18 @@
 import { Operation } from '../_lib/Operation';
 
 export class CreateSeller extends Operation {
-  async execute({
-    surname,
-    firstName,
-    middleName,
-    phone,
-    postId,
-    appointDate,
-  }) {
+  async execute({ lastName, firstName, middleName, phone }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
-      repositories: { Seller: repo },
+      repositories: { Seller: sellerRepo },
       entities: { Seller },
       commonTypes: { PostId },
     } = this;
 
-    const seller = new Seller({ surname, firstName, middleName, phone });
-    const postIdObj = new PostId({ id: postId });
-    seller.appointToPostId(postIdObj, appointDate);
-
     try {
-      const newSeller = await repo.add(seller);
+      const seller = new Seller({ lastName, firstName, middleName, phone });
+
+      const newSeller = await sellerRepo.add(seller);
 
       this.emit(SUCCESS, newSeller);
     } catch (error) {

@@ -1,6 +1,6 @@
 'use strict';
 export default (sequelize, DataTypes) => {
-  var PostPieceRate = sequelize.define(
+  let PostPieceRate = sequelize.define(
     'postPieceRate',
     {
       value: {

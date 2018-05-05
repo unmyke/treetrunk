@@ -1,8 +1,8 @@
 import { Operation } from '../_lib/Operation';
 
-export class GetSellerById extends Operation {
-  async execute({ sellerId: sellerIdValue }) {
-    const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
+export class GetSeller extends Operation {
+  async execute(sellerIdValue) {
+    const { SUCCESS, ERROR, NOT_FOUND } = this.outputs;
     const {
       commonTypes: { SellerId },
       repositories: {
@@ -15,22 +15,24 @@ export class GetSellerById extends Operation {
 
     try {
       const sellerId = new SellerId({ value: sellerIdValue });
-      const seller = sellerRepo.getById(sellerId);
+      const seller = await sellerRepo.getById(sellerId);
       const sellerDTO = {
         sellerId: sellerIdValue,
-        surname: seller.personName.surname,
+        lastName: seller.personName.lastName,
         firstName: seller.personName.firstName,
         middleName: seller.personName.middleName,
       };
 
-      const appointmentsDTO = seller.appointments.map(({ postId, day }) => {
-        const { name: postName } = postRepo.getById(postId.value);
-        return {
-          postId: postId.value,
-          postName,
-          date: day.value,
-        };
-      });
+      const appointmentsDTO = seller.appointments.map(
+        async ({ postId, day }) => {
+          const { name: postName } = await postRepo.getById(postId.value);
+          return {
+            postId: postId.value,
+            postName,
+            date: day.value,
+          };
+        }
+      );
       sellerDTO.appointments = appointmentsDTO;
 
       // const workshifts = workshiftRepo.getBySellerId(sellerId);
@@ -50,8 +52,8 @@ export class GetSellerById extends Operation {
 
       this.emit(SUCCESS, sellerDTO);
     } catch (error) {
-      if (error.message === 'ValidationError') {
-        return this.emit(VALIDATION_ERROR, error);
+      if (error.message === 'NOT_FOUND') {
+        return this.emit(NOT_FOUND, error);
       }
 
       this.emit(ERROR, error);
@@ -59,4 +61,4 @@ export class GetSellerById extends Operation {
   }
 }
 
-GetSellerById.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+GetSeller.setOutputs(['SUCCESS', 'ERROR', 'NOT_FOUND']);

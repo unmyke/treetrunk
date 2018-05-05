@@ -8,7 +8,7 @@ import {
   SellerManagementService,
 } from './Seller';
 
-import { Day } from './_lib/ValueObjects';
+import { Day, DayRange } from './_lib/ValueObjects';
 
 export const entities = {
   Seller,
@@ -21,6 +21,7 @@ export const commonTypes = {
   PostId,
   SeniorityTypeId,
   Day,
+  DayRange,
 };
 
 export const services = {

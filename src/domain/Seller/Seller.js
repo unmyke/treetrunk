@@ -4,6 +4,7 @@ import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition
 
 import { Appointment } from './Appointment';
 import { SellerId } from './SellerId';
+import { PostId } from './PostId';
 
 export class Seller extends BaseEntity {
   constructor({
@@ -39,6 +40,24 @@ export class Seller extends BaseEntity {
     return this.personName.middleName;
   }
 
+  get recruitDay() {
+    return this.getRecruitDayAt();
+  }
+
+  get quitDay() {
+    return this.getQuitDayAt();
+  }
+
+  get postIds() {
+    return new Array(
+      ...new Set(
+        this.appointments
+          .sort(this._appointmentsComparator)
+          .map(({ postId }) => postId)
+      )
+    );
+  }
+
   addAppointment(postId, day) {
     const previousPostId = this.getPostIdAt(day);
 
@@ -47,9 +66,7 @@ export class Seller extends BaseEntity {
     }
 
     const appointment = new Appointment({ postId, day });
-    this.appointments = [...this.appointments, appointment].sort(
-      (a, b) => a.day > b.day
-    );
+    this.appointments = [...this.appointments, appointment];
   }
 
   deleteAppointment(postId, day) {
@@ -69,12 +86,84 @@ export class Seller extends BaseEntity {
     this.addAppointment(postId, day);
   }
 
+  getRecruitDayAt(day = new Day()) {
+    const appointments = this.getAppointmentsAt(day);
+    if (appointments.length === 0) {
+      return;
+    }
+
+    return appointments[0].day;
+  }
+
+  getQuitDayAt(day = new Day()) {
+    const appointments = this.appointments
+      .filter(({ day: currentDay }) => currentDay <= day)
+      .sort(this._appointmentsComparator);
+
+    if (appointments.length === 0) {
+      return;
+    }
+
+    const lastAppointment = appointments[appointments.length - 1];
+
+    return lastAppointment.postId.equals(PostId.quitPostId)
+      ? lastAppointment.day
+      : undefined;
+  }
+
+  getLastQuitDayAt(day = new Day()) {
+    return this.getPostIdLastDayAt(PostId.quitPostId, day);
+  }
+
+  getAppointmentsAt(day = new Day()) {
+    const appointmentsBeforeDay = this.appointments.filter(
+      ({ day: currentDay }) => currentDay <= day
+    );
+
+    if (appointmentsBeforeDay.length === 0 || this.getQuitDayAt(day)) {
+      return [];
+    }
+
+    const lastQuitDay = this.getLastQuitDayAt(day);
+
+    if (lastQuitDay == undefined) {
+      return appointmentsBeforeDay;
+    }
+
+    return appointmentsBeforeDay.filter(
+      ({ day: currentDay }) => currentDay > lastQuitDay
+    );
+  }
+
+  getPostIdLastDayAt(postId, day = new Day()) {
+    if (
+      postId === undefined ||
+      postId.constructor !== PostId ||
+      this.appointments.length === 0
+    ) {
+      return;
+    }
+
+    const appointment = this.appointments
+      .filter(({ day: currentDay }) => currentDay <= day)
+      .sort(this._appointmentsComparator)
+      .reduce((currentAppointment, appointment) => {
+        return appointment.postId.equals(postId)
+          ? appointment
+          : currentAppointment;
+      }, undefined);
+
+    return appointment === undefined ? undefined : appointment.day;
+  }
+
   getPostIdAt(day = new Day()) {
     if (!this.isRecruitedAt(day)) {
       return;
     }
 
-    const [firstAppointment, ...restAppointments] = this.appointments;
+    const [firstAppointment, ...restAppointments] = this.getAppointmentsAt(
+      day
+    ).sort(this._appointmentsComparator);
 
     const { postId } = restAppointments.reduce(
       (currentAppointment, appointment) => {
@@ -91,17 +180,35 @@ export class Seller extends BaseEntity {
       return;
     }
 
-    return day.differenceInMonths(this.recruitDay);
+    return day.differenceInMonths(this.getRecruitDayAt(day));
   }
 
-  isRecruitedAt(day = new Date()) {
-    const recruitDay = this.recruitDay;
+  isQuitedAt(day = new Day()) {
+    const quitDay = this.getQuitDayAt(day);
+    return !!quitDay && quitDay <= day;
+  }
+
+  isRecruitedAt(day = new Day()) {
+    const recruitDay = this.getRecruitDayAt(day);
     return !!recruitDay && recruitDay <= day;
   }
 
-  get recruitDay() {
-    const [firstAppointment] = this.appointments;
-    return firstAppointment && firstAppointment.day;
+  isQuitedAt(day = new Day()) {
+    const quitDay = this.getQuitDayAt(day);
+    return !!quitDay && quitDay <= day;
+  }
+
+  takeQuit(day = new Day()) {
+    const recruitDay = this.getRecruitDayAt(day);
+    if (!recruitDay || day <= recruitDay) {
+      throw this.constructor.errorTakeQuit;
+    }
+    this.addAppointment(PostId.quitPostId, day);
+  }
+
+  // private
+  _appointmentsComparator(a, b) {
+    return a.day > b.day;
   }
 }
 
@@ -116,4 +223,10 @@ addErrorDefinitionProperty(
   'errorNoAppointments',
   'OperationError',
   'Seller have not such appointment to this postId'
+);
+addErrorDefinitionProperty(
+  Seller,
+  'errorTakeQuit',
+  'OperationError',
+  'Seller cannot take quit before get recruit or on the same day'
 );

@@ -1,7 +1,7 @@
 import { Operation } from '../_lib/Operation';
 
 export class GetSellers extends Operation {
-  async execute({ options }) {
+  async execute(props = {}) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
       repositories: {
@@ -13,10 +13,18 @@ export class GetSellers extends Operation {
     } = this;
 
     try {
-      const sellers = await sellerRepo.getAll(options);
-      const seniorityTypes = seniorityTypeRepo.getAll();
+      const sellers = await sellerRepo.getAll(props);
+      const seniorityTypes = await seniorityTypeRepo.getAll();
+      const postIds = [
+        ...sellers.reduce(
+          (postIdsSet, seller) => new Set([...postIdsSet, ...seller.postIds]),
+          new Set()
+        ),
+      ];
+      const posts = await postRepo.getByIds(postIds);
+      console.log(posts);
 
-      const sellersDTO = sellers.map((seller) => {
+      const sellersDTO = sellers.map(async (seller) => {
         const {
           sellerId: { value: sellerId },
           fullName,
@@ -24,23 +32,32 @@ export class GetSellers extends Operation {
           recruitDay: { value: recruitDate },
         } = seller;
 
-        const post = postRepo.getById(seller.getPostIdAt());
-        const { name, currentPieceRate } = post;
+        const sellerDTO = {
+          sellerId,
+          fullName,
+          seniority,
+          recruitDate,
+        };
 
-        const { currentAward } = sellerManagementService.getSellerSeniorityType(
+        const postId = seller.getPostIdAt();
+        const {
+          name,
+          currentPieceRate,
+        } = sellerManagementService.getSellerPost(seller, posts);
+
+        sellerDTO.postName = name;
+        sellerDTO.currentPieceRate = currentPieceRate;
+
+        const seniorityType = sellerManagementService.getSellerSeniorityType(
           seller,
           seniorityTypes
         );
 
-        const sellerDTO = {
-          sellerId,
-          fullName,
-          name,
-          seniority,
-          currentPieceRate,
-          recruitDate,
-          currentAward,
-        };
+        sellerDTO.currentAward = seniorityType
+          ? seniorityType.currentAward
+          : undefined;
+
+        return sellerDTO;
       });
 
       this.emit(SUCCESS, sellersDTO);

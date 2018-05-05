@@ -46,7 +46,7 @@ describe('Infra :: Model :: Seller', () => {
       ]);
     });
 
-    it('returns all sellers from the database', async () => {
+    test('returns all sellers from the database', async () => {
       expect.assertions(3);
 
       const sellers = await SellerModel.findAll();
@@ -69,7 +69,7 @@ describe('Infra :: Model :: Seller', () => {
   //   });
 
   //   context('when seller exists', () => {
-  //     it('returns the seller', async () => {
+  //     test('returns the seller', async () => {
   //       expect.assertions(2);
 
   //       const sellers = await SellerModel.findAll();
@@ -82,7 +82,7 @@ describe('Infra :: Model :: Seller', () => {
   //   });
 
   //   context('when the seller does not exist', () => {
-  //     it('returns null', async () => {
+  //     test('returns null', async () => {
   //       expect.assertions(1);
 
   //       expect(await SellerModel.findById(-1)).toBeNull();
@@ -99,7 +99,7 @@ describe('Infra :: Model :: Seller', () => {
   //   });
 
   //   context('when seller exists', () => {
-  //     it('returns the seller', async () => {
+  //     test('returns the seller', async () => {
   //       expect.assertions(1);
 
   //       const seller = await SellerModel.findOne({
@@ -115,7 +115,7 @@ describe('Infra :: Model :: Seller', () => {
   //   });
 
   //   context('when the seller does not exist', () => {
-  //     it('returns null', async () => {
+  //     test('returns null', async () => {
   //       expect.assertions(1);
 
   //       const seller = await SellerModel.findOne({
@@ -133,7 +133,7 @@ describe('Infra :: Model :: Seller', () => {
 
   // describe('#add', () => {
   //   context('when seller is valid', () => {
-  //     it('persists the seller', async () => {
+  //     test('persists the seller', async () => {
   //       expect.assertions(2);
 
   //       const countBefore = await SellerModel.count();
@@ -149,7 +149,7 @@ describe('Infra :: Model :: Seller', () => {
   //   });
 
   //   context('when seller is invalid', () => {
-  //     it('does not persist the seller and rejects with an error', async () => {
+  //     test('does not persist the seller and rejects with an error', async () => {
   //       expect.assertions(3);
 
   //       const expectedErrors = [
@@ -177,7 +177,7 @@ describe('Infra :: Model :: Seller', () => {
   //   });
 
   //   context('when seller is non-unique', () => {
-  //     it('does not persist the seller and rejects with an error', async () => {
+  //     test('does not persist the seller and rejects with an error', async () => {
   //       expect.assertions(3);
 
   //       const countBefore = await SellerModel.count();
@@ -207,7 +207,7 @@ describe('Infra :: Model :: Seller', () => {
   //     });
   //   });
 
-  //   it('destroys the seller', async () => {
+  //   test('destroys the seller', async () => {
   //     expect.assertions(1);
   //     const countBefore = await SellerModel.count();
   //     const seller = await SellerModel.findOne({
@@ -232,7 +232,7 @@ describe('Infra :: Model :: Seller', () => {
   //   });
 
   //   context('when seller is valid', () => {
-  //     it('updates seller', async () => {
+  //     test('updates seller', async () => {
   //       expect.assertions(2);
   //       const seller = await SellerModel.findOne({
   //         where: {
@@ -248,7 +248,7 @@ describe('Infra :: Model :: Seller', () => {
   //   });
 
   //   context('when seller is non-unique', () => {
-  //     it('does not persist the seller and rejects with an error', async () => {
+  //     test('does not persist the seller and rejects with an error', async () => {
   //       expect.assertions(3);
 
   //       const { lastName, firstName, middleName } = await SellerModel.findOne({

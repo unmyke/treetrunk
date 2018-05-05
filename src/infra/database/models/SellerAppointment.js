@@ -1,6 +1,6 @@
 'use strict';
 export default (sequelize, DataTypes) => {
-  var SellerAppointment = sequelize.define(
+  let SellerAppointment = sequelize.define(
     'sellerAppointment',
     {
       postId: {

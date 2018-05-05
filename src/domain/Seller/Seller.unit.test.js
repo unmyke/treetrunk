@@ -31,7 +31,7 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#constructor', () => {
-    it('should be instance of Seller', () => {
+    test('should be instance of Seller', () => {
       expect(seller).toBeInstanceOf(Seller);
       expect(seller.sellerId).toBeInstanceOf(SellerId);
       expect(seller.personName).toBeInstanceOf(PersonName);
@@ -39,7 +39,7 @@ describe('Domain :: entities :: Seller', () => {
       expect(seller.phone).toBe(phone);
       expect(seller.appointments).toHaveLength(0);
     });
-    it('should have set points', () => {
+    test('should have set points', () => {
       expect(seller.seniorityAt(appointmentDay1)).toBeUndefined();
       expect(seller.isRecruitedAt()).toBe(false);
       expect(seller.recruitDay).toBeUndefined();
@@ -52,22 +52,22 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when seller appointed to postId', () => {
-      it('should recruit seller', () => {
+      test('should recruit seller', () => {
         expect(seller.isRecruitedAt()).toBe(true);
         expect(seller.recruitDay).toBe(appointmentDay1);
       });
 
-      it('should return seniority not undefined', () => {
+      test('should return seniority not undefined', () => {
         expect(seller.seniorityAt(appointmentDay1)).not.toBeUndefined();
       });
 
-      it('should have appointments length equal to 1', () => {
+      test('should have appointments length equal to 1', () => {
         expect(seller.appointments).toHaveLength(1);
       });
     });
 
     context('when appoint to same postId at same date', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         try {
           seller.addAppointment(floristPost.postId, appointmentDay1);
         } catch (e) {
@@ -78,7 +78,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when appoint to same postId at another date', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         try {
           seller.addAppointment(floristPost.postId, newDay);
         } catch (e) {
@@ -97,7 +97,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when delete existing appointment', () => {
-      it('should decrease appointments length', () => {
+      test('should decrease appointments length', () => {
         expect(seller.appointments).toHaveLength(3);
 
         seller.deleteAppointment(floristPost.postId, appointmentDay3);
@@ -108,7 +108,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when delete appointment twice', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         seller.deleteAppointment(floristPost.postId, appointmentDay3);
 
         try {
@@ -129,7 +129,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when appointment has created with wrong postId', () => {
-      it('should change associated postId', () => {
+      test('should change associated postId', () => {
         seller.editAppointment(
           floristPost.postId,
           appointmentDay1,
@@ -144,7 +144,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when appointment has created with wrong date', () => {
-      it('should change associated date', () => {
+      test('should change associated date', () => {
         seller.editAppointment(
           floristPost.postId,
           appointmentDay1,
@@ -166,13 +166,13 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when requested before first appointment', () => {
-      it('should return postId undefined', () => {
+      test('should return postId undefined', () => {
         expect(seller.getPostIdAt(appointmentDay1.subDays(1))).toBeUndefined();
       });
     });
 
     context('when requested past postId', () => {
-      it('should return postId appointed at that day', () => {
+      test('should return postId appointed at that day', () => {
         expect(seller.getPostIdAt(appointmentDay2)).toBe(
           seniorFloristPost.postId
         );
@@ -180,7 +180,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when requested current postId associated with seller', () => {
-      it('should return last postId', () => {
+      test('should return last postId', () => {
         expect(seller.getPostIdAt(newDay)).toBe(floristPost.postId);
       });
     });
@@ -193,7 +193,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when passed postId in appointments', () => {
-      it('should return correct day', () => {
+      test('should return correct day', () => {
         expect(seller.getPostIdLastDayAt(floristPost.postId)).toEqual(
           appointmentDay1
         );
@@ -206,7 +206,7 @@ describe('Domain :: entities :: Seller', () => {
     context(
       'when passed postId, that contained more than one times in appointments',
       () => {
-        it('should return day of last appointment', () => {
+        test('should return day of last appointment', () => {
           seller.addAppointment(floristPost.postId, appointmentDay3);
           seller.addAppointment(seniorFloristPost.postId, appointmentDay4);
           seller.addAppointment(floristPost.postId, appointmentDay5);
@@ -225,19 +225,19 @@ describe('Domain :: entities :: Seller', () => {
     );
 
     context('when passed postId is not in appointments', () => {
-      it('should return undefined', () => {
+      test('should return undefined', () => {
         expect(seller.getPostIdLastDayAt(new PostId())).toBeUndefined();
       });
     });
 
     context('when passed not postId', () => {
-      it('should return undefined', () => {
+      test('should return undefined', () => {
         expect(seller.getPostIdLastDayAt('')).toBeUndefined();
       });
     });
 
     context('when passed undefined', () => {
-      it('should return undefined', () => {
+      test('should return undefined', () => {
         expect(seller.getPostIdLastDayAt()).toBeUndefined();
       });
     });
@@ -250,7 +250,7 @@ describe('Domain :: entities :: Seller', () => {
         seller.addAppointment(seniorFloristPost.postId, appointmentDay3);
       });
 
-      it('should be an integer', () => {
+      test('should be an integer', () => {
         expect(seller.seniorityAt(appointmentDay3)).toBe(0);
       });
 
@@ -266,31 +266,31 @@ describe('Domain :: entities :: Seller', () => {
         seller.takeQuit(appointmentDay3);
       });
 
-      it('should be undefined at today', () => {
+      test('should be undefined at today', () => {
         expect(seller.seniorityAt()).toBeUndefined();
       });
 
-      it('should be a integer at day before quit', () => {
+      test('should be a integer at day before quit', () => {
         expect(seller.seniorityAt(appointmentDay3.prev())).toBe(1);
       });
     });
 
     context('when seller have no appointments', () => {
-      it('should be undefined', () => {
+      test('should be undefined', () => {
         expect(seller.seniorityAt()).toBeUndefined();
       });
     });
   });
 
   describe('#isRecruitedAt', () => {
-    it('should be undefined', () => {
+    test('should be undefined', () => {
       expect(seller.isRecruitedAt()).toBe(false);
     });
   });
 
   describe('#postIds', () => {
     context('when seller have appointments', () => {
-      it('should return array of postIds', () => {
+      test('should return array of postIds', () => {
         seller.addAppointment(floristPost.postId, appointmentDay3);
         seller.addAppointment(floristPost.postId, appointmentDay1);
         seller.addAppointment(seniorFloristPost.postId, appointmentDay2);
@@ -303,7 +303,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when seller have no appointments', () => {
-      it('should return empty array', () => {
+      test('should return empty array', () => {
         expect(seller.postIds).toEqual([]);
       });
     });
@@ -346,67 +346,67 @@ describe('Domain :: entities :: Seller', () => {
         seller.takeQuit(appDay10);
       });
 
-      it('should return undefined at 15.12.2016', () => {
+      test('should return undefined at 15.12.2016', () => {
         const day = new Day({ value: new Date('2016.12.15') });
 
         expect(seller.getQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return undefined at 15.01.2017', () => {
+      test('should return undefined at 15.01.2017', () => {
         const day = new Day({ value: new Date('2017.01.15') });
 
         expect(seller.getQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return quit day at 15.02.2017', () => {
+      test('should return quit day at 15.02.2017', () => {
         const day = new Day({ value: new Date('2017.02.15') });
 
         expect(seller.getQuitDayAt(day).equals(appDay2)).toBeTruthy();
       });
 
-      it('should return undefined at 15.03.2017', () => {
+      test('should return undefined at 15.03.2017', () => {
         const day = new Day({ value: new Date('2017.03.15') });
 
         expect(seller.getQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return undefined at 15.04.2017', () => {
+      test('should return undefined at 15.04.2017', () => {
         const day = new Day({ value: new Date('2017.04.15') });
 
         expect(seller.getQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return quit day at 15.05.2017', () => {
+      test('should return quit day at 15.05.2017', () => {
         const day = new Day({ value: new Date('2017.05.15') });
 
         expect(seller.getQuitDayAt(day).equals(appDay5)).toBeTruthy();
       });
 
-      it('should return undefined at 15.06.2017', () => {
+      test('should return undefined at 15.06.2017', () => {
         const day = new Day({ value: new Date('2017.06.15') });
 
         expect(seller.getQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return quit day at 15.07.2017', () => {
+      test('should return quit day at 15.07.2017', () => {
         const day = new Day({ value: new Date('2017.07.15') });
 
         expect(seller.getQuitDayAt(day).equals(appDay7)).toBeTruthy();
       });
 
-      it('should return undefined at 15.08.2017', () => {
+      test('should return undefined at 15.08.2017', () => {
         const day = new Day({ value: new Date('2017.08.15') });
 
         expect(seller.getQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return undefined at 15.09.2017', () => {
+      test('should return undefined at 15.09.2017', () => {
         const day = new Day({ value: new Date('2017.09.15') });
 
         expect(seller.getQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return quit day at 15.10.2017', () => {
+      test('should return quit day at 15.10.2017', () => {
         const day = new Day({ value: new Date('2017.10.15') });
 
         expect(seller.getQuitDayAt(day).equals(appDay10)).toBeTruthy();
@@ -414,7 +414,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when seller have no appointments', () => {
-      it('should return undefined', () => {
+      test('should return undefined', () => {
         expect(seller.getQuitDayAt()).toBeUndefined();
       });
     });
@@ -457,67 +457,67 @@ describe('Domain :: entities :: Seller', () => {
         seller.takeQuit(appDay10);
       });
 
-      it('should return undefined at 15.12.2016', () => {
+      test('should return undefined at 15.12.2016', () => {
         const day = new Day({ value: new Date('2016.12.15') });
 
         expect(seller.getRecruitDayAt(day)).toBeUndefined();
       });
 
-      it('should return recruit day at 15.01.2017', () => {
+      test('should return recruit day at 15.01.2017', () => {
         const day = new Day({ value: new Date('2017.01.15') });
 
         expect(seller.getRecruitDayAt(day).equals(appDay1)).toBeTruthy();
       });
 
-      it('should return undefined at 15.02.2017', () => {
+      test('should return undefined at 15.02.2017', () => {
         const day = new Day({ value: new Date('2017.02.15') });
 
         expect(seller.getRecruitDayAt(day)).toBeUndefined();
       });
 
-      it('should return recruit day at 15.03.2017', () => {
+      test('should return recruit day at 15.03.2017', () => {
         const day = new Day({ value: new Date('2017.03.15') });
 
         expect(seller.getRecruitDayAt(day).equals(appDay3)).toBeTruthy();
       });
 
-      it('should return recruit day at 15.04.2017', () => {
+      test('should return recruit day at 15.04.2017', () => {
         const day = new Day({ value: new Date('2017.04.15') });
 
         expect(seller.getRecruitDayAt(day).equals(appDay3)).toBeTruthy();
       });
 
-      it('should return undefined at 15.05.2017', () => {
+      test('should return undefined at 15.05.2017', () => {
         const day = new Day({ value: new Date('2017.05.15') });
 
         expect(seller.getRecruitDayAt(day)).toBeUndefined();
       });
 
-      it('should return recruit day at 15.06.2017', () => {
+      test('should return recruit day at 15.06.2017', () => {
         const day = new Day({ value: new Date('2017.06.15') });
 
         expect(seller.getRecruitDayAt(day).equals(appDay6)).toBeTruthy();
       });
 
-      it('should return undefined at 15.07.2017', () => {
+      test('should return undefined at 15.07.2017', () => {
         const day = new Day({ value: new Date('2017.07.15') });
 
         expect(seller.getRecruitDayAt(day)).toBeUndefined();
       });
 
-      it('should return recruit day at 15.08.2017', () => {
+      test('should return recruit day at 15.08.2017', () => {
         const day = new Day({ value: new Date('2017.08.15') });
 
         expect(seller.getRecruitDayAt(day).equals(appDay8)).toBeTruthy();
       });
 
-      it('should return recruit day at 15.09.2017', () => {
+      test('should return recruit day at 15.09.2017', () => {
         const day = new Day({ value: new Date('2017.09.15') });
 
         expect(seller.getRecruitDayAt(day).equals(appDay8)).toBeTruthy();
       });
 
-      it('should return undefined at 15.10.2017', () => {
+      test('should return undefined at 15.10.2017', () => {
         const day = new Day({ value: new Date('2017.10.15') });
 
         expect(seller.getRecruitDayAt(day)).toBeUndefined();
@@ -525,7 +525,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when seller have no appointments', () => {
-      it('should return undefined', () => {
+      test('should return undefined', () => {
         expect(seller.getRecruitDayAt()).toBeUndefined();
       });
     });
@@ -568,67 +568,67 @@ describe('Domain :: entities :: Seller', () => {
         seller.takeQuit(appDay10);
       });
 
-      it('should return undefined at 15.12.2016', () => {
+      test('should return undefined at 15.12.2016', () => {
         const day = new Day({ value: new Date('2016.12.15') });
 
         expect(seller.getLastQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return undefined at 15.01.2017', () => {
+      test('should return undefined at 15.01.2017', () => {
         const day = new Day({ value: new Date('2017.01.15') });
 
         expect(seller.getLastQuitDayAt(day)).toBeUndefined();
       });
 
-      it('should return last quit day at 15.02.2017', () => {
+      test('should return last quit day at 15.02.2017', () => {
         const day = new Day({ value: new Date('2017.02.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay2)).toBeTruthy();
       });
 
-      it('should return last quit day at 15.03.2017', () => {
+      test('should return last quit day at 15.03.2017', () => {
         const day = new Day({ value: new Date('2017.03.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay2)).toBeTruthy();
       });
 
-      it('should return last quit day at 15.04.2017', () => {
+      test('should return last quit day at 15.04.2017', () => {
         const day = new Day({ value: new Date('2017.04.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay2)).toBeTruthy();
       });
 
-      it('should return last quit day at 15.05.2017', () => {
+      test('should return last quit day at 15.05.2017', () => {
         const day = new Day({ value: new Date('2017.05.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay5)).toBeTruthy();
       });
 
-      it('should return last quit day at 15.06.2017', () => {
+      test('should return last quit day at 15.06.2017', () => {
         const day = new Day({ value: new Date('2017.06.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay5)).toBeTruthy();
       });
 
-      it('should return last quit day at 15.07.2017', () => {
+      test('should return last quit day at 15.07.2017', () => {
         const day = new Day({ value: new Date('2017.07.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay7)).toBeTruthy();
       });
 
-      it('should return last quit day at 15.08.2017', () => {
+      test('should return last quit day at 15.08.2017', () => {
         const day = new Day({ value: new Date('2017.08.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay7)).toBeTruthy();
       });
 
-      it('should return last quit day at 15.09.2017', () => {
+      test('should return last quit day at 15.09.2017', () => {
         const day = new Day({ value: new Date('2017.09.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay7)).toBeTruthy();
       });
 
-      it('should return last quit day at 15.10.2017', () => {
+      test('should return last quit day at 15.10.2017', () => {
         const day = new Day({ value: new Date('2017.10.15') });
 
         expect(seller.getLastQuitDayAt(day).equals(appDay10)).toBeTruthy();
@@ -636,7 +636,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when seller have no appointments', () => {
-      it('should return undefined', () => {
+      test('should return undefined', () => {
         expect(seller.getLastQuitDayAt()).toBeUndefined();
       });
     });
@@ -679,7 +679,7 @@ describe('Domain :: entities :: Seller', () => {
         seller.takeQuit(appDay10);
       });
 
-      it('should return an array with one appointment at 15.01.2017', () => {
+      test('should return an array with one appointment at 15.01.2017', () => {
         const day = new Day({ value: new Date('2017.01.15') });
 
         const appointments = seller.getAppointmentsAt(day);
@@ -688,14 +688,14 @@ describe('Domain :: entities :: Seller', () => {
         expect(appointments[0].day).toBe(appDay1);
       });
 
-      it('should return an empty array at 15.02.2017', () => {
+      test('should return an empty array at 15.02.2017', () => {
         const day = new Day({ value: new Date('2017.02.15') });
 
         const appointments = seller.getAppointmentsAt(day);
         expect(appointments).toHaveLength(0);
       });
 
-      it('should return an array with one appointment at 15.03.2017', () => {
+      test('should return an array with one appointment at 15.03.2017', () => {
         const day = new Day({ value: new Date('2017.03.15') });
 
         const appointments = seller.getAppointmentsAt(day);
@@ -704,7 +704,7 @@ describe('Domain :: entities :: Seller', () => {
         expect(appointments[0].day).toBe(appDay3);
       });
 
-      it('should return an array with two appointment at 15.04.2017', () => {
+      test('should return an array with two appointment at 15.04.2017', () => {
         const day = new Day({ value: new Date('2017.04.15') });
 
         const appointments = seller.getAppointmentsAt(day);
@@ -715,14 +715,14 @@ describe('Domain :: entities :: Seller', () => {
         expect(appointments[1].day).toBe(appDay4);
       });
 
-      it('should return an empty array at 15.05.2017', () => {
+      test('should return an empty array at 15.05.2017', () => {
         const day = new Day({ value: new Date('2017.05.15') });
 
         const appointments = seller.getAppointmentsAt(day);
         expect(appointments).toHaveLength(0);
       });
 
-      it('should return an array with one appointment at 15.06.2017', () => {
+      test('should return an array with one appointment at 15.06.2017', () => {
         const day = new Day({ value: new Date('2017.06.15') });
 
         const appointments = seller.getAppointmentsAt(day);
@@ -731,14 +731,14 @@ describe('Domain :: entities :: Seller', () => {
         expect(appointments[0].day).toBe(appDay6);
       });
 
-      it('should return an empty array at 15.07.2017', () => {
+      test('should return an empty array at 15.07.2017', () => {
         const day = new Day({ value: new Date('2017.07.15') });
 
         const appointments = seller.getAppointmentsAt(day);
         expect(appointments).toHaveLength(0);
       });
 
-      it('should return an array with one appointment at 15.08.2017', () => {
+      test('should return an array with one appointment at 15.08.2017', () => {
         const day = new Day({ value: new Date('2017.08.15') });
 
         const appointments = seller.getAppointmentsAt(day);
@@ -747,7 +747,7 @@ describe('Domain :: entities :: Seller', () => {
         expect(appointments[0].day).toBe(appDay8);
       });
 
-      it('should return an array with two appointment at 15.09.2017', () => {
+      test('should return an array with two appointment at 15.09.2017', () => {
         const day = new Day({ value: new Date('2017.09.15') });
 
         const appointments = seller.getAppointmentsAt(day);
@@ -758,7 +758,7 @@ describe('Domain :: entities :: Seller', () => {
         expect(appointments[1].day).toBe(appDay9);
       });
 
-      it('should return an empty array at 15.10.2017', () => {
+      test('should return an empty array at 15.10.2017', () => {
         const day = new Day({ value: new Date('2017.10.15') });
 
         const appointments = seller.getAppointmentsAt(day);
@@ -774,14 +774,14 @@ describe('Domain :: entities :: Seller', () => {
         seller.addAppointment(seniorFloristPost.postId, appointmentDay2);
       });
 
-      it('should be add quitPostId', () => {
+      test('should be add quitPostId', () => {
         seller.takeQuit(newDay);
 
         expect(seller.quitDay).toEqual(newDay);
         expect(seller.appointments).toHaveLength(3);
       });
 
-      it('should throw exeption if quit day before reqruit day', () => {
+      test('should throw exeption if quit day before reqruit day', () => {
         try {
           seller.takeQuit(appointmentDay1.prev());
         } catch (e) {
@@ -795,7 +795,7 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when seller have no appointments', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         try {
           seller.takeQuit(appointmentDay1.prev());
         } catch (e) {

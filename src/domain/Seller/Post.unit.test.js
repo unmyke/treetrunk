@@ -22,20 +22,20 @@ describe('Domain :: entities :: Post', () => {
   });
 
   describe('#constructor', () => {
-    it('should be instance of Post', () => {
+    test('should be instance of Post', () => {
       expect(post).toBeInstanceOf(Post);
       expect(post.postId).toBeInstanceOf(PostId);
       expect(post.pieceRates).toHaveLength(0);
     });
 
-    it('should have no pieceRate', () => {
+    test('should have no pieceRate', () => {
       expect(post.getPieceRateAt()).toBeUndefined();
     });
   });
 
   describe('#addPieceRate', () => {
     context('when add one pieceRate value', () => {
-      it('should have pieceRates length equal 1', () => {
+      test('should have pieceRates length equal 1', () => {
         post.addPieceRate(pieceRate1value, pieceRate1day);
 
         expect(post.pieceRates).toHaveLength(1);
@@ -43,7 +43,7 @@ describe('Domain :: entities :: Post', () => {
     });
 
     context('when add same pieceRate twice a day', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         post.addPieceRate(pieceRate1value, pieceRate1day);
 
         try {
@@ -56,7 +56,7 @@ describe('Domain :: entities :: Post', () => {
     });
 
     context('when add same pieceRate another day after', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         post.addPieceRate(pieceRate1value, pieceRate1day);
 
         try {
@@ -77,7 +77,7 @@ describe('Domain :: entities :: Post', () => {
     });
 
     context('when requested before any pieceRate added to post', () => {
-      it('should return undefined', () => {
+      test('should return undefined', () => {
         expect(post.getPieceRateAt(pieceRate1day.subDays(1))).toBeUndefined();
       });
     });
@@ -103,7 +103,7 @@ describe('Domain :: entities :: Post', () => {
     });
 
     context('when delete existing pieceRate', () => {
-      it('should decrease pieceRates length', () => {
+      test('should decrease pieceRates length', () => {
         expect(post.pieceRates).toHaveLength(3);
 
         post.deletePieceRate(pieceRate3value, pieceRate3day);
@@ -113,7 +113,7 @@ describe('Domain :: entities :: Post', () => {
     });
 
     context('when delete post twice', () => {
-      it('should throw exeption', () => {
+      test('should throw exeption', () => {
         post.deletePieceRate(pieceRate3value, pieceRate3day);
 
         try {
@@ -132,7 +132,7 @@ describe('Domain :: entities :: Post', () => {
     });
 
     context('when appointment has created with wrong pieceRate', () => {
-      it('should change associated pieceRate', () => {
+      test('should change associated pieceRate', () => {
         post.editPieceRate(
           pieceRate1value,
           pieceRate1day,
@@ -148,7 +148,7 @@ describe('Domain :: entities :: Post', () => {
     });
 
     context('when pieceRate has created with wrong date', () => {
-      it('should change associated date', () => {
+      test('should change associated date', () => {
         post.editPieceRate(
           pieceRate1value,
           pieceRate1day,

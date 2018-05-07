@@ -156,4 +156,4 @@ const SellersController = {
   },
 };
 
-module.exports = SellersController;
+export { SellersController };

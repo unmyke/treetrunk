@@ -197,4 +197,4 @@ const PostsController = {
   },
 };
 
-module.exports = PostsController;
+export { PostsController };

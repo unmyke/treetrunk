@@ -1,4 +1,4 @@
-import supertest from 'supertest-as-promised';
+import supertest from 'supertest';
 import { container } from 'src/container';
 const { server } = container;
 

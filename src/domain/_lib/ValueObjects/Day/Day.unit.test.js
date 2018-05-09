@@ -10,7 +10,7 @@ const getSunday = (date) =>
 describe('Domain :: lib :: valueObjects :: Day', () => {
   describe('Day#createStartOfWeek', () => {
     context('when pass correct date', () => {
-      it("return new inctance of Day, that represence  day's start of week", () => {
+      test("return new inctance of Day, that represence  day's start of week", () => {
         const date = new Date('2018.04.12 12:45');
         const monday = getMonday(date);
         const expectedDay = new Day({ value: monday });
@@ -22,7 +22,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass undefined', () => {
-      it("return new inctance of Day, that represence  today's start of week", () => {
+      test("return new inctance of Day, that represence  today's start of week", () => {
         const monday = getMonday(new Date());
         const expectedDay = new Day({ value: monday });
 
@@ -49,7 +49,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
   describe('Day#createEndOfWeek', () => {
     context('when pass correct date', () => {
-      it("return new inctance of Day, that represence  day's end of week", () => {
+      test("return new inctance of Day, that represence  day's end of week", () => {
         const date = new Date('2018.04.12 12:45');
         const sunday = getSunday(date);
         const expectedDay = new Day({ value: sunday });
@@ -61,7 +61,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
 
     context('when pass undefined', () => {
-      it("return new inctance of Day, that represence  today's end of week", () => {
+      test("return new inctance of Day, that represence  today's end of week", () => {
         const date = new Date();
         const curDayOfWeek = date.getDay();
 

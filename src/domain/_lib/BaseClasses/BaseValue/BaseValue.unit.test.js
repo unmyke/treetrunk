@@ -44,7 +44,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
   });
 
   context('when two instance of same class have non-equals attributes', () => {
-    it("shouldn't be equal", () => {
+    test("shouldn't be equal", () => {
       const valueObject = new ConcreteValue(props);
       const anotherValueObject = new ConcreteValue(anotherProps);
 
@@ -53,7 +53,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
   });
 
   context('when two instance of different class have equals attributes', () => {
-    it("shouldn't be equal", () => {
+    test("shouldn't be equal", () => {
       const valueObject = new ConcreteValue(props);
       const anotherValueObject = new AnotherConcreteValue(props);
 
@@ -64,7 +64,7 @@ describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
   context(
     'when two instance of different class have non-equals attributes',
     () => {
-      it("shouldn't be equal", () => {
+      test("shouldn't be equal", () => {
         const valueObject = new ConcreteValue(props);
         const anotherValueObject = new AnotherConcreteValue(anotherProps);
 

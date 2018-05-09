@@ -12,13 +12,9 @@ export class CreatePostPieceRate extends Operation {
       const postId = new PostId({ value: postIdValue });
       const post = await postRepo.getById(postId);
 
-      console.log(post);
-
       const day = new Day({ value: new Date(date) });
 
       post.addPieceRate(value, day);
-
-      console.log(post);
 
       const newPost = await postRepo.save(post);
 

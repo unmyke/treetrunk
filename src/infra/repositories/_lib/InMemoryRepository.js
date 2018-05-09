@@ -6,7 +6,7 @@ import { lowercaseFirstLetter } from 'src/infra/support/changeCaseFirstLetter';
 export class InMemoryRepository extends BaseRepository {
   store = [];
 
-  async getAll(props) {
+  async getAll(props = {}) {
     return this.store.reduce((acc, item) => {
       return this._compare(item, props) ? [...acc, item] : acc;
     }, []);
@@ -22,7 +22,7 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (entity === undefined) {
-      throw new Error('NOT_FOUND');
+      throw this.constructor.NOT_FOUND;
     }
 
     return entity;
@@ -34,7 +34,7 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (entity === undefined) {
-      throw new Error('NOT_FOUND');
+      throw this.constructor.NOT_FOUND;
     }
 
     return entity;
@@ -66,6 +66,10 @@ export class InMemoryRepository extends BaseRepository {
     return this.getAll(props).length;
   }
 
+  async clear() {
+    this.store = [];
+  }
+
   _idPropName(id) {
     return lowercaseFirstLetter(id.constructor.name);
   }
@@ -84,6 +88,14 @@ export class InMemoryRepository extends BaseRepository {
 
 addErrorDefinitionProperty(
   InMemoryRepository,
+  'ID_INCORRECT',
   'IncorrectInput',
   'Passed argument must be instance of BaseId'
+);
+
+addErrorDefinitionProperty(
+  InMemoryRepository,
+  'NOT_FOUND',
+  'NotFoundError',
+  "Post can't be found."
 );

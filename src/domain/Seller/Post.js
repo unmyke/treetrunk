@@ -6,10 +6,23 @@ import { PieceRate } from './PieceRate';
 import { PostId } from './PostId';
 
 export class Post extends BaseEntity {
+  static constraints = {
+    name: {
+      presence: { allowEmpty: false },
+    },
+    pieceRates: {
+      presence: true,
+    },
+  };
+
   constructor({ postId = new PostId(), name, pieceRates = [] }) {
     super(postId);
     this.name = name;
     this.pieceRates = pieceRates;
+  }
+
+  update({ name }) {
+    this.name = name;
   }
 
   addPieceRate(value, day) {

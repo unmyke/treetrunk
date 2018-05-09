@@ -83,13 +83,13 @@ describe('Domain :: entities :: Post', () => {
     });
 
     context('when requested past pieceRate', () => {
-      it("should return pieceRate's value belongs to that dateRange", () => {
+      test("should return pieceRate's value belongs to that dateRange", () => {
         expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
       });
     });
 
     context('when requested current pieceRate associated with post', () => {
-      it("should return last pieceRate's value", () => {
+      test("should return last pieceRate's value", () => {
         expect(post.currentPieceRate).toBe(pieceRate3value);
       });
     });

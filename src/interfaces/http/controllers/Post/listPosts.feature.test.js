@@ -19,7 +19,11 @@ describe('API :: GET /api/posts', () => {
       return Promise.all([postRepo.add(post1), postRepo.add(post2)]);
     });
 
-    it('return success with array of posts', async () => {
+    afterEach(() => {
+      return postRepo.clear();
+    });
+
+    test('should return success with array of posts', async () => {
       const { statusCode, body } = await request().get('/api/posts');
 
       expect(statusCode).toBe(200);
@@ -27,17 +31,30 @@ describe('API :: GET /api/posts', () => {
       expect(body).toHaveLength(2);
 
       expect(body[0].name).toBe('Флорист');
-      expect(body[0]).toHaveProperty('postId');
-      expect(body[0]).toHaveProperty('name');
+      expect(body[0].postId).toBe(post1.postId.toString());
 
       expect(body[1].name).toBe('Старший флорист');
-      expect(body[0]).toHaveProperty('postId');
-      expect(body[0]).toHaveProperty('name');
+      expect(body[1].postId).toBe(post2.postId.toString());
     });
+
+    // context('when props is passed', () => {
+    //   test('should return success with array with one post', async () => {
+    //     const { statusCode, body } = await request().get(
+    //       '/api/posts?name=Флорист'
+    //     );
+
+    //     expect(statusCode).toBe(200);
+
+    //     expect(body).toHaveLength(1);
+
+    //     expect(body[0].name).toBe('Флорист');
+    //     expect(body[0]).toHaveProperty('postId');
+    //   });
+    // });
   });
 
   context('when there are no posts', () => {
-    it('return success with empty array', async () => {
+    test('return success with empty array', async () => {
       const { statusCode, body } = await request().get('/api/posts');
 
       expect(statusCode).toBe(200);

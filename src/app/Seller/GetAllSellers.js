@@ -1,6 +1,6 @@
 import { Operation } from '../_lib/Operation';
 
-export class GetSellers extends Operation {
+export class GetAllSellers extends Operation {
   async execute(props = {}) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
@@ -22,7 +22,6 @@ export class GetSellers extends Operation {
         ),
       ];
       const posts = await postRepo.getByIds(postIds);
-      console.log(posts);
 
       const sellersDTO = sellers.map(async (seller) => {
         const {
@@ -71,4 +70,4 @@ export class GetSellers extends Operation {
   }
 }
 
-GetSellers.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+GetAllSellers.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);

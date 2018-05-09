@@ -91,14 +91,6 @@ export class Day extends BaseValue {
     return convertDate(date).valueOf() === this.valueOf();
   }
 
-  format(formatString = 'DD.MM.YYYY') {
-    if (!this.isValid()) {
-      return this.constructor.errorNotADay.details[0];
-    }
-
-    return formatFNS(this.value, formatString, { locale: ru });
-  }
-
   addDays(num = 0) {
     if (typeof num !== 'number') {
       throw this.constructor.errorNotANumber;
@@ -172,12 +164,20 @@ export class Day extends BaseValue {
     return this.subDays(1);
   }
 
+  format(formatString = 'DD.MM.YYYY') {
+    if (!this.isValid()) {
+      return this.constructor.errorNotADay.details[0];
+    }
+
+    return formatFNS(this.value, formatString, { locale: ru });
+  }
+
   toString() {
     if (!this.isValid()) {
       return this.constructor.errorNotADay.message[0];
     }
 
-    return this.format(this.value);
+    return this.format();
   }
 
   valueOf() {

@@ -212,8 +212,6 @@ describe('Domain :: entities :: Seller', () => {
           seller.addAppointment(floristPost.postId, appointmentDay5);
           seller.addAppointment(seniorFloristPost.postId, appointmentDay6);
 
-          // console.log(seller.appointments);
-
           expect(seller.getPostIdLastDayAt(floristPost.postId)).toEqual(
             appointmentDay5
           );
@@ -254,7 +252,7 @@ describe('Domain :: entities :: Seller', () => {
         expect(seller.seniorityAt(appointmentDay3)).toBe(0);
       });
 
-      it("should be undefined when requested before seller's appointment", () => {
+      test("should be undefined when requested before seller's appointment", () => {
         expect(seller.seniorityAt(appointmentDay1)).toBeUndefined();
       });
     });

@@ -1,6 +1,7 @@
 import { Operation } from '../_lib/Operation';
+import { postToDTO } from './postToDTO';
 
-export class GetPosts extends Operation {
+export class GetAllPosts extends Operation {
   async execute(props = {}) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
@@ -10,23 +11,7 @@ export class GetPosts extends Operation {
 
     try {
       const posts = await postRepo.getAll(props);
-      const postsDTO = posts.map((post) => {
-        const {
-          postId: { value: postId },
-          name,
-          currentPieceRate,
-        } = post;
-
-        const postDTO = {
-          postId,
-          name,
-          currentPieceRate,
-        };
-
-        return postDTO;
-      });
-
-      this.emit(SUCCESS, postsDTO);
+      this.emit(SUCCESS, posts.map((post) => postToDTO(post)));
     } catch (error) {
       if (error.message === 'ValidationError') {
         return this.emit(VALIDATION_ERROR, error);
@@ -37,4 +22,4 @@ export class GetPosts extends Operation {
   }
 }
 
-GetPosts.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+GetAllPosts.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);

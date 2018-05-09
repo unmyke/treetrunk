@@ -6,4 +6,11 @@ export class PieceRate extends BaseValue {
     this.value = value;
     this.day = day;
   }
+
+  toJSON() {
+    return {
+      value: this.value,
+      date: this.day.toString(),
+    };
+  }
 }

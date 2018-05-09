@@ -7,10 +7,20 @@ export class CreatePost extends Operation {
       repositories: { Post: postRepo },
       entities: { Post },
       commonTypes: { PostId },
+      validate,
     } = this;
 
     try {
       const post = new Post({ name });
+
+      const errors = validate(post);
+
+      if (errors) {
+        const error = new Error('ValidationError');
+        error.details = errors;
+
+        throw error;
+      }
 
       const newPost = await postRepo.add(post);
 

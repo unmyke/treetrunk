@@ -8,7 +8,7 @@ const PostsController = {
 
     // router.use(inject('serializers.post'));
 
-    router.get('/', injectService('Post', 'getPosts'), this.index);
+    router.get('/', injectService('Post', 'getAllPosts'), this.index);
     router.get('/:postId', injectService('Post', 'getPost'), this.show);
     router.post('/', injectService('Post', 'createPost'), this.create);
     router.put('/:postId', injectService('Post', 'updatePost'), this.update);
@@ -33,16 +33,16 @@ const PostsController = {
   },
 
   index(req, res, next) {
-    const { getPosts } = req;
-    const { SUCCESS, ERROR } = getPosts.outputs;
+    const { getAllPosts } = req;
+    const { SUCCESS, ERROR } = getAllPosts.outputs;
 
-    getPosts
+    getAllPosts
       .on(SUCCESS, (posts) => {
         res.status(Status.OK).json(posts);
       })
       .on(ERROR, next);
 
-    getPosts.execute();
+    getAllPosts.execute(req.query);
   },
 
   show(req, res, next) {

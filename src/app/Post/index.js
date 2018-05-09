@@ -1,6 +1,7 @@
-import { GetPosts } from './GetPosts';
+import { GetAllPosts } from './GetAllPosts';
 import { GetPost } from './GetPost';
 import { CreatePost } from './CreatePost';
+import { UpdatePost } from './UpdatePost';
 import { CreatePostPieceRate } from './CreatePostPieceRate';
 
-export { GetPosts, GetPost, CreatePost, CreatePostPieceRate };
+export { GetAllPosts, GetPost, CreatePost, UpdatePost, CreatePostPieceRate };

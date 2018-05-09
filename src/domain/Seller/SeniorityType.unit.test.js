@@ -87,7 +87,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     });
 
     context('when requested past award', () => {
-      it("should return award's value belongs to that dateRange", () => {
+      test("should return award's value belongs to that dateRange", () => {
         expect(seniorityType.getAwardAt(award2day)).toBe(award2value);
       });
     });
@@ -95,7 +95,7 @@ describe('Domain :: entities :: SeniorityType', () => {
     context(
       'when requested current award associated with seniorityType',
       () => {
-        it("should return last award's value", () => {
+        test("should return last award's value", () => {
           expect(seniorityType.getAwardAt(newDay)).toBe(award3value);
         });
       }

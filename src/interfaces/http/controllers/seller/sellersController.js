@@ -60,7 +60,6 @@ const SellersController = {
       })
       .on(ERROR, next);
 
-    console.log(req.params.sellerId);
     getSeller.execute(req.params.sellerId);
   },
 

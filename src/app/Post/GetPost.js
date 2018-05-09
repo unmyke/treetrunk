@@ -1,4 +1,5 @@
 import { Operation } from '../_lib/Operation';
+import { postToDTO } from './postToDTO';
 
 export class GetPost extends Operation {
   async execute(postIdValue) {
@@ -11,22 +12,8 @@ export class GetPost extends Operation {
     try {
       const postId = new PostId({ value: postIdValue });
       const post = await postRepo.getById(postId);
-      console.log(post);
-      const postDTO = {
-        postId: postIdValue,
-        name: post.name,
-      };
 
-      const pieceRatesDTO = post.pieceRates.map(async ({ value, day }) => {
-        const { name: postName } = await postRepo.getById(value.value);
-        return {
-          value,
-          date: day.value,
-        };
-      });
-      postDTO.pieceRates = pieceRatesDTO;
-
-      this.emit(SUCCESS, postDTO);
+      this.emit(SUCCESS, postToDTO(post));
     } catch (error) {
       if (error.message === 'NOT_FOUND') {
         return this.emit(NOT_FOUND, error);

@@ -17,7 +17,7 @@ const ru = require('date-fns/locale/ru');
 
 import { BaseValue } from '../../BaseClasses';
 import { isValidDate, convertDate } from 'src/infra/support/dateHelpers';
-import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
+// import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
 
 function isMinusZero(value) {
   if (value !== 0) {
@@ -63,9 +63,9 @@ export class Day extends BaseValue {
   }
 
   static _dayFactory(date = new Date(), dateGetter, dateGetterProps) {
-    if (!isValidDate(date)) {
-      throw this.errorNotADate;
-    }
+    // if (!isValidDate(date)) {
+    //   throw this.errorNotADate;
+    // }
 
     return new Day({ value: dateGetter(date, dateGetterProps) });
   }
@@ -84,41 +84,41 @@ export class Day extends BaseValue {
   }
 
   contains(date) {
-    if (!isValidDate(date)) {
-      throw this.constructor.errorNotADay;
-    }
+    // if (!isValidDate(date)) {
+    //   throw this.constructor.errorNotADay;
+    // }
 
     return convertDate(date).valueOf() === this.valueOf();
   }
 
   addDays(num = 0) {
-    if (typeof num !== 'number') {
-      throw this.constructor.errorNotANumber;
-    }
+    // if (typeof num !== 'number') {
+    //   throw this.constructor.errorNotANumber;
+    // }
 
     return new Day({ value: addDaysFNS(this.value, num) });
   }
 
   subDays(num = 0) {
-    if (typeof num !== 'number') {
-      throw this.constructor.errorNotANumber;
-    }
+    // if (typeof num !== 'number') {
+    //   throw this.constructor.errorNotANumber;
+    // }
 
     return new Day({ value: subDaysFNS(this.value, num) });
   }
 
   difference(day) {
-    if (day.constructor !== this.constructor || !day.isValid()) {
-      throw this.constructor.errorNotADay;
-    }
+    // if (day.constructor !== this.constructor || !day.isValid()) {
+    //   throw this.constructor.errorNotADay;
+    // }
 
     return parseInt((this - day) / 86400000);
   }
 
   differenceInMonths(day) {
-    if (day.constructor !== this.constructor || !day.isValid()) {
-      throw this.constructor.errorNotADay;
-    }
+    // if (day.constructor !== this.constructor || !day.isValid()) {
+    //   throw this.constructor.errorNotADay;
+    // }
 
     const result = differenceInMonthsFNS(this.value, day.value);
     return isMinusZero(result) ? -result : result;
@@ -165,25 +165,25 @@ export class Day extends BaseValue {
   }
 
   format(formatString = 'DD.MM.YYYY') {
-    if (!this.isValid()) {
-      return this.constructor.errorNotADay.details[0];
-    }
+    // if (!this.isValid()) {
+    //   return this.constructor.errorNotADay.details[0];
+    // }
 
     return formatFNS(this.value, formatString, { locale: ru });
   }
 
   toString() {
-    if (!this.isValid()) {
-      return this.constructor.errorNotADay.message[0];
-    }
+    // if (!this.isValid()) {
+    //   return this.constructor.errorNotADay.message[0];
+    // }
 
     return this.format();
   }
 
   valueOf() {
-    if (!this.isValid()) {
-      return NaN;
-    }
+    // if (!this.isValid()) {
+    //   return NaN;
+    // }
 
     return this.value.getTime();
   }
@@ -193,16 +193,16 @@ export class Day extends BaseValue {
   }
 }
 
-addErrorDefinitionProperty(
-  Day,
-  'errorNotADate',
-  'ValidationError',
-  'Not A Date'
-);
-addErrorDefinitionProperty(Day, 'errorNotADay', 'ValidationError', 'Not A Day');
-addErrorDefinitionProperty(
-  Day,
-  'errorNotANumber',
-  'ValidationError',
-  'Not A Number'
-);
+// addErrorDefinitionProperty(
+//   Day,
+//   'errorNotADate',
+//   'ValidationError',
+//   'Not A Date'
+// );
+// addErrorDefinitionProperty(Day, 'errorNotADay', 'ValidationError', 'Not A Day');
+// addErrorDefinitionProperty(
+//   Day,
+//   'errorNotANumber',
+//   'ValidationError',
+//   'Not A Number'
+// );

@@ -9,6 +9,7 @@ import {
 } from './Seller';
 
 import { Day, DayRange } from './_lib/ValueObjects';
+import { ValidationError, PersistenceError } from './_lib/Errors';
 
 export const entities = {
   Seller,
@@ -22,6 +23,11 @@ export const commonTypes = {
   SeniorityTypeId,
   Day,
   DayRange,
+};
+
+export const Errors = {
+  ValidationError,
+  PersistenceError,
 };
 
 export const services = {

@@ -1,15 +1,23 @@
 import validate from 'validate.js';
+import { upperFirst, lowerFirst, snakeCase } from 'lodash';
 import { Day, DayRange } from 'src/domain/_lib/ValueObjects';
+import { ValidationError } from 'src/domain/_lib/Errors';
 
 export const makeValidator = () => {
-  const entityValidator = (entity, options = { exception: false }) => {
-    const errors = validate(entity, entity.constructor.constraints);
+  const validator = (entity, options = { exception: false }) => {
+    const validationErrors = validate(entity, entity.constructor.constraints);
+
     if (errors && options.exception) {
-      const err = new Error(`${entity.constructor.name} is not valid.
-        Errors: (${JSON.stringify(errors)})`);
-      err.errors = errors;
+      const error = ValidationError.create(
+        `${entity.constructor.name} is not valid.`,
+        validationErrors,
+        snakeCase(entity.constructor.name).toUpperCase()
+      );
+
+      err.details = validationErrors;
       throw err;
     }
+
     return errors;
   };
 
@@ -17,7 +25,7 @@ export const makeValidator = () => {
     if (!value) {
       return null;
     }
-    return entityValidator(value);
+    return validator(value);
   };
 
   validate.validators.dayObject = (value) => {
@@ -34,5 +42,5 @@ export const makeValidator = () => {
     return null;
   };
 
-  return entityValidator;
+  return validator;
 };

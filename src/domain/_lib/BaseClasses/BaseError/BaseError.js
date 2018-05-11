@@ -1,4 +1,4 @@
-class BaseError extends Error {
+export class BaseError extends Error {
   constructor({ message, details }) {
     super(message);
 
@@ -10,5 +10,17 @@ class BaseError extends Error {
     } else {
       this.stack = new Error(message).stack;
     }
+  }
+
+  get code() {
+    return `${this._codePrefix}::${this._codeSufix}`;
+  }
+
+  _setCodePrefix(codePrefix) {
+    this._codePrefix = codePrefix;
+  }
+
+  setCodePrefix(codeSufix) {
+    this._codeSufix = codeSufix;
   }
 }

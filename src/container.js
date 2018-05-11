@@ -3,7 +3,12 @@ import Bottle from 'bottlejs';
 import { config } from 'config';
 import { Application } from './app/Application';
 
-import { entities, commonTypes, services as domainServices } from './domain';
+import {
+  entities,
+  commonTypes,
+  services as domainServices,
+  Errors,
+} from './domain';
 
 import * as repositories from './infra/repositories';
 import * as services from './app';
@@ -33,6 +38,7 @@ bottle.constant('config', config);
 bottle.factory('app', (container) => new Application(container));
 bottle.factory('domain.entities', () => entities);
 bottle.factory('domain.commonTypes', () => commonTypes);
+bottle.factory('domain.Errors', () => Errors);
 bottle.factory('domain.services', (container) => {
   return Object.keys(domainServices).reduce((acc, domainServiceName) => {
     const domainService = new domainServices[domainServiceName](container);

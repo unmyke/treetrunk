@@ -1,5 +1,5 @@
 import { BaseClasses } from './BaseClasses';
 import { ValueObjects } from './ValueObjects';
-import { functions } from './functions';
+import { Errors } from './Errors';
 
-export { BaseClasses, ValueObjects, functions };
+export { BaseClasses, ValueObjects, Errors };

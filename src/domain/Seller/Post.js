@@ -1,6 +1,5 @@
 import { BaseEntity } from '../_lib/BaseClasses';
 import { Day } from '../_lib/ValueObjects';
-import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
 
 import { PieceRate } from './PieceRate';
 import { PostId } from './PostId';
@@ -22,7 +21,18 @@ export class Post extends BaseEntity {
   }
 
   update({ name }) {
+    if (name === this.name) {
+      throw this.constructor.errorFactrory.createNothingToUpdate(this);
+    }
+
     this.name = name;
+  }
+
+  setPieceRates(pieceRates) {
+    this.pieceRates = pieceRates.map(
+      ({ value, date }) =>
+        new PieceRate({ value, day: new Day({ value: new Date(date) }) })
+    );
   }
 
   addPieceRate(value, day) {
@@ -76,16 +86,3 @@ export class Post extends BaseEntity {
     return this.getPieceRateAt();
   }
 }
-
-addErrorDefinitionProperty(
-  Post,
-  'errorDuplication',
-  'OperationError',
-  'Post already have this pieceRate'
-);
-addErrorDefinitionProperty(
-  Post,
-  'errorNoPieceRates',
-  'OperationError',
-  'Post have not such pieceRate'
-);

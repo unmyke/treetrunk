@@ -33,7 +33,7 @@ const postDTO = {
 
 let postToUpdate;
 
-describe('API :: GET /api/posts', () => {
+describe('API :: GET /api/posts/:id', () => {
   beforeEach(() => {
     return postRepo.add(post);
   });
@@ -58,12 +58,16 @@ describe('API :: GET /api/posts', () => {
 
   context('when seller does not exist', () => {
     test('returns a not found error and status 404', async () => {
-      const { statusCode, body } = await request().get(
-        `/api/posts/${uuidv4()}`
-      );
+      const uuid = uuidv4();
+      const { statusCode, body } = await request().get(`/api/posts/${uuid}`);
 
       expect(statusCode).toBe(404);
-      expect(body).toEqual({ type: 'NotFoundError' });
+      expect(body).toEqual({
+        type: 'NotFoundError',
+        details: {
+          postId: [`Post with postId: "${uuid}" not found.`],
+        },
+      });
     });
   });
 });

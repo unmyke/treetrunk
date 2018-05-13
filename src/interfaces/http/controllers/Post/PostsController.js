@@ -67,7 +67,12 @@ const PostsController = {
 
   create(req, res, next) {
     const { createPost } = req;
-    const { SUCCESS, ERROR, VALIDATION_ERROR } = createPost.outputs;
+    const {
+      SUCCESS,
+      ERROR,
+      VALIDATION_ERROR,
+      ALREADY_EXISTS,
+    } = createPost.outputs;
 
     createPost
       .on(SUCCESS, (post) => {
@@ -79,6 +84,12 @@ const PostsController = {
           details: error.details,
         });
       })
+      .on(ALREADY_EXISTS, (error) => {
+        res.status(Status.CONFLICT).json({
+          type: 'AlreadyExists',
+          details: error.details,
+        });
+      })
       .on(ERROR, next);
 
     createPost.execute(req.body);
@@ -86,7 +97,14 @@ const PostsController = {
 
   update(req, res, next) {
     const { updatePost } = req;
-    const { SUCCESS, ERROR, VALIDATION_ERROR, NOT_FOUND } = updatePost.outputs;
+    const {
+      SUCCESS,
+      VALIDATION_ERROR,
+      NOT_FOUND,
+      ALREADY_EXISTS,
+      NOTHING_TO_UPDATE,
+      ERROR,
+    } = updatePost.outputs;
 
     updatePost
       .on(SUCCESS, (post) => {
@@ -104,9 +122,21 @@ const PostsController = {
           details: error.details,
         });
       })
+      .on(ALREADY_EXISTS, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'AlreadyExists',
+          details: error.details,
+        });
+      })
+      .on(NOTHING_TO_UPDATE, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'NothingToUpdate',
+          details: error.details,
+        });
+      })
       .on(ERROR, next);
 
-    updatePost.execute(req.params.postId, req.body);
+    updatePost.execute({ postIdValue: req.params.postId, ...req.body });
   },
 
   delete(req, res, next) {

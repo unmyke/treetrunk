@@ -99,7 +99,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       test('should be true', () => {
         const day = new Day();
 
-        expect(day.isValid()).toBeTruthy();
+        expect(Day.isValid(day)).toBeTruthy();
       });
     });
 
@@ -107,7 +107,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       test('should be true', () => {
         const day = new Day(correctDateParam);
 
-        expect(day.isValid()).toBeTruthy();
+        expect(Day.isValid(day)).toBeTruthy();
       });
     });
 
@@ -115,7 +115,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       test('should be false', () => {
         const day = new Day(emptyParam);
 
-        expect(day.isValid()).toBeFalsy();
+        expect(Day.isValid(day)).toBeFalsy();
       });
     });
 
@@ -123,7 +123,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       test('should be false', () => {
         const day = new Day(incorrectParam);
 
-        expect(day.isValid()).toBeFalsy();
+        expect(Day.isValid(day)).toBeFalsy();
       });
     });
 
@@ -131,7 +131,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       test('should be false', () => {
         const day = new Day(undefinedDateParam);
 
-        expect(day.isValid()).toBeFalsy();
+        expect(Day.isValid(day)).toBeFalsy();
       });
     });
 
@@ -139,7 +139,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       test('should be false', () => {
         const day = new Day(incorrectDateParam);
 
-        expect(day.isValid()).toBeFalsy();
+        expect(Day.isValid(day)).toBeFalsy();
       });
     });
   });
@@ -509,33 +509,33 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     });
   });
 
-  describe('#isValidDay', () => {
-    context('when pass correct day', () => {
-      test('return true', () => {
-        const day = new Day({ value: new Date() });
+  // describe('#isValidDay', () => {
+  //   context('when pass correct day', () => {
+  //     test('return true', () => {
+  //       const day = new Day({ value: new Date() });
 
-        expect(day.isValid()).toBeTruthy();
-      });
-    });
+  //       expect(Day.isValid(day)).toBeTruthy();
+  //     });
+  //   });
 
-    context('when pass incorrect day', () => {
-      context('when pass day with incorrect value', () => {
-        test('return false', () => {
-          const day = new Day({ value: '' });
+  //   context('when pass incorrect day', () => {
+  //     context('when pass day with incorrect value', () => {
+  //       test('return false', () => {
+  //         const day = new Day({ value: '' });
 
-          expect(day.isValid()).toBeFalsy();
-        });
-      });
+  //         expect(Day.isValid(day)).toBeFalsy();
+  //       });
+  //     });
 
-      context('when pass day with incorrect date', () => {
-        test('return false', () => {
-          const day = new Day({ value: new Date('') });
+  //     context('when pass day with incorrect date', () => {
+  //       test('return false', () => {
+  //         const day = new Day({ value: new Date('') });
 
-          expect(day.isValid()).toBeFalsy();
-        });
-      });
-    });
-  });
+  //         expect(Day.isValid(day)).toBeFalsy();
+  //       });
+  //     });
+  //   });
+  // });
 
   describe('#format', () => {
     context('when pass correct day without format', () => {
@@ -557,22 +557,22 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       });
     });
 
-    context('when pass incorrect day', () => {
-      context('when pass day with incorrect value', () => {
-        test('return NaD error name', () => {
-          const day = new Day({ value: '' });
+    // context('when pass incorrect day', () => {
+    //   context('when pass day with incorrect value', () => {
+    //     test('return NaD error name', () => {
+    //       const day = new Day({ value: '' });
 
-          expect(day.format()).toBe(errorNotADay.details[0]);
-        });
-      });
+    //       expect(day.format()).toBe(errorNotADay.details[0]);
+    //     });
+    //   });
 
-      context('when pass day with incorrect date', () => {
-        test('return NaD error name', () => {
-          const day = new Day({ value: new Date('') });
+    //   context('when pass day with incorrect date', () => {
+    //     test('return NaD error name', () => {
+    //       const day = new Day({ value: new Date('') });
 
-          expect(day.format()).toBe(errorNotADay.details[0]);
-        });
-      });
-    });
+    //       expect(day.format()).toBe(errorNotADay.details[0]);
+    //     });
+    //   });
+    // });
   });
 });

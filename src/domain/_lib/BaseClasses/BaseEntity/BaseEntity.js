@@ -1,8 +1,10 @@
 import { BaseId } from '../BaseId';
-import { lowercaseFirstLetter } from 'src/infra/support/changeCaseFirstLetter';
+import { lowerFirst } from 'lodash';
+import { Operation as ErrorFactrory } from '../../ErrorFactories';
 
 export class BaseEntity {
+  static errorFactrory = new ErrorFactrory();
   constructor(id = new BaseId()) {
-    this[lowercaseFirstLetter(id.constructor.name)] = id;
+    this[lowerFirst(id.constructor.name)] = id;
   }
 }

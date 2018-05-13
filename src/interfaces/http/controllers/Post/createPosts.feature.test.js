@@ -1,5 +1,6 @@
 import { container } from 'src/container';
 import { request } from 'src/infra/support/test/request';
+import { Post } from 'src/domain/Seller';
 
 const {
   repositories: { Post: postRepo },
@@ -24,7 +25,7 @@ describe('API :: POST /api/posts', () => {
     });
   });
 
-  context('when there are no posts', () => {
+  context('when there are no props', () => {
     test('should return BD_REQUEST with array of errors', async () => {
       const { statusCode, body } = await request()
         .post('/api/posts')
@@ -34,6 +35,22 @@ describe('API :: POST /api/posts', () => {
       expect(statusCode).toBe(400);
       expect(body.type).toBe('ValidationError');
       expect(body.details).toEqual({ name: ["Name can't be blank"] });
+    });
+  });
+
+  context('when post exists', () => {
+    test('should return BD_REQUEST with array of errors', async () => {
+      const post = new Post({ name: 'Флорист' });
+      const { statusCode, body } = await request()
+        .post('/api/posts')
+        .set('Accept', 'application/json')
+        .send({ name: 'Флорист' });
+
+      expect(statusCode).toBe(409);
+      expect(body.type).toBe('AlreadyExists');
+      expect(body.details).toEqual({
+        name: ['Post with name: "Флорист" already exists.'],
+      });
     });
   });
 });

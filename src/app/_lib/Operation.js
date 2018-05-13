@@ -17,7 +17,7 @@ export class Operation extends EventEmitter {
     this.domainServices = domainServices;
     this.entities = entities;
     this.commonTypes = commonTypes;
-    this.validate = makeValidator();
+    this.validate = makeValidator(this.constructor.constraints);
   }
 
   on(output, handler) {

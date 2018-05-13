@@ -1,43 +1,49 @@
 import validate from 'validate.js';
 import { upperFirst, lowerFirst, snakeCase } from 'lodash';
 import { Day, DayRange } from 'src/domain/_lib/ValueObjects';
-import { ValidationError } from 'src/domain/_lib/Errors';
+import { Validation as ValidationErrorFactories } from '../../domain/_lib/ErrorFactories';
 
-export const makeValidator = () => {
+const validationErrorFactory = new ValidationErrorFactories();
+
+export const makeValidator = (constraints) => {
   const validator = (entity, options = { exception: false }) => {
-    const validationErrors = validate(entity, entity.constructor.constraints);
+    const errors = validate(
+      entity,
+      constraints || entity.constructor.constraints
+    );
 
     if (errors && options.exception) {
-      const error = ValidationError.create(
-        `${entity.constructor.name} is not valid.`,
-        validationErrors,
-        snakeCase(entity.constructor.name).toUpperCase()
-      );
-
-      err.details = validationErrors;
+      const err = validationErrorFactory.create(errors);
       throw err;
     }
 
     return errors;
   };
 
-  validate.validators.association = (value) => {
+  validate.validators.hasOne = (value) => {
     if (!value) {
       return null;
     }
     return validator(value);
   };
 
+  validate.validators.hasMany = (value) => {
+    if (value.length === 0) {
+      return null;
+    }
+    return value.map(validator);
+  };
+
   validate.validators.dayObject = (value) => {
     if (!Day.isValid(value)) {
-      return Day.errorNotADayRange.details[0];
+      return `${value} is not valid Day`;
     }
     return null;
   };
 
   validate.validators.dayRangeObject = (value) => {
     if (!DayRange.isValid(value)) {
-      return DayRange.errorNotADayRange.details[0];
+      return `${value} is not valid DayRange`;
     }
     return null;
   };

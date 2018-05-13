@@ -1,13 +1,13 @@
 import { BaseValue } from '../../BaseClasses';
 import { Day } from '../Day';
-import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
+// import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
 
 export class DayRange extends BaseValue {
   // Errors
 
-  static errorNotADay = Day.errorNotADay;
-  static errorNotADate = Day.errorNotADate;
-  static errorNotANumber = Day.errorNotANumber;
+  // static errorNotADay = Day.errorNotADay;
+  // static errorNotADate = Day.errorNotADate;
+  // static errorNotANumber = Day.errorNotANumber;
 
   // Factories
 
@@ -28,9 +28,9 @@ export class DayRange extends BaseValue {
   }
 
   static _dayRangeFactory(day = new Day(), rangeName) {
-    if (!Day.isValid(day)) {
-      throw this.errorNotADay;
-    }
+    // if (!Day.isValid(day)) {
+    //   throw this.errorNotADay;
+    // }
 
     return new DayRange({
       start: day[`startOf${rangeName}`](),
@@ -41,7 +41,13 @@ export class DayRange extends BaseValue {
   //Validator
 
   static isValid(dayRange) {
-    return dayRange && dayRange.constructor === DayRange && dayRange.isValid();
+    return (
+      dayRange &&
+      dayRange.constructor === DayRange &&
+      Day.isValid(dayRange.start) &&
+      Day.isValid(dayRange.end) &&
+      dayRange.end >= dayRange.start
+    );
   }
 
   // Instance methods
@@ -53,9 +59,9 @@ export class DayRange extends BaseValue {
   }
 
   [Symbol.iterator] = function*() {
-    if (!this.isValid()) {
-      return undefined;
-    }
+    // if (!this.isValid()) {
+    //   return undefined;
+    // }
     let curDay = this.start;
     do {
       yield curDay;
@@ -64,46 +70,46 @@ export class DayRange extends BaseValue {
   };
 
   get length() {
-    if (!this.isValid()) {
-      throw this.constructor.errorNotANumber;
-    }
+    // if (!this.isValid()) {
+    //   throw this.constructor.errorNotANumber;
+    // }
 
     return this.end.difference(this.start) + 1;
   }
 
   contains(day) {
-    if (!this.isValid() && Day.isValid(day)) {
-      throw this.constructor.errorNotADay;
-    }
+    // if (!this.isValid() && Day.isValid(day)) {
+    //   throw this.constructor.errorNotADay;
+    // }
     return day >= this.start && day <= this.end;
   }
 
   toString() {
-    if (!this.isValid()) {
-      return this.constructor.errorNotADayRange.message[0];
-    }
+    // if (!this.isValid()) {
+    //   return this.constructor.errorNotADayRange.message[0];
+    // }
 
     return `${this.start.toString()} - ${this.end.toString()}`;
   }
 
   valueOf() {
-    if (this.isValid()) {
-      return NaN;
-    }
+    // if (this.isValid()) {
+    //   return NaN;
+    // }
 
     return this.end - this.start;
   }
 
-  isValid() {
-    return (
-      Day.isValid(this.start) && Day.isValid(this.end) && this.end >= this.start
-    );
-  }
+  // isValid() {
+  //   return (
+  //     Day.isValid(this.start) && Day.isValid(this.end) && this.end >= this.start
+  //   );
+  // }
 }
 
-addErrorDefinitionProperty(
-  DayRange,
-  'errorNotADayRange',
-  'ValidationError',
-  'Not A DayRage'
-);
+// addErrorDefinitionProperty(
+//   DayRange,
+//   'errorNotADayRange',
+//   'ValidationError',
+//   'Not A DayRage'
+// );

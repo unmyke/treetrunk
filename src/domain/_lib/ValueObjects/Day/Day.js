@@ -73,7 +73,7 @@ export class Day extends BaseValue {
   //Validator
 
   static isValid(day) {
-    return day && day.constructor === Day && day.isValid();
+    return day && day.constructor === Day && isValidDate(day.value);
   }
 
   // Instance methods
@@ -188,9 +188,9 @@ export class Day extends BaseValue {
     return this.value.getTime();
   }
 
-  isValid() {
-    return isValidDate(this.value);
-  }
+  // isValid() {
+  //   return isValidDate(this.value);
+  // }
 }
 
 // addErrorDefinitionProperty(

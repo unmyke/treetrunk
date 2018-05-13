@@ -15,7 +15,7 @@ export class GetPost extends Operation {
 
       this.emit(SUCCESS, postToDTO(post));
     } catch (error) {
-      if (error.message === 'NOT_FOUND') {
+      if (error.code === 'NOT_FOUND') {
         return this.emit(NOT_FOUND, error);
       }
 

@@ -7,7 +7,7 @@ import {
   entities,
   commonTypes,
   services as domainServices,
-  Errors,
+  ErrorFactories,
 } from './domain';
 
 import * as repositories from './infra/repositories';
@@ -27,7 +27,7 @@ import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
 import { db } from './infra/database/models';
 const { database, models } = db;
-// import * as mappers from './infra/mappers';
+import * as mappers from './infra/mappers';
 
 import { containerMiddleware } from './interfaces/http/utils/bottle-express';
 import { lowercaseFirstLetter } from './infra/support/changeCaseFirstLetter';
@@ -38,7 +38,12 @@ bottle.constant('config', config);
 bottle.factory('app', (container) => new Application(container));
 bottle.factory('domain.entities', () => entities);
 bottle.factory('domain.commonTypes', () => commonTypes);
-bottle.factory('domain.Errors', () => Errors);
+bottle.factory('domain.errorFactories', () => {
+  return Object.keys(ErrorFactories).reduce((acc, ErrorFactoryName) => {
+    const errorFactory = new ErrorFactories[ErrorFactoryName]();
+    return { ...acc, [ErrorFactoryName]: errorFactory };
+  }, {});
+});
 bottle.factory('domain.services', (container) => {
   return Object.keys(domainServices).reduce((acc, domainServiceName) => {
     const domainService = new domainServices[domainServiceName](container);
@@ -46,6 +51,19 @@ bottle.factory('domain.services', (container) => {
   }, {});
 });
 
+bottle.factory('mappers', (container) => {
+  return Object.keys(mappers).reduce((acc, mapperTypeName) => {
+    const mapperType = Object.keys(mappers[mapperTypeName]).reduce(
+      (acc, mapperName) => {
+        const mapper = new mappers[mapperTypeName][mapperName](container);
+        return { ...acc, [mapperName]: mapper };
+      },
+      {}
+    );
+
+    return { ...acc, [mapperTypeName]: mapperType };
+  }, {});
+});
 bottle.factory('repositories', (container) => {
   const result = Object.keys(repositories).reduce((acc, repositoryName) => {
     const repository = new repositories[repositoryName](container);

@@ -17,27 +17,28 @@ const pieceRateDay2 = new Day({ value: pieceRateDate2 });
 
 const postProps = { name: 'Флорист' };
 
+const pieceRates = [
+  { value: 1, date: pieceRateDate1 },
+  { value: 2, date: pieceRateDate2 },
+];
+
 let post;
 let postDTO;
-let postToUpdate;
+let postToDelete;
 
-describe('API :: PUT /api/posts/:id', () => {
+describe('API :: DELETE /api/posts/:id', () => {
   beforeEach(async () => {
     post = new Post(postProps);
-    post.addPieceRate(1, pieceRateDay1);
-    post.addPieceRate(2, pieceRateDay2);
+    post.setPieceRate(pieceRates);
 
     postDTO = {
       postId: post.postId.toString(),
       name: 'Флорист',
       currentPieceRate: 2,
-      pieceRates: [
-        { value: 1, date: '21.01.2018' },
-        { value: 2, date: '21.02.2018' },
-      ],
+      pieceRates,
     };
 
-    postToUpdate = await postRepo.add(post);
+    postToDelete = await postRepo.add(post);
   });
 
   afterEach(() => {
@@ -47,7 +48,7 @@ describe('API :: PUT /api/posts/:id', () => {
   context('when props are correct', () => {
     test('should update and return 202 with the updated post', async () => {
       const { statusCode, body } = await request()
-        .put(`/api/posts/${postToUpdate.postId}`)
+        .put(`/api/posts/${postToDelete.postId}`)
         .set('Accept', 'application/json')
         .send({ name: 'Старший флорист' });
 
@@ -59,7 +60,7 @@ describe('API :: PUT /api/posts/:id', () => {
     context('when name is empty', () => {
       test('should not update and returns 400 with the validation error', async () => {
         const { statusCode, body } = await request()
-          .put(`/api/posts/${postToUpdate.postId}`)
+          .put(`/api/posts/${postToDelete.postId}`)
           .send({
             name: '',
           });
@@ -75,7 +76,7 @@ describe('API :: PUT /api/posts/:id', () => {
     context('when send no props', () => {
       test('should not update and returns 400 with the validation error', async () => {
         const { statusCode, body } = await request()
-          .put(`/api/posts/${postToUpdate.postId}`)
+          .put(`/api/posts/${postToDelete.postId}`)
           .send();
 
         expect(statusCode).toBe(400);
@@ -105,7 +106,7 @@ describe('API :: PUT /api/posts/:id', () => {
     });
   });
 
-  context('when post with updated name already exists', () => {
+  context('when post already exists', () => {
     test('should not update and returns the already exists message and status 400', async () => {
       const name = 'Старший флорист';
       const duplicatePostProps = { name };
@@ -115,7 +116,7 @@ describe('API :: PUT /api/posts/:id', () => {
       await postRepo.add(duplicatePost);
 
       const { statusCode, body } = await request()
-        .put(`/api/posts/${postToUpdate.postId}`)
+        .put(`/api/posts/${postToDelete.postId}`)
         .send({
           name,
         });
@@ -124,22 +125,6 @@ describe('API :: PUT /api/posts/:id', () => {
       expect(body.type).toBe('AlreadyExists');
       expect(body.details).toEqual({
         name: ['Post with name: "Старший флорист" already exists.'],
-      });
-    });
-  });
-
-  context('when post nothing to update', () => {
-    test('should not update and returns the nothing to update message and status 400', async () => {
-      const { statusCode, body } = await request()
-        .put(`/api/posts/${postToUpdate.postId}`)
-        .send({
-          name: 'Флорист',
-        });
-
-      expect(statusCode).toBe(400);
-      expect(body.type).toBe('NothingToUpdate');
-      expect(body.details).toEqual({
-        name: [`Nothing to update.`],
       });
     });
   });

@@ -1,6 +1,6 @@
-import { Operation } from '../_lib/Operation';
+import { SellerManagementOperation } from '../SellerManagementOperation';
 
-export class CreatePost extends Operation {
+export class CreatePost extends SellerManagementOperation {
   static constraints = {
     name: {
       presence: {

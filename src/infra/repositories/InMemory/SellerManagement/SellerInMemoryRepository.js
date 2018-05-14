@@ -1,4 +1,4 @@
-import { InMemoryRepository } from '../_lib/InMemoryRepository';
+import { InMemoryRepository } from '../InMemoryRepository';
 
 export class SellerInMemoryRepository extends InMemoryRepository {
   // appointments = [];

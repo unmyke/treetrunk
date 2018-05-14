@@ -1,6 +1,6 @@
-import { Operation } from '../_lib/Operation';
+import { SellerManagementOperation } from '../SellerManagementOperation';
 
-export class CreatePostPieceRate extends Operation {
+export class CreatePostPieceRate extends SellerManagementOperation {
   async execute(postIdValue, { value, date }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {

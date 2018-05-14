@@ -1,6 +1,6 @@
-import { Operation } from '../_lib/Operation';
+import { SellerManagementOperation } from '../SellerManagementOperation';
 
-export class UpdateSeller extends Operation {
+export class UpdateSeller extends SellerManagementOperation {
   async execute(sellerIdValue, { lastName, firstName, middleName, phone }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {

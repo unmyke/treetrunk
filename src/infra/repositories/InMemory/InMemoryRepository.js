@@ -1,4 +1,4 @@
-import { BaseRepository } from '../BaseRepository';
+import { BaseRepository } from '../_lib';
 import { lowerFirst } from 'lodash';
 
 export class InMemoryRepository extends BaseRepository {

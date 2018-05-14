@@ -3,7 +3,7 @@ import { request } from 'src/infra/support/test/request';
 import uuidv4 from 'uuid/v4';
 
 const {
-  subdomain: {
+  subdomains: {
     SellerManagement: {
       entities: { Post },
     },

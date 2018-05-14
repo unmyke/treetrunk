@@ -1,6 +1,5 @@
-import { Operation } from '../_lib/Operation';
-import { lowercaseFirstLetter } from 'src/infra/support/changeCaseFirstLetter';
-import { POINT_CONVERSION_HYBRID } from 'constants';
+import { Operation } from '../_lib';
+import { lowerFirst } from 'lodash';
 
 export class InitializeApplication extends Operation {
   constructor({ makeValidator, subdomains, commonTypes, repositories }) {
@@ -39,7 +38,7 @@ export class InitializeApplication extends Operation {
           model = await repo.add(newModel);
         }
 
-        const id = model[`${lowercaseFirstLetter(ModelName)}Id`];
+        const id = model[`${lowerFirst(ModelName)}Id`];
 
         seed.callback(Entity, id);
       });

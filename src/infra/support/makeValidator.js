@@ -1,7 +1,7 @@
 import validate from 'validate.js';
 import { upperFirst, lowerFirst, snakeCase } from 'lodash';
-import { Day, DayRange } from 'src/domain/_lib/ValueObjects';
-import { Validation as ValidationErrorFactories } from '../../domain/_lib/ErrorFactories';
+import { Day, DayRange } from 'src/domain/commonTypes';
+import { Validation as ValidationErrorFactories } from 'src/domain/ErrorFactories';
 
 const validationErrorFactory = new ValidationErrorFactories();
 

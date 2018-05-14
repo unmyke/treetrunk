@@ -1,14 +1,10 @@
 import Bottle from 'bottlejs';
+import { lowerFirst } from 'lodash';
 
 import { config } from 'config';
 import { Application } from './app/Application';
 
-import {
-  entities,
-  commonTypes,
-  services as domainServices,
-  ErrorFactories,
-} from './domain';
+import { subdomains, commonTypes, errorFactories } from './domain';
 
 import * as repositories from './infra/repositories';
 import * as services from './app';
@@ -30,26 +26,25 @@ const { database, models } = db;
 import * as mappers from './infra/mappers';
 
 import { containerMiddleware } from './interfaces/http/utils/bottle-express';
-import { lowercaseFirstLetter } from './infra/support/changeCaseFirstLetter';
 
 const bottle = new Bottle();
 
 bottle.constant('config', config);
 bottle.factory('app', (container) => new Application(container));
-bottle.factory('domain.entities', () => entities);
-bottle.factory('domain.commonTypes', () => commonTypes);
-bottle.factory('domain.errorFactories', () => {
-  return Object.keys(ErrorFactories).reduce((acc, ErrorFactoryName) => {
-    const errorFactory = new ErrorFactories[ErrorFactoryName]();
+bottle.factory('subdomains', () => subdomains);
+bottle.factory('commonTypes', () => commonTypes);
+bottle.factory('errorFactories', () => {
+  return Object.keys(errorFactories).reduce((acc, ErrorFactoryName) => {
+    const errorFactory = new errorFactories[ErrorFactoryName]();
     return { ...acc, [ErrorFactoryName]: errorFactory };
   }, {});
 });
-bottle.factory('domain.services', (container) => {
-  return Object.keys(domainServices).reduce((acc, domainServiceName) => {
-    const domainService = new domainServices[domainServiceName](container);
-    return { ...acc, [domainServiceName]: domainService };
-  }, {});
-});
+// bottle.factory('domain.services', (container) => {
+//   return Object.keys(domainServices).reduce((acc, domainServiceName) => {
+//     const domainService = new domainServices[domainServiceName](container);
+//     return { ...acc, [domainServiceName]: domainService };
+//   }, {});
+// });
 
 bottle.factory('mappers', (container) => {
   return Object.keys(mappers).reduce((acc, mapperTypeName) => {
@@ -65,11 +60,10 @@ bottle.factory('mappers', (container) => {
   }, {});
 });
 bottle.factory('repositories', (container) => {
-  const result = Object.keys(repositories).reduce((acc, repositoryName) => {
+  return Object.keys(repositories).reduce((acc, repositoryName) => {
     const repository = new repositories[repositoryName](container);
     return { ...acc, [repositoryName]: repository };
   }, {});
-  return result;
 });
 
 bottle.factory('services', (container) => {
@@ -78,7 +72,7 @@ bottle.factory('services', (container) => {
     const operations = Object.keys(Operations).reduce((acc, operationName) => {
       return {
         ...acc,
-        [lowercaseFirstLetter(operationName)]: () =>
+        [lowerFirst(operationName)]: () =>
           new Operations[operationName](container),
       };
     }, {});
@@ -92,7 +86,7 @@ bottle.factory('services', (container) => {
 //   const serializer = serializers[entityName];
 //   Object.keys(Operations).forEach((operationName) => {
 //     const Operation = Operations[operationName];
-//     bottle.factory(`services.${entityName}.${lowercaseFirstLetter(operationName)}`, (container) => {
+//     bottle.factory(`services.${entityName}.${lowerFirst(operationName)}`, (container) => {
 //       const { repositories, entities } = container;
 //       console.log(container);
 //       console.log(repositories);

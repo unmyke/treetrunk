@@ -1,6 +1,6 @@
 import { container } from 'src/container';
 import { request } from 'src/infra/support/test/request';
-import { Post } from 'src/domain/Seller';
+import { Post } from 'src/domain/subdomains/SellerManagement';
 
 const {
   repositories: { Post: postRepo },

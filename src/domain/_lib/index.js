@@ -1,5 +1,15 @@
-import { BaseClasses } from './BaseClasses';
-import { ValueObjects } from './ValueObjects';
-import { ErrorFactories } from './ErrorFactories';
+import { BaseValue } from './BaseValue';
+import { BaseEntity } from './BaseEntity';
+import { BaseId } from './BaseId';
+import { BaseService } from './BaseService';
+import { BaseAdapter } from './BaseAdapter';
+import { BaseErrorFactory } from './BaseErrorFactory';
 
-export { BaseClasses, ValueObjects, ErrorFactories };
+export {
+  BaseValue,
+  BaseEntity,
+  BaseId,
+  BaseService,
+  BaseAdapter,
+  BaseErrorFactory,
+};

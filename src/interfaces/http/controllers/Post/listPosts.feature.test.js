@@ -2,10 +2,14 @@ import { container } from 'src/container';
 import { request } from 'src/infra/support/test/request';
 
 const {
-  domain: {
-    entities: { Post },
+  subdomain: {
+    SellerManagement: {
+      entities: { Post },
+    },
   },
-  repositories: { Post: postRepo },
+  repositories: {
+    SellerManagement: { Post: postRepo },
+  },
 } = container;
 
 const postProps1 = { name: 'Флорист' };

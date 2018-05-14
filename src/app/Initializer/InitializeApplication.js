@@ -3,6 +3,21 @@ import { lowercaseFirstLetter } from 'src/infra/support/changeCaseFirstLetter';
 import { POINT_CONVERSION_HYBRID } from 'constants';
 
 export class InitializeApplication extends Operation {
+  constructor({ makeValidator, subdomains, commonTypes, repositories }) {
+    super({ makeValidator, commonTypes });
+
+    this.entities = Object.keys(subdomains).reduce((acc, subdomainName) => {
+      return { ...acc, ...subdomains[subdomainName].entities };
+    }, {});
+
+    this.repositories = Object.keys(repositories).reduce(
+      (acc, subdomainName) => {
+        return { ...acc, ...repositories[subdomainName] };
+      },
+      {}
+    );
+  }
+
   async execute({ config }) {
     const { repositories, entities } = this;
     const { SUCCESS, ERROR, INITIALIZE_ERROR } = this.outputs;

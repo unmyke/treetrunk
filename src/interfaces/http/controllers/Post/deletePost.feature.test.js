@@ -3,11 +3,15 @@ import { request } from 'src/infra/support/test/request';
 import uuidv4 from 'uuid/v4';
 
 const {
-  domain: {
-    entities: { Post },
-    commonTypes: { Day },
+  subdomain: {
+    SellerManagement: {
+      entities: { Post },
+      commonTypes: { Day },
+    },
   },
-  repositories: { Post: postRepo },
+  repositories: {
+    SellerManagement: { Post: postRepo },
+  },
 } = container;
 
 const pieceRateDate1 = new Date('2018.01.21');

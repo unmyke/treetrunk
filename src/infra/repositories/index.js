@@ -1,3 +1,3 @@
-import { Seller, Post, SeniorityType } from './InMemory';
+import { SellerManagement } from './InMemory';
 
-export { Seller, Post, SeniorityType };
+export { SellerManagement };

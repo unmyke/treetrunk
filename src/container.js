@@ -23,7 +23,10 @@ import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
 import { db } from './infra/database/models';
 const { database, models } = db;
-import * as mappers from './infra/mappers';
+import {
+  commonTypes as commonTypesMappers,
+  subdomains as subdomainsMappers,
+} from './infra/mappers';
 
 import { containerMiddleware } from './interfaces/http/utils/bottle-express';
 
@@ -46,23 +49,42 @@ bottle.factory('errorFactories', () => {
 //   }, {});
 // });
 
-bottle.factory('mappers', (container) => {
-  return Object.keys(mappers).reduce((acc, mapperTypeName) => {
-    const mapperType = Object.keys(mappers[mapperTypeName]).reduce(
-      (acc, mapperName) => {
-        const mapper = new mappers[mapperTypeName][mapperName](container);
-        return { ...acc, [mapperName]: mapper };
-      },
-      {}
-    );
-
-    return { ...acc, [mapperTypeName]: mapperType };
+bottle.factory('mappers.commonTypes', (container) => {
+  return Object.keys(commonTypesMappers).reduce((acc, commonTypeName) => {
+    const mapper = new commonTypesMappers[commonTypeName](container);
+    return { ...acc, [commonTypeName]: mapper };
   }, {});
 });
+
+bottle.factory('mappers.subdomains', (container) => {
+  return Object.keys(subdomainsMappers).reduce((acc, subdomainName) => {
+    const subdomainMappers = Object.keys(
+      subdomainsMappers[subdomainName]
+    ).reduce((acc, EntityName) => {
+      const mapper = new subdomainsMappers[subdomainName][EntityName](
+        container
+      );
+      return { ...acc, [EntityName]: mapper };
+    }, {});
+
+    return { ...acc, [subdomainName]: subdomainMappers };
+  }, {});
+});
+
 bottle.factory('repositories', (container) => {
-  return Object.keys(repositories).reduce((acc, repositoryName) => {
-    const repository = new repositories[repositoryName](container);
-    return { ...acc, [repositoryName]: repository };
+  return Object.keys(repositories).reduce((acc, subdomainName) => {
+    return {
+      ...acc,
+      [subdomainName]: Object.keys(repositories[subdomainName]).reduce(
+        (acc, repositoryName) => {
+          const repository = new repositories[subdomainName][repositoryName](
+            container
+          );
+          return { ...acc, [repositoryName]: repository };
+        },
+        {}
+      ),
+    };
   }, {});
 });
 

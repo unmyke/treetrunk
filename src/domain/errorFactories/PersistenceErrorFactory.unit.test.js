@@ -21,12 +21,12 @@ base.middleName = 'Middlename';
 base.lastName = 'Lastname';
 base.phone = 'phone';
 
-const persistenceErrorFactory = new PersistenceErrorFactory();
+const errorFactory = new PersistenceErrorFactory();
 
 describe('Domain :: lib :: Errors:: PersistenceErrorFactory', () => {
   describe('#createIdNotFound', () => {
     test('should construct NOT_FOUND Error', () => {
-      const notFoundError = persistenceErrorFactory.createIdNotFound(baseId);
+      const notFoundError = errorFactory.createIdNotFound(baseId);
 
       expect(notFoundError).toBeInstanceOf(Error);
       expect(notFoundError.code).toBe('NOT_FOUND');
@@ -40,7 +40,7 @@ describe('Domain :: lib :: Errors:: PersistenceErrorFactory', () => {
 
   describe('#createIdsNotFound', () => {
     test('should construct NOT_FOUND Error', () => {
-      const notFoundError = persistenceErrorFactory.createIdsNotFound(baseIds);
+      const notFoundError = errorFactory.createIdsNotFound(baseIds);
 
       expect(notFoundError).toBeInstanceOf(Error);
       expect(notFoundError.code).toBe('NOT_FOUND');
@@ -56,7 +56,7 @@ describe('Domain :: lib :: Errors:: PersistenceErrorFactory', () => {
 
   describe('#createAlreadyExists', () => {
     test('should construct Persistence Error', () => {
-      const alredyExistsError = persistenceErrorFactory.createAlreadyExists(
+      const alredyExistsError = errorFactory.createAlreadyExists(
         base,
         uniqueness
       );

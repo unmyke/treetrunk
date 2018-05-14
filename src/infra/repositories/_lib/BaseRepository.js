@@ -1,16 +1,11 @@
 export class BaseRepository {
   constructor({
-    domain: {
-      entities,
-      commonTypes,
-      errorFactories: { Persistence: persistenceErrorFactory },
-    },
-    mappers: { commonTypes: commonTypesMappers, entities: entitiesMappers },
+    commonTypes,
+    errorFactories: { Persistence: errorFactory },
+    mappers: { commonTypes: commonTypesMappers },
   }) {
-    this.entities = entities;
     this.commonTypes = commonTypes;
-    this.persistenceErrorFactory = persistenceErrorFactory;
+    this.errorFactory = errorFactory;
     this.commonTypesMappers = commonTypesMappers;
-    this.entitiesMappers = entitiesMappers;
   }
 }

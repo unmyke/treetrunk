@@ -27,7 +27,9 @@
     "console": "NODE_PATH=. babel-node src/interfaces/console/index.js",
     "pm2": "pm2",
     "precommit": "lint-staged",
-    "prettier": "prettier"
+    "prettier": "prettier",
+    "debug":
+      "node --debug-brk node_modules/jest/bin/jest --runInBand --no-cache link"
   },
   "jest": {
     "setupFiles": ["jest-plugin-context/setup"]

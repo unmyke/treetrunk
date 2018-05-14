@@ -1,11 +1,11 @@
-import { BaseMapper } from '../_lib';
-import { PostId as PostIdMapper, Day as DayMapper } from '../commonTypes';
+import { SellerManagementMapper } from './SellerManagementMapper';
+import { PostId as PostIdMapper, Day as DayMapper } from '../../commonTypes';
 
-export class PostMapper extends BaseMapper {
-  constructor({ domain: { entities, commonTypes } }) {
-    super({ domain: { entities, commonTypes } });
-    this.postIdMapper = new PostIdMapper({ domain: { entities, commonTypes } });
-    this.dayMapper = new DayMapper({ domain: { entities, commonTypes } });
+export class PostMapper extends SellerManagementMapper {
+  constructor({ commonTypes, subdomains }) {
+    super({ commonTypes, subdomains });
+    this.postIdMapper = new PostIdMapper({ subdomains, commonTypes });
+    this.dayMapper = new DayMapper({ subdomains, commonTypes });
   }
 
   toDatabase({ postId, name, pieceRates }) {

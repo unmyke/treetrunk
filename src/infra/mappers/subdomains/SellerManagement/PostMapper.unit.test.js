@@ -3,10 +3,12 @@ import uuidv4 from 'uuid/v4';
 import { container } from 'src/container';
 
 const {
-  domain: {
-    entities: { Post },
-    commonTypes: { PostId, Day },
+  subdomains: {
+    SellerManagement: {
+      entities: { Post },
+    },
   },
+  commonTypes: { PostId, Day },
 } = container;
 
 let postMapper;

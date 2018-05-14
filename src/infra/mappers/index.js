@@ -1,4 +1,4 @@
-import * as entities from './entities';
+import * as subdomains from './subdomains';
 import * as commonTypes from './commonTypes';
 
-export { entities, commonTypes };
+export { subdomains, commonTypes };

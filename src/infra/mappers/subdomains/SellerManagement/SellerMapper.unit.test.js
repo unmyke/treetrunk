@@ -3,10 +3,12 @@ import uuidv4 from 'uuid/v4';
 import { container } from 'src/container';
 
 const {
-  domain: {
-    entities: { Seller },
-    commonTypes: { SellerId, PostId, Day },
+  subdomains: {
+    SellerManagement: {
+      entities: { Seller },
+    },
   },
+  commonTypes: { SellerId, PostId, Day },
 } = container;
 
 let sellerMapper;
@@ -66,8 +68,6 @@ describe('Domain :: infra :: mappers :: SellerMapper', () => {
   describe('#toEntity', () => {
     test('should return Seller entity', () => {
       const persistedEntity = sellerMapper.toEntity(entry);
-
-      console.log(persistedEntity);
 
       expect(persistedEntity).toBeInstanceOf(Seller);
       expect(persistedEntity.sellerId).toBeInstanceOf(SellerId);

@@ -4,9 +4,21 @@ import { lowerFirst } from 'lodash';
 export class InMemoryRepository extends BaseRepository {
   store = [];
 
-  constructor(container) {
-    super(container);
-    this.entityMapper = this.entitiesMappers[this.constructor.entityMapperName];
+  constructor({
+    commonTypes,
+    errorFactories: { Persistence: errorFactory },
+    mappers: {
+      commonTypes: commonTypesMappers,
+      SellerManagement: entitiesMappers,
+    },
+  }) {
+    super({
+      commonTypes,
+      errorFactories: { Persistence: errorFactory },
+      mappers: { commonTypes: commonTypesMappers },
+    });
+
+    this.entityMapper = entitiesMappers[this.constructor.entityMapperName];
   }
 
   async getAll(props = {}) {
@@ -30,7 +42,7 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (item === undefined) {
-      throw this.persistenceErrorFactory.createIdNotFound(id);
+      throw this.errorFactory.createIdNotFound(id);
     }
 
     return this.entityMapper.toEntity(item);
@@ -44,7 +56,7 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (entities.length === 0) {
-      throw this.persistenceErrorFactory.createIdsNotFound(ids);
+      throw this.errorFactory.createIdsNotFound(ids);
     }
 
     return entities;
@@ -137,10 +149,7 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (Object.keys(uniqueless).length !== 0) {
-      throw this.persistenceErrorFactory.createAlreadyExists(
-        entity,
-        uniqueless
-      );
+      throw this.errorFactory.createAlreadyExists(entity, uniqueless);
     }
 
     return null;

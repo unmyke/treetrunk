@@ -6,6 +6,7 @@ export class PostInMemoryRepository extends InMemoryRepository {
   };
 
   static entityMapperName = 'Post';
+
   // appointments = [];
   // async add(seller) {
   //   const { sellerId, personName, phone, appointments } = seller;

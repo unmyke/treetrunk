@@ -8,24 +8,44 @@ const PostsController = {
 
     // router.use(inject('serializers.post'));
 
-    router.get('/', injectService('Post', 'getAllPosts'), this.index);
-    router.get('/:postId', injectService('Post', 'getPost'), this.show);
-    router.post('/', injectService('Post', 'createPost'), this.create);
-    router.put('/:postId', injectService('Post', 'updatePost'), this.update);
-    router.delete('/:postId', injectService('Post', 'deletePost'), this.delete);
+    router.get(
+      '/',
+      injectService('SellerManagement', 'Post', 'getAllPosts'),
+      this.index
+    );
+    router.get(
+      '/:postId',
+      injectService('SellerManagement', 'Post', 'getPost'),
+      this.show
+    );
+    router.post(
+      '/',
+      injectService('SellerManagement', 'Post', 'createPost'),
+      this.create
+    );
+    router.put(
+      '/:postId',
+      injectService('SellerManagement', 'Post', 'updatePost'),
+      this.update
+    );
+    router.delete(
+      '/:postId',
+      injectService('SellerManagement', 'Post', 'deletePost'),
+      this.delete
+    );
     router.post(
       '/:postId/piecerates',
-      injectService('Post', 'createPostPieceRate'),
+      injectService('SellerManagement', 'Post', 'createPostPieceRate'),
       this.createPieceRate
     );
     router.put(
       '/:postId/piecerates',
-      injectService('Post', 'updatePostPieceRate'),
+      injectService('SellerManagement', 'Post', 'updatePostPieceRate'),
       this.updatePieceRate
     );
     router.delete(
       '/:postId/piecerates',
-      injectService('Post', 'deletePostPieceRate'),
+      injectService('SellerManagement', 'Post', 'deletePostPieceRate'),
       this.deletePieceRate
     );
 
@@ -155,7 +175,7 @@ const PostsController = {
       })
       .on(ERROR, next);
 
-    deletePost.execute(req.params.postId);
+    deletePost.execute({ postIdValue: req.params.postId });
   },
 
   createPieceRate(req, res, next) {

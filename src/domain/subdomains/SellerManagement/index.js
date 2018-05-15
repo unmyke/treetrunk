@@ -2,7 +2,7 @@ import { Seller } from './Seller';
 import { Post } from './Post';
 import { SeniorityType } from './SeniorityType';
 
-import { SellerManagementService } from './SellerManagementService';
+import { SellerService } from './SellerService';
 
 export const entities = {
   Seller,
@@ -11,5 +11,5 @@ export const entities = {
 };
 
 export const services = {
-  SellerManagementService,
+  SellerService,
 };

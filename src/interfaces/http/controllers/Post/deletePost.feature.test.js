@@ -6,9 +6,9 @@ const {
   subdomains: {
     SellerManagement: {
       entities: { Post },
-      commonTypes: { Day },
     },
   },
+  commonTypes: { Day },
   repositories: {
     SellerManagement: { Post: postRepo },
   },
@@ -33,7 +33,7 @@ let postToDelete;
 describe('API :: DELETE /api/posts/:id', () => {
   beforeEach(async () => {
     post = new Post(postProps);
-    post.setPieceRate(pieceRates);
+    post.setPieceRates(pieceRates);
 
     postDTO = {
       postId: post.postId.toString(),
@@ -49,86 +49,30 @@ describe('API :: DELETE /api/posts/:id', () => {
     return postRepo.clear();
   });
 
-  context('when props are correct', () => {
-    test('should update and return 202 with the updated post', async () => {
+  context('when post exists', () => {
+    test('should delete and return 202', async () => {
       const { statusCode, body } = await request()
-        .put(`/api/posts/${postToDelete.postId}`)
-        .set('Accept', 'application/json')
-        .send({ name: 'Старший флорист' });
+        .delete(`/api/posts/${postToDelete.postId}`)
+        .send();
 
       expect(statusCode).toBe(202);
 
-      expect(body).toEqual({ ...postDTO, name: 'Старший флорист' });
-    });
-
-    context('when name is empty', () => {
-      test('should not update and returns 400 with the validation error', async () => {
-        const { statusCode, body } = await request()
-          .put(`/api/posts/${postToDelete.postId}`)
-          .send({
-            name: '',
-          });
-
-        expect(statusCode).toBe(400);
-        expect(body.type).toBe('ValidationError');
-        expect(body.details).toEqual({
-          name: ["Name can't be blank"],
-        });
-      });
-    });
-
-    context('when send no props', () => {
-      test('should not update and returns 400 with the validation error', async () => {
-        const { statusCode, body } = await request()
-          .put(`/api/posts/${postToDelete.postId}`)
-          .send();
-
-        expect(statusCode).toBe(400);
-        expect(body.type).toBe('ValidationError');
-        expect(body.details).toEqual({
-          name: ["Name can't be blank"],
-        });
-      });
+      expect(body).toEqual({});
     });
   });
 
-  context('when post does not exist', () => {
-    test('should not update and returns the not found message and status 404', async () => {
+  context('when post does not exists', () => {
+    test('should not delete and return 404', async () => {
       const fakePostId = uuidv4();
 
       const { statusCode, body } = await request()
-        .put(`/api/posts/${fakePostId}`)
-        .send({
-          name: 'Страший флорист',
-        });
+        .delete(`/api/posts/${fakePostId}`)
+        .send();
 
       expect(statusCode).toBe(404);
       expect(body.type).toBe('NotFoundError');
       expect(body.details).toEqual({
         postId: [`Post with postId: "${fakePostId}" not found.`],
-      });
-    });
-  });
-
-  context('when post already exists', () => {
-    test('should not update and returns the already exists message and status 400', async () => {
-      const name = 'Старший флорист';
-      const duplicatePostProps = { name };
-      const duplicatePost = new Post(duplicatePostProps);
-      duplicatePost.addPieceRate(3, pieceRateDay1);
-      duplicatePost.addPieceRate(4, pieceRateDay2);
-      await postRepo.add(duplicatePost);
-
-      const { statusCode, body } = await request()
-        .put(`/api/posts/${postToDelete.postId}`)
-        .send({
-          name,
-        });
-
-      expect(statusCode).toBe(400);
-      expect(body.type).toBe('AlreadyExists');
-      expect(body.details).toEqual({
-        name: ['Post with name: "Старший флорист" already exists.'],
       });
     });
   });

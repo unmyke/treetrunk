@@ -2,6 +2,7 @@ import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
 
 import { config } from 'config';
+import { InitializeApplication } from './app/Initializer';
 import { Application } from './app/Application';
 
 import { subdomains, commonTypes, errorFactories } from './domain';
@@ -33,6 +34,9 @@ import { containerMiddleware } from './interfaces/http/utils/bottle-express';
 const bottle = new Bottle();
 
 bottle.constant('config', config);
+bottle.factory('initializeApplication', (container) => () =>
+  new InitializeApplication(container)
+);
 bottle.factory('app', (container) => new Application(container));
 
 bottle.factory('subdomains', () => subdomains);
@@ -103,9 +107,7 @@ bottle.factory(
   'services',
   ({
     makeValidator,
-    subdomains: {
-      SellerManagement: { entities, services: domainServices },
-    },
+    subdomains,
     commonTypes,
     errorFactories,
     repositories,
@@ -115,7 +117,6 @@ bottle.factory(
         const subdomainRepositories = repositories[SubdomainName];
         const entities = subdomains[SubdomainName].entities;
         const domainServices = subdomains[SubdomainName].services;
-
         const subdomainServices = Object.keys(services[SubdomainName]).reduce(
           (acc, EntityName) => {
             const Operations = services[SubdomainName][EntityName];
@@ -148,24 +149,6 @@ bottle.factory(
     return subdomainsServices;
   }
 );
-
-// Object.keys(services).forEach((EntityName) => {
-//   const Operations = services[EntityName];
-//   const serializer = serializers[EntityName];
-//   Object.keys(Operations).forEach((operationName) => {
-//     const Operation = Operations[operationName];
-//     bottle.factory(`services.${EntityName}.${lowerFirst(operationName)}`, (container) => {
-//       const { repositories, entities } = container;
-//       console.log(container);
-//       console.log(repositories);
-//       console.log(entities);
-
-//       return { instance: () => new Operation({ repositories, entities, serializer }), }
-//     });
-//   });
-// });
-
-// bottle.constant('serializers', serializers);
 
 bottle.constant('makeValidator', makeValidator);
 

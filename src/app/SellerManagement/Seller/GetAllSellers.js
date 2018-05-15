@@ -9,7 +9,7 @@ export class GetAllSellers extends SellerManagementOperation {
         Post: postRepo,
         SeniorityType: seniorityTypeRepo,
       },
-      services: { SellerManagementService },
+      services: { SellerService },
     } = this;
 
     try {
@@ -39,17 +39,17 @@ export class GetAllSellers extends SellerManagementOperation {
         };
 
         const postId = seller.getPostIdAt();
-        const {
-          name,
-          currentPieceRate,
-        } = sellerManagementService.getSellerPost(seller, posts);
+        const { name, currentPieceRate } = sellerService.getSellerPost(
+          seller,
+          posts
+        );
 
         sellerDTO.postName = name;
         sellerDTO.currentPieceRate = currentPieceRate;
 
-        const sellerManagementService = new SellerManagementService();
+        const sellerService = new SellerService();
 
-        const seniorityType = sellerManagementService.getSellerSeniorityType(
+        const seniorityType = sellerService.getSellerSeniorityType(
           seller,
           seniorityTypes
         );

@@ -1,7 +1,7 @@
 import { BaseService } from '../../_lib';
 import { Day } from '../../commonTypes';
 
-export class SellerManagementService extends BaseService {
+export class SellerService extends BaseService {
   getSellerPost(seller, posts) {
     if (!posts) {
       return [];

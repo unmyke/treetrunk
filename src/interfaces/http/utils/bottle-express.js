@@ -8,7 +8,13 @@ export const injectSerializer = (serializerName) => (req, res, next) => {
   next();
 };
 
-export const injectService = (scope, serviceName) => (req, res, next) => {
-  req[serviceName] = req.container.services[scope][serviceName]();
+export const injectService = (SubdomainName, EntityName, serviceName) => (
+  req,
+  res,
+  next
+) => {
+  req[serviceName] = req.container.services[SubdomainName][EntityName][
+    serviceName
+  ]();
   next();
 };

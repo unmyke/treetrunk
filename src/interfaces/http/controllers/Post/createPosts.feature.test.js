@@ -1,9 +1,15 @@
 import { container } from 'src/container';
 import { request } from 'src/infra/support/test/request';
-import { Post } from 'src/domain/subdomains/SellerManagement';
 
 const {
-  repositories: { Post: postRepo },
+  subdomains: {
+    SellerManagement: {
+      entities: { Post },
+    },
+  },
+  repositories: {
+    SellerManagement: { Post: postRepo },
+  },
 } = container;
 
 describe('API :: POST /api/posts', () => {

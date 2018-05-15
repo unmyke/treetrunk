@@ -5,13 +5,13 @@ export class InitializeApplication extends Operation {
   constructor({ makeValidator, subdomains, commonTypes, repositories }) {
     super({ makeValidator, commonTypes });
 
-    this.entities = Object.keys(subdomains).reduce((acc, subdomainName) => {
-      return { ...acc, ...subdomains[subdomainName].entities };
+    this.entities = Object.keys(subdomains).reduce((acc, SubdomainName) => {
+      return { ...acc, ...subdomains[SubdomainName].entities };
     }, {});
 
     this.repositories = Object.keys(repositories).reduce(
-      (acc, subdomainName) => {
-        return { ...acc, ...repositories[subdomainName] };
+      (acc, SubdomainName) => {
+        return { ...acc, ...repositories[SubdomainName] };
       },
       {}
     );

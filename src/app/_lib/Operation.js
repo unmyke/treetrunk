@@ -11,7 +11,7 @@ export class Operation extends EventEmitter {
     makeValidator,
     commonTypes,
     errorFactories,
-    repositories: subdomainRepositories,
+    repositories,
     entities,
     domainServices,
   }) {

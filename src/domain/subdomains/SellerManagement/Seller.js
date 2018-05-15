@@ -1,7 +1,6 @@
 import { BaseEntity } from '../../_lib';
 import { SellerId, PostId, PersonName, Day } from '../../commonTypes';
 import { Appointment } from './Appointment';
-// import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
 
 export class Seller extends BaseEntity {
   constructor({

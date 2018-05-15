@@ -1,5 +1,8 @@
-import { BaseId, BaseErrorFactory, BaseEntity } from '../_lib';
 import { lowerFirst } from 'lodash';
+
+import { BaseId, BaseEntity, BaseErrorFactory } from '../_lib';
+// import { BaseId, BaseEntity } from '../_lib';
+// import { BaseErrorFactory } from '../_lib/BaseErrorFactory';
 
 export class OperationErrorFactory extends BaseErrorFactory {
   constructor() {
@@ -11,10 +14,10 @@ export class OperationErrorFactory extends BaseErrorFactory {
       return new Error('Not a Entity');
     }
 
-    const entityIdPropName = `${lowerFirst(entity.constructor.name)}Id`;
+    const entityPropName = `${lowerFirst(entity.constructor.name)}`;
 
     return this._create('Nothing to update', {
-      [entityIdPropName]: ['Nothig to update.'],
+      [entityPropName]: ['Nothing to update.'],
     });
   }
 }

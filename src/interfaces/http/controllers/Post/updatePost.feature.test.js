@@ -143,7 +143,7 @@ describe('API :: PUT /api/posts/:id', () => {
       expect(statusCode).toBe(400);
       expect(body.type).toBe('NothingToUpdate');
       expect(body.details).toEqual({
-        name: [`Nothing to update.`],
+        post: [`Nothing to update.`],
       });
     });
   });

@@ -8,8 +8,10 @@ const {
       entities: { Seller },
     },
   },
-  commonTypes: { SellerId, PostId, Day },
+  commonTypes,
 } = container;
+
+const { SellerId, PostId, Day } = commonTypes;
 
 let sellerMapper;
 
@@ -62,7 +64,7 @@ entity.setAppointments(appointments);
 
 describe('Domain :: infra :: mappers :: SellerMapper', () => {
   beforeEach(() => {
-    sellerMapper = new SellerMapper(container);
+    sellerMapper = new SellerMapper({ commonTypes, Entity: Seller });
   });
 
   describe('#toEntity', () => {

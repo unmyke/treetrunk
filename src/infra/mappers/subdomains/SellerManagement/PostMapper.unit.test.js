@@ -8,8 +8,10 @@ const {
       entities: { Post },
     },
   },
-  commonTypes: { PostId, Day },
+  commonTypes,
 } = container;
+
+const { PostId, Day } = commonTypes;
 
 let postMapper;
 
@@ -38,7 +40,7 @@ entity.setPieceRates(entry.pieceRates);
 
 describe('Domain :: infra :: mappers :: PostMapper', () => {
   beforeEach(() => {
-    postMapper = new PostMapper(container);
+    postMapper = new PostMapper({ commonTypes, Entity: Post });
   });
 
   describe('#toEntity', () => {

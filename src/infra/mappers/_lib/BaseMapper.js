@@ -1,5 +1,6 @@
 export class BaseMapper {
-  constructor({ commonTypes }) {
+  constructor({ commonTypes, Entity }) {
     this.commonTypes = commonTypes;
+    this.Entity = Entity;
   }
 }

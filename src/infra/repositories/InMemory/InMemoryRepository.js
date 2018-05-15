@@ -4,21 +4,16 @@ import { lowerFirst } from 'lodash';
 export class InMemoryRepository extends BaseRepository {
   store = [];
 
-  constructor({
-    commonTypes,
-    errorFactories: { Persistence: errorFactory },
-    mappers: {
-      commonTypes: commonTypesMappers,
-      SellerManagement: entitiesMappers,
-    },
-  }) {
+  constructor({ commonTypes, errorFactory, commonTypesMappers, entityMapper }) {
     super({
       commonTypes,
-      errorFactories: { Persistence: errorFactory },
-      mappers: { commonTypes: commonTypesMappers },
+      errorFactory,
+      commonTypesMappers,
     });
 
-    this.entityMapper = entitiesMappers[this.constructor.entityMapperName];
+    this.entityMapper = entityMapper;
+    console.log(`Inside: ${this.constructor.name}`);
+    console.log(this.entityMapper);
   }
 
   async getAll(props = {}) {

@@ -1,4 +1,4 @@
-import { BaseIdMapper } from '../_lib/BaseIdMapper';
+import { BaseIdMapper } from '../_lib';
 
 export class PostIdMapper extends BaseIdMapper {
   static EntityIdName = 'PostId';

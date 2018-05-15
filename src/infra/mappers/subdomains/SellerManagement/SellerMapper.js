@@ -1,16 +1,16 @@
-import { SellerManagementMapper } from './SellerManagementMapper';
+import { BaseMapper } from '../../_lib';
 import {
   SellerId as SellerIdMapper,
   PostId as PostIdMapper,
   Day as DayMapper,
 } from '../../commonTypes';
 
-export class SellerMapper extends SellerManagementMapper {
-  constructor({ commonTypes, subdomains }) {
-    super({ commonTypes, subdomains });
-    this.sellerIdMapper = new SellerIdMapper({ subdomains, commonTypes });
-    this.postIdMapper = new PostIdMapper({ subdomains, commonTypes });
-    this.dayMapper = new DayMapper({ subdomains, commonTypes });
+export class SellerMapper extends BaseMapper {
+  constructor({ commonTypes, Entity }) {
+    super({ commonTypes, Entity });
+    this.sellerIdMapper = new SellerIdMapper({ commonTypes });
+    this.postIdMapper = new PostIdMapper({ commonTypes });
+    this.dayMapper = new DayMapper({ commonTypes });
   }
 
   toDatabase({
@@ -35,7 +35,7 @@ export class SellerMapper extends SellerManagementMapper {
   }
 
   toEntity({ sellerId, firstName, middleName, lastName, phone, appointments }) {
-    const sellerEntity = new this.entities.Seller({
+    const sellerEntity = new this.Entity({
       sellerId: this.sellerIdMapper.toEntity({ value: sellerId }),
       firstName,
       middleName,

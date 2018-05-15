@@ -1,7 +1,7 @@
-import { SellerManagementOperation } from '../SellerManagementOperation';
+import { Operation } from '../../_lib';
 import { postToDTO } from './postToDTO';
 
-export class GetPost extends SellerManagementOperation {
+export class GetPost extends Operation {
   async execute(postIdValue) {
     const { SUCCESS, ERROR, NOT_FOUND } = this.outputs;
     const {

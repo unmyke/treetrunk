@@ -1,11 +1,8 @@
 import validate from 'validate.js';
 import { upperFirst, lowerFirst, snakeCase } from 'lodash';
 import { Day, DayRange } from 'src/domain/commonTypes';
-import { Validation as ValidationErrorFactories } from 'src/domain/ErrorFactories';
 
-const validationErrorFactory = new ValidationErrorFactories();
-
-export const makeValidator = (constraints) => {
+export const makeValidator = (constraints, errorFactory) => {
   const validator = (entity, options = { exception: false }) => {
     const errors = validate(
       entity,
@@ -13,7 +10,7 @@ export const makeValidator = (constraints) => {
     );
 
     if (errors && options.exception) {
-      const err = validationErrorFactory.create(errors);
+      const err = errorFactory.create(errors);
       throw err;
     }
 

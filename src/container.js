@@ -109,7 +109,10 @@ bottle.factory(
     makeValidator,
     subdomains,
     commonTypes,
-    errorFactories,
+    errorFactories: {
+      Operation: errorFactory,
+      Validation: validationErrorFactory,
+    },
     repositories,
   }) => {
     const subdomainsServices = Object.keys(services).reduce(
@@ -127,9 +130,12 @@ bottle.factory(
                   ...acc,
                   [lowerFirst(operationName)]: () =>
                     new Operations[operationName]({
-                      makeValidator,
+                      validate: makeValidator(
+                        Operations[operationName].constraints,
+                        validationErrorFactory
+                      ),
                       commonTypes,
-                      errorFactories,
+                      errorFactory,
                       repositories: subdomainRepositories,
                       entities,
                       domainServices,

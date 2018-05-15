@@ -8,19 +8,20 @@ export class Operation extends EventEmitter {
   }
 
   constructor({
-    makeValidator,
     commonTypes,
-    errorFactories,
-    repositories,
     entities,
     domainServices,
+    validate,
+    repositories,
+    errorFactory,
   }) {
     super();
+    this.commonTypes = commonTypes;
     this.entities = entities;
     this.domainServices = domainServices;
     this.repositories = repositories;
-    this.commonTypes = commonTypes;
-    this.validate = makeValidator(this.constructor.constraints);
+    this.validate = validate;
+    this.errorFactory = errorFactory;
   }
 
   on(output, handler) {

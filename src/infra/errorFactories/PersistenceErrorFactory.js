@@ -1,6 +1,7 @@
 import { lowerFirst } from 'lodash';
 
-import { BaseId, BaseEntity, BaseErrorFactory } from '../_lib';
+import { BaseErrorFactory } from './_lib';
+import { BaseId, BaseEntity } from 'src/domain/_lib';
 
 export class PersistenceErrorFactory extends BaseErrorFactory {
   constructor() {

@@ -1,4 +1,4 @@
-import { BaseId, BaseEntity } from '../_lib';
+import { BaseId, BaseEntity } from 'src/domain/_lib';
 import { PersistenceErrorFactory } from './PersistenceErrorFactory';
 
 const uniqueness = {

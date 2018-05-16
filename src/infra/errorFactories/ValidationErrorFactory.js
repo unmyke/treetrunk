@@ -1,4 +1,5 @@
-import { BaseId, BaseErrorFactory } from '../_lib';
+import { BaseErrorFactory } from './_lib';
+import { BaseId } from 'src/domain/_lib';
 
 export class ValidationErrorFactory extends BaseErrorFactory {
   constructor() {

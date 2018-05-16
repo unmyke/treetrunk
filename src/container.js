@@ -4,11 +4,12 @@ import { lowerFirst } from 'lodash';
 import { config } from 'config';
 import { InitializeApplication } from './app/Initializer';
 import { Application } from './app/Application';
-
-import { subdomains, commonTypes, errorFactories } from './domain';
-
-import * as repositories from './infra/repositories';
 import * as services from './app';
+
+import { subdomains, commonTypes } from './domain';
+
+import * as errorFactories from './infra/errorFactories';
+import * as repositories from './infra/repositories';
 import { makeValidator } from './infra/support/makeValidator';
 
 import { Server } from './interfaces/http/Server';

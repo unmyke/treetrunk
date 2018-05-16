@@ -15,10 +15,10 @@ export class DeletePost extends Operation {
   };
 
   async execute({ postIdValue }) {
-    const { SUCCESS, NOT_FOUND, ERROR } = this.outputs;
+    const { SUCCESS, NOT_FOUND, NOT_ALLOWED, ERROR } = this.outputs;
 
     const {
-      repositories: { Post: postRepo },
+      repositories: { Post: postRepo, Seller: sellerRepo },
       commonTypes: { PostId },
       validate,
     } = this;
@@ -28,6 +28,18 @@ export class DeletePost extends Operation {
 
       const postId = new PostId({ value: postIdValue });
 
+      const sellersCountWithPostId = await sellerRepo.countByPostId(postId);
+
+      console.log(sellersCountWithPostId);
+      if (sellersCountWithPostId > 0) {
+        const post = await postRepo.getById(postId);
+
+        throw this.errorFactory.createNotAllowed(
+          post,
+          `There are sellers appointed to post ${post.name}`
+        );
+      }
+
       await postRepo.remove(postId);
 
       this.emit(SUCCESS);
@@ -35,6 +47,8 @@ export class DeletePost extends Operation {
       switch (error.code) {
         case 'NOT_FOUND':
           return this.emit(NOT_FOUND, error);
+        case 'NOT_ALLOWED':
+          return this.emit(NOT_ALLOWED, error);
         default:
           this.emit(ERROR, error);
       }
@@ -42,4 +56,4 @@ export class DeletePost extends Operation {
   }
 }
 
-DeletePost.setOutputs(['SUCCESS', 'NOT_FOUND', 'ERROR']);
+DeletePost.setOutputs(['SUCCESS', 'NOT_FOUND', 'NOT_ALLOWED', 'ERROR']);

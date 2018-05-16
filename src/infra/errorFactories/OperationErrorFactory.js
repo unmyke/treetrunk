@@ -1,6 +1,7 @@
 import { lowerFirst } from 'lodash';
 
-import { BaseId, BaseEntity, BaseErrorFactory } from '../_lib';
+import { BaseErrorFactory } from './_lib';
+import { BaseId, BaseEntity } from 'src/domain/_lib';
 
 export class OperationErrorFactory extends BaseErrorFactory {
   constructor() {
@@ -16,6 +17,18 @@ export class OperationErrorFactory extends BaseErrorFactory {
 
     return this._create('Nothing to update', {
       [entityPropName]: ['Nothing to update.'],
+    });
+  }
+
+  createNotAllowed(entity, detail) {
+    if (!(entity instanceof BaseEntity)) {
+      return new Error('Not a Entity');
+    }
+
+    const entityPropName = `${lowerFirst(entity.constructor.name)}`;
+
+    return this._create('Not allowed', {
+      [entityPropName]: [detail],
     });
   }
 }

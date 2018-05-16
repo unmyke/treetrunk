@@ -20,7 +20,7 @@ export class Post extends BaseEntity {
 
   update({ name }) {
     if (name === this.name) {
-      throw this.constructor.errorFactrory.createNothingToUpdate(this);
+      throw this.constructor.errorFactory.createNothingToUpdate(this);
     }
 
     this.name = name;

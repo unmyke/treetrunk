@@ -161,7 +161,7 @@ const PostsController = {
 
   delete(req, res, next) {
     const { deletePost } = req;
-    const { SUCCESS, ERROR, NOT_FOUND } = deletePost.outputs;
+    const { SUCCESS, NOT_FOUND, NOT_ALLOWED, ERROR } = deletePost.outputs;
 
     deletePost
       .on(SUCCESS, () => {
@@ -169,6 +169,12 @@ const PostsController = {
       })
       .on(NOT_FOUND, (error) => {
         res.status(Status.NOT_FOUND).json({
+          type: 'NotFoundError',
+          details: error.details,
+        });
+      })
+      .on(NOT_ALLOWED, (error) => {
+        res.status(Status.CONFLICT).json({
           type: 'NotFoundError',
           details: error.details,
         });

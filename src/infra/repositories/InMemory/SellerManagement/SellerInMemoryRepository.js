@@ -6,4 +6,8 @@ export class SellerInMemoryRepository extends InMemoryRepository {
       with: ['firstName', 'middleName', 'phone'],
     },
   };
+
+  countByPostId(postId) {
+    return this.count({ where: { postId } });
+  }
 }

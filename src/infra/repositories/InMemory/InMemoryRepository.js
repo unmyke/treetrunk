@@ -4,10 +4,11 @@ import { lowerFirst } from 'lodash';
 export class InMemoryRepository extends BaseRepository {
   store = [];
 
-  async getAll(props = {}) {
+  async getAll(props = { where: {} }) {
     return this.store.reduce((acc, item) => {
       const entity = this.entityMapper.toEntity(item);
-      if (this._compare(entity, props)) {
+      console.log(entity);
+      if (this._compare(entity, where)) {
         return [...acc, entity];
       }
       return acc;
@@ -94,9 +95,9 @@ export class InMemoryRepository extends BaseRepository {
     return entity[lowerFirst(`${entity.constructor.name}Id`)];
   }
 
-  _compare(entity, props) {
-    return Object.keys(props).reduce((isEquals, key) => {
-      return isEquals && props[key] === entity[key];
+  _compare(entity, whereProps) {
+    return Object.keys(whereProps).reduce((isEquals, attribute) => {
+      return isEquals && whereProps[attribute] === entity[attribute];
     }, true);
   }
 

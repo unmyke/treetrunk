@@ -35,9 +35,9 @@ describe('Domain :: entities :: Seller', () => {
       expect(seller.personName).toBeInstanceOf(PersonName);
       expect(seller.fullName).toBe(`${lastName} ${firstName} ${middleName}`);
       expect(seller.phone).toBe(phone);
-      expect(seller.appointments).toHaveLength(0);
     });
     test('should have set points', () => {
+      expect(seller.appointments).toHaveLength(0);
       expect(seller.seniorityAt(appointmentDay1)).toBeUndefined();
       expect(seller.isRecruitedAt()).toBe(false);
       expect(seller.recruitDay).toBeUndefined();
@@ -180,61 +180,6 @@ describe('Domain :: entities :: Seller', () => {
     context('when requested current postId associated with seller', () => {
       test('should return last postId', () => {
         expect(seller.getPostIdAt(newDay)).toBe(floristPost.postId);
-      });
-    });
-  });
-
-  describe('#getPostIdLastDayAt', () => {
-    beforeEach(() => {
-      seller.addAppointment(floristPost.postId, appointmentDay1);
-      seller.addAppointment(seniorFloristPost.postId, appointmentDay2);
-    });
-
-    context('when passed postId in appointments', () => {
-      test('should return correct day', () => {
-        expect(seller.getPostIdLastDayAt(floristPost.postId)).toEqual(
-          appointmentDay1
-        );
-        expect(seller.getPostIdLastDayAt(seniorFloristPost.postId)).toEqual(
-          appointmentDay2
-        );
-      });
-    });
-
-    context(
-      'when passed postId, that contained more than one times in appointments',
-      () => {
-        test('should return day of last appointment', () => {
-          seller.addAppointment(floristPost.postId, appointmentDay3);
-          seller.addAppointment(seniorFloristPost.postId, appointmentDay4);
-          seller.addAppointment(floristPost.postId, appointmentDay5);
-          seller.addAppointment(seniorFloristPost.postId, appointmentDay6);
-
-          expect(seller.getPostIdLastDayAt(floristPost.postId)).toEqual(
-            appointmentDay5
-          );
-          expect(seller.getPostIdLastDayAt(seniorFloristPost.postId)).toEqual(
-            appointmentDay6
-          );
-        });
-      }
-    );
-
-    context('when passed postId is not in appointments', () => {
-      test('should return undefined', () => {
-        expect(seller.getPostIdLastDayAt(new PostId())).toBeUndefined();
-      });
-    });
-
-    context('when passed not postId', () => {
-      test('should return undefined', () => {
-        expect(seller.getPostIdLastDayAt('')).toBeUndefined();
-      });
-    });
-
-    context('when passed undefined', () => {
-      test('should return undefined', () => {
-        expect(seller.getPostIdLastDayAt()).toBeUndefined();
       });
     });
   });
@@ -523,117 +468,6 @@ describe('Domain :: entities :: Seller', () => {
     context('when seller have no appointments', () => {
       test('should return undefined', () => {
         expect(seller.getRecruitDayAt()).toBeUndefined();
-      });
-    });
-  });
-
-  describe('#getLastQuitDayAt', () => {
-    let appDay1;
-    let appDay2;
-    let appDay3;
-    let appDay4;
-    let appDay5;
-    let appDay6;
-    let appDay7;
-    let appDay8;
-    let appDay9;
-    let appDay10;
-
-    context('when seller have appointments', () => {
-      beforeEach(() => {
-        appDay1 = new Day({ value: new Date('2017.01.01 12:45') });
-        appDay2 = new Day({ value: new Date('2017.02.01 12:45') });
-        appDay3 = new Day({ value: new Date('2017.03.01 12:45') });
-        appDay4 = new Day({ value: new Date('2017.04.01 12:45') });
-        appDay5 = new Day({ value: new Date('2017.05.01 12:45') });
-        appDay6 = new Day({ value: new Date('2017.06.01 12:45') });
-        appDay7 = new Day({ value: new Date('2017.07.01 12:45') });
-        appDay8 = new Day({ value: new Date('2017.08.01 12:45') });
-        appDay9 = new Day({ value: new Date('2017.09.01 12:45') });
-        appDay10 = new Day({ value: new Date('2017.10.01 12:45') });
-
-        seller.addAppointment(floristPost.postId, appDay1);
-        seller.takeQuit(appDay2);
-        seller.addAppointment(floristPost.postId, appDay3);
-        seller.addAppointment(seniorFloristPost.postId, appDay4);
-        seller.takeQuit(appDay5);
-        seller.addAppointment(floristPost.postId, appDay6);
-        seller.takeQuit(appDay7);
-        seller.addAppointment(floristPost.postId, appDay8);
-        seller.addAppointment(seniorFloristPost.postId, appDay9);
-        seller.takeQuit(appDay10);
-      });
-
-      test('should return undefined at 15.12.2016', () => {
-        const day = new Day({ value: new Date('2016.12.15') });
-
-        expect(seller.getLastQuitDayAt(day)).toBeUndefined();
-      });
-
-      test('should return undefined at 15.01.2017', () => {
-        const day = new Day({ value: new Date('2017.01.15') });
-
-        expect(seller.getLastQuitDayAt(day)).toBeUndefined();
-      });
-
-      test('should return last quit day at 15.02.2017', () => {
-        const day = new Day({ value: new Date('2017.02.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay2)).toBeTruthy();
-      });
-
-      test('should return last quit day at 15.03.2017', () => {
-        const day = new Day({ value: new Date('2017.03.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay2)).toBeTruthy();
-      });
-
-      test('should return last quit day at 15.04.2017', () => {
-        const day = new Day({ value: new Date('2017.04.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay2)).toBeTruthy();
-      });
-
-      test('should return last quit day at 15.05.2017', () => {
-        const day = new Day({ value: new Date('2017.05.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay5)).toBeTruthy();
-      });
-
-      test('should return last quit day at 15.06.2017', () => {
-        const day = new Day({ value: new Date('2017.06.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay5)).toBeTruthy();
-      });
-
-      test('should return last quit day at 15.07.2017', () => {
-        const day = new Day({ value: new Date('2017.07.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay7)).toBeTruthy();
-      });
-
-      test('should return last quit day at 15.08.2017', () => {
-        const day = new Day({ value: new Date('2017.08.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay7)).toBeTruthy();
-      });
-
-      test('should return last quit day at 15.09.2017', () => {
-        const day = new Day({ value: new Date('2017.09.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay7)).toBeTruthy();
-      });
-
-      test('should return last quit day at 15.10.2017', () => {
-        const day = new Day({ value: new Date('2017.10.15') });
-
-        expect(seller.getLastQuitDayAt(day).equals(appDay10)).toBeTruthy();
-      });
-    });
-
-    context('when seller have no appointments', () => {
-      test('should return undefined', () => {
-        expect(seller.getLastQuitDayAt()).toBeUndefined();
       });
     });
   });

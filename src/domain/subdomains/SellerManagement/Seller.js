@@ -51,11 +51,43 @@ export class Seller extends BaseEntity {
   get postIds() {
     return new Array(
       ...new Set(
-        this.appointments
+        this.getAppointmentsAt()
           .sort(this._appointmentsComparator)
           .map(({ postId }) => postId)
       )
     );
+  }
+
+  get appointments() {
+    return this.getAppointmentsAt();
+  }
+
+  getAppointmentsAt(day = new Day()) {
+    const appointmentsBeforeDay = this.appointments.filter(
+      ({ day: currentDay }) => currentDay <= day
+    );
+
+    if (appointmentsBeforeDay.length === 0 || this.getQuitDayAt(day)) {
+      return [];
+    }
+
+    const quitDay = this.getQuitDayAt(day);
+
+    if (quitDay == undefined) {
+      return appointmentsBeforeDay;
+    }
+
+    return appointmentsBeforeDay.filter(
+      ({ day: currentDay }) => currentDay > quitDay
+    );
+
+    return this._getPostIdAppointmentsAt(day);
+  }
+
+  _getPostIdAppointmentsAt(day, postId) {
+    if (!postId) {
+      return [];
+    }
   }
 
   setAppointments(appointments) {
@@ -97,73 +129,27 @@ export class Seller extends BaseEntity {
   }
 
   getRecruitDayAt(day = new Day()) {
-    const appointments = this.getAppointmentsAt(day);
-    if (appointments.length === 0) {
-      return;
-    }
+    const quitPostIdAppointments = this._getAppointments(day, quitPostId);
+    const recruitAppointments = this.appointments;
+  }
 
-    return appointments[0].day;
+  isRecruitedAt(day = new Day()) {
+    const recruitDay = this.getRecruitDayAt(day);
+    return !!recruitDay && recruitDay <= day;
   }
 
   getQuitDayAt(day = new Day()) {
-    const appointments = this.appointments
-      .filter(({ day: currentDay }) => currentDay <= day)
-      .sort(this._appointmentsComparator);
-
-    if (appointments.length === 0) {
-      return;
-    }
-
-    const lastAppointment = appointments[appointments.length - 1];
-
-    return lastAppointment.postId.equals(PostId.quitPostId)
-      ? lastAppointment.day
-      : undefined;
+    const quitPostIdAppointments = this._getAppointments(day, quitPostId);
+    const lastQuitDay =
+      quitPostIdAppointments.length > 1
+        ? quitPostIdAppointments[quitPostIdAppointments.length - 1].day
+        : undefined;
+    return lastQuitDay;
   }
 
-  getLastQuitDayAt(day = new Day()) {
-    return this.getPostIdLastDayAt(PostId.quitPostId, day);
-  }
-
-  getAppointmentsAt(day = new Day()) {
-    const appointmentsBeforeDay = this.appointments.filter(
-      ({ day: currentDay }) => currentDay <= day
-    );
-
-    if (appointmentsBeforeDay.length === 0 || this.getQuitDayAt(day)) {
-      return [];
-    }
-
-    const lastQuitDay = this.getLastQuitDayAt(day);
-
-    if (lastQuitDay == undefined) {
-      return appointmentsBeforeDay;
-    }
-
-    return appointmentsBeforeDay.filter(
-      ({ day: currentDay }) => currentDay > lastQuitDay
-    );
-  }
-
-  getPostIdLastDayAt(postId, day = new Day()) {
-    if (
-      postId === undefined ||
-      postId.constructor !== PostId ||
-      this.appointments.length === 0
-    ) {
-      return;
-    }
-
-    const appointment = this.appointments
-      .filter(({ day: currentDay }) => currentDay <= day)
-      .sort(this._appointmentsComparator)
-      .reduce((currentAppointment, appointment) => {
-        return appointment.postId.equals(postId)
-          ? appointment
-          : currentAppointment;
-      }, undefined);
-
-    return appointment === undefined ? undefined : appointment.day;
+  isQuitedAt(day = new Day()) {
+    const quitDay = this.getQuitDayAt(day);
+    return !!quitDay && quitDay <= day;
   }
 
   getPostIdAt(day = new Day()) {
@@ -191,21 +177,6 @@ export class Seller extends BaseEntity {
     }
 
     return day.differenceInMonths(this.getRecruitDayAt(day));
-  }
-
-  isQuitedAt(day = new Day()) {
-    const quitDay = this.getQuitDayAt(day);
-    return !!quitDay && quitDay <= day;
-  }
-
-  isRecruitedAt(day = new Day()) {
-    const recruitDay = this.getRecruitDayAt(day);
-    return !!recruitDay && recruitDay <= day;
-  }
-
-  isQuitedAt(day = new Day()) {
-    const quitDay = this.getQuitDayAt(day);
-    return !!quitDay && quitDay <= day;
   }
 
   takeQuit(day = new Day()) {

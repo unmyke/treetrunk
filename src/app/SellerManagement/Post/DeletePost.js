@@ -30,13 +30,12 @@ export class DeletePost extends Operation {
 
       const sellersCountWithPostId = await sellerRepo.countByPostId(postId);
 
-      console.log(sellersCountWithPostId);
       if (sellersCountWithPostId > 0) {
         const post = await postRepo.getById(postId);
 
         throw this.errorFactory.createNotAllowed(
           post,
-          `There are sellers appointed to post ${post.name}`
+          `There are sellers appointed to post "${post.name}"`
         );
       }
 

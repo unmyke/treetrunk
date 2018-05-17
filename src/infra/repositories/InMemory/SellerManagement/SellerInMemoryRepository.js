@@ -7,7 +7,7 @@ export class SellerInMemoryRepository extends InMemoryRepository {
     },
   };
 
-  countByPostId(postId) {
-    return this.count({ where: { postId } });
+  async countByPostId(postId) {
+    return await this.count({ where: { postId } });
   }
 }

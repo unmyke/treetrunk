@@ -175,7 +175,7 @@ const PostsController = {
       })
       .on(NOT_ALLOWED, (error) => {
         res.status(Status.CONFLICT).json({
-          type: 'NotFoundError',
+          type: 'NotAllowedError',
           details: error.details,
         });
       })

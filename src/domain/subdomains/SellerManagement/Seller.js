@@ -36,6 +36,10 @@ export class Seller extends BaseEntity {
     return this.personName.middleName;
   }
 
+  get postId() {
+    return this.getPostIdAt();
+  }
+
   get recruitDay() {
     return this.getRecruitDayAt();
   }
@@ -217,22 +221,3 @@ export class Seller extends BaseEntity {
     return a.day > b.day;
   }
 }
-
-// addErrorDefinitionProperty(
-//   Seller,
-//   'errorDuplication',
-//   'OperationError',
-//   'Seller already have this post'
-// );
-// addErrorDefinitionProperty(
-//   Seller,
-//   'errorNoAppointments',
-//   'OperationError',
-//   'Seller have not such appointment to this postId'
-// );
-// addErrorDefinitionProperty(
-//   Seller,
-//   'errorTakeQuit',
-//   'OperationError',
-//   'Seller cannot take quit before get recruit or on the same day'
-// );

@@ -1,5 +1,6 @@
 import { BaseRepository } from '../_lib';
 import { lowerFirst } from 'lodash';
+import { BaseValue } from '../../../domain/_lib';
 
 export class InMemoryRepository extends BaseRepository {
   store = [];
@@ -7,16 +8,17 @@ export class InMemoryRepository extends BaseRepository {
   async getAll(props = { where: {} }) {
     return this.store.reduce((acc, item) => {
       const entity = this.entityMapper.toEntity(item);
-      console.log(entity);
-      if (this._compare(entity, where)) {
+
+      if (this._compare(entity, props.where)) {
         return [...acc, entity];
       }
+
       return acc;
     }, []);
   }
 
   async getOne(props) {
-    return await this.getAll(props)[0];
+    return (await this.getAll(props))[0];
   }
 
   async getById(id) {
@@ -80,7 +82,7 @@ export class InMemoryRepository extends BaseRepository {
   }
 
   async count(props) {
-    return this.getAll(props).length;
+    return (await this.getAll(props)).length;
   }
 
   async clear() {
@@ -96,8 +98,17 @@ export class InMemoryRepository extends BaseRepository {
   }
 
   _compare(entity, whereProps) {
+    if (whereProps === undefined) {
+      return true;
+    }
+
     return Object.keys(whereProps).reduce((isEquals, attribute) => {
-      return isEquals && whereProps[attribute] === entity[attribute];
+      return (
+        isEquals &&
+        (whereProps[attribute] instanceof BaseValue
+          ? whereProps[attribute].equals(entity[attribute])
+          : whereProps[attribute] === entity[attribute])
+      );
     }, true);
   }
 

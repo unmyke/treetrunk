@@ -5,12 +5,12 @@ import uuidv4 from 'uuid/v4';
 const {
   subdomains: {
     SellerManagement: {
-      entities: { Post },
+      entities: { Post, Seller },
     },
   },
   commonTypes: { Day },
   repositories: {
-    SellerManagement: { Post: postRepo },
+    SellerManagement: { Post: postRepo, Seller: sellerRepo },
   },
 } = container;
 
@@ -73,6 +73,29 @@ describe('API :: DELETE /api/posts/:id', () => {
       expect(body.type).toBe('NotFoundError');
       expect(body.details).toEqual({
         postId: [`Post with postId: "${fakePostId}" not found.`],
+      });
+    });
+  });
+
+  context('when post is appointed by existing sellers', () => {
+    test('should not delete and return 409', async () => {
+      const seller = new Seller({
+        firstName: 'Firstname',
+        middleName: 'Middlename',
+        lastName: 'Lastname',
+        phone: '00-00-00',
+      });
+      seller.addAppointment(postToDelete.postId, new Day());
+      await sellerRepo.add(seller);
+
+      const { statusCode, body } = await request()
+        .delete(`/api/posts/${postToDelete.postId}`)
+        .send();
+
+      expect(statusCode).toBe(409);
+      expect(body.type).toBe('NotAllowedError');
+      expect(body.details).toEqual({
+        post: [`There are sellers appointed to post "Флорист"`],
       });
     });
   });

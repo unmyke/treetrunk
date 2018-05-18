@@ -164,7 +164,7 @@ export class Day extends BaseValue {
     return this.subDays(1);
   }
 
-  format(formatString = 'DD.MM.YYYY') {
+  format(formatString) {
     // if (!this.isValid()) {
     //   return this.constructor.errorNotADay.details[0];
     // }

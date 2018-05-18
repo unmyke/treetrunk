@@ -39,13 +39,10 @@ export class GetAllSellers extends Operation {
         };
 
         const postId = seller.getPostIdAt();
-        const { name, currentPieceRate } = sellerService.getSellerPost(
-          seller,
-          posts
-        );
+        const { name, pieceRate } = sellerService.getSellerPost(seller, posts);
 
         sellerDTO.postName = name;
-        sellerDTO.currentPieceRate = currentPieceRate;
+        sellerDTO.pieceRate = pieceRate;
 
         const sellerService = new SellerService();
 
@@ -54,9 +51,7 @@ export class GetAllSellers extends Operation {
           seniorityTypes
         );
 
-        sellerDTO.currentAward = seniorityType
-          ? seniorityType.currentAward
-          : undefined;
+        sellerDTO.award = seniorityType ? seniorityType.award : undefined;
 
         return sellerDTO;
       });

@@ -44,8 +44,8 @@ export class SeniorityType extends BaseEntity {
 
     const [firstAward, ...restAwards] = this.awards;
 
-    const { value } = restAwards.reduce((currentAward, appointment) => {
-      return appointment.day <= day ? appointment : currentAward;
+    const { value } = restAwards.reduce((award, appointment) => {
+      return appointment.day <= day ? appointment : award;
     }, firstAward);
 
     return value;
@@ -56,7 +56,7 @@ export class SeniorityType extends BaseEntity {
     return !!firstAward && firstAward.day <= day;
   }
 
-  get currentAward() {
+  get Award() {
     return this.getAwardAt();
   }
 }

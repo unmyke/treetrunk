@@ -34,7 +34,7 @@ describe('API :: PUT /api/posts/:id', () => {
     postDTO = {
       postId: post.postId.toString(),
       name: 'Флорист',
-      currentPieceRate: 2,
+      pieceRate: 2,
       pieceRates: [
         { value: 1, date: '21.01.2018' },
         { value: 2, date: '21.02.2018' },

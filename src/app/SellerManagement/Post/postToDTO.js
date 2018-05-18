@@ -1,8 +1,8 @@
-export const postToDTO = ({ postId, name, currentPieceRate, pieceRates }) => {
+export const postToDTO = ({ postId, name, pieceRate, pieceRates }) => {
   return {
     postId: postId.toString(),
     name,
-    currentPieceRate,
+    pieceRate,
     pieceRates: pieceRates.map((pieceRate) => pieceRate.toJSON()),
   };
 };

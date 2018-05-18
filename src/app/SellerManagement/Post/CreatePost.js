@@ -1,4 +1,5 @@
 import { Operation } from '../../_lib';
+import { postToDTO } from './postToDTO';
 
 export class CreatePost extends Operation {
   static constraints = {
@@ -24,7 +25,7 @@ export class CreatePost extends Operation {
 
       const newPost = await postRepo.add(post);
 
-      this.emit(SUCCESS, newPost);
+      this.emit(SUCCESS, postToDTO(newPost));
     } catch (error) {
       switch (error.code) {
         case 'ALREADY_EXISTS':

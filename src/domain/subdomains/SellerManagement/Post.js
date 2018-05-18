@@ -18,6 +18,10 @@ export class Post extends BaseEntity {
     this.pieceRates = pieceRates;
   }
 
+  get pieceRate() {
+    return this.getPieceRateAt();
+  }
+
   update({ name }) {
     if (name === this.name) {
       throw this.constructor.errorFactory.createNothingToUpdate(this);
@@ -51,8 +55,8 @@ export class Post extends BaseEntity {
 
     const [firstPieceRate, ...restPieceRates] = this.pieceRates;
 
-    const { value } = restPieceRates.reduce((currentPieceRate, appointment) => {
-      return appointment.day <= day ? appointment : currentPieceRate;
+    const { value } = restPieceRates.reduce((pieceRate, appointment) => {
+      return appointment.day <= day ? appointment : pieceRate;
     }, firstPieceRate);
 
     return value;
@@ -78,9 +82,5 @@ export class Post extends BaseEntity {
   hasPieceRate(day) {
     const [firstPieceRate] = this.pieceRates;
     return !!firstPieceRate && firstPieceRate.day <= day;
-  }
-
-  get currentPieceRate() {
-    return this.getPieceRateAt();
   }
 }

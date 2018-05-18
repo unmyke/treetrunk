@@ -34,17 +34,17 @@ const PostsController = {
       this.delete
     );
     router.post(
-      '/:postId/piecerates',
+      '/:postId/piece_rates',
       injectService('SellerManagement', 'Post', 'createPostPieceRate'),
       this.createPieceRate
     );
     router.put(
-      '/:postId/piecerates',
+      '/:postId/piece_rates',
       injectService('SellerManagement', 'Post', 'updatePostPieceRate'),
       this.updatePieceRate
     );
     router.delete(
-      '/:postId/piecerates',
+      '/:postId/piece_rates',
       injectService('SellerManagement', 'Post', 'deletePostPieceRate'),
       this.deletePieceRate
     );
@@ -186,7 +186,14 @@ const PostsController = {
 
   createPieceRate(req, res, next) {
     const { createPostPieceRate } = req;
-    const { SUCCESS, ERROR, VALIDATION_ERROR } = createPostPieceRate.outputs;
+    const {
+      SUCCESS,
+      VALIDATION_ERROR,
+      NOT_FOUND,
+      ALREADY_EXISTS,
+      NOTHING_TO_UPDATE,
+      ERROR,
+    } = createPostPieceRate.outputs;
 
     createPostPieceRate
       .on(SUCCESS, (post) => {
@@ -198,9 +205,30 @@ const PostsController = {
           details: error.details,
         });
       })
+      .on(NOT_FOUND, (error) => {
+        res.status(Status.NOT_FOUND).json({
+          type: 'NotFoundError',
+          details: error.details,
+        });
+      })
+      .on(ALREADY_EXISTS, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'AlreadyExists',
+          details: error.details,
+        });
+      })
+      .on(NOTHING_TO_UPDATE, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'NothingToUpdate',
+          details: error.details,
+        });
+      })
       .on(ERROR, next);
 
-    createPostPieceRate.execute(req.params.postId, req.body);
+    createPostPieceRate.execute({
+      postIdValue: req.params.postId,
+      ...req.body,
+    });
   },
 
   updatePieceRate(req, res, next) {

@@ -89,7 +89,7 @@ describe('Domain :: entities :: Post', () => {
 
     context('when requested current pieceRate associated with post', () => {
       test("should return last pieceRate's value", () => {
-        expect(post.currentPieceRate).toBe(pieceRate3value);
+        expect(post.pieceRate).toBe(pieceRate3value);
       });
     });
   });

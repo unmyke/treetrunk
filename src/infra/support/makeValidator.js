@@ -1,6 +1,7 @@
 import validate from 'validate.js';
 import { upperFirst, lowerFirst, snakeCase } from 'lodash';
 import { Day, DayRange } from 'src/domain/commonTypes';
+import isValidDate from 'date-fns/is_valid';
 
 export const makeValidator = (constraints, errorFactory) => {
   const validator = (entity, options = { exception: false }) => {
@@ -29,6 +30,22 @@ export const makeValidator = (constraints, errorFactory) => {
       return null;
     }
     return value.map(validator);
+  };
+
+  validate.validators.numberValue = (value, options) => {
+    const number = Number.parseInt(value);
+    if (validate(number, { numericality: options })) {
+      return `${value} is not valid Date`;
+    }
+    return null;
+  };
+
+  validate.validators.dateValue = (value) => {
+    const date = new Date(value);
+    if (!isValidDate(date)) {
+      return `${value} is not valid Date`;
+    }
+    return null;
   };
 
   validate.validators.dayObject = (value) => {

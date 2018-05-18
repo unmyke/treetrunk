@@ -128,6 +128,11 @@ export class InMemoryRepository extends BaseRepository {
     uniquenessKeys.forEach((uniquenessKey) => {
       const persistedEntity = this.store.find((persistedItem) => {
         const persistedEntity = this.entityMapper.toEntity(persistedItem);
+
+        if (this._entityId(entity).equals(this._entityId(persistedEntity))) {
+          return false;
+        }
+
         if (uniqueness[uniquenessKey] === true) {
           return persistedEntity[uniquenessKey] === entity[uniquenessKey];
         }

@@ -38,7 +38,7 @@ describe('API :: DELETE /api/posts/:id', () => {
     postDTO = {
       postId: post.postId.toString(),
       name: 'Флорист',
-      currentPieceRate: 2,
+      pieceRate: 2,
       pieceRates,
     };
 

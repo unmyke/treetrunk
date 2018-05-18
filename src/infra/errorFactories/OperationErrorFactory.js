@@ -31,4 +31,16 @@ export class OperationErrorFactory extends BaseErrorFactory {
       [entityPropName]: [detail],
     });
   }
+
+  createNotAllowed(entity, detail) {
+    if (!(entity instanceof BaseEntity)) {
+      return new Error('Not a Entity');
+    }
+
+    const entityPropName = `${lowerFirst(entity.constructor.name)}`;
+
+    return this._create('Not allowed', {
+      [entityPropName]: [detail],
+    });
+  }
 }

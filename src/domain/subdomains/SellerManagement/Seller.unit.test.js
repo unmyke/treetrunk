@@ -514,6 +514,7 @@ describe('Domain :: entities :: Seller', () => {
 
         const appointments = seller.getAppointmentsAt(day);
         expect(appointments).toHaveLength(1);
+        expect(seller.getAppointmentsAt().length).toBe(0);
         expect(appointments[0].postId).toBe(floristPost.postId);
         expect(appointments[0].day).toBe(appDay1);
       });
@@ -638,5 +639,29 @@ describe('Domain :: entities :: Seller', () => {
     //     }
     //   });
     // });
+  });
+
+  describe('#get/_get', () => {
+    context('when seller have no appointments', () => {
+      test('should return undefined', () => {
+        expect(seller.getAppointmentsAt()).toEqual([]);
+        expect(seller.getAppointmentsAt().length).toBe(0);
+      });
+    });
+
+    context('when seller have appointments', () => {
+      beforeEach(() => {
+        seller.addAppointment(floristPost.postId, appointmentDay1);
+      });
+
+      test('should return ', () => {
+        seller.takeQuit(newDay);
+
+        expect(seller.quitDay).toEqual(newDay);
+        expect(seller._getPostIdAppointmentsAt(day, quitPostId)).toHaveLength(
+          1
+        );
+      });
+    });
   });
 });

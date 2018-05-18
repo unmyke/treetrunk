@@ -74,8 +74,8 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
         expect(statusCode).toBe(400);
         expect(body.type).toBe('ValidationError');
         expect(body.details).toEqual({
-          name: ['Value must be a number'],
-          date: ['Date must be date'],
+          value: ["Value can't be blank"],
+          date: ['Date "test" is not valid Date.'],
         });
       });
     });

@@ -69,12 +69,14 @@ describe('Domain :: entities :: Seller', () => {
         seller.addAppointment(quitPostId, day5);
       });
 
-      test('should return first appointment day after last quit', () => {
-        expect(seller.getRecruitDayAt()).toBe(day1);
+      context('when seller ', () => {
+        test('should return new first appointment day after quit', () => {
+          expect(seller.getRecruitDayAt(day3)).toBe(day1);
+        });
       });
 
-      test('should return first appointment day after another appointment', () => {
-        expect(seller.getRecruitDayAt()).toBe(day1);
+      test('should return undefined at quit day', () => {
+        expect(seller.getRecruitDayAt(day2)).toBeUndefined();
       });
     });
   });

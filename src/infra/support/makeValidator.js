@@ -32,32 +32,32 @@ export const makeValidator = (constraints, errorFactory) => {
     return value.map(validator);
   };
 
-  validate.validators.numberValue = (value, options) => {
+  validate.validators.numericalityString = (value, options) => {
     const number = Number.parseInt(value);
     if (validate(number, { numericality: options })) {
-      return `${value} is not valid Date`;
+      return `"${value}" is not valid Number.`;
     }
     return null;
   };
 
-  validate.validators.dateValue = (value) => {
+  validate.validators.dateString = (value) => {
     const date = new Date(value);
     if (!isValidDate(date)) {
-      return `${value} is not valid Date`;
+      return `"${value}" is not valid Date.`;
     }
     return null;
   };
 
   validate.validators.dayObject = (value) => {
     if (!Day.isValid(value)) {
-      return `${value} is not valid Day`;
+      return `"${value}" is not valid Day.`;
     }
     return null;
   };
 
   validate.validators.dayRangeObject = (value) => {
     if (!DayRange.isValid(value)) {
-      return `${value} is not valid DayRange`;
+      return `"${value}" is not valid DayRange.`;
     }
     return null;
   };

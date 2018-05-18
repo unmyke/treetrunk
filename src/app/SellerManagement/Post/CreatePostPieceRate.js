@@ -16,13 +16,13 @@ export class CreatePostPieceRate extends Operation {
       presence: {
         allowEmpty: false,
       },
-      numericality: true,
+      numericalityString: true,
     },
     date: {
       presence: {
         allowEmpty: false,
       },
-      dateValue: true,
+      dateString: true,
     },
   };
 
@@ -41,7 +41,7 @@ export class CreatePostPieceRate extends Operation {
     } = this;
 
     try {
-      this.validate({ postIdValue, value, date });
+      this.validate({ postIdValue, value, date }, { exception: true });
 
       const postId = new PostId({ value: postIdValue });
       const post = await postRepo.getById(postId);

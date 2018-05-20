@@ -99,11 +99,11 @@ export class Seller extends BaseEntity {
   }
 
   addAppointment(postId, day) {
-    const previousPostId = this.getPostIdAt(day);
+    // const previousPostId = this.getPostIdAt(day);
 
-    if (previousPostId === postId) {
-      throw this.constructor.errorDuplication;
-    }
+    // if (previousPostId === postId) {
+    //   throw this.constructor.errorDuplication;
+    // }
 
     const appointment = new Appointment({ postId, day });
     this.appointments = [...this.appointments, appointment];
@@ -138,7 +138,12 @@ export class Seller extends BaseEntity {
 
     return appointments.reduce(
       (recruitDay, { postId, day: currentDay }, index) => {
-        return postId.isQuitPostId() ? appointments[index + 1].day : recruitDay;
+        if (postId.isQuitPostId()) {
+          return appointments[index + 1]
+            ? appointments[index + 1].day
+            : undefined;
+        }
+        return recruitDay;
       },
       firstAppointment.day
     );
@@ -146,7 +151,6 @@ export class Seller extends BaseEntity {
 
   isRecruitedAt(day = new Day()) {
     const recruitDay = this.getRecruitDayAt(day);
-    // console.log(recruitDay);
     return !!recruitDay && recruitDay <= day;
   }
 

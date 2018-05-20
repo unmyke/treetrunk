@@ -62,9 +62,9 @@ export class Seller extends BaseEntity {
     );
   }
 
-  // get appointments() {
-  //   return this.getAppointmentsAt().sort(this._appointmentsComparator);
-  // }
+  get appointments() {
+    return this.getAppointmentsAt().sort(this._appointmentsComparator);
+  }
 
   getAppointmentsAt(day = new Day()) {
     return this._getPostIdAppointmentsAt(day);

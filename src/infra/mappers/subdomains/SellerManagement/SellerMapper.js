@@ -19,7 +19,7 @@ export class SellerMapper extends BaseMapper {
     middleName,
     lastName,
     phone,
-    appointments,
+    _appointments,
   }) {
     return {
       sellerId: this.sellerIdMapper.toDatabase(sellerId),
@@ -27,7 +27,7 @@ export class SellerMapper extends BaseMapper {
       middleName,
       lastName,
       phone,
-      appointments: appointments.map(({ postId, day }) => ({
+      appointments: _appointments.map(({ postId, day }) => ({
         postId: this.postIdMapper.toDatabase(postId),
         date: this.dayMapper.toDatabase(day),
       })),

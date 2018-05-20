@@ -1,6 +1,8 @@
+import { format } from 'date-fns';
+import uuidv4 from 'uuid/v4';
+
 import { container } from 'src/container';
 import { request } from 'src/infra/support/test/request';
-import uuidv4 from 'uuid/v4';
 
 const {
   subdomains: {
@@ -36,8 +38,8 @@ describe('API :: PUT /api/posts/:id', () => {
       name: 'Флорист',
       pieceRate: 2,
       pieceRates: [
-        { value: 1, date: '21.01.2018' },
-        { value: 2, date: '21.02.2018' },
+        { value: 1, date: format(pieceRateDate1) },
+        { value: 2, date: format(pieceRateDate2) },
       ],
     };
 
@@ -92,7 +94,7 @@ describe('API :: PUT /api/posts/:id', () => {
   });
 
   context('when post does not exist', () => {
-    test('should not update and returns the not found message and status 404', async () => {
+    test('should not update and returns 400 with the not found message', async () => {
       const fakePostId = uuidv4();
 
       const { statusCode, body } = await request()
@@ -110,7 +112,7 @@ describe('API :: PUT /api/posts/:id', () => {
   });
 
   context('when post with updated name already exists', () => {
-    test('should not update and returns the already exists message and status 400', async () => {
+    test('should not update and returns 400 with the already exists message', async () => {
       const name = 'Старший флорист';
       const duplicatePostProps = { name };
       const duplicatePost = new Post(duplicatePostProps);
@@ -133,7 +135,7 @@ describe('API :: PUT /api/posts/:id', () => {
   });
 
   context('when post nothing to update', () => {
-    test('should not update and returns the nothing to update message and status 400', async () => {
+    test('should not update and returns 400 with the nothing to update message', async () => {
       const { statusCode, body } = await request()
         .put(`/api/posts/${postToUpdate.postId}`)
         .send({

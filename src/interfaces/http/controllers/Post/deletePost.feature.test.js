@@ -1,6 +1,8 @@
+import uuidv4 from 'uuid/v4';
+import { format } from 'date-fns';
+
 import { container } from 'src/container';
 import { request } from 'src/infra/support/test/request';
-import uuidv4 from 'uuid/v4';
 
 const {
   subdomains: {
@@ -22,8 +24,8 @@ const pieceRateDay2 = new Day({ value: pieceRateDate2 });
 const postProps = { name: 'Флорист' };
 
 const pieceRates = [
-  { value: 1, date: pieceRateDate1 },
-  { value: 2, date: pieceRateDate2 },
+  { value: 1, date: format(pieceRateDate1) },
+  { value: 2, date: format(pieceRateDate2) },
 ];
 
 let post;

@@ -89,9 +89,9 @@ const PostsController = {
     const { createPost } = req;
     const {
       SUCCESS,
-      ERROR,
       VALIDATION_ERROR,
       ALREADY_EXISTS,
+      ERROR,
     } = createPost.outputs;
 
     createPost
@@ -235,9 +235,10 @@ const PostsController = {
     const { updatePostPieceRate } = req;
     const {
       SUCCESS,
-      ERROR,
       VALIDATION_ERROR,
+      NOTHING_TO_UPDATE,
       NOT_FOUND,
+      ERROR,
     } = updatePostPieceRate.outputs;
 
     updatePostPieceRate
@@ -250,6 +251,12 @@ const PostsController = {
           details: error.details,
         });
       })
+      .on(NOTHING_TO_UPDATE, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'NothingToUpdate',
+          details: error.details,
+        });
+      })
       .on(NOT_FOUND, (error) => {
         res.status(Status.NOT_FOUND).json({
           type: 'NotFoundError',
@@ -258,12 +265,15 @@ const PostsController = {
       })
       .on(ERROR, next);
 
-    updatePostPieceRate.execute(req.params.postId, req.body);
+    updatePostPieceRate.execute({
+      postIdValue: req.params.postId,
+      ...req.body,
+    });
   },
 
   deletePieceRate(req, res, next) {
     const { deletePostPieceRate } = req;
-    const { SUCCESS, ERROR, NOT_FOUND } = deletePostPieceRate.outputs;
+    const { SUCCESS, NOT_FOUND, ERROR } = deletePostPieceRate.outputs;
 
     deletePostPieceRate
       .on(SUCCESS, () => {

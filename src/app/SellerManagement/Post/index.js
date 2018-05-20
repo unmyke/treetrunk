@@ -4,6 +4,7 @@ import { CreatePost } from './CreatePost';
 import { UpdatePost } from './UpdatePost';
 import { DeletePost } from './DeletePost';
 import { CreatePostPieceRate } from './CreatePostPieceRate';
+import { UpdatePostPieceRate } from './UpdatePostPieceRate';
 
 export {
   GetAllPosts,
@@ -12,4 +13,5 @@ export {
   UpdatePost,
   DeletePost,
   CreatePostPieceRate,
+  UpdatePostPieceRate,
 };

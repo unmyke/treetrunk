@@ -1,7 +1,8 @@
-import { container } from 'src/container';
-import { request } from 'src/infra/support/test/request';
 import { format } from 'date-fns';
 import uuidv4 from 'uuid/v4';
+
+import { container } from 'src/container';
+import { request } from 'src/infra/support/test/request';
 
 const {
   subdomains: {

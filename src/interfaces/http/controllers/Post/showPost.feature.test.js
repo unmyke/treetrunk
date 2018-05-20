@@ -1,6 +1,8 @@
+import { format } from 'date-fns';
+import uuidv4 from 'uuid/v4';
+
 import { container } from 'src/container';
 import { request } from 'src/infra/support/test/request';
-import uuidv4 from 'uuid/v4';
 
 const {
   subdomains: {
@@ -30,8 +32,8 @@ const postDTO = {
   name: 'Флорист',
   pieceRate: 2,
   pieceRates: [
-    { value: 1, date: '21.01.2018' },
-    { value: 2, date: '21.02.2018' },
+    { value: 1, date: format(pieceRateDate1) },
+    { value: 2, date: format(pieceRateDate2) },
   ],
 };
 

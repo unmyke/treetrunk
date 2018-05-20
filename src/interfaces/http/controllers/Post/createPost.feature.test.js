@@ -32,7 +32,7 @@ describe('API :: POST /api/posts', () => {
   });
 
   context('when there are no props', () => {
-    test('should return BD_REQUEST with array of errors', async () => {
+    test('should return 400 with array of errors', async () => {
       const { statusCode, body } = await request()
         .post('/api/posts')
         .set('Accept', 'application/json')
@@ -45,7 +45,7 @@ describe('API :: POST /api/posts', () => {
   });
 
   context('when post exists', () => {
-    test('should return BD_REQUEST with array of errors', async () => {
+    test('should return 409 with array of errors', async () => {
       const post = new Post({ name: 'Флорист' });
       const { statusCode, body } = await request()
         .post('/api/posts')

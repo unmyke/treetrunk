@@ -119,12 +119,13 @@ export class Seller extends BaseEntity {
 
   setAppointments(appointments) {
     this._appointments = appointments.map(
-      ({ postId, date }) =>
+      ({ postId, day }) =>
         new Appointment({
-          postId: new PostId({ value: postId }),
-          day: new Day({ value: new Date(date) }),
+          postId,
+          day,
         })
     );
+    console.log(`установленные назначения ${this._appointments}`);
   }
 
   getPostIdAt(day = new Day()) {
@@ -173,6 +174,7 @@ export class Seller extends BaseEntity {
 
   isRecruitedAt(day = new Day()) {
     const recruitDay = this.getRecruitDayAt(day);
+    // console.log(`день приема - ${this.getRecruitDayAt(day)}`);
     return !!recruitDay && recruitDay <= day;
   }
 
@@ -207,20 +209,33 @@ export class Seller extends BaseEntity {
   }
 
   _getPostIdAppointmentsAt(day, postId) {
+    const quitDay = this.getQuitDayAt(day);
+    const now = new Day();
+    const recruitDay = this.getRecruitDayAt(day);
+    console.log(
+      `нанят ? ${this.isRecruitedAt(
+        day
+      )}, сейчас - ${now}, день приема -${recruitDay}`
+    );
+    // if (!this.isRecruitedAt(day)) {
+    //   return [];
+    // }
     if (!postId) {
       const currentAppointments = this._appointments
-        .filter(({ day: currentDay }) => currentDay > this.getRecruitDayAt(day))
+        .filter(
+          ({ day: currentDay }) => (quitDay || now) >= currentDay <= recruitDay
+        )
         .sort(this._appointmentsComparator);
-      console.log(currentAppointments);
       return currentAppointments;
     }
     const postIdAppointments = this._appointments
       .filter(
         ({ day: currentDay, postId: currentPostId }) =>
-          currentDay > this.getRecruitDayAt(day) && currentPostId == postId
+          currentDay <= this.getRecruitDayAt(day) &&
+          currentPostId.equals(postId)
       )
       .sort(this._appointmentsComparator);
-    console.log(postIdAppointments);
+    //console.log(postIdAppointments);
     return postIdAppointments;
   }
 }

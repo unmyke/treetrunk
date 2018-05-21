@@ -35,8 +35,7 @@ export class Post extends BaseEntity {
 
   setPieceRates(pieceRates) {
     this.pieceRates = pieceRates.map(
-      ({ value, date }) =>
-        new PieceRate({ value, day: new Day({ value: new Date(date) }) })
+      ({ value, day }) => new PieceRate({ value, day })
     );
   }
 

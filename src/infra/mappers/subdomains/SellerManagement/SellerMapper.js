@@ -43,7 +43,12 @@ export class SellerMapper extends BaseMapper {
       phone,
     });
 
-    sellerEntity.setAppointments(appointments);
+    sellerEntity.setAppointments(
+      appointments.map(({ postId, date }) => ({
+        postId: this.postIdMapper.toEntity({ value: postId }),
+        day: this.dayMapper.toEntity({ value: date }),
+      }))
+    );
 
     return sellerEntity;
   }

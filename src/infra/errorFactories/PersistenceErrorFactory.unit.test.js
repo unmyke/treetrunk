@@ -33,7 +33,7 @@ describe('Domain :: lib :: Errors:: PersistenceErrorFactory', () => {
       expect(notFoundError.message).toBe('Not found');
       expect(notFoundError.type).toBe('PERSISTENCE_ERROR');
       expect(notFoundError.details).toEqual({
-        baseId: ['Base with baseId: "baseIdValue" not found.'],
+        baseId: ['Base with baseId: "baseIdValue" not found'],
       });
     });
   });
@@ -48,7 +48,7 @@ describe('Domain :: lib :: Errors:: PersistenceErrorFactory', () => {
       expect(notFoundError.type).toBe('PERSISTENCE_ERROR');
       expect(notFoundError.details).toEqual({
         baseId: [
-          'Base with baseId in ["baseIdValue0", "baseIdValue1", "baseIdValue2"] not found.',
+          'Base with baseId in ["baseIdValue0", "baseIdValue1", "baseIdValue2"] not found',
         ],
       });
     });
@@ -69,7 +69,7 @@ describe('Domain :: lib :: Errors:: PersistenceErrorFactory', () => {
         firstName: [
           'BaseEntity with firstName: "Firstname", middleName: "Middlename", lastName: "Lastname" already exists.',
         ],
-        phone: ['BaseEntity with phone: "phone" already exists.'],
+        phone: ['BaseEntity with phone: "phone" already exists'],
       });
     });
   });

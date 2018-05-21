@@ -26,7 +26,7 @@ export class Post extends BaseEntity {
     if (name === this.name) {
       throw this.constructor.errorFactory.createNothingToUpdate(
         this,
-        `Post already has name "${name}".`
+        `Post already has name "${name}"`
       );
     }
 
@@ -71,7 +71,7 @@ export class Post extends BaseEntity {
         this,
         `Updated piece rate at ${day.format('DD.MM.YYYY')} for post "${
           this.name
-        }" already equlas ${pieceRate}%.`
+        }" already equlas ${pieceRate}%`
       );
     }
 

@@ -180,9 +180,9 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
       });
     });
 
-    context('when second day is not valid day', () => {
+    context('when second day is not a valid day', () => {
       test('return false', () => {
-        const anotherValue = new Date('Invalid Date');
+        const anotherValue = new Date('Invalid date');
         const notEqualDay = new Day({ value: anotherValue });
 
         expect(day.equals(notEqualDay)).toBeFalsy();
@@ -191,7 +191,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
     context('when second day is not Day instance', () => {
       test('return false', () => {
-        const anotherValue = new Date('Invalid Date');
+        const anotherValue = new Date('Invalid date');
 
         expect(day.equals(anotherValue)).toBeFalsy();
       });
@@ -248,7 +248,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
 
     // context('when pass incorect date', () => {
     //   test('throw error', () => {
-    //     expect(() => day.contains(new Date('Invalid Date'))).toThrow();
+    //     expect(() => day.contains(new Date('Invalid date'))).toThrow();
     //   });
     // });
   });

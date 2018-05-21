@@ -71,7 +71,7 @@ describe('API :: GET /api/posts/:id', () => {
       expect(body).toEqual({
         type: 'NotFoundError',
         details: {
-          postId: [`Post with postId: "${uuid}" not found.`],
+          postId: [`Post with postId: "${uuid}" not found`],
         },
       });
     });

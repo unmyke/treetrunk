@@ -76,7 +76,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
         expect(body.type).toBe('ValidationError');
         expect(body.details).toEqual({
           value: ["Value can't be blank"],
-          date: ['Date "test" is not valid Date.'],
+          date: ['Date "test" is not a valid date'],
         });
       });
     });
@@ -97,7 +97,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
       expect(statusCode).toBe(404);
       expect(body.type).toBe('NotFoundError');
       expect(body.details).toEqual({
-        postId: [`Post with postId: "${fakePostId}" not found.`],
+        postId: [`Post with postId: "${fakePostId}" not found`],
       });
     });
   });

@@ -55,7 +55,7 @@ describe('API :: POST /api/posts', () => {
       expect(statusCode).toBe(409);
       expect(body.type).toBe('AlreadyExists');
       expect(body.details).toEqual({
-        name: ['Post with name: "Флорист" already exists.'],
+        name: ['Post with name: "Флорист" already exists'],
       });
     });
   });

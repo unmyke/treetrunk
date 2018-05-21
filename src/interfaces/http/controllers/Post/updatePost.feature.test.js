@@ -106,7 +106,7 @@ describe('API :: PUT /api/posts/:id', () => {
       expect(statusCode).toBe(404);
       expect(body.type).toBe('NotFoundError');
       expect(body.details).toEqual({
-        postId: [`Post with postId: "${fakePostId}" not found.`],
+        postId: [`Post with postId: "${fakePostId}" not found`],
       });
     });
   });
@@ -129,7 +129,7 @@ describe('API :: PUT /api/posts/:id', () => {
       expect(statusCode).toBe(400);
       expect(body.type).toBe('AlreadyExists');
       expect(body.details).toEqual({
-        name: ['Post with name: "Старший флорист" already exists.'],
+        name: ['Post with name: "Старший флорист" already exists'],
       });
     });
   });
@@ -145,7 +145,7 @@ describe('API :: PUT /api/posts/:id', () => {
       expect(statusCode).toBe(400);
       expect(body.type).toBe('NothingToUpdate');
       expect(body.details).toEqual({
-        post: ['Post already has name "Флорист".'],
+        post: ['Post already has name "Флорист"'],
       });
     });
   });

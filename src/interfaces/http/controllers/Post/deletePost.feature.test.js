@@ -74,7 +74,7 @@ describe('API :: DELETE /api/posts/:id', () => {
       expect(statusCode).toBe(404);
       expect(body.type).toBe('NotFoundError');
       expect(body.details).toEqual({
-        postId: [`Post with postId: "${fakePostId}" not found.`],
+        postId: [`Post with postId: "${fakePostId}" not found`],
       });
     });
   });

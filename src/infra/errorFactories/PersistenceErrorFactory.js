@@ -18,7 +18,7 @@ export class PersistenceErrorFactory extends BaseErrorFactory {
 
     return this._create('Not found', {
       [entityIdPropName]: [
-        `${EntityName} with ${entityIdPropName}: "${id}" not found.`,
+        `${EntityName} with ${entityIdPropName}: "${id}" not found`,
       ],
     });
   }
@@ -35,7 +35,7 @@ export class PersistenceErrorFactory extends BaseErrorFactory {
       [entityIdPropName]: [
         `${EntityName} with ${entityIdPropName} in ["${ids.join(
           '", "'
-        )}"] not found.`,
+        )}"] not found`,
       ],
     });
   }
@@ -58,7 +58,7 @@ export class PersistenceErrorFactory extends BaseErrorFactory {
         const keys = [key, ...uniqueless[key].with];
         keyDetails = keys.map((key) => `${key}: "${entity[key]}"`).join(', ');
       }
-      details[key] = [`${EntityName} with ${keyDetails} already exists.`];
+      details[key] = [`${EntityName} with ${keyDetails} already exists`];
     });
 
     return this._create('Already exists', details);

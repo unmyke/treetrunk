@@ -33,53 +33,69 @@ export const makeValidator = (constraints, errorFactory) => {
   };
 
   validate.validators.numericalityString = (value, options) => {
-    const number = Number.parseInt(value);
-    if (validate(number, { numericality: options })) {
-      return `"${value}" is not valid Number.`;
+    const presenceError = validate.single(value, {
+      presence: { allowEmpty: false },
+    });
+    if (presenceError) {
+      return presenceError;
     }
-    return null;
+
+    const number = Number.parseInt(value);
+    return validate.single(number, {
+      numericality: { ...options, message: `"${value}" is not a valid number` },
+    });
   };
 
-  validate.validators.pieceRateObject = (
-    pieceRate,
-    options = { value: true, date: true }
-  ) => {
+  validate.validators.pieceRateObject = (pieceRate) => {
     if (pieceRate === undefined) {
-      return "^Piece rate value can't be blank";
+      return "can't be blank";
     }
 
-    const valueErrors = validate(pieceRate.value, {
-      numericalityString: options.value,
+    const valueErrors = validate.single(pieceRate.value, {
+      numericalityString: {
+        greaterThan: 0,
+        lessThan: 100,
+      },
     });
 
-    const dateErrors = validate(pieceRate.date, {
-      dateString: options.date,
+    const dateErrors = validate.single(pieceRate.date, {
+      dateString: true,
     });
 
-    console.log(valueErrors);
-    console.log(dateErrors);
-
+    if (valueErrors || dateErrors) {
+      return [
+        ...valueErrors.map((error) => `value ${error}`),
+        ...dateErrors.map((error) => `date ${error}`),
+      ];
+    }
     return null;
   };
 
   validate.validators.dateString = (value) => {
+    const presenceError = validate.single(value, {
+      presence: { allowEmpty: false },
+    });
+    if (presenceError) {
+      return presenceError;
+    }
+
     const date = new Date(value);
     if (!isValidDate(date)) {
-      return `"${value}" is not valid Date.`;
+      return `"${value}" is not a valid date`;
     }
     return null;
   };
 
   validate.validators.dayObject = (value) => {
     if (!Day.isValid(value)) {
-      return `"${value}" is not valid Day.`;
+      return `"${value}" is not a valid day`;
     }
     return null;
   };
 
   validate.validators.dayRangeObject = (value) => {
     if (!DayRange.isValid(value)) {
-      return `"${value}" is not valid DayRange.`;
+      return `"${value}" is not a valid dayRange.`;
     }
     return null;
   };

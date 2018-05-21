@@ -94,7 +94,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           expect(body.type).toBe('NothingToUpdate');
           expect(body.details).toEqual({
             post: [
-              'Updated piece rate at 21.01.2018 for post "Флорист" already equlas 1%.',
+              'Updated piece rate at 21.01.2018 for post "Флорист" already equlas 1%',
             ],
           });
         });
@@ -111,8 +111,8 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
             expect(statusCode).toBe(400);
             expect(body.type).toBe('ValidationError');
             expect(body.details).toEqual({
-              pieceRate: ["Piece rate value can't be blank"],
-              updatedPieceRate: ["Piece rate value can't be blank"],
+              pieceRate: ["Piece rate can't be blank"],
+              updatedPieceRate: ["Updated piece rate can't be blank"],
             });
           });
         }
@@ -126,20 +126,26 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
               .set('Accept', 'application/json')
               .send({
                 pieceRate: {
-                  value: '1%',
+                  value: 'value',
                   date: 'pieceRateDate1',
                 },
                 updatedPieceRate: {
                   value: '',
-                  date: 'pieceRateDate2',
+                  date: '',
                 },
               });
 
             expect(statusCode).toBe(400);
             expect(body.type).toBe('ValidationError');
             expect(body.details).toEqual({
-              pieceRate: ["Piece rate value can't be blank"],
-              updatedPieceRate: ["Piece rate value can't be blank"],
+              pieceRate: [
+                'Piece rate value "value" is not a valid number',
+                'Piece rate date "pieceRateDate1" is not a valid date',
+              ],
+              updatedPieceRate: [
+                "Updated piece rate value can't be blank",
+                "Updated piece rate date can't be blank",
+              ],
             });
           });
         }
@@ -168,7 +174,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
       expect(statusCode).toBe(404);
       expect(body.type).toBe('NotFoundError');
       expect(body.details).toEqual({
-        postId: [`Post with postId: "${fakePostId}" not found.`],
+        postId: [`Post with postId: "${fakePostId}" not found`],
       });
     });
   });

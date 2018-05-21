@@ -8,7 +8,7 @@ export class OperationErrorFactory extends BaseErrorFactory {
     super('OPERATION_ERROR');
   }
 
-  createNothingToUpdate(entity) {
+  createNothingToUpdate(entity, detail) {
     if (!(entity instanceof BaseEntity)) {
       return new Error('Not a Entity');
     }
@@ -16,7 +16,7 @@ export class OperationErrorFactory extends BaseErrorFactory {
     const entityPropName = `${lowerFirst(entity.constructor.name)}`;
 
     return this._create('Nothing to update', {
-      [entityPropName]: ['Nothing to update.'],
+      [entityPropName]: [detail],
     });
   }
 

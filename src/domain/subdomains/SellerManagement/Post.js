@@ -24,7 +24,10 @@ export class Post extends BaseEntity {
 
   update({ name }) {
     if (name === this.name) {
-      throw this.constructor.errorFactory.createNothingToUpdate(this);
+      throw this.constructor.errorFactory.createNothingToUpdate(
+        this,
+        `Post already has name "${name}".`
+      );
     }
 
     this.name = name;
@@ -63,6 +66,15 @@ export class Post extends BaseEntity {
   }
 
   editPieceRate(pieceRateToEdit, dayToEdit, pieceRate, day) {
+    if (pieceRateToEdit === pieceRate && dayToEdit.equals(day)) {
+      throw this.constructor.errorFactory.createNothingToUpdate(
+        this,
+        `Updated piece rate at ${day.format('DD.MM.YYYY')} for post "${
+          this.name
+        }" already equlas ${pieceRate}%.`
+      );
+    }
+
     this.deletePieceRate(pieceRateToEdit, dayToEdit);
     this.addPieceRate(pieceRate, day);
   }

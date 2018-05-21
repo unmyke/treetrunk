@@ -13,34 +13,10 @@ export class UpdatePostPieceRate extends Operation {
       },
     },
     pieceRate: {
-      presence: true,
+      pieceRateObject: true,
     },
     updatedPieceRate: {
-      presence: true,
-    },
-    'pieceRate.value': {
-      presence: {
-        allowEmpty: false,
-      },
-      numericalityString: true,
-    },
-    'pieceRate.date': {
-      presence: {
-        allowEmpty: false,
-      },
-      dateString: true,
-    },
-    'updatedPieceRate.value': {
-      presence: {
-        allowEmpty: false,
-      },
-      numericalityString: true,
-    },
-    'updatedPieceRate.date': {
-      presence: {
-        allowEmpty: false,
-      },
-      dateString: true,
+      pieceRateObject: true,
     },
   };
 

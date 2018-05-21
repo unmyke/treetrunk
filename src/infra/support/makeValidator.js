@@ -40,6 +40,28 @@ export const makeValidator = (constraints, errorFactory) => {
     return null;
   };
 
+  validate.validators.pieceRateObject = (
+    pieceRate,
+    options = { value: true, date: true }
+  ) => {
+    if (pieceRate === undefined) {
+      return "^Piece rate value can't be blank";
+    }
+
+    const valueErrors = validate(pieceRate.value, {
+      numericalityString: options.value,
+    });
+
+    const dateErrors = validate(pieceRate.date, {
+      dateString: options.date,
+    });
+
+    console.log(valueErrors);
+    console.log(dateErrors);
+
+    return null;
+  };
+
   validate.validators.dateString = (value) => {
     const date = new Date(value);
     if (!isValidDate(date)) {

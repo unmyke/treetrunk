@@ -145,7 +145,7 @@ describe('API :: PUT /api/posts/:id', () => {
       expect(statusCode).toBe(400);
       expect(body.type).toBe('NothingToUpdate');
       expect(body.details).toEqual({
-        post: [`Nothing to update.`],
+        post: ['Post already has name "Флорист".'],
       });
     });
   });

@@ -93,7 +93,9 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           expect(statusCode).toBe(400);
           expect(body.type).toBe('NothingToUpdate');
           expect(body.details).toEqual({
-            updatedPieceRate: ['Updated piece rates same as original'],
+            post: [
+              'Updated piece rate at 21.01.2018 for post "Флорист" already equlas 1%.',
+            ],
           });
         });
       });
@@ -109,8 +111,35 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
             expect(statusCode).toBe(400);
             expect(body.type).toBe('ValidationError');
             expect(body.details).toEqual({
-              pieceRate: ["Piece rate can't be blank"],
-              updatedPieceRate: ["Updated piece rate can't be blank"],
+              pieceRate: ["Piece rate value can't be blank"],
+              updatedPieceRate: ["Piece rate value can't be blank"],
+            });
+          });
+        }
+      );
+      context(
+        'when values of original and updated piece rate props are not correct',
+        () => {
+          test('should not edit piece rate and return 400 with the validation error message', async () => {
+            const { statusCode, body } = await request()
+              .put(`/api/posts/${persistedPost.postId}/piece_rates`)
+              .set('Accept', 'application/json')
+              .send({
+                pieceRate: {
+                  value: '1%',
+                  date: 'pieceRateDate1',
+                },
+                updatedPieceRate: {
+                  value: '',
+                  date: 'pieceRateDate2',
+                },
+              });
+
+            expect(statusCode).toBe(400);
+            expect(body.type).toBe('ValidationError');
+            expect(body.details).toEqual({
+              pieceRate: ["Piece rate value can't be blank"],
+              updatedPieceRate: ["Piece rate value can't be blank"],
             });
           });
         }

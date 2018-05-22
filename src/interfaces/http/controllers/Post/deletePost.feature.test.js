@@ -16,17 +16,14 @@ const {
   },
 } = container;
 
-const pieceRateDate1 = new Date('2018.01.21');
-const pieceRateDate2 = new Date('2018.02.21');
-const pieceRateDay1 = new Day({ value: pieceRateDate1 });
-const pieceRateDay2 = new Day({ value: pieceRateDate2 });
+const date1 = new Date('2018.01.21');
+const date2 = new Date('2018.02.21');
+const day1 = new Day({ value: date1 });
+const day2 = new Day({ value: date2 });
 
 const postProps = { name: 'Флорист' };
 
-const pieceRates = [
-  { value: 1, date: format(pieceRateDate1) },
-  { value: 2, date: format(pieceRateDate2) },
-];
+const pieceRates = [{ value: 1, day: day1 }, { value: 2, day: day2 }];
 
 let post;
 let postDTO;
@@ -97,7 +94,7 @@ describe('API :: DELETE /api/posts/:id', () => {
       expect(statusCode).toBe(409);
       expect(body.type).toBe('NotAllowedError');
       expect(body.details).toEqual({
-        post: [`There are sellers appointed to post "Флорист"`],
+        post: ['There are sellers appointed to post "Флорист"'],
       });
     });
   });

@@ -25,8 +25,12 @@ export class PostMapper extends BaseMapper {
       name,
     });
 
-    postEntity.setPieceRates(pieceRates);
-
+    postEntity.setPieceRates(
+      pieceRates.map(({ value, date }) => ({
+        value,
+        day: this.dayMapper.toEntity({ value: date }),
+      }))
+    );
     return postEntity;
   }
 }

@@ -9,7 +9,7 @@ export class OperationErrorFactory extends BaseErrorFactory {
   }
 
   createNothingToUpdate(entity, detail) {
-    if (!(entity instanceof BaseEntity)) {
+    if (!this._isInstanceOfBaseEntity(entity)) {
       return new Error('Not a Entity');
     }
 
@@ -21,7 +21,7 @@ export class OperationErrorFactory extends BaseErrorFactory {
   }
 
   createNotAllowed(entity, detail) {
-    if (!(entity instanceof BaseEntity)) {
+    if (!this._isInstanceOfBaseEntity(entity)) {
       return new Error('Not a Entity');
     }
 
@@ -32,14 +32,14 @@ export class OperationErrorFactory extends BaseErrorFactory {
     });
   }
 
-  createNotAllowed(entity, detail) {
-    if (!(entity instanceof BaseEntity)) {
+  createNotFound(entity, detail) {
+    if (!this._isInstanceOfBaseEntity(entity)) {
       return new Error('Not a Entity');
     }
 
     const entityPropName = `${lowerFirst(entity.constructor.name)}`;
 
-    return this._create('Not allowed', {
+    return this._create('Not found', {
       [entityPropName]: [detail],
     });
   }

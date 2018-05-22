@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import uuidv4 from 'uuid/v4';
 
 import { container } from 'src/container';
@@ -16,15 +15,19 @@ const {
   },
 } = container;
 
-const pieceRateDate1 = new Date('2018-01-20T16:00:00.000Z');
-const pieceRateDay1 = new Day({ value: pieceRateDate1 });
-const pieceRateDate2 = new Date('2018-02-20T16:00:00.000Z');
-const pieceRateDay2 = new Day({ value: pieceRateDate2 });
+const dateDTO1 = '2018-01-21T00:00:00.000+08:00';
+const dateDTO2 = '2018-02-21T00:00:00.000+08:00';
+const pieceRatesDTO = [{ value: 1, date: dateDTO1 }];
+const updatedPieceRatesDTO = [{ value: 2, date: dateDTO2 }];
+
+const date1 = new Date(dateDTO1);
+const date2 = new Date(dateDTO2);
 
 const postProps = { name: 'Флорист' };
-
-const pieceRates = [{ value: 1, date: format(pieceRateDate1) }];
-const updatedPieceRates = [{ value: 2, date: format(pieceRateDate2) }];
+const day1 = new Day({ value: date1 });
+const day2 = new Day({ value: date2 });
+const pieceRates = [{ value: 1, day: day1 }];
+const updatedPieceRates = [{ value: 2, day: day2 }];
 
 describe('API :: POST /api/posts/:id/piece_rates', () => {
   let post;
@@ -38,7 +41,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
       postId: post.postId.toString(),
       name: 'Флорист',
       pieceRate: 2,
-      pieceRates: updatedPieceRates,
+      pieceRates: updatedPieceRatesDTO,
     };
 
     post.setPieceRates(pieceRates);
@@ -59,11 +62,11 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           .send({
             pieceRate: {
               value: 1,
-              date: pieceRateDate1,
+              date: dateDTO1,
             },
             updatedPieceRate: {
               value: 2,
-              date: pieceRateDate2,
+              date: dateDTO2,
             },
           });
 
@@ -82,11 +85,11 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
             .send({
               pieceRate: {
                 value: 1,
-                date: pieceRateDate1,
+                date: dateDTO1,
               },
               updatedPieceRate: {
                 value: 1,
-                date: pieceRateDate1,
+                date: dateDTO1,
               },
             });
 
@@ -117,39 +120,33 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           });
         }
       );
-      context(
-        'when values of original and updated piece rate props are not correct',
-        () => {
-          test('should not edit piece rate and return 400 with the validation error message', async () => {
-            const { statusCode, body } = await request()
-              .put(`/api/posts/${persistedPost.postId}/piece_rates`)
-              .set('Accept', 'application/json')
-              .send({
-                pieceRate: {
-                  value: 'value',
-                  date: 'pieceRateDate1',
-                },
-                updatedPieceRate: {
-                  value: '',
-                  date: '',
-                },
-              });
-
-            expect(statusCode).toBe(400);
-            expect(body.type).toBe('ValidationError');
-            expect(body.details).toEqual({
-              pieceRate: [
-                'Piece rate value "value" is not a valid number',
-                'Piece rate date "pieceRateDate1" is not a valid date',
-              ],
-              updatedPieceRate: [
-                "Updated piece rate value can't be blank",
-                "Updated piece rate date can't be blank",
-              ],
+      context('when original piece rate not exists', () => {
+        test('should not edit piece rate and return 404 with the not found error message', async () => {
+          const { statusCode, body } = await request()
+            .put(`/api/posts/${persistedPost.postId}/piece_rates`)
+            .set('Accept', 'application/json')
+            .send({
+              pieceRate: {
+                value: 2,
+                date: dateDTO1,
+              },
+              updatedPieceRate: {
+                value: 2,
+                date: dateDTO2,
+              },
             });
+
+          expect(statusCode).toBe(404);
+          expect(body.type).toBe('NotFoundError');
+          expect(body.details).toEqual({
+            post: [
+              `Piece rate with value 2 at ${day1.format(
+                'DD.MM.YYYY'
+              )} not found`,
+            ],
           });
-        }
-      );
+        });
+      });
     });
   });
 
@@ -163,11 +160,11 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
         .send({
           pieceRate: {
             value: 1,
-            date: pieceRateDate1,
+            date: date1,
           },
           updatedPieceRate: {
             value: 2,
-            date: pieceRateDate2,
+            date: date2,
           },
         });
 

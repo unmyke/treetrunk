@@ -84,7 +84,12 @@ export class Post extends BaseEntity {
       (pieceRate) => !pieceRate.equals(pieceRateToDelete)
     );
     if (this.pieceRates.length === filteredPieceRates.length) {
-      this.constructor.errorNoPieceRates;
+      throw this.constructor.errorFactory.createNotFound(
+        this,
+        `Piece rate with value ${value} at ${day.format(
+          'DD.MM.YYYY'
+        )} not found`
+      );
     }
 
     this.pieceRates = filteredPieceRates;

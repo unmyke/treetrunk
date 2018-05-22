@@ -1,5 +1,4 @@
 import uuidv4 from 'uuid/v4';
-import { format } from 'date-fns';
 
 import { container } from 'src/container';
 import { request } from 'src/infra/support/test/request';
@@ -16,13 +15,19 @@ const {
   },
 } = container;
 
-const date1 = new Date('2018.01.21');
-const date2 = new Date('2018.02.21');
-const day1 = new Day({ value: date1 });
-const day2 = new Day({ value: date2 });
+const dateDTO1 = '2018-01-21T00:00:00.000+08:00';
+const dateDTO2 = '2018-02-21T00:00:00.000+08:00';
+const pieceRatesDTO = [
+  { value: 1, date: dateDTO1 },
+  { value: 2, date: dateDTO2 },
+];
+
+const date1 = new Date(dateDTO1);
+const date2 = new Date(dateDTO2);
 
 const postProps = { name: 'Флорист' };
-
+const day1 = new Day({ value: date1 });
+const day2 = new Day({ value: date2 });
 const pieceRates = [{ value: 1, day: day1 }, { value: 2, day: day2 }];
 
 let post;

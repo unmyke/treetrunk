@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import uuidv4 from 'uuid/v4';
 
 import { container } from 'src/container';
@@ -16,12 +15,20 @@ const {
   },
 } = container;
 
-const pieceRateDate1 = new Date('2018.01.21');
-const pieceRateDate2 = new Date('2018.02.21');
-const pieceRateDay1 = new Day({ value: pieceRateDate1 });
-const pieceRateDay2 = new Day({ value: pieceRateDate2 });
+const dateDTO1 = '2018-01-21T00:00:00.000+08:00';
+const dateDTO2 = '2018-02-21T00:00:00.000+08:00';
+const pieceRatesDTO = [
+  { value: 1, date: dateDTO1 },
+  { value: 2, date: dateDTO2 },
+];
+
+const date1 = new Date(dateDTO1);
+const date2 = new Date(dateDTO2);
 
 const postProps = { name: 'Флорист' };
+const day1 = new Day({ value: date1 });
+const day2 = new Day({ value: date2 });
+const pieceRates = [{ value: 1, day: day1 }, { value: 2, day: day2 }];
 
 let post;
 let postDTO;
@@ -30,17 +37,13 @@ let postToUpdate;
 describe('API :: PUT /api/posts/:id', () => {
   beforeEach(async () => {
     post = new Post(postProps);
-    post.addPieceRate(1, pieceRateDay1);
-    post.addPieceRate(2, pieceRateDay2);
+    post.setPieceRates(pieceRates);
 
     postDTO = {
       postId: post.postId.toString(),
       name: 'Флорист',
       pieceRate: 2,
-      pieceRates: [
-        { value: 1, date: format(pieceRateDate1) },
-        { value: 2, date: format(pieceRateDate2) },
-      ],
+      pieceRates: pieceRatesDTO,
     };
 
     postToUpdate = await postRepo.add(post);
@@ -116,8 +119,8 @@ describe('API :: PUT /api/posts/:id', () => {
       const name = 'Старший флорист';
       const duplicatePostProps = { name };
       const duplicatePost = new Post(duplicatePostProps);
-      duplicatePost.addPieceRate(3, pieceRateDay1);
-      duplicatePost.addPieceRate(4, pieceRateDay2);
+      duplicatePost.addPieceRate(3, day1);
+      duplicatePost.addPieceRate(4, day2);
       await postRepo.add(duplicatePost);
 
       const { statusCode, body } = await request()

@@ -273,11 +273,22 @@ const PostsController = {
 
   deletePieceRate(req, res, next) {
     const { deletePostPieceRate } = req;
-    const { SUCCESS, NOT_FOUND, ERROR } = deletePostPieceRate.outputs;
+    const {
+      SUCCESS,
+      VALIDATION_ERROR,
+      NOT_FOUND,
+      ERROR,
+    } = deletePostPieceRate.outputs;
 
     deletePostPieceRate
-      .on(SUCCESS, () => {
-        res.status(Status.ACCEPTED).end();
+      .on(SUCCESS, (post) => {
+        res.status(Status.ACCEPTED).json(post);
+      })
+      .on(VALIDATION_ERROR, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'ValidationError',
+          details: error.details,
+        });
       })
       .on(NOT_FOUND, (error) => {
         res.status(Status.NOT_FOUND).json({
@@ -287,7 +298,10 @@ const PostsController = {
       })
       .on(ERROR, next);
 
-    deletePostPieceRate.execute(req.params.postId), req.body;
+    deletePostPieceRate.execute({
+      postIdValue: req.params.postId,
+      ...req.body,
+    });
   },
 };
 

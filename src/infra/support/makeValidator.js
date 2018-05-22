@@ -64,8 +64,8 @@ export const makeValidator = (constraints, errorFactory) => {
 
     if (valueErrors || dateErrors) {
       return [
-        ...valueErrors.map((error) => `value ${error}`),
-        ...dateErrors.map((error) => `date ${error}`),
+        ...(valueErrors || []).map((error) => `value ${error}`),
+        ...(dateErrors || []).map((error) => `date ${error}`),
       ];
     }
     return null;

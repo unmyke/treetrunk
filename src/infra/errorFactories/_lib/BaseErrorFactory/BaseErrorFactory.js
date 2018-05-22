@@ -1,4 +1,5 @@
 import { snakeCase } from 'lodash';
+import { BaseEntity, BaseValue } from 'src/domain/_lib';
 
 export class BaseErrorFactory {
   constructor(type) {
@@ -12,5 +13,9 @@ export class BaseErrorFactory {
     error.type = this.type;
 
     return error;
+  }
+
+  _isInstanceOfBaseEntity(entity) {
+    return entity instanceof BaseEntity;
   }
 }

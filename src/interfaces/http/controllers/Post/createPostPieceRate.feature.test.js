@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import uuidv4 from 'uuid/v4';
 
 import { container } from 'src/container';
@@ -16,12 +15,12 @@ const {
   },
 } = container;
 
-const pieceRateDate1 = new Date('2018-01-20T16:00:00.000Z');
-const pieceRateDay1 = new Day({ value: pieceRateDate1 });
+const dateDTO = '2018-01-21T00:00:00.000+08:00';
+const date = new Date(dateDTO);
 
-const postProps = { name: 'Флорист', piecerate: 1 };
+const postProps = { name: 'Флорист' };
 
-const pieceRates = [{ value: 1, date: format(pieceRateDate1) }];
+const pieceRatesDTO = [{ value: 1, date: dateDTO }];
 
 let post;
 let postDTO;
@@ -30,15 +29,14 @@ let persistedPost;
 describe('API :: POST /api/posts/:id/piece_rates', () => {
   beforeEach(async () => {
     post = new Post(postProps);
+    persistedPost = await postRepo.add(post);
 
     postDTO = {
       postId: post.postId.toString(),
       name: 'Флорист',
       pieceRate: 1,
-      pieceRates,
+      pieceRates: pieceRatesDTO,
     };
-
-    persistedPost = await postRepo.add(post);
   });
 
   afterEach(() => {
@@ -53,7 +51,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           .set('Accept', 'application/json')
           .send({
             value: 1,
-            date: pieceRateDate1,
+            date: dateDTO,
           });
 
         expect(statusCode).toBe(201);
@@ -68,15 +66,30 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           .post(`/api/posts/${persistedPost.postId}/piece_rates`)
           .set('Accept', 'application/json')
           .send({
-            value: '',
+            value: 'test',
             date: 'test',
           });
 
         expect(statusCode).toBe(400);
         expect(body.type).toBe('ValidationError');
         expect(body.details).toEqual({
-          value: ["Value can't be blank"],
+          value: ['Value "test" is not a valid number'],
           date: ['Date "test" is not a valid date'],
+        });
+      });
+    });
+    context('when props are not passed', () => {
+      test('should not add piece rate and return 400', async () => {
+        const { statusCode, body } = await request()
+          .post(`/api/posts/${persistedPost.postId}/piece_rates`)
+          .set('Accept', 'application/json')
+          .send({});
+
+        expect(statusCode).toBe(400);
+        expect(body.type).toBe('ValidationError');
+        expect(body.details).toEqual({
+          value: ["Value can't be blank"],
+          date: ["Date can't be blank"],
         });
       });
     });
@@ -91,7 +104,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
         .set('Accept', 'application/json')
         .send({
           value: 1,
-          date: pieceRateDate1,
+          date: date,
         });
 
       expect(statusCode).toBe(404);

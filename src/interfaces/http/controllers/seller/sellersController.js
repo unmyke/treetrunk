@@ -18,7 +18,7 @@ const SellersController = {
       injectService('SellerManagement', 'Seller', 'getSeller'),
       this.show
     );
-    router.seller(
+    router.post(
       '/',
       injectService('SellerManagement', 'Seller', 'createSeller'),
       this.create
@@ -33,7 +33,7 @@ const SellersController = {
       injectService('SellerManagement', 'Seller', 'deleteSeller'),
       this.delete
     );
-    router.seller(
+    router.post(
       '/:sellerId/appointments',
       injectService('SellerManagement', 'Seller', 'createSellerAppointment'),
       this.createAppointment

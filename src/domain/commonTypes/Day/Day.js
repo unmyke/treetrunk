@@ -107,7 +107,7 @@ export class Day extends BaseValue {
     return new Day({ value: subDaysFNS(this.value, num) });
   }
 
-  difference(day) {
+  difference(day = new Day()) {
     // if (day.constructor !== this.constructor || !day.isValid()) {
     //   throw this.constructor.errorNotADay;
     // }
@@ -115,7 +115,7 @@ export class Day extends BaseValue {
     return parseInt((this - day) / 86400000);
   }
 
-  differenceInMonths(day) {
+  differenceInMonths(day = new Day()) {
     // if (day.constructor !== this.constructor || !day.isValid()) {
     //   throw this.constructor.errorNotADay;
     // }

@@ -165,6 +165,7 @@ bottle.factory('router', (container) => router(container));
 bottle.factory('containerMiddleware', (container) =>
   containerMiddleware(container)
 );
+// bottle.constant('serializers', serializers);
 
 bottle.factory('loggerMiddleware', (container) => loggerMiddleware(container));
 bottle.constant(

@@ -105,6 +105,12 @@ export class DayRange extends BaseValue {
   //     Day.isValid(this.start) && Day.isValid(this.end) && this.end >= this.start
   //   );
   // }
+  toJSON() {
+    return {
+      startDate: this.start.toJSON(),
+      startDate: this.end.toJSON(),
+    };
+  }
 }
 
 // addErrorDefinitionProperty(

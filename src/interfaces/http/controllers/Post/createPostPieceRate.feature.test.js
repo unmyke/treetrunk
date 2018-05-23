@@ -73,8 +73,10 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
         expect(statusCode).toBe(400);
         expect(body.type).toBe('ValidationError');
         expect(body.details).toEqual({
-          value: ['Value "test" is not a valid number'],
-          date: ['Date "test" is not a valid date'],
+          pieceRate: [
+            'Piece rate value "test" is not a valid number',
+            'Piece rate date "test" is not a valid date',
+          ],
         });
       });
     });
@@ -88,8 +90,36 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
         expect(statusCode).toBe(400);
         expect(body.type).toBe('ValidationError');
         expect(body.details).toEqual({
-          value: ["Value can't be blank"],
-          date: ["Date can't be blank"],
+          pieceRate: [
+            "Piece rate value can't be blank",
+            "Piece rate date can't be blank",
+          ],
+        });
+      });
+    });
+    context('when piece rate already exists', () => {
+      test('should not add piece rate and return 409', async () => {
+        const postToUpdate = await postRepo.getById(persistedPost.postId);
+        const day = new Day({ value: date });
+        postToUpdate.addPieceRate(1, day);
+        const updatedPost = await postRepo.save(postToUpdate);
+
+        const { statusCode, body } = await request()
+          .post(`/api/posts/${persistedPost.postId}/piece_rates`)
+          .set('Accept', 'application/json')
+          .send({
+            value: '1',
+            date: dateDTO,
+          });
+
+        expect(statusCode).toBe(409);
+        expect(body.type).toBe('AlreadyExists');
+        expect(body.details).toEqual({
+          pieceRate: [
+            `Piece rate with value: 1 at ${day.format(
+              'DD.MM.YYYY'
+            )} already exists`,
+          ],
         });
       });
     });

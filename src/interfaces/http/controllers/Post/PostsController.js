@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { injectService } from '../../utils/bottle-express';
+import { inject } from '../../utils/bottle-express';
 import Status from 'http-status';
 
 const PostsController = {
@@ -10,42 +10,42 @@ const PostsController = {
 
     router.get(
       '/',
-      injectService('SellerManagement', 'Post', 'getAllPosts'),
+      inject('SellerManagement', 'Post', 'getAllPosts'),
       this.index
     );
     router.get(
       '/:postId',
-      injectService('SellerManagement', 'Post', 'getPost'),
+      inject('SellerManagement', 'Post', 'getPost'),
       this.show
     );
     router.post(
       '/',
-      injectService('SellerManagement', 'Post', 'createPost'),
+      inject('SellerManagement', 'Post', 'createPost'),
       this.create
     );
     router.put(
       '/:postId',
-      injectService('SellerManagement', 'Post', 'updatePost'),
+      inject('SellerManagement', 'Post', 'updatePost'),
       this.update
     );
     router.delete(
       '/:postId',
-      injectService('SellerManagement', 'Post', 'deletePost'),
+      inject('SellerManagement', 'Post', 'deletePost'),
       this.delete
     );
     router.post(
       '/:postId/piece_rates',
-      injectService('SellerManagement', 'Post', 'createPostPieceRate'),
+      inject('SellerManagement', 'Post', 'createPostPieceRate'),
       this.createPieceRate
     );
     router.put(
       '/:postId/piece_rates',
-      injectService('SellerManagement', 'Post', 'updatePostPieceRate'),
+      inject('SellerManagement', 'Post', 'updatePostPieceRate'),
       this.updatePieceRate
     );
     router.delete(
       '/:postId/piece_rates',
-      injectService('SellerManagement', 'Post', 'deletePostPieceRate'),
+      inject('SellerManagement', 'Post', 'deletePostPieceRate'),
       this.deletePieceRate
     );
 
@@ -143,7 +143,7 @@ const PostsController = {
         });
       })
       .on(ALREADY_EXISTS, (error) => {
-        res.status(Status.BAD_REQUEST).json({
+        res.status(Status.CONFLICT).json({
           type: 'AlreadyExists',
           details: error.details,
         });
@@ -212,7 +212,7 @@ const PostsController = {
         });
       })
       .on(ALREADY_EXISTS, (error) => {
-        res.status(Status.BAD_REQUEST).json({
+        res.status(Status.CONFLICT).json({
           type: 'AlreadyExists',
           details: error.details,
         });

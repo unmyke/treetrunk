@@ -191,6 +191,9 @@ export class Day extends BaseValue {
   // isValid() {
   //   return isValidDate(this.value);
   // }
+  toJSON() {
+    return this.format();
+  }
 }
 
 // addErrorDefinitionProperty(

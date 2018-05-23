@@ -96,7 +96,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           expect(statusCode).toBe(400);
           expect(body.type).toBe('NothingToUpdate');
           expect(body.details).toEqual({
-            post: [
+            pieceRate: [
               'Updated piece rate at 21.01.2018 for post "Флорист" already equlas 1%',
             ],
           });
@@ -139,7 +139,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           expect(statusCode).toBe(404);
           expect(body.type).toBe('NotFoundError');
           expect(body.details).toEqual({
-            post: [
+            pieceRate: [
               `Piece rate with value 2 at ${day1.format(
                 'DD.MM.YYYY'
               )} not found`,

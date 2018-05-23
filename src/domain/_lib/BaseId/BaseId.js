@@ -14,4 +14,8 @@ export class BaseId extends BaseValue {
   toString() {
     return this.value;
   }
+
+  toJSON() {
+    return this.value;
+  }
 }

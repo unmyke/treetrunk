@@ -1,5 +1,4 @@
 import { Operation } from '../../_lib';
-import { postToDTO } from './postToDTO';
 
 export class UpdatePost extends Operation {
   static constraints = {
@@ -45,7 +44,7 @@ export class UpdatePost extends Operation {
 
       const updatedPost = await postRepo.save(post);
 
-      this.emit(SUCCESS, postToDTO(updatedPost));
+      this.emit(SUCCESS, updatedPost.toJSON());
     } catch (error) {
       switch (error.code) {
         case 'INVALID_VALUE':

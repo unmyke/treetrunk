@@ -1,5 +1,4 @@
 import { Operation } from '../../_lib';
-import { postToDTO } from './postToDTO';
 
 export class UpdatePostPieceRate extends Operation {
   static constraints = {
@@ -13,10 +12,10 @@ export class UpdatePostPieceRate extends Operation {
       },
     },
     pieceRate: {
-      pieceRateObject: true,
+      percentageMetricObject: true,
     },
     updatedPieceRate: {
-      pieceRateObject: true,
+      percentageMetricObject: true,
     },
   };
 
@@ -46,15 +45,15 @@ export class UpdatePostPieceRate extends Operation {
       const updatedDay = new Day({ value: new Date(updatedPieceRate.date) });
 
       post.editPieceRate(
-        pieceRate.value,
+        parseFloat(pieceRate.value),
         day,
-        updatedPieceRate.value,
+        parseFloat(updatedPieceRate.value),
         updatedDay
       );
 
       const newPost = await postRepo.save(post);
 
-      this.emit(SUCCESS, postToDTO(newPost));
+      this.emit(SUCCESS, newPost.toJSON());
     } catch (error) {
       switch (error.code) {
         case 'INVALID_VALUE':

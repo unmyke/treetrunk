@@ -6,4 +6,11 @@ export class Appointment extends BaseValue {
     this.postId = postId;
     this.day = day;
   }
+
+  toJSON() {
+    return {
+      postId: this.postId.toJSON(),
+      date: day.toJSON(),
+    };
+  }
 }

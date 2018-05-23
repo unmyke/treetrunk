@@ -1,3 +1,5 @@
+import { BaseClass } from '../BaseClass';
+
 const valueEquality = (value1, value2) => {
   if (value1 instanceof BaseValue) {
     return value1.equals(value2);
@@ -5,7 +7,7 @@ const valueEquality = (value1, value2) => {
   return value1.valueOf() === value2.valueOf();
 };
 
-export class BaseValue {
+export class BaseValue extends BaseClass {
   equals(value) {
     if (this === value) {
       return true;

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { injectService } from '../../utils/bottle-express';
+import { inject } from '../../utils/bottle-express';
 import Status from 'http-status';
 
 const SellersController = {
@@ -10,42 +10,42 @@ const SellersController = {
 
     router.get(
       '/',
-      injectService('SellerManagement', 'Seller', 'getAllSellers'),
+      inject('SellerManagement', 'Seller', 'getAllSellers'),
       this.index
     );
     router.get(
       '/:sellerId',
-      injectService('SellerManagement', 'Seller', 'getSeller'),
+      inject('SellerManagement', 'Seller', 'getSeller'),
       this.show
     );
     router.post(
       '/',
-      injectService('SellerManagement', 'Seller', 'createSeller'),
+      inject('SellerManagement', 'Seller', 'createSeller'),
       this.create
     );
     router.put(
       '/:sellerId',
-      injectService('SellerManagement', 'Seller', 'updateSeller'),
+      inject('SellerManagement', 'Seller', 'updateSeller'),
       this.update
     );
     router.delete(
       '/:sellerId',
-      injectService('SellerManagement', 'Seller', 'deleteSeller'),
+      inject('SellerManagement', 'Seller', 'deleteSeller'),
       this.delete
     );
     router.post(
       '/:sellerId/appointments',
-      injectService('SellerManagement', 'Seller', 'createSellerAppointment'),
+      inject('SellerManagement', 'Seller', 'createSellerAppointment'),
       this.createAppointment
     );
     router.put(
       '/:sellerId/appointments',
-      injectService('SellerManagement', 'Seller', 'updateSellerAppointment'),
+      inject('SellerManagement', 'Seller', 'updateSellerAppointment'),
       this.updateAppointment
     );
     router.delete(
       '/:sellerId/appointments',
-      injectService('SellerManagement', 'Seller', 'deleteSellerAppointment'),
+      inject('SellerManagement', 'Seller', 'deleteSellerAppointment'),
       this.deleteAppointment
     );
 

@@ -1,5 +1,4 @@
 import { Operation } from '../../_lib';
-import { postToDTO } from './postToDTO';
 
 export class CreatePostPieceRate extends Operation {
   static constraints = {
@@ -12,17 +11,8 @@ export class CreatePostPieceRate extends Operation {
         message: '^PostId: "%{value}" must be UUID',
       },
     },
-    value: {
-      presence: {
-        allowEmpty: false,
-      },
-      numericalityString: true,
-    },
-    date: {
-      presence: {
-        allowEmpty: false,
-      },
-      dateString: true,
+    pieceRate: {
+      percentageMetricObject: true,
     },
   };
 
@@ -41,17 +31,20 @@ export class CreatePostPieceRate extends Operation {
     } = this;
 
     try {
-      this.validate({ postIdValue, value, date }, { exception: true });
+      this.validate(
+        { postIdValue, pieceRate: { value, date } },
+        { exception: true }
+      );
 
       const postId = new PostId({ value: postIdValue });
       const post = await postRepo.getById(postId);
       const day = new Day({ value: new Date(date) });
 
-      post.addPieceRate(value, day);
+      post.addPieceRate(parseFloat(value), day);
 
       const newPost = await postRepo.save(post);
 
-      this.emit(SUCCESS, postToDTO(newPost));
+      this.emit(SUCCESS, newPost.toJSON());
     } catch (error) {
       switch (error.code) {
         case 'INVALID_VALUE':

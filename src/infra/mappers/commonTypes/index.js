@@ -1,5 +1,6 @@
-import { PostIdMapper as PostId } from './PostIdMapper';
 import { SellerIdMapper as SellerId } from './SellerIdMapper';
+import { SeniorityTypeIdMapper as SeniorityTypeId } from './SeniorityTypeIdMapper';
+import { PostIdMapper as PostId } from './PostIdMapper';
 import { DayMapper as Day } from './DayMapper';
 
-export { PostId, SellerId, Day };
+export { SellerId, PostId, SeniorityTypeId, Day };

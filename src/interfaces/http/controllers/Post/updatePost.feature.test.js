@@ -115,7 +115,7 @@ describe('API :: PUT /api/posts/:id', () => {
   });
 
   context('when post with updated name already exists', () => {
-    test('should not update and returns 400 with the already exists message', async () => {
+    test('should not update and returns 409 with the already exists message', async () => {
       const name = 'Старший флорист';
       const duplicatePostProps = { name };
       const duplicatePost = new Post(duplicatePostProps);
@@ -129,7 +129,7 @@ describe('API :: PUT /api/posts/:id', () => {
           name,
         });
 
-      expect(statusCode).toBe(400);
+      expect(statusCode).toBe(409);
       expect(body.type).toBe('AlreadyExists');
       expect(body.details).toEqual({
         name: ['Post with name: "Старший флорист" already exists'],

@@ -1,27 +1,49 @@
 import { Operation } from '../../_lib';
 
-export class CreateSeller extends Operation {
-  async execute({ lastName, firstName, middleName, phone }) {
-    const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
+export class CreatePost extends Operation {
+  static constraints = {
+    name: {
+      presence: {
+        allowEmpty: false,
+      },
+    },
+  };
+
+  async execute({ name }) {
+    const { SUCCESS, ERROR, VALIDATION_ERROR, ALREADY_EXISTS } = this.outputs;
     const {
-      repositories: { Seller: sellerRepo },
-      entities: { Seller },
+      repositories: { Post: postRepo },
+      entities: { Post },
+      validate,
     } = this;
 
     try {
-      const seller = new Seller({ lastName, firstName, middleName, phone });
+      validate({ name }, { exception: true });
 
-      const newSeller = await sellerRepo.add(seller);
+      const post = new Post({ name });
 
-      this.emit(SUCCESS, newSeller);
+      const newPost = await postRepo.add(post);
+
+      this.emit(SUCCESS, newPost);
     } catch (error) {
-      if (error.message === 'ValidationError') {
-        return this.emit(VALIDATION_ERROR, error);
+      switch (error.code) {
+        case 'ALREADY_EXISTS':
+          this.emit(ALREADY_EXISTS, error);
+          break;
+        case 'INVALID_VALUE':
+          this.emit(VALIDATION_ERROR, error);
+          break;
+        default:
+          this.emit(ERROR, error);
+          break;
       }
-
-      this.emit(ERROR, error);
     }
   }
 }
 
-CreateSeller.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+CreatePost.setOutputs([
+  'SUCCESS',
+  'ERROR',
+  'VALIDATION_ERROR',
+  'ALREADY_EXISTS',
+]);

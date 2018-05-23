@@ -1,12 +1,15 @@
 import { lowerFirst } from 'lodash';
-import { Operation as ErrorFactory } from 'src/infra/errorFactories';
 
 import { BaseId } from '../BaseId';
+import { BaseClass } from '../BaseClass';
 
-export class BaseEntity {
+import { Operation as ErrorFactory } from 'src/infra/errorFactories';
+
+export class BaseEntity extends BaseClass {
   static errorFactory = new ErrorFactory();
 
   constructor(id = new BaseId()) {
+    super();
     this[lowerFirst(id.constructor.name)] = id;
   }
 }

@@ -3,15 +3,6 @@ import { PostId, Day } from '../../commonTypes';
 import { PieceRate } from './PieceRate';
 
 export class Post extends BaseEntity {
-  static constraints = {
-    name: {
-      presence: { allowEmpty: false },
-    },
-    pieceRates: {
-      presence: true,
-    },
-  };
-
   constructor({ postId = new PostId(), name, pieceRates = [] }) {
     super(postId);
     this.name = name;
@@ -40,11 +31,17 @@ export class Post extends BaseEntity {
   }
 
   addPieceRate(value, day) {
-    const previuosPieceRate = this.getPieceRateAt(day);
     const pieceRate = new PieceRate({ value, day });
-    if (previuosPieceRate === pieceRate) {
-      throw this.constructor.errorDuplication;
+    const prevValue = this.getPieceRateAt(day);
+    if (value === prevValue) {
+      throw this.constructor.errorFactory.createAlreadyExists(
+        pieceRate,
+        `Piece rate with value: ${value} at ${day.format(
+          'DD.MM.YYYY'
+        )} already exists`
+      );
     }
+
     this.pieceRates = [...this.pieceRates, pieceRate].sort(
       (a, b) => a.day > b.day
     );
@@ -64,18 +61,24 @@ export class Post extends BaseEntity {
     return value;
   }
 
-  editPieceRate(pieceRateToEdit, dayToEdit, pieceRate, day) {
-    if (pieceRateToEdit === pieceRate && dayToEdit.equals(day)) {
+  editPieceRate(valueToEdit, dayToEdit, value, day) {
+    const pieceRateToEdit = new PieceRate({
+      value: valueToEdit,
+      day: dayToEdit,
+    });
+    const pieceRate = new PieceRate({ value, day });
+
+    if (pieceRateToEdit.equals(pieceRate)) {
       throw this.constructor.errorFactory.createNothingToUpdate(
-        this,
+        pieceRate,
         `Updated piece rate at ${day.format('DD.MM.YYYY')} for post "${
           this.name
-        }" already equlas ${pieceRate}%`
+        }" already equlas ${value}%`
       );
     }
 
-    this.deletePieceRate(pieceRateToEdit, dayToEdit);
-    this.addPieceRate(pieceRate, day);
+    this.deletePieceRate(valueToEdit, dayToEdit);
+    this.addPieceRate(value, day);
   }
 
   deletePieceRate(value, day) {
@@ -85,7 +88,7 @@ export class Post extends BaseEntity {
     );
     if (this.pieceRates.length === filteredPieceRates.length) {
       throw this.constructor.errorFactory.createNotFound(
-        this,
+        pieceRateToDelete,
         `Piece rate with value ${value} at ${day.format(
           'DD.MM.YYYY'
         )} not found`
@@ -98,5 +101,13 @@ export class Post extends BaseEntity {
   hasPieceRate(day) {
     const [firstPieceRate] = this.pieceRates;
     return !!firstPieceRate && firstPieceRate.day <= day;
+  }
+  toJSON() {
+    return {
+      postId: this.postId.toJSON(),
+      name: this.name,
+      pieceRate: this.pieceRate,
+      pieceRates: this.pieceRates.map((pieceRate) => pieceRate.toJSON()),
+    };
   }
 }

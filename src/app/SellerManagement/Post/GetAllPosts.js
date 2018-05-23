@@ -1,5 +1,4 @@
 import { Operation } from '../../_lib';
-import { postToDTO } from './postToDTO';
 
 export class GetAllPosts extends Operation {
   async execute(props = {}) {
@@ -10,7 +9,7 @@ export class GetAllPosts extends Operation {
 
     try {
       const posts = await postRepo.getAll(props);
-      this.emit(SUCCESS, posts.map((post) => postToDTO(post)));
+      this.emit(SUCCESS, posts.map((post) => post.toJSON()));
     } catch (error) {
       if (error.message === 'ValidationError') {
         return this.emit(VALIDATION_ERROR, error);

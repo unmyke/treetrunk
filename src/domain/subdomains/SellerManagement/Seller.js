@@ -160,8 +160,6 @@ export class Seller extends BaseEntity {
     }
 
     const appointments = this.getAppointmentsAt(day);
-    console.log(appointments);
-    console.log(this.getRecruitDayAt(day));
     return appointments[appointments.length - 1].postId;
   }
 
@@ -223,6 +221,25 @@ export class Seller extends BaseEntity {
     }
 
     return day.differenceInMonths(this.getRecruitDayAt(day));
+  }
+
+  toJSON() {
+    return {
+      sellerId: this.sellerId.toJSON(),
+      fullName: this.fullName,
+      lastName: this.lastName,
+      firstName: this.firstName,
+      middleName: this.middleName,
+      phone: this.phone,
+      postId: this.postId,
+      postIds: this.postIds,
+      recruitDay: this.recruitDay,
+      isRecruited: this.isRecruited,
+      quitDay: this.quitDay,
+      isQuited: this.isQuited,
+      seniority: this.seniority,
+      appointments: this.appointments,
+    };
   }
 
   // private

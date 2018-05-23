@@ -87,7 +87,7 @@ describe('API :: DELETE /api/posts/:id/piece_rates', () => {
           expect(statusCode).toBe(404);
           expect(body.type).toBe('NotFoundError');
           expect(body.details).toEqual({
-            post: [
+            pieceRate: [
               `Piece rate with value 2 at ${day1.format(
                 'DD.MM.YYYY'
               )} not found`,
@@ -105,8 +105,10 @@ describe('API :: DELETE /api/posts/:id/piece_rates', () => {
           expect(statusCode).toBe(400);
           expect(body.type).toBe('ValidationError');
           expect(body.details).toEqual({
-            value: ["Value can't be blank"],
-            date: ["Date can't be blank"],
+            pieceRate: [
+              "Piece rate value can't be blank",
+              "Piece rate date can't be blank",
+            ],
           });
         });
       });
@@ -123,8 +125,10 @@ describe('API :: DELETE /api/posts/:id/piece_rates', () => {
           expect(statusCode).toBe(400);
           expect(body.type).toBe('ValidationError');
           expect(body.details).toEqual({
-            value: ['Value "test" is not a valid number'],
-            date: ['Date "test" is not a valid date'],
+            pieceRate: [
+              'Piece rate value "test" is not a valid number',
+              'Piece rate date "test" is not a valid date',
+            ],
           });
         });
       });

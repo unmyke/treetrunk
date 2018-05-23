@@ -7,4 +7,8 @@ export class Award extends BaseValue {
     this.value = value;
     this.day = day;
   }
+  toJSON() {
+    value: this.value;
+    date: this.day.toJSON();
+  }
 }

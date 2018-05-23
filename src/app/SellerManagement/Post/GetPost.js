@@ -1,5 +1,4 @@
 import { Operation } from '../../_lib';
-import { postToDTO } from './postToDTO';
 
 export class GetPost extends Operation {
   async execute(postIdValue) {
@@ -13,7 +12,7 @@ export class GetPost extends Operation {
       const postId = new PostId({ value: postIdValue });
       const post = await postRepo.getById(postId);
 
-      this.emit(SUCCESS, postToDTO(post));
+      this.emit(SUCCESS, post.toJSON());
     } catch (error) {
       if (error.code === 'NOT_FOUND') {
         return this.emit(NOT_FOUND, error);

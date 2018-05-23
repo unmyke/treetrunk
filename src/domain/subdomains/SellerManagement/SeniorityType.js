@@ -1,7 +1,6 @@
 import { BaseEntity } from '../../_lib';
 import { SeniorityTypeId, Day } from '../../commonTypes';
 import { Award } from './Award';
-// import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
 
 export class SeniorityType extends BaseEntity {
   constructor({ seniorityTypeId = new SeniorityTypeId(), name, months }) {
@@ -9,6 +8,29 @@ export class SeniorityType extends BaseEntity {
     this.name = name;
     this.months = months;
     this.awards = [];
+  }
+
+  update({ name, months }) {
+    const errors = [];
+    if (name === this.name) {
+      errors.push(`SeniorityType already has name "${name}"`);
+    }
+    if (months === this.months) {
+      errors.push(`SeniorityType already has months "${months}"`);
+    }
+
+    if (errors.length > 0) {
+      throw this.constructor.errorFactory.createNothingToUpdate(
+        this,
+        ...errors
+      );
+    }
+    this.name = name;
+    this.months = months;
+  }
+
+  setAwards(awards) {
+    this.awards = awards.map(({ value, day }) => new Award({ value, day }));
   }
 
   addAward(value, day = new Day()) {

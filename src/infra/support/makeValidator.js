@@ -46,19 +46,18 @@ export const makeValidator = (constraints, errorFactory) => {
     });
   };
 
-  validate.validators.pieceRateObject = (pieceRate) => {
-    if (pieceRate === undefined) {
+  validate.validators.metricObject = (metric, numericalityOptions) => {
+    if (metric === undefined) {
       return "can't be blank";
     }
 
-    const valueErrors = validate.single(pieceRate.value, {
+    const valueErrors = validate.single(metric.value, {
       numericalityString: {
-        greaterThan: 0,
-        lessThan: 100,
+        ...numericalityOptions,
       },
     });
 
-    const dateErrors = validate.single(pieceRate.date, {
+    const dateErrors = validate.single(metric.date, {
       dateString: true,
     });
 
@@ -69,6 +68,24 @@ export const makeValidator = (constraints, errorFactory) => {
       ];
     }
     return null;
+  };
+
+  validate.validators.percentageMetricObject = (metric) => {
+    return validate.single(metric, {
+      metricObject: {
+        greaterThan: 0,
+        lessThan: 100,
+      },
+    });
+  };
+
+  validate.validators.integerMetricObject = (metric) => {
+    return validate.single(metric, {
+      metricObject: {
+        onlyInteger: true,
+        greaterThan: 0,
+      },
+    });
   };
 
   validate.validators.dateString = (value) => {

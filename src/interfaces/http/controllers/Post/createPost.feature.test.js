@@ -31,16 +31,33 @@ describe('API :: POST /api/posts', () => {
     });
   });
 
-  context('when there are no props', () => {
-    test('should return 400 with array of errors', async () => {
-      const { statusCode, body } = await request()
-        .post('/api/posts')
-        .set('Accept', 'application/json')
-        .send();
+  context('when props are correct', () => {
+    context('when props are invalid', () => {
+      test('should return 400 with array of errors', async () => {
+        const { statusCode, body } = await request()
+          .post('/api/posts')
+          .set('Accept', 'application/json')
+          .send({
+            name: '',
+          });
 
-      expect(statusCode).toBe(400);
-      expect(body.type).toBe('ValidationError');
-      expect(body.details).toEqual({ name: ["Name can't be blank"] });
+        expect(statusCode).toBe(400);
+        expect(body.type).toBe('ValidationError');
+        expect(body.details).toEqual({ name: ["Name can't be blank"] });
+      });
+    });
+
+    context('when there are no props', () => {
+      test('should return 400 with array of errors', async () => {
+        const { statusCode, body } = await request()
+          .post('/api/posts')
+          .set('Accept', 'application/json')
+          .send();
+
+        expect(statusCode).toBe(400);
+        expect(body.type).toBe('ValidationError');
+        expect(body.details).toEqual({ name: ["Name can't be blank"] });
+      });
     });
   });
 

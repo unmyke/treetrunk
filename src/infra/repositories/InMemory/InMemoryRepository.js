@@ -62,11 +62,15 @@ export class InMemoryRepository extends BaseRepository {
 
     const index = this.store.findIndex((storedItem) => {
       const storedEntity = this.entityMapper.toEntity(storedItem);
-      return this._entityId(storedEntity) === entityId;
+      return this._entityId(storedEntity).equals(entityId);
     });
     this.store[index] = this.entityMapper.toDatabase(entity);
 
-    return entity;
+    if (index === -1) {
+      throw this.errorFactory.createIdNotFound(entityId);
+    }
+
+    return this.entityMapper.toEntity(this.store[index]);
   }
 
   async remove(id) {

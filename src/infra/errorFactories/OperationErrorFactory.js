@@ -8,39 +8,29 @@ export class OperationErrorFactory extends BaseErrorFactory {
     super('OPERATION_ERROR');
   }
 
-  createNothingToUpdate(entity, detail) {
-    if (!this._isInstanceOfBaseEntity(entity)) {
-      return new Error('Not a Entity');
-    }
-
-    const entityPropName = `${lowerFirst(entity.constructor.name)}`;
-
-    return this._create('Nothing to update', {
-      [entityPropName]: [detail],
-    });
+  createNothingToUpdate(entity, ...details) {
+    return this._createOperation(entity, 'Nothing to update', ...details);
   }
 
-  createNotAllowed(entity, detail) {
-    if (!this._isInstanceOfBaseEntity(entity)) {
-      return new Error('Not a Entity');
-    }
-
-    const entityPropName = `${lowerFirst(entity.constructor.name)}`;
-
-    return this._create('Not allowed', {
-      [entityPropName]: [detail],
-    });
+  createNotAllowed(entity, ...details) {
+    return this._createOperation(entity, 'Not allowed', ...details);
   }
 
-  createNotFound(entity, detail) {
-    if (!this._isInstanceOfBaseEntity(entity)) {
+  createNotFound(entity, ...details) {
+    return this._createOperation(entity, 'Not found', ...details);
+  }
+
+  createAlreadyExists(entity, ...details) {
+    return this._createOperation(entity, 'Already exists', ...details);
+  }
+  _createOperation(entity, message, ...details) {
+    if (!this._isInstanceOfBaseClass(entity)) {
       return new Error('Not a Entity');
     }
 
     const entityPropName = `${lowerFirst(entity.constructor.name)}`;
-
-    return this._create('Not found', {
-      [entityPropName]: [detail],
+    return this._create(message, {
+      [entityPropName]: details,
     });
   }
 }

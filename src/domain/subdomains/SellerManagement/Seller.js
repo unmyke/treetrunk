@@ -160,6 +160,8 @@ export class Seller extends BaseEntity {
     }
 
     const appointments = this.getAppointmentsAt(day);
+    console.log(appointments);
+    console.log(this.getRecruitDayAt(day));
     return appointments[appointments.length - 1].postId;
   }
 
@@ -229,34 +231,7 @@ export class Seller extends BaseEntity {
   }
 
   _getPostIdAppointmentsAt(day = new Day(), postId) {
-    // const quitDay = this.getQuitDayAt(day);
-    // const now = new Day();
     const recruitDay = this.getRecruitDayAt(day);
-    // console.log(
-    //   `нанят ? ${this.isRecruitedAt(
-    //     day
-    //   )}, сейчас - ${now}, день приема -${recruitDay}`
-    // );
-    // if (!this.isRecruitedAt(day)) {
-    //   return [];
-    // }
-    // if (!postId) {
-    //   const currentAppointments = this._appointments
-    //     .filter(
-    //       ({ day: currentDay }) => (quitDay || now) >= currentDay <= recruitDay
-    //     )
-    //     .sort(this._appointmentsComparator);
-    //   return currentAppointments;
-    // }
-    // const postIdAppointments = this._appointments
-    //   .filter(
-    //     ({ day: currentDay, postId: currentPostId }) =>
-    //       currentDay <= this.getRecruitDayAt(day) &&
-    //       currentPostId.equals(postId)
-    //   )
-    //   .sort(this._appointmentsComparator);
-    // //console.log(postIdAppointments);
-
     const postIdAppointments = this._appointments
       .sort(this._appointmentsComparator)
       .filter(({ postId: currentPostId, day: currentDay }) => {

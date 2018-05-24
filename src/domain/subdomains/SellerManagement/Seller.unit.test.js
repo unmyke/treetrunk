@@ -52,8 +52,9 @@ describe('Domain :: entities :: Seller', () => {
 
     context('when seller have appointments', () => {
       context('withoit quit', () => {
+        let appointments;
         beforeEach(() => {
-          const appointments = [
+          appointments = [
             { postId: floristPost.postId, day: day2 },
             { postId: seniorFloristPost.postId, day: day4 },
           ];
@@ -119,7 +120,7 @@ describe('Domain :: entities :: Seller', () => {
         //   ]);
         // });
         test('should return empty array', () => {
-          expect(seller.getAppointmentsAt(day4)).toBe([]);
+          expect(seller.getAppointmentsAt(day4)).toEqual([]);
         });
 
         test('should return array not containing appointments after new recruit ', () => {
@@ -137,16 +138,18 @@ describe('Domain :: entities :: Seller', () => {
         //   });
         // });
         test('should return empty array', () => {
-          expect(seller.getAppointmentsAt(day3)).toBe([]);
+          expect(seller.getAppointmentsAt(day3)).toEqual([]);
         });
       });
 
       context('when passed day is after new recruit', () => {
         test('should return array with only appointments after new recruit', () => {
-          expect(seller.getAppointmentsAt(day6)).toEqual({
-            postId: floristPost.postId,
-            day: day5,
-          });
+          expect(seller.getAppointmentsAt(day6)).toEqual([
+            {
+              postId: floristPost.postId,
+              day: day5,
+            },
+          ]);
         });
         test('should return array not containing appointments before new recruit ', () => {
           expect(seller.getAppointmentsAt(day6)).not.toContainEqual([
@@ -271,7 +274,7 @@ describe('Domain :: entities :: Seller', () => {
   describe('#postIds', () => {
     context('when seller have no appointments now', () => {
       test('should return empty array', () => {
-        expect(seller.postIds).toBe([]);
+        expect(seller.postIds).toEqual([]);
       });
     });
 

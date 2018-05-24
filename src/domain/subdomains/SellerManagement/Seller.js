@@ -46,11 +46,7 @@ export class Seller extends BaseEntity {
 
   get postIds() {
     return new Array(
-      ...new Set(
-        this.getAppointmentsAt()
-          .sort(this._appointmentsComparator)
-          .map(({ postId }) => postId)
-      )
+      ...new Set(this.getAppointmentsAt().map(({ postId }) => postId))
     );
   }
 
@@ -223,13 +219,9 @@ export class Seller extends BaseEntity {
   }
 
   // private
-  _appointmentsComparator(a, b) {
-    return a.day > b.day;
-  }
-
   _getAllAppointmentsAt(day = new Day()) {
     return this._appointments
-      .sort(this._appointmentsComparator)
+      .sort(this._dayComparator)
       .filter(({ day: currentDay }) => currentDay <= day);
   }
 

@@ -37,7 +37,7 @@ export class Seller extends BaseEntity {
   }
 
   get appointments() {
-    return this.getAppointmentsAt().sort(this._appointmentsComparator);
+    return this.getAppointmentsAt();
   }
 
   get postId() {
@@ -75,16 +75,14 @@ export class Seller extends BaseEntity {
   }
 
   getAppointmentsAt(day = new Day()) {
-    const allAppointments = this._getPostIdAppointmentsAt(day);
-
-    const quitDay = this.getQuitDayAt(day);
-    if (quitDay === undefined) {
-      return allAppointments;
+    if (!this.isRecruitedAt(day)) {
+      return [];
     }
-    return allAppointments.filter(
-      ({ postId: currentPostId, day: currentDay }) =>
-        currentDay > quitDay && !currentDay.isQuitPostId
+    const recruitDay = this.getRecruitDayAt(day);
+    const currentAppointments = this._getAllAppointmentsAt(day).filter(
+      ({ day: currentDay }) => currentDay >= recruitDay
     );
+    return currentAppointments;
   }
 
   addAppointment(postId, day) {
@@ -155,12 +153,12 @@ export class Seller extends BaseEntity {
   }
 
   getPostIdAt(day = new Day()) {
-    if (!this.isRecruitedAt(day)) {
+    const postId = this._getPostIdAt(day);
+
+    if (!postId || postId.isQuitPostId()) {
       return;
     }
-
-    const appointments = this.getAppointmentsAt(day);
-    return appointments[appointments.length - 1].postId;
+    return postId;
   }
 
   getPostIdsAt(day = new Day()) {
@@ -168,51 +166,33 @@ export class Seller extends BaseEntity {
   }
 
   getRecruitDayAt(day = new Day()) {
-    const [firstAppointment, ...appointments] = this._appointments
-      .filter(({ day: currentDay }) => {
-        return currentDay <= day;
-      })
-      .sort(this._appointmentsComparator);
-    if (firstAppointment === undefined) {
-      return undefined;
+    if (!this.isRecruitedAt(day)) {
+      return;
     }
 
-    return appointments.reduce(
-      (recruitDay, { postId, day: currentDay }, index) => {
-        if (postId.isQuitPostId()) {
-          return appointments[index + 1]
-            ? appointments[index + 1].day
-            : undefined;
-        }
-        return recruitDay;
-      },
-      firstAppointment.day
-    );
+    const [firstAppointment, ...appointments] = this._getAllAppointmentsAt(day);
+    return appointments.reduce((recruitDay, { postId }, index) => {
+      if (postId.isQuitPostId()) {
+        return appointments[index + 1];
+      }
+      return recruitDay;
+    }, firstAppointment.day);
   }
 
   isRecruitedAt(day = new Day()) {
-    const recruitDay = this.getRecruitDayAt(day);
-    // console.log(`день приема - ${this.getRecruitDayAt(day)}`);
-    return !!recruitDay && recruitDay <= day;
+    return !!this.getPostIdAt(day);
   }
 
   getQuitDayAt(day = new Day()) {
-    const quitPostIdAppointments = this._getPostIdAppointmentsAt(
-      day,
-      PostId.quitPostId
-    );
-
-    const lastQuitDay =
-      quitPostIdAppointments.length > 0
-        ? quitPostIdAppointments[quitPostIdAppointments.length - 1].day
-        : undefined;
-
-    return lastQuitDay;
+    const postId = this._getPostIdAt(day);
+    if (!postId || !postId.isQuitPostId()) {
+      return;
+    }
+    return postId.day;
   }
 
   isQuitedAt(day = new Day()) {
-    const quitDay = this.getQuitDayAt(day);
-    return !!quitDay && quitDay <= day;
+    return !!this.getQuitDayAt(day);
   }
 
   getSeniorityAt(day = new Day()) {
@@ -247,17 +227,19 @@ export class Seller extends BaseEntity {
     return a.day > b.day;
   }
 
-  _getPostIdAppointmentsAt(day = new Day(), postId) {
-    const recruitDay = this.getRecruitDayAt(day);
-    const postIdAppointments = this._appointments
+  _getAllAppointmentsAt(day = new Day()) {
+    return this._appointments
       .sort(this._appointmentsComparator)
-      .filter(({ postId: currentPostId, day: currentDay }) => {
-        return (
-          (!postId || currentPostId.equals(postId)) &&
-          (!recruitDay || currentDay >= recruitDay) &&
-          currentDay <= day
-        );
-      });
-    return postIdAppointments;
+      .filter(({ day: currentDay }) => currentDay <= day);
+  }
+
+  _getPostIdAt(day = new Day()) {
+    const appointments = this._getAllAppointmentsAt(day);
+
+    if (appointments.length === 0) {
+      return;
+    }
+
+    return appointments[appointments.length - 1].postId;
   }
 }

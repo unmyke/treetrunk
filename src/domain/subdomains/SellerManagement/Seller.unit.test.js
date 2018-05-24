@@ -423,7 +423,7 @@ describe('Domain :: entities :: Seller', () => {
 
         context('when passed day is between quit and new recruit', () => {
           test('should return day is when seller take quit', () => {
-            expect(seller.getQuitDayAt(day3)).toBe(day4);
+            expect(seller.getQuitDayAt(day4)).toBe(day3);
           });
         });
       });

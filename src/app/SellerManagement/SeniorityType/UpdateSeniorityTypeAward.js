@@ -24,6 +24,7 @@ export class UpdateSeniorityTypeAward extends Operation {
       SUCCESS,
       VALIDATION_ERROR,
       NOT_FOUND,
+      ALREADY_EXISTS,
       NOTHING_TO_UPDATE,
       ERROR,
     } = this.outputs;
@@ -76,6 +77,7 @@ export class UpdateSeniorityTypeAward extends Operation {
 UpdateSeniorityTypeAward.setOutputs([
   'SUCCESS',
   'NOT_FOUND',
+  'ALREADY_EXISTS',
   'VALIDATION_ERROR',
   'NOTHING_TO_UPDATE',
   'ERROR',

@@ -24,6 +24,7 @@ export class UpdatePostPieceRate extends Operation {
       SUCCESS,
       VALIDATION_ERROR,
       NOT_FOUND,
+      ALREADY_EXISTS,
       NOTHING_TO_UPDATE,
       ERROR,
     } = this.outputs;
@@ -74,6 +75,7 @@ export class UpdatePostPieceRate extends Operation {
 UpdatePostPieceRate.setOutputs([
   'SUCCESS',
   'NOT_FOUND',
+  'ALREADY_EXISTS',
   'VALIDATION_ERROR',
   'NOTHING_TO_UPDATE',
   'ERROR',

@@ -17,7 +17,10 @@ const {
 
 const dateDTO1 = '2018-01-21T00:00:00.000+08:00';
 const dateDTO2 = '2018-02-21T00:00:00.000+08:00';
-const awardsDTO = [{ value: 1, date: dateDTO1 }, { value: 2, date: dateDTO2 }];
+const awardsDTO = [
+  { value: 1000, date: dateDTO1 },
+  { value: 2000, date: dateDTO2 },
+];
 
 const date1 = new Date(dateDTO1);
 const date2 = new Date(dateDTO2);
@@ -25,7 +28,7 @@ const date2 = new Date(dateDTO2);
 const seniorityTypeProps = { name: 'До 6 мес.', months: 6 };
 const day1 = new Day({ value: date1 });
 const day2 = new Day({ value: date2 });
-const awards = [{ value: 1, day: day1 }, { value: 2, day: day2 }];
+const awards = [{ value: 1000, day: day1 }, { value: 2000, day: day2 }];
 
 const seniorityType = new SeniorityType(seniorityTypeProps);
 seniorityType.setAwards(awards);
@@ -33,11 +36,12 @@ seniorityType.setAwards(awards);
 const seniorityTypeDTO = {
   seniorityTypeId: seniorityType.seniorityTypeId.toString(),
   name: 'До 6 мес.',
-  award: 2,
+  months: 6,
+  award: 2000,
   awards: awardsDTO,
 };
 
-describe('API :: GET /api/seniorityTypes/:id', () => {
+describe('API :: GET /api/seniority_types/:id', () => {
   beforeEach(() => {
     return seniorityTypeRepo.add(seniorityType);
   });
@@ -49,7 +53,7 @@ describe('API :: GET /api/seniorityTypes/:id', () => {
   context('when seniorityType exists', () => {
     test('updates and returns 202 with the updated seniorityType', async () => {
       const { statusCode, body } = await request().get(
-        `/api/seniorityTypes/${seniorityType.seniorityTypeId}`
+        `/api/seniority_types/${seniorityType.seniorityTypeId}`
       );
 
       expect(statusCode).toBe(200);
@@ -62,7 +66,7 @@ describe('API :: GET /api/seniorityTypes/:id', () => {
     test('returns a not found error and status 404', async () => {
       const uuid = uuidv4();
       const { statusCode, body } = await request().get(
-        `/api/seniorityTypes/${uuid}`
+        `/api/seniority_types/${uuid}`
       );
 
       expect(statusCode).toBe(404);

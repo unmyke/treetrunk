@@ -14,7 +14,7 @@ export class DeleteSeniorityType extends Operation {
   };
 
   async execute({ seniorityTypeIdValue }) {
-    const { SUCCESS, NOT_FOUND, NOT_ALLOWED, ERROR } = this.outputs;
+    const { SUCCESS, NOT_FOUND, ERROR } = this.outputs;
 
     const {
       repositories: { SeniorityType: seniorityTypeRepo, Seller: sellerRepo },
@@ -30,19 +30,6 @@ export class DeleteSeniorityType extends Operation {
         value: seniorityTypeIdValue,
       });
 
-      const sellersCountWithSeniorityTypeId = await sellerRepo.countBySeniorityTypeId(
-        seniorityTypeId
-      );
-
-      if (sellersCountWithSeniorityTypeId > 0) {
-        const seniorityType = await seniorityTypeRepo.getById(seniorityTypeId);
-
-        throw this.errorFactory.createNotAllowed(
-          seniorityType,
-          `There are sellers appointed to seniorityType "${seniorityType.name}"`
-        );
-      }
-
       await seniorityTypeRepo.remove(seniorityTypeId);
 
       this.emit(SUCCESS);
@@ -50,8 +37,6 @@ export class DeleteSeniorityType extends Operation {
       switch (error.code) {
         case 'NOT_FOUND':
           return this.emit(NOT_FOUND, error);
-        case 'NOT_ALLOWED':
-          return this.emit(NOT_ALLOWED, error);
         default:
           this.emit(ERROR, error);
       }
@@ -59,9 +44,4 @@ export class DeleteSeniorityType extends Operation {
   }
 }
 
-DeleteSeniorityType.setOutputs([
-  'SUCCESS',
-  'NOT_FOUND',
-  'NOT_ALLOWED',
-  'ERROR',
-]);
+DeleteSeniorityType.setOutputs(['SUCCESS', 'NOT_FOUND', 'ERROR']);

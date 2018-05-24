@@ -10,6 +10,10 @@ export class SeniorityType extends BaseEntity {
     this.awards = [];
   }
 
+  get award() {
+    return this.getAwardValueAt();
+  }
+
   update({ name, months }) {
     const errors = [];
     if (name === this.name) {
@@ -34,12 +38,27 @@ export class SeniorityType extends BaseEntity {
   }
 
   addAward(value, day = new Day()) {
-    const previuosAward = this.getAwardAt(day);
     const award = new Award({ value, day });
-    if (previuosAward === award) {
-      throw this.constructor.errorDuplication;
+    this._checkAwardUniqueness(award);
+
+    this.awards = [...this.awards, award].sort(this._dayComparator);
+  }
+
+  editAward(valueToEdit, dayToEdit, value, day) {
+    const awardToEdit = new Award({ value: valueToEdit, day: dayToEdit });
+    const award = new Award({ value, day });
+
+    if (awardToEdit.equals(award)) {
+      throw this.constructor.errorFactory.createNothingToUpdate(
+        award,
+        `Updated award at ${day.format('DD.MM.YYYY')} for seniority type "${
+          this.name
+        }" already equlas ${value}%`
+      );
     }
-    this.awards = [...this.awards, award].sort((a, b) => a.day > b.day);
+
+    this.addAward(value, day);
+    this.deleteAward(valueToEdit, dayToEdit);
   }
 
   deleteAward(value, day) {
@@ -48,50 +67,70 @@ export class SeniorityType extends BaseEntity {
       (award) => !award.equals(seniorityTypeToDelete)
     );
     if (this.awards.length === filteredAwards.length) {
-      this.constructor.errorNoAwards;
+      throw this.constructor.errorFactory.createNotFound(
+        seniorityTypeToDelete,
+        `Award with value ${value} at ${day.format('DD.MM.YYYY')} not found`
+      );
     }
 
     this.awards = filteredAwards;
   }
 
-  editAward(value, day, updateValue, updateDay) {
-    this.deleteAward(value, day);
-    this.addAward(updateValue, updateDay);
-  }
-
-  getAwardAt(day = new Day()) {
+  getAwardValueAt(day = new Day()) {
     if (!this.hasAward(day)) {
       return;
     }
 
     const [firstAward, ...restAwards] = this.awards;
 
-    const { value } = restAwards.reduce((award, appointment) => {
-      return appointment.day <= day ? appointment : award;
+    const { value } = restAwards.reduce((award, currentAward) => {
+      return currentAward.day <= day ? currentAward : award;
     }, firstAward);
 
     return value;
   }
 
-  hasAward(day) {
+  hasAward(day = new Day()) {
     const [firstAward] = this.awards;
     return !!firstAward && firstAward.day <= day;
   }
 
-  get Award() {
-    return this.getAwardAt();
+  toJSON() {
+    return {
+      seniorityTypeId: this.seniorityTypeId,
+      name: this.name,
+      months: this.months,
+      award: this.award,
+      awards: this.awards.map((award) => award.toJSON()),
+    };
+  }
+
+  // private
+
+  _checkAwardUniqueness(award) {
+    if (this._isAwardExistsAt(award.day)) {
+      throw this.constructor.errorFactory.createAlreadyExists(
+        award,
+        `Award at ${award.day.format('DD.MM.YYYY')} already exists`
+      );
+    }
+
+    const prevValue = this.getAwardValueAt(award.day);
+    if (award.value === prevValue) {
+      throw this.constructor.errorFactory.createAlreadyExists(
+        award,
+        `Award value at ${award.day.format('DD.MM.YYYY')} already equals "${
+          award.value
+        }"`
+      );
+    }
+  }
+
+  _isAwardExistsAt(day = new Day()) {
+    const index = this.awards.findIndex(({ day: currentDay }) =>
+      day.equals(currentDay)
+    );
+
+    return index !== -1;
   }
 }
-
-// addErrorDefinitionProperty(
-//   SeniorityType,
-//   'errorDuplication',
-//   'OperationError',
-//   'SeniorityType already have this award'
-// );
-// addErrorDefinitionProperty(
-//   SeniorityType,
-//   'errorNoAwards',
-//   'OperationError',
-//   'SeniorityType have not such award'
-// );

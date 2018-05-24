@@ -237,6 +237,7 @@ const PostsController = {
       SUCCESS,
       VALIDATION_ERROR,
       NOTHING_TO_UPDATE,
+      ALREADY_EXISTS,
       NOT_FOUND,
       ERROR,
     } = updatePostPieceRate.outputs;
@@ -260,6 +261,12 @@ const PostsController = {
       .on(NOT_FOUND, (error) => {
         res.status(Status.NOT_FOUND).json({
           type: 'NotFoundError',
+          details: error.details,
+        });
+      })
+      .on(ALREADY_EXISTS, (error) => {
+        res.status(Status.CONFLICT).json({
+          type: 'AlreadyExists',
           details: error.details,
         });
       })

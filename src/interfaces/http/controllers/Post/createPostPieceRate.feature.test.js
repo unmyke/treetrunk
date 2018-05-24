@@ -98,28 +98,55 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
       });
     });
     context('when piece rate already exists', () => {
-      test('should not add piece rate and return 409', async () => {
-        const postToUpdate = await postRepo.getById(persistedPost.postId);
-        const day = new Day({ value: date });
-        postToUpdate.addPieceRate(1, day);
-        const updatedPost = await postRepo.save(postToUpdate);
+      context('when piece rate at day already exists', () => {
+        test('should not add piece rate and return 409', async () => {
+          const postToUpdate = await postRepo.getById(persistedPost.postId);
+          const day = new Day({ value: date });
+          postToUpdate.addPieceRate(1, day);
+          const updatedPost = await postRepo.save(postToUpdate);
 
-        const { statusCode, body } = await request()
-          .post(`/api/posts/${persistedPost.postId}/piece_rates`)
-          .set('Accept', 'application/json')
-          .send({
-            value: '1',
-            date: dateDTO,
+          const { statusCode, body } = await request()
+            .post(`/api/posts/${persistedPost.postId}/piece_rates`)
+            .set('Accept', 'application/json')
+            .send({
+              value: 2,
+              date: dateDTO,
+            });
+
+          expect(statusCode).toBe(409);
+          expect(body.type).toBe('AlreadyExists');
+          expect(body.details).toEqual({
+            pieceRate: [
+              `Piece rate at ${day.format('DD.MM.YYYY')} already exists`,
+            ],
           });
+        });
+      });
 
-        expect(statusCode).toBe(409);
-        expect(body.type).toBe('AlreadyExists');
-        expect(body.details).toEqual({
-          pieceRate: [
-            `Piece rate with value: 1 at ${day.format(
-              'DD.MM.YYYY'
-            )} already exists`,
-          ],
+      context('when value eqauls existing value at date', () => {
+        test('should not add piece rate and return 409', async () => {
+          const postToUpdate = await postRepo.getById(persistedPost.postId);
+          const day = new Day({ value: date });
+          postToUpdate.addPieceRate(1, day.startOfMonth());
+          const updatedPost = await postRepo.save(postToUpdate);
+
+          const { statusCode, body } = await request()
+            .post(`/api/posts/${persistedPost.postId}/piece_rates`)
+            .set('Accept', 'application/json')
+            .send({
+              value: 1,
+              date: dateDTO,
+            });
+
+          expect(statusCode).toBe(409);
+          expect(body.type).toBe('AlreadyExists');
+          expect(body.details).toEqual({
+            pieceRate: [
+              `Piece rate value at ${day.format(
+                'DD.MM.YYYY'
+              )} already equals "1"`,
+            ],
+          });
         });
       });
     });

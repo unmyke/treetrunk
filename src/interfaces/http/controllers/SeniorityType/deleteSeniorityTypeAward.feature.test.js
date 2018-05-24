@@ -29,7 +29,7 @@ const day2 = new Day({ value: date2 });
 const awards = [{ value: 1, day: day1 }, { value: 2, day: day2 }];
 const afterDeleteAwards = [{ value: 2, day: day2 }];
 
-describe('API :: DELETE /api/seniorityTypes/:id/piece_rates', () => {
+describe('API :: DELETE /api/seniority_types/:id/awards', () => {
   let seniorityType;
   let seniorityTypeDTO;
   let persistedSeniorityType;
@@ -40,6 +40,7 @@ describe('API :: DELETE /api/seniorityTypes/:id/piece_rates', () => {
     seniorityTypeDTO = {
       seniorityTypeId: seniorityType.seniorityTypeId.toString(),
       name: 'До 6 мес.',
+      months: 6,
       award: 2,
       awards: afterDeleteAwardsDTO,
     };
@@ -55,12 +56,12 @@ describe('API :: DELETE /api/seniorityTypes/:id/piece_rates', () => {
 
   context('when seniorityType exists', () => {
     context('when props are correct', () => {
-      test('should delete piece rate and return 202 with updated seniorityType', async () => {
+      test('should delete award and return 202 with updated seniorityType', async () => {
         const { statusCode, body } = await request()
           .delete(
-            `/api/seniorityTypes/${
+            `/api/seniority_types/${
               persistedSeniorityType.seniorityTypeId
-            }/piece_rates`
+            }/awards`
           )
           .set('Accept', 'application/json')
           .send({
@@ -75,13 +76,13 @@ describe('API :: DELETE /api/seniorityTypes/:id/piece_rates', () => {
     });
 
     context('when props are not correct', () => {
-      context('when piece rate with props not exists', () => {
-        test('should not delete piece rate and return 400 with the not found error message', async () => {
+      context('when award with props not exists', () => {
+        test('should not delete award and return 400 with the not found error message', async () => {
           const { statusCode, body } = await request()
             .delete(
-              `/api/seniorityTypes/${
+              `/api/seniority_types/${
                 persistedSeniorityType.seniorityTypeId
-              }/piece_rates`
+              }/awards`
             )
             .set('Accept', 'application/json')
             .send({
@@ -93,20 +94,18 @@ describe('API :: DELETE /api/seniorityTypes/:id/piece_rates', () => {
           expect(body.type).toBe('NotFoundError');
           expect(body.details).toEqual({
             award: [
-              `Piece rate with value 2 at ${day1.format(
-                'DD.MM.YYYY'
-              )} not found`,
+              `Award with value 2 at ${day1.format('DD.MM.YYYY')} not found`,
             ],
           });
         });
       });
       context('when props are not correct', () => {
-        test('should not delete piece rate and return 400 with the validation error message', async () => {
+        test('should not delete award and return 400 with the validation error message', async () => {
           const { statusCode, body } = await request()
             .delete(
-              `/api/seniorityTypes/${
+              `/api/seniority_types/${
                 persistedSeniorityType.seniorityTypeId
-              }/piece_rates`
+              }/awards`
             )
             .set('Accept', 'application/json')
             .send({});
@@ -114,20 +113,17 @@ describe('API :: DELETE /api/seniorityTypes/:id/piece_rates', () => {
           expect(statusCode).toBe(400);
           expect(body.type).toBe('ValidationError');
           expect(body.details).toEqual({
-            award: [
-              "Piece rate value can't be blank",
-              "Piece rate date can't be blank",
-            ],
+            award: ["Award value can't be blank", "Award date can't be blank"],
           });
         });
       });
       context('when props are not passed', () => {
-        test('should not delete piece rate and return 400 with the validation error message', async () => {
+        test('should not delete award and return 400 with the validation error message', async () => {
           const { statusCode, body } = await request()
             .delete(
-              `/api/seniorityTypes/${
+              `/api/seniority_types/${
                 persistedSeniorityType.seniorityTypeId
-              }/piece_rates`
+              }/awards`
             )
             .set('Accept', 'application/json')
             .send({
@@ -139,8 +135,8 @@ describe('API :: DELETE /api/seniorityTypes/:id/piece_rates', () => {
           expect(body.type).toBe('ValidationError');
           expect(body.details).toEqual({
             award: [
-              'Piece rate value "test" is not a valid number',
-              'Piece rate date "test" is not a valid date',
+              'Award value "test" is not a valid number',
+              'Award date "test" is not a valid date',
             ],
           });
         });
@@ -153,7 +149,7 @@ describe('API :: DELETE /api/seniorityTypes/:id/piece_rates', () => {
       const fakeSeniorityTypeId = uuidv4();
 
       const { statusCode, body } = await request()
-        .delete(`/api/seniorityTypes/${fakeSeniorityTypeId}/piece_rates`)
+        .delete(`/api/seniority_types/${fakeSeniorityTypeId}/awards`)
         .set('Accept', 'application/json')
         .send({
           value: 1,

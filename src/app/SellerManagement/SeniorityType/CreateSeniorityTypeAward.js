@@ -12,7 +12,7 @@ export class CreateSeniorityTypeAward extends Operation {
       },
     },
     award: {
-      percentageMetricObject: true,
+      integerMetricObject: true,
     },
   };
 

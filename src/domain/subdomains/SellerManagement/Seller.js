@@ -243,14 +243,10 @@ export class Seller extends BaseEntity {
   }
 
   // private
-  _appointmentsComparator(a, b) {
-    return a.day > b.day;
-  }
-
   _getPostIdAppointmentsAt(day = new Day(), postId) {
     const recruitDay = this.getRecruitDayAt(day);
     const postIdAppointments = this._appointments
-      .sort(this._appointmentsComparator)
+      .sort(this._dayComparator)
       .filter(({ postId: currentPostId, day: currentDay }) => {
         return (
           (!postId || currentPostId.equals(postId)) &&

@@ -12,4 +12,8 @@ export class BaseEntity extends BaseClass {
     super();
     this[lowerFirst(id.constructor.name)] = id;
   }
+
+  _dayComparator(a, b) {
+    return a.day > b.day;
+  }
 }

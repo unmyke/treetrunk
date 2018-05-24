@@ -164,12 +164,7 @@ const SeniorityTypesController = {
 
   delete(req, res, next) {
     const { deleteSeniorityType } = req;
-    const {
-      SUCCESS,
-      NOT_FOUND,
-      NOT_ALLOWED,
-      ERROR,
-    } = deleteSeniorityType.outputs;
+    const { SUCCESS, NOT_FOUND, ERROR } = deleteSeniorityType.outputs;
 
     deleteSeniorityType
       .on(SUCCESS, () => {
@@ -178,12 +173,6 @@ const SeniorityTypesController = {
       .on(NOT_FOUND, (error) => {
         res.status(Status.NOT_FOUND).json({
           type: 'NotFoundError',
-          details: error.details,
-        });
-      })
-      .on(NOT_ALLOWED, (error) => {
-        res.status(Status.CONFLICT).json({
-          type: 'NotAllowedError',
           details: error.details,
         });
       })
@@ -246,8 +235,9 @@ const SeniorityTypesController = {
     const {
       SUCCESS,
       VALIDATION_ERROR,
-      NOTHING_TO_UPDATE,
       NOT_FOUND,
+      ALREADY_EXISTS,
+      NOTHING_TO_UPDATE,
       ERROR,
     } = updateSeniorityTypeAward.outputs;
 
@@ -258,6 +248,12 @@ const SeniorityTypesController = {
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({
           type: 'ValidationError',
+          details: error.details,
+        });
+      })
+      .on(ALREADY_EXISTS, (error) => {
+        res.status(Status.CONFLICT).json({
+          type: 'AlreadyExists',
           details: error.details,
         });
       })

@@ -70,6 +70,27 @@ export class Seller extends BaseEntity {
     return this.getSeniorityAt();
   }
 
+  update({ lastName, firstName, middleName, phone }) {
+    const newPersonName = new PersonName({
+      ...this.personName,
+      lastName,
+      firstName,
+      middleName,
+    });
+
+    if (this.personName.equals(newPersonName) && this.phone === phone) {
+      throw this.constructor.errorFactory.createNothingToUpdate(
+        this,
+        `Seller already has lastName "${lastName}", firstName "${firstName}", middleName "${middleName}" and phone "${phone}"`
+      );
+    }
+
+    this.personName = newPersonName;
+    if (phone) {
+      this.phone = phone;
+    }
+  }
+
   getAppointmentsAt(day = new Day()) {
     if (!this.isRecruitedAt(day)) {
       return [];

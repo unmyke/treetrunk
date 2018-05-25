@@ -46,11 +46,7 @@ export class Seller extends BaseEntity {
 
   get postIds() {
     return new Array(
-      ...new Set(
-        this.getAppointmentsAt()
-          .sort(this._appointmentsComparator)
-          .map(({ postId }) => postId)
-      )
+      ...new Set(this.getAppointmentsAt().map(({ postId }) => postId))
     );
   }
 
@@ -72,6 +68,27 @@ export class Seller extends BaseEntity {
 
   get seniority() {
     return this.getSeniorityAt();
+  }
+
+  update({ lastName, firstName, middleName, phone }) {
+    const newPersonName = new PersonName({
+      ...this.personName,
+      lastName,
+      firstName,
+      middleName,
+    });
+
+    if (this.personName.equals(newPersonName) && this.phone === phone) {
+      throw this.constructor.errorFactory.createNothingToUpdate(
+        this,
+        `Seller already has lastName "${lastName}", firstName "${firstName}", middleName "${middleName}" and phone "${phone}"`
+      );
+    }
+
+    this.personName = newPersonName;
+    if (phone) {
+      this.phone = phone;
+    }
   }
 
   getAppointmentsAt(day = new Day()) {
@@ -153,7 +170,7 @@ export class Seller extends BaseEntity {
   }
 
   getPostIdAt(day = new Day()) {
-    const appointment = this._getAppointmentIdAt(day);
+    const appointment = this._getAppointmentAt(day);
 
     if (!appointment || appointment.postId.isQuitPostId()) {
       return;
@@ -184,7 +201,7 @@ export class Seller extends BaseEntity {
   }
 
   getQuitDayAt(day = new Day()) {
-    const appointment = this._getAppointmentIdAt(day);
+    const appointment = this._getAppointmentAt(day);
     if (!appointment || !appointment.postId.isQuitPostId()) {
       return;
     }
@@ -223,17 +240,13 @@ export class Seller extends BaseEntity {
   }
 
   // private
-  _appointmentsComparator(a, b) {
-    return a.day > b.day;
-  }
-
   _getAllAppointmentsAt(day = new Day()) {
     return this._appointments
-      .sort(this._appointmentsComparator)
+      .sort(this._dayComparator)
       .filter(({ day: currentDay }) => currentDay <= day);
   }
 
-  _getAppointmentIdAt(day = new Day()) {
+  _getAppointmentAt(day = new Day()) {
     const appointments = this._getAllAppointmentsAt(day);
 
     if (appointments.length === 0) {

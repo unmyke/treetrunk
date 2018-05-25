@@ -26,7 +26,7 @@ let seniorityType;
 let seniorityTypeDTO;
 let persistedSeniorityType;
 
-describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
+describe('API :: POST /api/seniority_types/:id/awards', () => {
   beforeEach(async () => {
     seniorityType = new SeniorityType(seniorityTypeProps);
     persistedSeniorityType = await seniorityTypeRepo.add(seniorityType);
@@ -34,6 +34,7 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
     seniorityTypeDTO = {
       seniorityTypeId: seniorityType.seniorityTypeId.toString(),
       name: 'До 6 мес.',
+      months: 6,
       award: 1,
       awards: awardsDTO,
     };
@@ -45,12 +46,12 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
 
   context('when seniorityType exists', () => {
     context('when props are correct', () => {
-      test('should add piece rate and return 201', async () => {
+      test('should add award and return 201', async () => {
         const { statusCode, body } = await request()
           .post(
-            `/api/seniorityTypes/${
+            `/api/seniority_types/${
               persistedSeniorityType.seniorityTypeId
-            }/piece_rates`
+            }/awards`
           )
           .set('Accept', 'application/json')
           .send({
@@ -58,19 +59,19 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
             date: dateDTO,
           });
 
-        expect(statusCode).toBe(201);
+        // expect(statusCode).toBe(201);
 
         expect(body).toEqual(seniorityTypeDTO);
       });
     });
 
     context('when props are not correct', () => {
-      test('should not add piece rate and return 400', async () => {
+      test('should not add award and return 400', async () => {
         const { statusCode, body } = await request()
           .post(
-            `/api/seniorityTypes/${
+            `/api/seniority_types/${
               persistedSeniorityType.seniorityTypeId
-            }/piece_rates`
+            }/awards`
           )
           .set('Accept', 'application/json')
           .send({
@@ -82,19 +83,19 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
         expect(body.type).toBe('ValidationError');
         expect(body.details).toEqual({
           award: [
-            'Piece rate value "test" is not a valid number',
-            'Piece rate date "test" is not a valid date',
+            'Award value "test" is not a valid number',
+            'Award date "test" is not a valid date',
           ],
         });
       });
     });
     context('when props are not passed', () => {
-      test('should not add piece rate and return 400', async () => {
+      test('should not add award and return 400', async () => {
         const { statusCode, body } = await request()
           .post(
-            `/api/seniorityTypes/${
+            `/api/seniority_types/${
               persistedSeniorityType.seniorityTypeId
-            }/piece_rates`
+            }/awards`
           )
           .set('Accept', 'application/json')
           .send({});
@@ -102,44 +103,72 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
         expect(statusCode).toBe(400);
         expect(body.type).toBe('ValidationError');
         expect(body.details).toEqual({
-          award: [
-            "Piece rate value can't be blank",
-            "Piece rate date can't be blank",
-          ],
+          award: ["Award value can't be blank", "Award date can't be blank"],
         });
       });
     });
-    context('when piece rate already exists', () => {
-      test('should not add piece rate and return 409', async () => {
-        const seniorityTypeToUpdate = await seniorityTypeRepo.getById(
-          persistedSeniorityType.seniorityTypeId
-        );
-        const day = new Day({ value: date });
-        seniorityTypeToUpdate.addAward(1, day);
-        const updatedSeniorityType = await seniorityTypeRepo.save(
-          seniorityTypeToUpdate
-        );
+    context('when award already exists', () => {
+      context('when award at day already exists', () => {
+        test('should not add award and return 409', async () => {
+          const seniorityTypeToUpdate = await seniorityTypeRepo.getById(
+            persistedSeniorityType.seniorityTypeId
+          );
+          const day = new Day({ value: date });
+          seniorityTypeToUpdate.addAward(1, day);
+          const updatedSeniorityType = await seniorityTypeRepo.save(
+            seniorityTypeToUpdate
+          );
 
-        const { statusCode, body } = await request()
-          .post(
-            `/api/seniorityTypes/${
-              persistedSeniorityType.seniorityTypeId
-            }/piece_rates`
-          )
-          .set('Accept', 'application/json')
-          .send({
-            value: '1',
-            date: dateDTO,
+          const { statusCode, body } = await request()
+            .post(
+              `/api/seniority_types/${
+                persistedSeniorityType.seniorityTypeId
+              }/awards`
+            )
+            .set('Accept', 'application/json')
+            .send({
+              value: 2,
+              date: dateDTO,
+            });
+
+          expect(statusCode).toBe(409);
+          expect(body.type).toBe('AlreadyExists');
+          expect(body.details).toEqual({
+            award: [`Award at ${day.format('DD.MM.YYYY')} already exists`],
           });
+        });
+      });
 
-        expect(statusCode).toBe(409);
-        expect(body.type).toBe('AlreadyExists');
-        expect(body.details).toEqual({
-          award: [
-            `Piece rate with value: 1 at ${day.format(
-              'DD.MM.YYYY'
-            )} already exists`,
-          ],
+      context('when value eqauls existing value at date', () => {
+        test('should not add award and return 409', async () => {
+          const seniorityTypeToUpdate = await seniorityTypeRepo.getById(
+            persistedSeniorityType.seniorityTypeId
+          );
+          const day = new Day({ value: date });
+          seniorityTypeToUpdate.addAward(1, day.startOfMonth());
+          const updatedSeniorityType = await seniorityTypeRepo.save(
+            seniorityTypeToUpdate
+          );
+
+          const { statusCode, body } = await request()
+            .post(
+              `/api/seniority_types/${
+                persistedSeniorityType.seniorityTypeId
+              }/awards`
+            )
+            .set('Accept', 'application/json')
+            .send({
+              value: 1,
+              date: dateDTO,
+            });
+
+          expect(statusCode).toBe(409);
+          expect(body.type).toBe('AlreadyExists');
+          expect(body.details).toEqual({
+            award: [
+              `Award value at ${day.format('DD.MM.YYYY')} already equals "1"`,
+            ],
+          });
         });
       });
     });
@@ -150,7 +179,7 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
       const fakeSeniorityTypeId = uuidv4();
 
       const { statusCode, body } = await request()
-        .post(`/api/seniorityTypes/${fakeSeniorityTypeId}/piece_rates`)
+        .post(`/api/seniority_types/${fakeSeniorityTypeId}/awards`)
         .set('Accept', 'application/json')
         .send({
           value: 1,
@@ -166,27 +195,4 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
       });
     });
   });
-
-  // context('when seniorityType is appointed by existing sellers', () => {
-  //   test('should not delete and return 409', async () => {
-  //     const seller = new Seller({
-  //       firstName: 'Firstname',
-  //       middleName: 'Middlename',
-  //       lastName: 'Lastname',
-  //       phone: '00-00-00',
-  //     });
-  //     seller.addAppointment(persistedSeniorityType.seniorityTypeId, new Day());
-  //     await sellerRepo.add(seller);
-
-  //     const { statusCode, body } = await request()
-  //       .delete(`/api/seniorityTypes/${persistedSeniorityType.seniorityTypeId}`)
-  //       .send();
-
-  //     expect(statusCode).toBe(409);
-  //     expect(body.type).toBe('NotAllowedError');
-  //     expect(body.details).toEqual({
-  //       seniorityType: [`There are sellers appointed to seniorityType "До 6 мес."`],
-  //     });
-  //   });
-  // });
 });

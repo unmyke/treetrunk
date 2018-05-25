@@ -17,7 +17,10 @@ const {
 
 const dateDTO1 = '2018-01-21T00:00:00.000+08:00';
 const dateDTO2 = '2018-02-21T00:00:00.000+08:00';
-const awardsDTO = [{ value: 1, date: dateDTO1 }, { value: 2, date: dateDTO2 }];
+const awardsDTO = [
+  { value: 1000, date: dateDTO1 },
+  { value: 2000, date: dateDTO2 },
+];
 
 const date1 = new Date(dateDTO1);
 const date2 = new Date(dateDTO2);
@@ -25,13 +28,13 @@ const date2 = new Date(dateDTO2);
 const seniorityTypeProps = { name: 'До 6 мес.', months: 6 };
 const day1 = new Day({ value: date1 });
 const day2 = new Day({ value: date2 });
-const awards = [{ value: 1, day: day1 }, { value: 2, day: day2 }];
+const awards = [{ value: 1000, day: day1 }, { value: 2000, day: day2 }];
 
 let seniorityType;
 let seniorityTypeDTO;
 let seniorityTypeToUpdate;
 
-describe('API :: PUT /api/seniorityTypes/:id', () => {
+describe('API :: PUT /api/seniority_types/:id', () => {
   beforeEach(async () => {
     seniorityType = new SeniorityType(seniorityTypeProps);
     seniorityType.setAwards(awards);
@@ -39,7 +42,7 @@ describe('API :: PUT /api/seniorityTypes/:id', () => {
     seniorityTypeDTO = {
       seniorityTypeId: seniorityType.seniorityTypeId.toString(),
       name: 'До 6 мес.',
-      award: 2,
+      award: 2000,
       awards: awardsDTO,
     };
 
@@ -53,41 +56,54 @@ describe('API :: PUT /api/seniorityTypes/:id', () => {
   context('when props are correct', () => {
     test('should update and return 202 with the updated seniorityType', async () => {
       const { statusCode, body } = await request()
-        .put(`/api/seniorityTypes/${seniorityTypeToUpdate.seniorityTypeId}`)
+        .put(`/api/seniority_types/${seniorityTypeToUpdate.seniorityTypeId}`)
         .set('Accept', 'application/json')
-        .send({ name: 'Старший флорист' });
+        .send({ name: 'От 6 до 12 мес.', months: 12 });
 
       expect(statusCode).toBe(202);
 
-      expect(body).toEqual({ ...seniorityTypeDTO, name: 'Старший флорист' });
-    });
-
-    context('when name is empty', () => {
-      test('should not update and returns 400 with the validation error', async () => {
-        const { statusCode, body } = await request()
-          .put(`/api/seniorityTypes/${seniorityTypeToUpdate.seniorityTypeId}`)
-          .send({
-            name: '',
-          });
-
-        expect(statusCode).toBe(400);
-        expect(body.type).toBe('ValidationError');
-        expect(body.details).toEqual({
-          name: ["Name can't be blank"],
-        });
+      expect(body).toEqual({
+        ...seniorityTypeDTO,
+        name: 'От 6 до 12 мес.',
+        months: 12,
       });
     });
 
-    context('when send no props', () => {
-      test('should not update and returns 400 with the validation error', async () => {
-        const { statusCode, body } = await request()
-          .put(`/api/seniorityTypes/${seniorityTypeToUpdate.seniorityTypeId}`)
-          .send();
+    context('when props are incorrect', () => {
+      context('when props are invalid', () => {
+        test('should not update and returns 400 with the validation error', async () => {
+          const { statusCode, body } = await request()
+            .put(
+              `/api/seniority_types/${seniorityTypeToUpdate.seniorityTypeId}`
+            )
+            .send({
+              name: '',
+              months: 'test',
+            });
 
-        expect(statusCode).toBe(400);
-        expect(body.type).toBe('ValidationError');
-        expect(body.details).toEqual({
-          name: ["Name can't be blank"],
+          expect(statusCode).toBe(400);
+          expect(body.type).toBe('ValidationError');
+          expect(body.details).toEqual({
+            name: ["Name can't be blank"],
+            months: ['Months is not a number'],
+          });
+        });
+      });
+
+      context('when send no props', () => {
+        test('should not update and returns 400 with the validation error', async () => {
+          const { statusCode, body } = await request()
+            .put(
+              `/api/seniority_types/${seniorityTypeToUpdate.seniorityTypeId}`
+            )
+            .send();
+
+          expect(statusCode).toBe(400);
+          expect(body.type).toBe('ValidationError');
+          expect(body.details).toEqual({
+            name: ["Name can't be blank"],
+            months: ["Months can't be blank"],
+          });
         });
       });
     });
@@ -98,9 +114,10 @@ describe('API :: PUT /api/seniorityTypes/:id', () => {
       const fakeSeniorityTypeId = uuidv4();
 
       const { statusCode, body } = await request()
-        .put(`/api/seniorityTypes/${fakeSeniorityTypeId}`)
+        .put(`/api/seniority_types/${fakeSeniorityTypeId}`)
         .send({
-          name: 'Страший флорист',
+          name: 'От 6 до 12 мес.',
+          months: 12,
         });
 
       expect(statusCode).toBe(404);
@@ -115,8 +132,8 @@ describe('API :: PUT /api/seniorityTypes/:id', () => {
 
   context('when seniorityType with updated name already exists', () => {
     test('should not update and returns 409 with the already exists message', async () => {
-      const name = 'Старший флорист';
-      const duplicateSeniorityTypeProps = { name };
+      const name = 'От 6 до 12 мес.';
+      const duplicateSeniorityTypeProps = { name, months: 12 };
       const duplicateSeniorityType = new SeniorityType(
         duplicateSeniorityTypeProps
       );
@@ -125,15 +142,17 @@ describe('API :: PUT /api/seniorityTypes/:id', () => {
       await seniorityTypeRepo.add(duplicateSeniorityType);
 
       const { statusCode, body } = await request()
-        .put(`/api/seniorityTypes/${seniorityTypeToUpdate.seniorityTypeId}`)
+        .put(`/api/seniority_types/${seniorityTypeToUpdate.seniorityTypeId}`)
         .send({
           name,
+          months: 12,
         });
 
       expect(statusCode).toBe(409);
       expect(body.type).toBe('AlreadyExists');
       expect(body.details).toEqual({
-        name: ['SeniorityType with name: "Старший флорист" already exists'],
+        name: ['SeniorityType with name: "От 6 до 12 мес." already exists'],
+        months: ['SeniorityType with months: "12" already exists'],
       });
     });
   });
@@ -141,15 +160,19 @@ describe('API :: PUT /api/seniorityTypes/:id', () => {
   context('when seniorityType nothing to update', () => {
     test('should not update and returns 400 with the nothing to update message', async () => {
       const { statusCode, body } = await request()
-        .put(`/api/seniorityTypes/${seniorityTypeToUpdate.seniorityTypeId}`)
+        .put(`/api/seniority_types/${seniorityTypeToUpdate.seniorityTypeId}`)
         .send({
           name: 'До 6 мес.',
+          months: 6,
         });
 
       expect(statusCode).toBe(400);
       expect(body.type).toBe('NothingToUpdate');
       expect(body.details).toEqual({
-        seniorityType: ['SeniorityType already has name "До 6 мес."'],
+        seniorityType: [
+          'SeniorityType already has name "До 6 мес."',
+          'SeniorityType already has months "6"',
+        ],
       });
     });
   });

@@ -143,7 +143,7 @@ const SellersController = {
         });
       })
       .on(ALREADY_EXISTS, (error) => {
-        res.status(Status.BAD_REQUEST).json({
+        res.status(Status.CONFLICT).json({
           type: 'AlreadyExists',
           details: error.details,
         });

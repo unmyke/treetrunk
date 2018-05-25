@@ -102,6 +102,68 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
           });
         });
       });
+
+      context('when piece rate already exists', () => {
+        let dateDTO3;
+        beforeEach(async () => {
+          dateDTO3 = '2018-03-21T00:00:00.000+08:00';
+          post.addPieceRate(2, day2);
+          await postRepo.save(post);
+        });
+
+        context('when piece rate at update day already exists', () => {
+          test('should not edit piece rate and return 409 with the nothing to update error message', async () => {
+            const { statusCode, body } = await request()
+              .put(`/api/posts/${persistedPost.postId}/piece_rates`)
+              .set('Accept', 'application/json')
+              .send({
+                pieceRate: {
+                  value: 1,
+                  date: dateDTO1,
+                },
+                updatedPieceRate: {
+                  value: 3,
+                  date: dateDTO2,
+                },
+              });
+
+            expect(statusCode).toBe(409);
+            expect(body.type).toBe('AlreadyExists');
+            expect(body.details).toEqual({
+              pieceRate: ['Piece rate at 21.02.2018 already exists'],
+            });
+          });
+        });
+        context(
+          'when update value equals existing value at update date',
+          () => {
+            test('should not edit piece rate and return 409 with the nothing to update error message', async () => {
+              const { statusCode, body } = await request()
+                .put(`/api/posts/${persistedPost.postId}/piece_rates`)
+                .set('Accept', 'application/json')
+                .send({
+                  pieceRate: {
+                    value: 1,
+                    date: dateDTO1,
+                  },
+                  updatedPieceRate: {
+                    value: 2,
+                    date: dateDTO3,
+                  },
+                });
+
+              expect(statusCode).toBe(409);
+              expect(body.type).toBe('AlreadyExists');
+              expect(body.details).toEqual({
+                pieceRate: [
+                  'Piece rate value at 21.03.2018 already equals "2"',
+                ],
+              });
+            });
+          }
+        );
+      });
+
       context(
         'when original and updated piece rate props are not passed',
         () => {

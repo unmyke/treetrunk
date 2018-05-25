@@ -10,7 +10,7 @@ export class Appointment extends BaseValue {
   toJSON() {
     return {
       postId: this.postId.toJSON(),
-      date: day.toJSON(),
+      date: this.day.toJSON(),
     };
   }
 }

@@ -23,13 +23,13 @@ const updatedAwardsDTO = [{ value: 2, date: dateDTO2 }];
 const date1 = new Date(dateDTO1);
 const date2 = new Date(dateDTO2);
 
-const seniorityTypeProps = { name: 'До 6 мес.', months: 6 };
+const seniorityTypeProps = { name: 'До 6 мес', months: 6 };
 const day1 = new Day({ value: date1 });
 const day2 = new Day({ value: date2 });
 const awards = [{ value: 1, day: day1 }];
 const updatedAwards = [{ value: 2, day: day2 }];
 
-describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
+describe('API :: POST /api/seniority_types/:id/awards', () => {
   let seniorityType;
   let seniorityTypeDTO;
   let persistedSeniorityType;
@@ -39,7 +39,8 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
 
     seniorityTypeDTO = {
       seniorityTypeId: seniorityType.seniorityTypeId.toString(),
-      name: 'До 6 мес.',
+      name: 'До 6 мес',
+      months: 6,
       award: 2,
       awards: updatedAwardsDTO,
     };
@@ -55,12 +56,12 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
 
   context('when seniorityType exists', () => {
     context('when props are correct', () => {
-      test('should edit piece rate and return 202 with updated seniorityType', async () => {
+      test('should edit award and return 202 with updated seniorityType', async () => {
         const { statusCode, body } = await request()
           .put(
-            `/api/seniorityTypes/${
+            `/api/seniority_types/${
               persistedSeniorityType.seniorityTypeId
-            }/piece_rates`
+            }/awards`
           )
           .set('Accept', 'application/json')
           .send({
@@ -81,13 +82,13 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
     });
 
     context('when props are not correct', () => {
-      context('when original and updated piece rate props are same', () => {
-        test('should not edit piece rate and return 400 with the nothing to update error message', async () => {
+      context('when original and updated award props are same', () => {
+        test('should not edit award and return 400 with the nothing to update error message', async () => {
           const { statusCode, body } = await request()
             .put(
-              `/api/seniorityTypes/${
+              `/api/seniority_types/${
                 persistedSeniorityType.seniorityTypeId
-              }/piece_rates`
+              }/awards`
             )
             .set('Accept', 'application/json')
             .send({
@@ -105,40 +106,105 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
           expect(body.type).toBe('NothingToUpdate');
           expect(body.details).toEqual({
             award: [
-              'Updated piece rate at 21.01.2018 for seniorityType "До 6 мес." already equlas 1%',
+              'Updated award at 21.01.2018 for seniority type "До 6 мес" already equlas 1%',
             ],
           });
         });
       });
-      context(
-        'when original and updated piece rate props are not passed',
-        () => {
-          test('should not edit piece rate and return 400 with the validation error message', async () => {
+
+      context('when award already exists', () => {
+        let dateDTO3;
+        beforeEach(async () => {
+          dateDTO3 = '2018-03-21T00:00:00.000+08:00';
+          seniorityType.addAward(2, day2);
+          await seniorityTypeRepo.save(seniorityType);
+        });
+
+        context('when award at update day already exists', () => {
+          test('should not edit award and return 409 with the nothing to update error message', async () => {
             const { statusCode, body } = await request()
               .put(
-                `/api/seniorityTypes/${
+                `/api/seniority_types/${
                   persistedSeniorityType.seniorityTypeId
-                }/piece_rates`
+                }/awards`
               )
               .set('Accept', 'application/json')
-              .send({});
+              .send({
+                award: {
+                  value: 1,
+                  date: dateDTO1,
+                },
+                updatedAward: {
+                  value: 3,
+                  date: dateDTO2,
+                },
+              });
 
-            expect(statusCode).toBe(400);
-            expect(body.type).toBe('ValidationError');
+            expect(statusCode).toBe(409);
+            expect(body.type).toBe('AlreadyExists');
             expect(body.details).toEqual({
-              award: ["Piece rate can't be blank"],
-              updatedAward: ["Updated piece rate can't be blank"],
+              award: ['Award at 21.02.2018 already exists'],
             });
           });
-        }
-      );
-      context('when original piece rate not exists', () => {
-        test('should not edit piece rate and return 404 with the not found error message', async () => {
+        });
+        context(
+          'when update value equals existing value at update date',
+          () => {
+            test('should not edit award and return 409 with the nothing to update error message', async () => {
+              const { statusCode, body } = await request()
+                .put(
+                  `/api/seniority_types/${
+                    persistedSeniorityType.seniorityTypeId
+                  }/awards`
+                )
+                .set('Accept', 'application/json')
+                .send({
+                  award: {
+                    value: 1,
+                    date: dateDTO1,
+                  },
+                  updatedAward: {
+                    value: 2,
+                    date: dateDTO3,
+                  },
+                });
+
+              expect(statusCode).toBe(409);
+              expect(body.type).toBe('AlreadyExists');
+              expect(body.details).toEqual({
+                award: ['Award value at 21.03.2018 already equals "2"'],
+              });
+            });
+          }
+        );
+      });
+
+      context('when original and updated award props are not passed', () => {
+        test('should not edit award and return 400 with the validation error message', async () => {
           const { statusCode, body } = await request()
             .put(
-              `/api/seniorityTypes/${
+              `/api/seniority_types/${
                 persistedSeniorityType.seniorityTypeId
-              }/piece_rates`
+              }/awards`
+            )
+            .set('Accept', 'application/json')
+            .send({});
+
+          expect(statusCode).toBe(400);
+          expect(body.type).toBe('ValidationError');
+          expect(body.details).toEqual({
+            award: ["Award can't be blank"],
+            updatedAward: ["Updated award can't be blank"],
+          });
+        });
+      });
+      context('when original award not exists', () => {
+        test('should not edit award and return 404 with the not found error message', async () => {
+          const { statusCode, body } = await request()
+            .put(
+              `/api/seniority_types/${
+                persistedSeniorityType.seniorityTypeId
+              }/awards`
             )
             .set('Accept', 'application/json')
             .send({
@@ -156,9 +222,7 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
           expect(body.type).toBe('NotFoundError');
           expect(body.details).toEqual({
             award: [
-              `Piece rate with value 2 at ${day1.format(
-                'DD.MM.YYYY'
-              )} not found`,
+              `Award with value 2 at ${day1.format('DD.MM.YYYY')} not found`,
             ],
           });
         });
@@ -171,7 +235,7 @@ describe('API :: POST /api/seniorityTypes/:id/piece_rates', () => {
       const fakeSeniorityTypeId = uuidv4();
 
       const { statusCode, body } = await request()
-        .put(`/api/seniorityTypes/${fakeSeniorityTypeId}/piece_rates`)
+        .put(`/api/seniority_types/${fakeSeniorityTypeId}/awards`)
         .set('Accept', 'application/json')
         .send({
           award: {

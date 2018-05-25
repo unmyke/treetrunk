@@ -3,14 +3,14 @@ import { PostId, Day } from '../../commonTypes';
 import { PieceRate } from './PieceRate';
 
 export class Post extends BaseEntity {
-  constructor({ postId = new PostId(), name, pieceRates = [] }) {
+  constructor({ postId = new PostId(), name }) {
     super(postId);
     this.name = name;
-    this.pieceRates = pieceRates;
+    this.pieceRates = [];
   }
 
   get pieceRate() {
-    return this.getPieceRateAt();
+    return this.getPieceRateValueAt();
   }
 
   update({ name }) {
@@ -32,33 +32,9 @@ export class Post extends BaseEntity {
 
   addPieceRate(value, day) {
     const pieceRate = new PieceRate({ value, day });
-    const prevValue = this.getPieceRateAt(day);
-    if (value === prevValue) {
-      throw this.constructor.errorFactory.createAlreadyExists(
-        pieceRate,
-        `Piece rate with value: ${value} at ${day.format(
-          'DD.MM.YYYY'
-        )} already exists`
-      );
-    }
+    this._checkPieceRateUniqueness(pieceRate);
 
-    this.pieceRates = [...this.pieceRates, pieceRate].sort(
-      (a, b) => a.day > b.day
-    );
-  }
-
-  getPieceRateAt(day = new Day()) {
-    if (!this.hasPieceRate(day)) {
-      return;
-    }
-
-    const [firstPieceRate, ...restPieceRates] = this.pieceRates;
-
-    const { value } = restPieceRates.reduce((pieceRate, appointment) => {
-      return appointment.day <= day ? appointment : pieceRate;
-    }, firstPieceRate);
-
-    return value;
+    this.pieceRates = [...this.pieceRates, pieceRate].sort(this._dayComparator);
   }
 
   editPieceRate(valueToEdit, dayToEdit, value, day) {
@@ -68,17 +44,17 @@ export class Post extends BaseEntity {
     });
     const pieceRate = new PieceRate({ value, day });
 
-    if (pieceRateToEdit.equals(pieceRate)) {
+    if (pieceRate.equals(pieceRateToEdit)) {
       throw this.constructor.errorFactory.createNothingToUpdate(
-        pieceRate,
-        `Updated piece rate at ${day.format('DD.MM.YYYY')} for post "${
-          this.name
-        }" already equlas ${value}%`
+        pieceRateToEdit,
+        `Updated piece rate at ${day.format(
+          'DD.MM.YYYY'
+        )} for post "Флорист" already equlas ${value}%`
       );
     }
 
-    this.deletePieceRate(valueToEdit, dayToEdit);
     this.addPieceRate(value, day);
+    this.deletePieceRate(valueToEdit, dayToEdit);
   }
 
   deletePieceRate(value, day) {
@@ -98,10 +74,25 @@ export class Post extends BaseEntity {
     this.pieceRates = filteredPieceRates;
   }
 
-  hasPieceRate(day) {
+  getPieceRateValueAt(day = new Day()) {
+    if (!this.hasPieceRate(day)) {
+      return;
+    }
+
+    const [firstPieceRate, ...restPieceRates] = this.pieceRates;
+
+    const { value } = restPieceRates.reduce((pieceRate, appointment) => {
+      return appointment.day <= day ? appointment : pieceRate;
+    }, firstPieceRate);
+
+    return value;
+  }
+
+  hasPieceRate(day = new Day()) {
     const [firstPieceRate] = this.pieceRates;
     return !!firstPieceRate && firstPieceRate.day <= day;
   }
+
   toJSON() {
     return {
       postId: this.postId.toJSON(),
@@ -109,5 +100,34 @@ export class Post extends BaseEntity {
       pieceRate: this.pieceRate,
       pieceRates: this.pieceRates.map((pieceRate) => pieceRate.toJSON()),
     };
+  }
+
+  // private
+
+  _checkPieceRateUniqueness(pieceRate) {
+    if (this._isPieceRateExistsAt(pieceRate.day)) {
+      throw this.constructor.errorFactory.createAlreadyExists(
+        pieceRate,
+        `Piece rate at ${pieceRate.day.format('DD.MM.YYYY')} already exists`
+      );
+    }
+
+    const prevValue = this.getPieceRateValueAt(pieceRate.day);
+    if (pieceRate.value === prevValue) {
+      throw this.constructor.errorFactory.createAlreadyExists(
+        pieceRate,
+        `Piece rate value at ${pieceRate.day.format(
+          'DD.MM.YYYY'
+        )} already equals "${pieceRate.value}"`
+      );
+    }
+  }
+
+  _isPieceRateExistsAt(day = new Day()) {
+    const index = this.pieceRates.findIndex(({ day: currentDay }) =>
+      day.equals(currentDay)
+    );
+
+    return index !== -1;
   }
 }

@@ -13,11 +13,11 @@ const {
 } = container;
 
 describe('API :: POST /api/posts', () => {
-  context('when props are correct', () => {
-    beforeEach(() => {
-      return postRepo.clear();
-    });
+  beforeEach(() => {
+    return postRepo.clear();
+  });
 
+  context('when props are correct', () => {
     test('should return success with array with one post', async () => {
       const { statusCode, body } = await request()
         .post('/api/posts')
@@ -64,6 +64,8 @@ describe('API :: POST /api/posts', () => {
   context('when post exists', () => {
     test('should return 409 with array of errors', async () => {
       const post = new Post({ name: 'Флорист' });
+      await postRepo.add(post);
+
       const { statusCode, body } = await request()
         .post('/api/posts')
         .set('Accept', 'application/json')

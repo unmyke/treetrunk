@@ -12,7 +12,7 @@ export class DeleteSeniorityTypeAward extends Operation {
       },
     },
     award: {
-      percentageMetricObject: true,
+      integerMetricObject: true,
     },
   };
 

@@ -20,11 +20,11 @@ const sellerDTO = {
 };
 
 describe('API :: POST /api/sellers', () => {
-  context('when props are correct', () => {
-    beforeEach(() => {
-      return sellerRepo.clear();
-    });
+  beforeEach(() => {
+    return sellerRepo.clear();
+  });
 
+  context('when props are correct', () => {
     test('should return success with array with one seller', async () => {
       const { statusCode, body } = await request()
         .post('/api/sellers')
@@ -42,36 +42,59 @@ describe('API :: POST /api/sellers', () => {
     });
   });
 
-  context('when there are no props', () => {
-    test('should return 400 with array of errors', async () => {
-      const { statusCode, body } = await request()
-        .post('/api/sellers')
-        .set('Accept', 'application/json')
-        .send();
+  context('when props are incorrect', () => {
+    context('when props are invalid', () => {
+      test('should return 400 with array of errors', async () => {
+        const { statusCode, body } = await request()
+          .post('/api/sellers')
+          .set('Accept', 'application/json')
+          .send({
+            ...sellerDTO,
+            phone: 'test',
+          });
 
-      expect(statusCode).toBe(400);
-      expect(body.type).toBe('ValidationError');
-      expect(body.details).toEqual({
-        firstName: ["First name can't be blank"],
-        middleName: ["Middle name can't be blank"],
-        lastName: ["Last name can't be blank"],
-        phone: ["Phone name can't be blank"],
+        expect(statusCode).toBe(400);
+        expect(body.type).toBe('ValidationError');
+        expect(body.details).toEqual({
+          phone: ['Phone is invalid'],
+        });
+      });
+    });
+    context('when there are no props', () => {
+      test('should return 400 with array of errors', async () => {
+        const { statusCode, body } = await request()
+          .post('/api/sellers')
+          .set('Accept', 'application/json')
+          .send();
+
+        expect(statusCode).toBe(400);
+        expect(body.type).toBe('ValidationError');
+        expect(body.details).toEqual({
+          firstName: ["First name can't be blank"],
+          middleName: ["Middle name can't be blank"],
+          lastName: ["Last name can't be blank"],
+          phone: ["Phone can't be blank"],
+        });
       });
     });
   });
 
   context('when seller exists', () => {
     test('should return 409 with array of errors', async () => {
-      const seller = new Seller({ name: 'Флорист' });
+      const seller = new Seller(sellerDTO);
+      await sellerRepo.add(seller);
+
       const { statusCode, body } = await request()
-        .post('/api/posts')
+        .post('/api/sellers')
         .set('Accept', 'application/json')
-        .send(postDTO);
+        .send(sellerDTO);
 
       expect(statusCode).toBe(409);
       expect(body.type).toBe('AlreadyExists');
       expect(body.details).toEqual({
-        name: ['Seller with name: "Флорист" already exists'],
+        lastName: [
+          'Seller with lastName: "Lastname", firstName: "Firstname", middleName: "Middlename", phone: "00-00-00" already exists',
+        ],
       });
     });
   });

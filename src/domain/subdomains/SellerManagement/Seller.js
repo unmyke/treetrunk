@@ -153,12 +153,12 @@ export class Seller extends BaseEntity {
   }
 
   getPostIdAt(day = new Day()) {
-    const postId = this._getPostIdAt(day);
+    const appointment = this._getAppointmentIdAt(day);
 
-    if (!postId || postId.isQuitPostId()) {
+    if (!appointment || appointment.postId.isQuitPostId()) {
       return;
     }
-    return postId;
+    return appointment.postId;
   }
 
   getPostIdsAt(day = new Day()) {
@@ -173,7 +173,7 @@ export class Seller extends BaseEntity {
     const [firstAppointment, ...appointments] = this._getAllAppointmentsAt(day);
     return appointments.reduce((recruitDay, { postId }, index) => {
       if (postId.isQuitPostId()) {
-        return appointments[index + 1];
+        return appointments[index + 1].day;
       }
       return recruitDay;
     }, firstAppointment.day);
@@ -184,11 +184,11 @@ export class Seller extends BaseEntity {
   }
 
   getQuitDayAt(day = new Day()) {
-    const postId = this._getPostIdAt(day);
-    if (!postId || !postId.isQuitPostId()) {
+    const appointment = this._getAppointmentIdAt(day);
+    if (!appointment || !appointment.postId.isQuitPostId()) {
       return;
     }
-    return postId.day;
+    return appointment.day;
   }
 
   isQuitedAt(day = new Day()) {
@@ -233,13 +233,13 @@ export class Seller extends BaseEntity {
       .filter(({ day: currentDay }) => currentDay <= day);
   }
 
-  _getPostIdAt(day = new Day()) {
+  _getAppointmentIdAt(day = new Day()) {
     const appointments = this._getAllAppointmentsAt(day);
 
     if (appointments.length === 0) {
       return;
     }
 
-    return appointments[appointments.length - 1].postId;
+    return appointments[appointments.length - 1];
   }
 }

@@ -12,10 +12,10 @@ export class UpdateSeniorityTypeAward extends Operation {
       },
     },
     award: {
-      percentageMetricObject: true,
+      integerMetricObject: true,
     },
     updatedAward: {
-      percentageMetricObject: true,
+      integerMetricObject: true,
     },
   };
 

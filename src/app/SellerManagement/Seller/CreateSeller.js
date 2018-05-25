@@ -1,30 +1,46 @@
 import { Operation } from '../../_lib';
 
-export class CreatePost extends Operation {
+export class CreateSeller extends Operation {
   static constraints = {
-    name: {
+    firstName: {
       presence: {
         allowEmpty: false,
       },
     },
+    middleName: {
+      presence: {
+        allowEmpty: false,
+      },
+    },
+    lastName: {
+      presence: {
+        allowEmpty: false,
+      },
+    },
+    phone: {
+      presence: {
+        allowEmpty: false,
+      },
+      format: /^[0-9 \-\+\(\)]+$/,
+    },
   };
 
-  async execute({ name }) {
+  async execute({ firstName, middleName, lastName, phone }) {
     const { SUCCESS, ERROR, VALIDATION_ERROR, ALREADY_EXISTS } = this.outputs;
     const {
-      repositories: { Post: postRepo },
-      entities: { Post },
+      repositories: { Seller: sellerRepo },
+      entities: { Seller },
       validate,
     } = this;
 
     try {
-      validate({ name }, { exception: true });
+      validate({ firstName, middleName, lastName, phone }, { exception: true });
 
-      const post = new Post({ name });
+      const seller = new Seller({ firstName, middleName, lastName, phone });
 
-      const newPost = await postRepo.add(post);
+      const newSeller = await sellerRepo.add(seller);
 
-      this.emit(SUCCESS, newPost);
+      this.emit(SUCCESS, newSeller.toJSON());
     } catch (error) {
       switch (error.code) {
         case 'ALREADY_EXISTS':
@@ -41,7 +57,7 @@ export class CreatePost extends Operation {
   }
 }
 
-CreatePost.setOutputs([
+CreateSeller.setOutputs([
   'SUCCESS',
   'ERROR',
   'VALIDATION_ERROR',

@@ -56,14 +56,38 @@ describe('API :: DELETE /api/posts/:id', () => {
   });
 
   context('when post exists', () => {
-    test('should delete and return 202', async () => {
-      const { statusCode, body } = await request()
-        .delete(`/api/posts/${postToDelete.postId}`)
-        .send();
+    context('when post not appointed by existing sellers', () => {
+      test('should delete and return 202', async () => {
+        const { statusCode, body } = await request()
+          .delete(`/api/posts/${postToDelete.postId}`)
+          .send();
 
-      expect(statusCode).toBe(202);
+        expect(statusCode).toBe(202);
 
-      expect(body).toEqual({});
+        expect(body).toEqual({});
+      });
+    });
+    context('when post appointed by existing sellers', () => {
+      test('should not delete and return 409', async () => {
+        const seller = new Seller({
+          firstName: 'Firstname',
+          middleName: 'Middlename',
+          lastName: 'Lastname',
+          phone: '00-00-00',
+        });
+        seller.addAppointment(postToDelete.postId, new Day());
+        await sellerRepo.add(seller);
+
+        const { statusCode, body } = await request()
+          .delete(`/api/posts/${postToDelete.postId}`)
+          .send();
+
+        expect(statusCode).toBe(409);
+        expect(body.type).toBe('NotAllowedError');
+        expect(body.details).toEqual({
+          post: ['There are sellers appointed to post "Флорист"'],
+        });
+      });
     });
   });
 
@@ -79,29 +103,6 @@ describe('API :: DELETE /api/posts/:id', () => {
       expect(body.type).toBe('NotFoundError');
       expect(body.details).toEqual({
         postId: [`Post with postId: "${fakePostId}" not found`],
-      });
-    });
-  });
-
-  context('when post is appointed by existing sellers', () => {
-    test('should not delete and return 409', async () => {
-      const seller = new Seller({
-        firstName: 'Firstname',
-        middleName: 'Middlename',
-        lastName: 'Lastname',
-        phone: '00-00-00',
-      });
-      seller.addAppointment(postToDelete.postId, new Day());
-      await sellerRepo.add(seller);
-
-      const { statusCode, body } = await request()
-        .delete(`/api/posts/${postToDelete.postId}`)
-        .send();
-
-      expect(statusCode).toBe(409);
-      expect(body.type).toBe('NotAllowedError');
-      expect(body.details).toEqual({
-        post: ['There are sellers appointed to post "Флорист"'],
       });
     });
   });

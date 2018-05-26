@@ -90,6 +90,8 @@ describe('Domain :: entities :: Seller', () => {
 
       context('when seller is quited', () => {
         beforeEach(() => {
+          seller.setAppointments(appointmentsOfQuitedSeller);
+
           expect(seller.isQuitedAt(day4)).toBe(true);
           expect(seller.isRecruitedAt(day4)).toBe(false);
           expect(seller.getPostIdAt(day4)).toBeUndefined();
@@ -97,7 +99,6 @@ describe('Domain :: entities :: Seller', () => {
           expect(seller.isRecruitedAt()).toBe(false);
           expect(seller.getPostIdAt()).toBeUndefined();
 
-          seller.setAppointments(appointmentsOfQuitedSeller);
           // test('seller should be quited', () => {
           //   expect(seller.isQuitedAt(day5)).toBe(true);
           // });
@@ -1086,7 +1087,7 @@ describe('Domain :: entities :: Seller', () => {
         seller.takeQuit(newDay);
 
         expect(seller.quitDay).toEqual(newDay);
-        expect(seller.appointments).toHaveLength(3);
+        expect(seller.appointments).toHaveLength(0);
       });
 
       // test('should throw exeption if quit day before reqruit day', () => {

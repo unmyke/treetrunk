@@ -12,18 +12,34 @@ const {
   },
 } = container;
 
+// test request body
+const validReqBody = {
+  name: 'Флорист',
+};
+const invalidNameReqBody = {
+  name: '',
+};
+
+const emptyReqBody = {};
+
+// test DTO
+const postDTO = {
+  name: validReqBody.name,
+  pieceRates: [],
+};
+
 describe('API :: POST /api/posts', () => {
   beforeEach(() => {
     return postRepo.clear();
   });
 
-  context('when props are correct', () => {
+  context('when passed valid and consistent props', () => {
     context('when post does not exists', () => {
       test('should return success with array with one post', async () => {
         const { statusCode, body } = await request()
           .post('/api/posts')
           .set('Accept', 'application/json')
-          .send({ name: 'Флорист' });
+          .send(validReqBody);
 
         expect(statusCode).toBe(201);
 

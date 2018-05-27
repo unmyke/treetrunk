@@ -3,14 +3,19 @@ import { PostId, Day } from '../../commonTypes';
 import { PieceRate } from './PieceRate';
 
 export class Post extends BaseEntity {
-  constructor({ postId = new PostId(), name }) {
+  constructor({ postId = new PostId(), name, state = 'active' }) {
     super(postId);
     this.name = name;
+    this.state = state;
     this.pieceRates = [];
   }
 
   get pieceRate() {
     return this.getPieceRateValueAt();
+  }
+
+  get hasPieceRates() {
+    return this.hasPieceRateAt();
   }
 
   update({ name }) {
@@ -75,7 +80,7 @@ export class Post extends BaseEntity {
   }
 
   getPieceRateValueAt(day = new Day()) {
-    if (!this.hasPieceRate(day)) {
+    if (!this.hasPieceRateAt(day)) {
       return;
     }
 
@@ -88,9 +93,21 @@ export class Post extends BaseEntity {
     return value;
   }
 
-  hasPieceRate(day = new Day()) {
+  hasPieceRateAt(day = new Day()) {
     const [firstPieceRate] = this.pieceRates;
     return !!firstPieceRate && firstPieceRate.day <= day;
+  }
+
+  inactivate() {
+    if (state === 'active') {
+      this.state = 'inactive';
+    }
+  }
+
+  activate() {
+    if (state === 'inactive') {
+      this.state = 'active';
+    }
   }
 
   toJSON() {
@@ -99,6 +116,7 @@ export class Post extends BaseEntity {
       name: this.name,
       pieceRate: this.pieceRate,
       pieceRates: this.pieceRates.map((pieceRate) => pieceRate.toJSON()),
+      state: this.state,
     };
   }
 

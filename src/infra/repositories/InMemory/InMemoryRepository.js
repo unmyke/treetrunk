@@ -5,7 +5,7 @@ import { BaseValue } from '../../../domain/_lib';
 export class InMemoryRepository extends BaseRepository {
   store = [];
 
-  async getAll(props = { where: {} }) {
+  async getAll(props) {
     return this.store.reduce((acc, item) => {
       const entity = this.entityMapper.toEntity(item);
 
@@ -102,7 +102,7 @@ export class InMemoryRepository extends BaseRepository {
   }
 
   _compare(entity, whereProps) {
-    if (whereProps === undefined) {
+    if (whereProps === undefined || Object.keys(whereProps).length === 0) {
       return true;
     }
 
@@ -111,7 +111,9 @@ export class InMemoryRepository extends BaseRepository {
         isEquals &&
         (whereProps[attribute] instanceof BaseValue
           ? whereProps[attribute].equals(entity[attribute])
-          : whereProps[attribute] === entity[attribute])
+          : whereProps[attribute] !== undefined
+            ? whereProps[attribute] === entity[attribute]
+            : true)
       );
     }, true);
   }
@@ -162,5 +164,29 @@ export class InMemoryRepository extends BaseRepository {
     }
 
     return null;
+  }
+
+  _getWhereParams(query) {
+    const queryKeys = Object.keys(query);
+
+    if (queryKeys.length === 0) {
+      return this.constructor.defaultWhereProps;
+    }
+
+    return queryKeys.reduce(
+      (whereParams, queryKey) => {
+        if (this.constructor.queryParams[queryKey] === undefined) {
+          return whereParams;
+        }
+
+        return {
+          where: {
+            ...whereParams.where,
+            ...this.constructor.queryParams[queryKey](queryKeys[queryKey]),
+          },
+        };
+      },
+      { where: {} }
+    );
   }
 }

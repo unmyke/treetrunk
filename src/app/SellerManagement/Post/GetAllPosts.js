@@ -1,14 +1,14 @@
 import { Operation } from '../../_lib';
 
 export class GetAllPosts extends Operation {
-  async execute(props = {}) {
+  async execute(query) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {
       repositories: { Post: postRepo },
     } = this;
 
     try {
-      const posts = await postRepo.getAll(props);
+      const posts = await postRepo.getAllPosts(query);
       this.emit(SUCCESS, posts.map((post) => post.toJSON()));
     } catch (error) {
       if (error.message === 'ValidationError') {

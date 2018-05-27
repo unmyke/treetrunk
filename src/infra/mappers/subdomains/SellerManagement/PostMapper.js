@@ -8,10 +8,11 @@ export class PostMapper extends BaseMapper {
     this.dayMapper = new DayMapper({ commonTypes });
   }
 
-  toDatabase({ postId, name, pieceRates }) {
+  toDatabase({ postId, name, state, pieceRates }) {
     return {
       postId: this.postIdMapper.toDatabase(postId),
       name,
+      state,
       pieceRates: pieceRates.map(({ value, day }) => ({
         value,
         date: this.dayMapper.toDatabase(day),
@@ -19,10 +20,11 @@ export class PostMapper extends BaseMapper {
     };
   }
 
-  toEntity({ postId, name, pieceRates }) {
+  toEntity({ postId, name, state, pieceRates }) {
     const postEntity = new this.Entity({
       postId: this.postIdMapper.toEntity({ value: postId }),
       name,
+      state,
     });
 
     postEntity.setPieceRates(

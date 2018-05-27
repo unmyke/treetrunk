@@ -17,7 +17,6 @@ const ru = require('date-fns/locale/ru');
 
 import { BaseValue } from '../../_lib';
 import { isValidDate, convertDate } from 'src/infra/support/dateHelpers';
-// import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
 
 function isMinusZero(value) {
   if (value !== 0) {
@@ -63,14 +62,10 @@ export class Day extends BaseValue {
   }
 
   static _dayFactory(date = new Date(), dateGetter, dateGetterProps) {
-    // if (!isValidDate(date)) {
-    //   throw this.errorNotADate;
-    // }
-
     return new Day({ value: dateGetter(date, dateGetterProps) });
   }
 
-  //Validator
+  // Validator
 
   static isValid(day) {
     return day && day.constructor === Day && isValidDate(day.value);
@@ -84,42 +79,22 @@ export class Day extends BaseValue {
   }
 
   contains(date) {
-    // if (!isValidDate(date)) {
-    //   throw this.constructor.errorNotADay;
-    // }
-
     return convertDate(date).valueOf() === this.valueOf();
   }
 
   addDays(num = 0) {
-    // if (typeof num !== 'number') {
-    //   throw this.constructor.errorNotANumber;
-    // }
-
     return new Day({ value: addDaysFNS(this.value, num) });
   }
 
   subDays(num = 0) {
-    // if (typeof num !== 'number') {
-    //   throw this.constructor.errorNotANumber;
-    // }
-
     return new Day({ value: subDaysFNS(this.value, num) });
   }
 
   difference(day = new Day()) {
-    // if (day.constructor !== this.constructor || !day.isValid()) {
-    //   throw this.constructor.errorNotADay;
-    // }
-
     return parseInt((this - day) / 86400000);
   }
 
   differenceInMonths(day = new Day()) {
-    // if (day.constructor !== this.constructor || !day.isValid()) {
-    //   throw this.constructor.errorNotADay;
-    // }
-
     const result = differenceInMonthsFNS(this.value, day.value);
     return isMinusZero(result) ? -result : result;
   }
@@ -165,47 +140,18 @@ export class Day extends BaseValue {
   }
 
   format(formatString) {
-    // if (!this.isValid()) {
-    //   return this.constructor.errorNotADay.details[0];
-    // }
-
     return formatFNS(this.value, formatString, { locale: ru });
   }
 
   toString() {
-    // if (!this.isValid()) {
-    //   return this.constructor.errorNotADay.message[0];
-    // }
-
     return this.format();
   }
 
   valueOf() {
-    // if (!this.isValid()) {
-    //   return NaN;
-    // }
-
     return this.value.getTime();
   }
 
-  // isValid() {
-  //   return isValidDate(this.value);
-  // }
   toJSON() {
     return this.format();
   }
 }
-
-// addErrorDefinitionProperty(
-//   Day,
-//   'errorNotADate',
-//   'ValidationError',
-//   'Not A Date'
-// );
-// addErrorDefinitionProperty(Day, 'errorNotADay', 'ValidationError', 'Not A Day');
-// addErrorDefinitionProperty(
-//   Day,
-//   'errorNotANumber',
-//   'ValidationError',
-//   'Not A Number'
-// );

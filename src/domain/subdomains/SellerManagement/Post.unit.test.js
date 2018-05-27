@@ -160,4 +160,42 @@ describe('Domain :: entities :: Post', () => {
       });
     });
   });
+
+  describe('#hasPieceRatAt', () => {
+    beforeEach(() => {
+      post.addPieceRate(pieceRate2value, pieceRate2day);
+      post.addPieceRate(pieceRate3value, pieceRate3day);
+      post.addPieceRate(pieceRate1value, pieceRate1day);
+    });
+
+    context('when appointment has created with wrong pieceRate', () => {
+      test('should change associated pieceRate', () => {
+        post.editPieceRate(
+          pieceRate1value,
+          pieceRate1day,
+          pieceRate2value,
+          pieceRate1day
+        );
+
+        expect(post.pieceRates[0].day).toEqual(
+          new Day({ value: startOfDay(pieceRate1day) })
+        );
+        expect(post.getPieceRateAt()).toBe(pieceRate2value);
+      });
+    });
+
+    context('when pieceRate has created with wrong date', () => {
+      test('should change associated date', () => {
+        post.editPieceRate(
+          pieceRate1value,
+          pieceRate1day,
+          pieceRate1value,
+          pieceRate2day
+        );
+        expect(post.pieceRates).toHaveLength(1);
+        expect(post.getPieceRateAt(pieceRate1day)).toEqual(undefined);
+        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate1value);
+      });
+    });
+  });
 });

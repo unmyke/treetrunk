@@ -29,7 +29,7 @@ const day2 = new Day({ value: date2 });
 const pieceRates = [{ value: 1, day: day1 }];
 const updatedPieceRates = [{ value: 2, day: day2 }];
 
-describe('API :: POST /api/posts/:id/piece_rates', () => {
+describe('API :: PUT /api/posts/:id/piece_rates', () => {
   let post;
   let postDTO;
   let persistedPost;

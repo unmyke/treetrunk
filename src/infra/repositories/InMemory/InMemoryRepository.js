@@ -5,11 +5,13 @@ import { BaseValue } from '../../../domain/_lib';
 export class InMemoryRepository extends BaseRepository {
   store = [];
 
-  async getAll(props) {
+  async getAll(query) {
+    const whereParams = this._getWhereParams(query);
+
     return this.store.reduce((acc, item) => {
       const entity = this.entityMapper.toEntity(item);
 
-      if (this._compare(entity, props.where)) {
+      if (this._compare(entity, whereParams)) {
         return [...acc, entity];
       }
 
@@ -173,20 +175,15 @@ export class InMemoryRepository extends BaseRepository {
       return this.constructor.defaultWhereProps;
     }
 
-    return queryKeys.reduce(
-      (whereParams, queryKey) => {
-        if (this.constructor.queryParams[queryKey] === undefined) {
-          return whereParams;
-        }
+    return queryKeys.reduce((whereParams, queryKey) => {
+      if (this.constructor.queryParams[queryKey] === undefined) {
+        return whereParams;
+      }
 
-        return {
-          where: {
-            ...whereParams.where,
-            ...this.constructor.queryParams[queryKey](queryKeys[queryKey]),
-          },
-        };
-      },
-      { where: {} }
-    );
+      return {
+        ...whereParams,
+        ...this.constructor.queryParams[queryKey](queryKeys[queryKey]),
+      };
+    }, {});
   }
 }

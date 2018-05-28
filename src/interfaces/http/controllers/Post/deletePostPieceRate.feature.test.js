@@ -26,7 +26,7 @@ const afterDeletePieceRatesDTO = [{ value: 2, date: dateDTO2 }];
 const date1 = new Date(dateDTO1);
 const date2 = new Date(dateDTO2);
 
-const postProps = { name: 'Флорист' };
+const postProps = { name: 'Флорист', state: 'active' };
 const day1 = new Day({ value: date1 });
 const day2 = new Day({ value: date2 });
 const pieceRates = [{ value: 1, day: day1 }, { value: 2, day: day2 }];
@@ -43,6 +43,7 @@ describe('API :: DELETE /api/posts/:id/piece_rates', () => {
     postDTO = {
       postId: post.postId.toString(),
       name: 'Флорист',
+      state: 'active',
       pieceRate: 2,
       pieceRates: afterDeletePieceRatesDTO,
     };

@@ -8,7 +8,7 @@ export class GetAllPosts extends Operation {
     } = this;
 
     try {
-      const posts = await postRepo.getAllPosts(query);
+      const posts = await postRepo.getAll(query);
       this.emit(SUCCESS, posts.map((post) => post.toJSON()));
     } catch (error) {
       if (error.message === 'ValidationError') {

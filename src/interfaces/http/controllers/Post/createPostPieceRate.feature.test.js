@@ -18,7 +18,7 @@ const {
 const dateDTO = '2018-01-21T00:00:00.000+08:00';
 const date = new Date(dateDTO);
 
-const postProps = { name: 'Флорист' };
+const postProps = { name: 'Флорист', state: 'active' };
 
 const pieceRatesDTO = [{ value: 1, date: dateDTO }];
 
@@ -34,6 +34,7 @@ describe('API :: POST /api/posts/:id/piece_rates', () => {
     postDTO = {
       postId: post.postId.toString(),
       name: 'Флорист',
+      state: 'active',
       pieceRate: 1,
       pieceRates: pieceRatesDTO,
     };

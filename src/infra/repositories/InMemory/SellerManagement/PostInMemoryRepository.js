@@ -6,9 +6,7 @@ export class PostInMemoryRepository extends InMemoryRepository {
   };
 
   static defaultWhereProps = {
-    where: {
-      state: 'active',
-    },
+    state: 'active',
   };
 
   static queryParams = {
@@ -17,8 +15,4 @@ export class PostInMemoryRepository extends InMemoryRepository {
       hasPieceRates: value === 'true' ? true : false,
     }),
   };
-
-  getAllPosts(query) {
-    return this.getAll(this._getWhereParams(query));
-  }
 }

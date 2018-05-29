@@ -4,7 +4,7 @@ import { CreatePost } from './CreatePost';
 import { UpdatePost } from './UpdatePost';
 import { DeletePost } from './DeletePost';
 import { CreatePostPieceRate } from './CreatePostPieceRate';
-import { UpdatePostPieceRate } from './UpdatePostPieceRate';
+// import { UpdatePostPieceRate } from './UpdatePostPieceRate';
 import { DeletePostPieceRate } from './DeletePostPieceRate';
 
 export {
@@ -14,6 +14,6 @@ export {
   UpdatePost,
   DeletePost,
   CreatePostPieceRate,
-  UpdatePostPieceRate,
+  // UpdatePostPieceRate,
   DeletePostPieceRate,
 };

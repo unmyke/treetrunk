@@ -38,11 +38,11 @@ const PostsController = {
       inject('SellerManagement', 'Post', 'createPostPieceRate'),
       this.createPieceRate
     );
-    router.put(
-      '/:postId/piece_rates',
-      inject('SellerManagement', 'Post', 'updatePostPieceRate'),
-      this.updatePieceRate
-    );
+    // router.put(
+    //   '/:postId/piece_rates',
+    //   inject('SellerManagement', 'Post', 'updatePostPieceRate'),
+    //   this.updatePieceRate
+    // );
     router.delete(
       '/:postId/piece_rates',
       inject('SellerManagement', 'Post', 'deletePostPieceRate'),
@@ -231,52 +231,52 @@ const PostsController = {
     });
   },
 
-  updatePieceRate(req, res, next) {
-    const { updatePostPieceRate } = req;
-    const {
-      SUCCESS,
-      VALIDATION_ERROR,
-      NOTHING_TO_UPDATE,
-      ALREADY_EXISTS,
-      NOT_FOUND,
-      ERROR,
-    } = updatePostPieceRate.outputs;
+  // updatePieceRate(req, res, next) {
+  //   const { updatePostPieceRate } = req;
+  //   const {
+  //     SUCCESS,
+  //     VALIDATION_ERROR,
+  //     NOTHING_TO_UPDATE,
+  //     ALREADY_EXISTS,
+  //     NOT_FOUND,
+  //     ERROR,
+  //   } = updatePostPieceRate.outputs;
 
-    updatePostPieceRate
-      .on(SUCCESS, (post) => {
-        res.status(Status.ACCEPTED).json(post);
-      })
-      .on(VALIDATION_ERROR, (error) => {
-        res.status(Status.BAD_REQUEST).json({
-          type: 'ValidationError',
-          details: error.details,
-        });
-      })
-      .on(NOTHING_TO_UPDATE, (error) => {
-        res.status(Status.BAD_REQUEST).json({
-          type: 'NothingToUpdate',
-          details: error.details,
-        });
-      })
-      .on(NOT_FOUND, (error) => {
-        res.status(Status.NOT_FOUND).json({
-          type: 'NotFoundError',
-          details: error.details,
-        });
-      })
-      .on(ALREADY_EXISTS, (error) => {
-        res.status(Status.CONFLICT).json({
-          type: 'AlreadyExists',
-          details: error.details,
-        });
-      })
-      .on(ERROR, next);
+  //   updatePostPieceRate
+  //     .on(SUCCESS, (post) => {
+  //       res.status(Status.ACCEPTED).json(post);
+  //     })
+  //     .on(VALIDATION_ERROR, (error) => {
+  //       res.status(Status.BAD_REQUEST).json({
+  //         type: 'ValidationError',
+  //         details: error.details,
+  //       });
+  //     })
+  //     .on(NOTHING_TO_UPDATE, (error) => {
+  //       res.status(Status.BAD_REQUEST).json({
+  //         type: 'NothingToUpdate',
+  //         details: error.details,
+  //       });
+  //     })
+  //     .on(NOT_FOUND, (error) => {
+  //       res.status(Status.NOT_FOUND).json({
+  //         type: 'NotFoundError',
+  //         details: error.details,
+  //       });
+  //     })
+  //     .on(ALREADY_EXISTS, (error) => {
+  //       res.status(Status.CONFLICT).json({
+  //         type: 'AlreadyExists',
+  //         details: error.details,
+  //       });
+  //     })
+  //     .on(ERROR, next);
 
-    updatePostPieceRate.execute({
-      postIdValue: req.params.postId,
-      ...req.body,
-    });
-  },
+  //   updatePostPieceRate.execute({
+  //     postIdValue: req.params.postId,
+  //     ...req.body,
+  //   });
+  // },
 
   deletePieceRate(req, res, next) {
     const { deletePostPieceRate } = req;

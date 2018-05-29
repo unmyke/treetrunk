@@ -11,7 +11,7 @@ export class Post extends BaseEntity {
   }
 
   get pieceRate() {
-    return this.getPieceRateValueAt();
+    return this.getPieceRateAt();
   }
 
   get hasPieceRates() {
@@ -35,35 +35,54 @@ export class Post extends BaseEntity {
     );
   }
 
-  addPieceRate(value, day) {
+  addPieceRate(value, day = new Day()) {
     const pieceRate = new PieceRate({ value, day });
     this._checkPieceRateUniqueness(pieceRate);
 
     this.pieceRates = [...this.pieceRates, pieceRate].sort(this._dayComparator);
   }
 
-  editPieceRate(valueToEdit, dayToEdit, value, day) {
-    const pieceRateToEdit = new PieceRate({
-      value: valueToEdit,
-      day: dayToEdit,
-    });
-    const pieceRate = new PieceRate({ value, day });
+  // editPieceRate(valueToEdit, dayToEdit, value, day) {
+  //   const pieceRateToEdit = new PieceRate({
+  //     value: valueToEdit,
+  //     day: dayToEdit,
+  //   });
+  //   const pieceRate = new PieceRate({ value, day });
 
-    if (pieceRate.equals(pieceRateToEdit)) {
-      throw this.constructor.errorFactory.createNothingToUpdate(
-        pieceRateToEdit,
-        `Updated piece rate at ${day.format(
+  //   if (pieceRate.equals(pieceRateToEdit)) {
+  //     throw this.constructor.errorFactory.createNothingToUpdate(
+  //       pieceRateToEdit,
+  //       `Updated piece rate at ${day.format(
+  //         'DD.MM.YYYY'
+  //       )} for post "Флорист" already equlas ${value}%`
+  //     );
+  //   }
+
+  //   this.addPieceRate(value, day);
+  //   this.deletePieceRate(valueToEdit, dayToEdit);
+  // }
+
+  deletePieceRate(value, day = new Day()) {
+    const pieceRateToDelete = new PieceRate({ value, day });
+
+    const prevPieceRate = this._getPrevPieceRateAt(day.prev());
+    const nextPieceRate = this._getNextPieceRateAt(day);
+
+    if (
+      prevPieceRate !== undefined &&
+      nextPieceRate !== undefined &&
+      prevPieceRate.value === nextPieceRate.value
+    ) {
+      throw this.constructor.errorFactory.createNotAllowed(
+        pieceRateToDelete,
+        `Piece rate with value ${value} at ${day.format(
           'DD.MM.YYYY'
-        )} for post "Флорист" already equlas ${value}%`
+        )} not allowed to delete: piece rate at ${prevPieceRate.day.format(
+          'DD.MM.YYYY'
+        )} equals piece rate at ${nextPieceRate.day.format('DD.MM.YYYY')}`
       );
     }
 
-    this.addPieceRate(value, day);
-    this.deletePieceRate(valueToEdit, dayToEdit);
-  }
-
-  deletePieceRate(value, day) {
-    const pieceRateToDelete = new PieceRate({ value, day });
     const filteredPieceRates = this.pieceRates.filter(
       (pieceRate) => !pieceRate.equals(pieceRateToDelete)
     );
@@ -79,18 +98,12 @@ export class Post extends BaseEntity {
     this.pieceRates = filteredPieceRates;
   }
 
-  getPieceRateValueAt(day = new Day()) {
-    if (!this.hasPieceRateAt(day)) {
+  getPieceRateAt(day = new Day()) {
+    const pieceRate = this._getPrevPieceRateAt(day);
+    if (pieceRate === undefined) {
       return;
     }
-
-    const [firstPieceRate, ...restPieceRates] = this.pieceRates;
-
-    const { value } = restPieceRates.reduce((pieceRate, appointment) => {
-      return appointment.day <= day ? appointment : pieceRate;
-    }, firstPieceRate);
-
-    return value;
+    return pieceRate.value;
   }
 
   hasPieceRateAt(day = new Day()) {
@@ -122,6 +135,32 @@ export class Post extends BaseEntity {
 
   // private
 
+  _getPrevPieceRateAt(day = new Day()) {
+    if (!this.hasPieceRateAt(day)) {
+      return;
+    }
+
+    const [firstPieceRate, ...restPieceRates] = this.pieceRates;
+
+    const pieceRate = restPieceRates.reduce((pieceRate, appointment) => {
+      return appointment.day <= day ? appointment : pieceRate;
+    }, firstPieceRate);
+
+    return pieceRate;
+  }
+
+  _getNextPieceRateAt(day = new Day()) {
+    const sortedPieceRates = this.pieceRates.sort(this._dayComparator);
+    const index = sortedPieceRates.findIndex(({ day: currentDay }) => {
+      return currentDay > day;
+    });
+    if (index === -1) {
+      return;
+    }
+
+    return sortedPieceRates[index];
+  }
+
   _checkPieceRateUniqueness(pieceRate) {
     if (this._isPieceRateExistsAt(pieceRate.day)) {
       throw this.constructor.errorFactory.createAlreadyExists(
@@ -130,13 +169,29 @@ export class Post extends BaseEntity {
       );
     }
 
-    const prevValue = this.getPieceRateValueAt(pieceRate.day);
-    if (pieceRate.value === prevValue) {
+    const prevPieceRate = this._getPrevPieceRateAt(pieceRate.day);
+    if (
+      prevPieceRate !== undefined &&
+      pieceRate.value === prevPieceRate.value
+    ) {
       throw this.constructor.errorFactory.createAlreadyExists(
         pieceRate,
-        `Piece rate value at ${pieceRate.day.format(
+        `Piece rate value at ${prevPieceRate.day.format(
           'DD.MM.YYYY'
-        )} already equals "${pieceRate.value}"`
+        )} already equals "${prevPieceRate.value}"`
+      );
+    }
+
+    const nextPieceRate = this._getNextPieceRateAt(pieceRate.day);
+    if (
+      nextPieceRate !== undefined &&
+      pieceRate.value === nextPieceRate.value
+    ) {
+      throw this.constructor.errorFactory.createAlreadyExists(
+        pieceRate,
+        `Piece rate value at ${nextPieceRate.day.format(
+          'DD.MM.YYYY'
+        )} already equals "${nextPieceRate.value}"`
       );
     }
   }

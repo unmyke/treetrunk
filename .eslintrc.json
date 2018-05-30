@@ -11,11 +11,11 @@
     "comma-spacing": ["error", { "before": false, "after": true }],
     "indent": ["error", 2],
     "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "single"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
     "semi": ["error", "always"],
-    "prettier/prettier": "error"
+    "prettier/prettier": ["error"]
   },
   "parser": "babel-eslint",
   "plugins": ["prettier"],
-  "extends": ["plugin:prettier/recommended"]
+  "extends": ["plugin:prettier/recommended", "prettier"]
 }

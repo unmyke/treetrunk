@@ -14,6 +14,12 @@ const pieceRate1day = new Day({ value: new Date('2018.01.14 11:00') });
 const pieceRate2day = new Day({ value: new Date('2018.02.20 11:00') });
 const pieceRate3day = new Day({ value: new Date('2018.03.14 11:00') });
 
+const pieceRates = [
+  { value: pieceRate1value, day: pieceRate1day },
+  { value: pieceRate2value, day: pieceRate2day },
+  { value: pieceRate3value, day: pieceRate3day },
+];
+
 describe('Domain :: entities :: Post', () => {
   let post;
   beforeEach(() => {
@@ -29,6 +35,36 @@ describe('Domain :: entities :: Post', () => {
 
     test('should have no pieceRate', () => {
       expect(post.getPieceRateAt()).toBeUndefined();
+    });
+  });
+
+  describe('#setPieceRates', () => {
+    context('when post is active', () => {
+      test('should set piece rates', () => {
+        post.setPieceRates(pieceRates);
+        expect(post.pieceRates).toEqual(pieceRates);
+        expect(post.pieceRates).not.toBe(pieceRates);
+      });
+    });
+
+    context('when post is inactive', () => {
+      beforeEach(() => {
+        post.inactivate();
+        expect(post.state).toBe('inactive');
+      });
+
+      test('should not set piece rates and throw NOT_ALLOWED error', () => {
+        try {
+          post.setPieceRates(pieceRates);
+        } catch (e) {
+          expect(e.message).toBe('Not allowed');
+          expect(e.details).toBe({
+            post: ['Not allowed set piece rate at inactive state'],
+          });
+        }
+
+        expect(post.pieceRates).toHaveLength(0);
+      });
     });
   });
 
@@ -234,7 +270,7 @@ describe('Domain :: entities :: Post', () => {
     });
   });
 
-  describe('#at', () => {
+  describe('#instanceAt', () => {
     beforeEach(() => {
       post.setPieceRates([
         { value: pieceRate3value, day: pieceRate3day },
@@ -246,30 +282,40 @@ describe('Domain :: entities :: Post', () => {
 
     context('when passed no props', () => {
       test('should return equal post, but not this', () => {
-        expect(post.at()).toEqual(post);
-        expect(post.at()).not.toBe(post);
+        const newPost = post.instanceAt();
+        expect(JSON.stringify(newPost)).toEqual(JSON.stringify(post));
+        expect(post.instanceAt()).not.toBe(post);
       });
     });
 
     context('when passed day at penultimate piece rate', () => {
-      test('should return equal post without last piece rate', () => {
-        const expectedPost = new Post(post);
+      let expectedPost;
+      beforeEach(() => {
+        expectedPost = new Post(post);
         expectedPost.setPieceRates([
           { value: pieceRate1value, day: pieceRate1day },
           { value: pieceRate2value, day: pieceRate2day },
         ]);
+      });
+      test('should return equal post without last piece rate', () => {
+        const newPost = post.instanceAt(
+          post.pieceRates[post.pieceRates.length - 2].day
+        );
 
-        expect(
-          post.at(post.pieceRates[post.pieceRates.length - 2].day)
-        ).toEqual(expectedPost);
+        expect(JSON.stringify(newPost)).toEqual(JSON.stringify(expectedPost));
       });
     });
 
     context('when passed day before piece rate exists', () => {
-      test('should return equal post with empty piece rates array', () => {
-        const expectedPost = new Post(post);
+      let expectedPost;
+      beforeEach(() => {
+        expectedPost = new Post(post);
+      });
 
-        expect(post.at(post.pieceRates[0].day.prev())).toEqual(expectedPost);
+      test('should return equal post with empty piece rates array', () => {
+        const newPost = post.instanceAt(post.pieceRates[0].day.prev());
+
+        expect(JSON.stringify(newPost)).toEqual(JSON.stringify(expectedPost));
       });
     });
   });
@@ -308,4 +354,91 @@ describe('Domain :: entities :: Post', () => {
   //     });
   //   });
   // });
+  describe('#inactivate', () => {
+    context('when post\'s state is "active"', () => {
+      beforeEach(() => {
+        expect(post.state).toBe('active');
+      });
+
+      test('should change state to "inactive"', () => {
+        post.inactivate();
+        expect(post.state).toBe('inactive');
+      });
+    });
+
+    context('when post\'s state is "inactive"', () => {
+      beforeEach(() => {
+        post.inactivate();
+        expect(post.state).toBe('inactive');
+      });
+
+      test('should not change state and throw NOT_ALLOWED error', () => {
+        try {
+          post.inactivate();
+        } catch (e) {
+          expect(e.message).toBe('Not allowed');
+          expect(e.details).toEqual({
+            post: ['Not allowed inactivate from inactive state'],
+          });
+        }
+
+        expect(post.state).toBe('inactive');
+      });
+    });
+  });
+
+  describe('#activate', () => {
+    context('when post\'s state is "inactive"', () => {
+      beforeEach(() => {
+        post.inactivate();
+        expect(post.state).toBe('inactive');
+      });
+      test('should change state to "active"', () => {
+        post.activate();
+        expect(post.state).toBe('active');
+      });
+    });
+  });
+
+  context('when post\'s state is "active"', () => {
+    beforeEach(() => {
+      expect(post.state).toBe('active');
+    });
+    test('should not change state and throw NOT_ALLOWED error', () => {
+      try {
+        post.activate();
+      } catch (e) {
+        expect(e.message).toBe('Not allowed');
+        expect(e.details).toEqual({
+          post: ['Not allowed activate from active state'],
+        });
+      }
+
+      expect(post.state).toBe('active');
+    });
+  });
+
+  describe('#update', () => {
+    context("when passed name not equals post's name", () => {
+      test('should set name', () => {
+        post.update({ name: 'Старший флорист' });
+        expect(post.name).toBe('Старший флорист');
+      });
+    });
+
+    context("when passed name equals post's name", () => {
+      test('should not change state and throw NOTHING_TO_UPDATE error', () => {
+        try {
+          post.update({ name: 'Флорист' });
+        } catch (e) {
+          expect(e.message).toBe('Nothing to update');
+          expect(e.details).toEqual({
+            post: ['Post already has name "Флорист"'],
+          });
+        }
+
+        expect(post.name).toBe('Флорист');
+      });
+    });
+  });
 });

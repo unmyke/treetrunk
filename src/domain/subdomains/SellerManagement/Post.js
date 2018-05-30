@@ -1,13 +1,63 @@
+import {} from 'javascript-state-machine';
+
 import { BaseEntity } from '../../_lib';
 import { PostId, Day } from '../../commonTypes';
 import { PieceRate } from './PieceRate';
 
 export class Post extends BaseEntity {
+  static fsm = {
+    init: 'active',
+    transitions: [
+      { name: 'inactivate', from: 'active', to: 'inactive' },
+      { name: 'activate', from: 'inactive', to: 'active' },
+      { name: 'update', from: 'active', to: 'active' },
+      { name: 'setPieceRates', from: 'active', to: 'active' },
+    ],
+    methods: {
+      onInvalidTransition(transition, from, to) {
+        switch (true) {
+          case /.*activate/.test(transition):
+            throw this.constructor.errorFactory.createNotAllowed(
+              this,
+              `Not allowed ${transition} from ${from} state`
+            );
+        }
+      },
+
+      onBeforeUpdate(lifecycle, { name }) {
+        if (name === this.name) {
+          throw this.constructor.errorFactory.createNothingToUpdate(
+            this,
+            `Post already has name "${name}"`
+          );
+        }
+      },
+      onUpdate(lifecycle, { name }) {
+        this.name = name;
+      },
+
+      onBeforeSetPieceRates(lifecycle, pieceRates) {
+        if (this.state === 'inactive') {
+          this.constructor.errorFactory.createNotAllowed(
+            this,
+            'Not allowed set piece rate at inactive state'
+          );
+        }
+      },
+      onSetPieceRates(lifecycle, pieceRates) {
+        this._pieceRates = pieceRates.map(
+          ({ value, day }) => new PieceRate({ value, day })
+        );
+      },
+    },
+  };
+
   constructor({ postId = new PostId(), name, state = 'active' }) {
     super(postId);
     this.name = name;
-    this.state = state;
     this._pieceRates = [];
+
+    this.setState(state);
   }
 
   get pieceRates() {
@@ -20,23 +70,6 @@ export class Post extends BaseEntity {
 
   get hasPieceRates() {
     return this.hasPieceRateAt();
-  }
-
-  update({ name }) {
-    if (name === this.name) {
-      throw this.constructor.errorFactory.createNothingToUpdate(
-        this,
-        `Post already has name "${name}"`
-      );
-    }
-
-    this.name = name;
-  }
-
-  setPieceRates(pieceRates) {
-    this._pieceRates = pieceRates.map(
-      ({ value, day }) => new PieceRate({ value, day })
-    );
   }
 
   addPieceRate(value, day = new Day()) {
@@ -117,25 +150,13 @@ export class Post extends BaseEntity {
     return !!firstPieceRate && firstPieceRate.day <= day;
   }
 
-  at(day = new Day()) {
+  instanceAt(day = new Day()) {
     const post = new Post(this);
 
     const pieceRates = this._getPieceRatesAt(day);
     post.setPieceRates(pieceRates);
 
     return post;
-  }
-
-  inactivate() {
-    if (state === 'active') {
-      this.state = 'inactive';
-    }
-  }
-
-  activate() {
-    if (state === 'inactive') {
-      this.state = 'active';
-    }
   }
 
   toJSON() {

@@ -7,7 +7,11 @@ export class Post extends BaseEntity {
     super(postId);
     this.name = name;
     this.state = state;
-    this.pieceRates = [];
+    this._pieceRates = [];
+  }
+
+  get pieceRates() {
+    return this._getPieceRatesAt();
   }
 
   get pieceRate() {
@@ -30,7 +34,7 @@ export class Post extends BaseEntity {
   }
 
   setPieceRates(pieceRates) {
-    this.pieceRates = pieceRates.map(
+    this._pieceRates = pieceRates.map(
       ({ value, day }) => new PieceRate({ value, day })
     );
   }
@@ -39,7 +43,9 @@ export class Post extends BaseEntity {
     const pieceRate = new PieceRate({ value, day });
     this._checkPieceRateUniqueness(pieceRate);
 
-    this.pieceRates = [...this.pieceRates, pieceRate].sort(this._dayComparator);
+    this._pieceRates = [...this._pieceRates, pieceRate].sort(
+      this._dayComparator
+    );
   }
 
   // editPieceRate(valueToEdit, dayToEdit, value, day) {
@@ -66,7 +72,7 @@ export class Post extends BaseEntity {
     const pieceRateToDelete = new PieceRate({ value, day });
 
     const prevPieceRate = this._getPrevPieceRateAt(day.prev());
-    const nextPieceRate = this._getNextPieceRateAt(day);
+    const nextPieceRate = this._getNextPieceRateAt(day.next());
 
     if (
       prevPieceRate !== undefined &&
@@ -83,10 +89,10 @@ export class Post extends BaseEntity {
       );
     }
 
-    const filteredPieceRates = this.pieceRates.filter(
+    const filteredPieceRates = this._pieceRates.filter(
       (pieceRate) => !pieceRate.equals(pieceRateToDelete)
     );
-    if (this.pieceRates.length === filteredPieceRates.length) {
+    if (this._pieceRates.length === filteredPieceRates.length) {
       throw this.constructor.errorFactory.createNotFound(
         pieceRateToDelete,
         `Piece rate with value ${value} at ${day.format(
@@ -95,7 +101,7 @@ export class Post extends BaseEntity {
       );
     }
 
-    this.pieceRates = filteredPieceRates;
+    this._pieceRates = filteredPieceRates;
   }
 
   getPieceRateAt(day = new Day()) {
@@ -107,8 +113,17 @@ export class Post extends BaseEntity {
   }
 
   hasPieceRateAt(day = new Day()) {
-    const [firstPieceRate] = this.pieceRates;
+    const [firstPieceRate] = this._getPieceRatesAt(day);
     return !!firstPieceRate && firstPieceRate.day <= day;
+  }
+
+  at(day = new Day()) {
+    const post = new Post(this);
+
+    const pieceRates = this._getPieceRatesAt(day);
+    post.setPieceRates(pieceRates);
+
+    return post;
   }
 
   inactivate() {
@@ -128,37 +143,44 @@ export class Post extends BaseEntity {
       postId: this.postId.toJSON(),
       name: this.name,
       pieceRate: this.pieceRate,
-      pieceRates: this.pieceRates.map((pieceRate) => pieceRate.toJSON()),
+      pieceRates: this._pieceRates.map((pieceRate) => pieceRate.toJSON()),
       state: this.state,
     };
   }
 
   // private
 
+  _getPieceRatesAt(day = new Day()) {
+    return this._pieceRates
+      .sort(this._dayComparator)
+      .filter(({ day: currentDay }) => currentDay <= day);
+  }
+
   _getPrevPieceRateAt(day = new Day()) {
     if (!this.hasPieceRateAt(day)) {
       return;
     }
 
-    const [firstPieceRate, ...restPieceRates] = this.pieceRates;
-
-    const pieceRate = restPieceRates.reduce((pieceRate, appointment) => {
-      return appointment.day <= day ? appointment : pieceRate;
-    }, firstPieceRate);
-
-    return pieceRate;
+    const pieceRates = this._getPieceRatesAt(day);
+    return pieceRates[pieceRates.length - 1];
   }
 
   _getNextPieceRateAt(day = new Day()) {
-    const sortedPieceRates = this.pieceRates.sort(this._dayComparator);
-    const index = sortedPieceRates.findIndex(({ day: currentDay }) => {
-      return currentDay > day;
-    });
-    if (index === -1) {
-      return;
+    const [lastPieceRate, ...restPieceRates] = this._pieceRates.sort(
+      (a, b) => !this._dayComparator(a, b)
+    );
+
+    // console.log(`lastPieceRate.day: ${lastPieceRate.day.toString()}`);
+    // console.log(`day: ${day.toString()}`);
+    if (lastPieceRate === undefined || lastPieceRate.day < day) {
+      return undefined;
     }
 
-    return sortedPieceRates[index];
+    const pieceRate = restPieceRates.reduce((pieceRate, currentPieceRate) => {
+      return currentPieceRate.day >= day ? currentPieceRate : pieceRate;
+    }, lastPieceRate);
+
+    return pieceRate;
   }
 
   _checkPieceRateUniqueness(pieceRate) {
@@ -169,7 +191,7 @@ export class Post extends BaseEntity {
       );
     }
 
-    const prevPieceRate = this._getPrevPieceRateAt(pieceRate.day);
+    const prevPieceRate = this._getPrevPieceRateAt(pieceRate.day.prev());
     if (
       prevPieceRate !== undefined &&
       pieceRate.value === prevPieceRate.value
@@ -182,7 +204,7 @@ export class Post extends BaseEntity {
       );
     }
 
-    const nextPieceRate = this._getNextPieceRateAt(pieceRate.day);
+    const nextPieceRate = this._getNextPieceRateAt(pieceRate.day.next());
     if (
       nextPieceRate !== undefined &&
       pieceRate.value === nextPieceRate.value
@@ -197,7 +219,7 @@ export class Post extends BaseEntity {
   }
 
   _isPieceRateExistsAt(day = new Day()) {
-    const index = this.pieceRates.findIndex(({ day: currentDay }) =>
+    const index = this._pieceRates.findIndex(({ day: currentDay }) =>
       day.equals(currentDay)
     );
 

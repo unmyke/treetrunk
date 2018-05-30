@@ -8,6 +8,10 @@ export class InMemoryRepository extends BaseRepository {
   async getAll(query) {
     const whereParams = this._getWhereParams(query);
 
+    if (Object.keys(whereParams).length === 0) {
+      return [];
+    }
+
     return this.store.reduce((acc, item) => {
       const entity = this.entityMapper.toEntity(item);
 

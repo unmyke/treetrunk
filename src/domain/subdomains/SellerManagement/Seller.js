@@ -253,7 +253,7 @@ export class Seller extends BaseEntity {
   // private
   _getAllAppointmentsAt(day = new Day()) {
     return this._appointments
-      .sort(this._dayComparator)
+      .sort(this._getDayComparator())
       .filter(({ day: currentDay }) => currentDay <= day);
   }
 

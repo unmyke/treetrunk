@@ -1,4 +1,5 @@
 import StateMachine from 'javascript-state-machine';
+import { lowerCase } from 'lodash';
 
 export const applyFSM = (EntityClass) => {
   StateMachine.factory(EntityClass, {
@@ -14,6 +15,14 @@ export const applyFSM = (EntityClass) => {
       },
     ],
     data: EntityClass.fsm.data,
-    methods: EntityClass.fsm.methods,
+    methods: {
+      onInvalidTransition(transition, from, to) {
+        throw this.constructor.errorFactory.createNotAllowed(
+          this,
+          `Not allowed to ${lowerCase(transition)} from ${from} state`
+        );
+      },
+      ...EntityClass.fsm.methods,
+    },
   });
 };

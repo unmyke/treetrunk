@@ -16,7 +16,14 @@ export class BaseEntity extends BaseClass {
     this._fsm();
   }
 
-  _dayComparator(a, b) {
-    return a.day > b.day;
+  _getDayComparator(orderBy = 'asc') {
+    return function(a, b) {
+      switch (orderBy) {
+        case 'desc':
+          return a.day < b.day;
+        default:
+          return a.day > b.day;
+      }
+    };
   }
 }

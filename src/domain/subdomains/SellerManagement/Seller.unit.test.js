@@ -2,6 +2,9 @@ import { SellerId, PostId, PersonName, Day } from '../../commonTypes';
 import { Seller } from './Seller';
 import { Post } from './Post';
 import { Appointment } from './Appointment';
+import { once } from 'cluster';
+import { EAGAIN } from 'constants';
+import { sample } from 'rxjs/operators';
 
 const lastName = 'lastName';
 const firstName = 'Firstname';
@@ -67,119 +70,125 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#getAppointmentsAt', () => {
-    context('when seller have no appointments', () => {
-      context('when seller is not recruited', () => {
-        context('at day', () => {
-          beforeEach(() => {
-            expect(seller.isRecruitedAt(day1)).toBe(false);
-          });
-          test('should return empty array', () => {
-            expect(seller.getAppointmentsAt(day1)).toEqual([]);
-          });
+    context('when seller is not recruited', () => {
+      context('at day', () => {
+        beforeEach(() => {
+          expect(seller.isRecruitedAt(day1)).toBe(false);
         });
-
-        context('now', () => {
-          beforeEach(() => {
-            expect(seller.isRecruitedAt()).toBe(false);
-          });
-          test('should return empty array', () => {
-            expect(seller.getAppointmentsAt()).toEqual([]);
-          });
+        test('should return empty array', () => {
+          expect(seller.getAppointmentsAt(day1)).toEqual([]);
         });
       });
 
-      context('when seller is quited', () => {
+      context('now', () => {
         beforeEach(() => {
-          seller.setAppointments(appointmentsOfQuitedSeller);
-
-          expect(seller.isQuitedAt(day4)).toBe(true);
-          expect(seller.isRecruitedAt(day4)).toBe(false);
-          expect(seller.getPostIdAt(day4)).toBeUndefined();
-          expect(seller.isQuitedAt()).toBe(true);
           expect(seller.isRecruitedAt()).toBe(false);
-          expect(seller.getPostIdAt()).toBeUndefined();
-
-          // test('seller should be quited', () => {
-          //   expect(seller.isQuitedAt(day5)).toBe(true);
-          // });
-          // test('seller should have not recruited at these day', () => {
-          //   expect(seller.isRecruitedAt(day5)).toBe(false);
-          // });
-          // test('seller should have no postId', () => {
-          //   expect(seller.getPostIdAt(day5)).toBeUndefined();
-          // });
         });
-
-        context('at day', () => {
-          test('should return empty array', () => {
-            expect(seller.getAppointmentsAt(day4)).toEqual([]);
-            expect(seller.getAppointmentsAt(day6)).toEqual([]);
-          });
-        });
-
-        context('now', () => {
-          test('should return empty array', () => {
-            expect(seller.getAppointmentsAt()).toEqual([]);
-          });
+        test('should return empty array', () => {
+          expect(seller.getAppointmentsAt()).toEqual([]);
         });
       });
     });
 
-    context('when seller have appointments', () => {
-      context('when seller is recruited once', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSeller);
-        });
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
 
-        context('at day', () => {
-          test('should return array with sooner appointments', () => {
-            expect(seller.getAppointmentsAt(day3)).toEqual([
-              { postId: floristPost.postId, day: day2 },
-            ]);
-          });
+        expect(seller.isQuitedAt(day4)).toBe(true);
+        expect(seller.isRecruitedAt(day4)).toBe(false);
+        expect(seller.getPostIdAt(day4)).toBeUndefined();
+        expect(seller.isQuitedAt()).toBe(true);
+        expect(seller.isRecruitedAt()).toBe(false);
+        expect(seller.getPostIdAt()).toBeUndefined();
 
-          test('should return array without later appointments', () => {
-            expect(seller.getAppointmentsAt(day3)).not.toContainEqual([
-              { postId: seniorFloristPost.postId, day: day4 },
-            ]);
-          });
-        });
+        // test('seller should be quited', () => {
+        //   expect(seller.isQuitedAt(day5)).toBe(true);
+        // });
+        // test('seller should have not recruited at these day', () => {
+        //   expect(seller.isRecruitedAt(day5)).toBe(false);
+        // });
+        // test('seller should have no postId', () => {
+        //   expect(seller.getPostIdAt(day5)).toBeUndefined();
+        // });
+      });
 
-        context('now', () => {
-          test('should return array containing all appointments', () => {
-            expect(seller.getAppointmentsAt()).toEqual([
-              { postId: floristPost.postId, day: day2 },
-              { postId: seniorFloristPost.postId, day: day4 },
-            ]);
-          });
+      context('at day', () => {
+        test('should return array containing quit', () => {
+          expect(seller.getAppointmentsAt(day4)).toEqual([
+            { postId: quitPostId, day: day4 },
+          ]);
+          expect(seller.getAppointmentsAt(day4)).toHaveLength(1);
+
+          expect(seller.getAppointmentsAt(day6)).toEqual([
+            { postId: quitPostId, day: day6 },
+          ]);
+          expect(seller.getAppointmentsAt(day6)).toHaveLength(1);
         });
       });
 
-      context('when seller is recruited again', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      context('now', () => {
+        test('should return array containing last quit ', () => {
+          expect(seller.getAppointmentsAt()).toEqual([
+            { postId: quitPostId, day: day6 },
+          ]);
+          expect(seller.getAppointmentsAt()).toHaveLength(1);
+        });
+      });
+    });
+
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+      });
+
+      context('at day', () => {
+        test('should return array with sooner appointments', () => {
+          expect(seller.getAppointmentsAt(day3)).toEqual([
+            { postId: floristPost.postId, day: day2 },
+          ]);
         });
 
-        context('at day', () => {
-          test('should return array containing only appointments after recruit', () => {
-            expect(seller.getAppointmentsAt(day5)).toEqual([
-              { postId: floristPost.postId, day: day4 },
-            ]);
-          });
+        test('should return array without later appointments', () => {
+          expect(seller.getAppointmentsAt(day3)).not.toContainEqual([
+            { postId: seniorFloristPost.postId, day: day4 },
+          ]);
+        });
+      });
 
-          test('should return array not containing appointments before quit', () => {
-            expect(seller.getAppointmentsAt(day5)).not.toContainEqual([
-              { postId: floristPost.postId, day: day2 },
-            ]);
-          });
+      context('now', () => {
+        test('should return array containing all appointments', () => {
+          expect(seller.getAppointmentsAt()).toEqual([
+            { postId: floristPost.postId, day: day2 },
+            { postId: seniorFloristPost.postId, day: day4 },
+          ]);
+        });
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      });
+
+      context('at day', () => {
+        test('should return array containing only appointments after recruit', () => {
+          expect(seller.getAppointmentsAt(day5)).toEqual([
+            { postId: floristPost.postId, day: day4 },
+          ]);
         });
 
-        context('now', () => {
-          test('should return array containing last appointments', () => {
-            expect(seller.getAppointmentsAt()).toEqual([
-              { postId: floristPost.postId, day: day7 },
-            ]);
-          });
+        test('should return array not containing appointments before quit', () => {
+          expect(seller.getAppointmentsAt(day5)).not.toContainEqual([
+            { postId: floristPost.postId, day: day2 },
+          ]);
+        });
+      });
+
+      context('now', () => {
+        test('should return array containing last appointments', () => {
+          expect(seller.getAppointmentsAt()).toEqual([
+            { postId: floristPost.postId, day: day7 },
+          ]);
         });
       });
     });
@@ -204,82 +213,82 @@ describe('Domain :: entities :: Seller', () => {
     });
 
     context('when seller is quited now', () => {
-      test('should return empty array', () => {
+      test('should return array containing quit', () => {
         seller.setAppointments(appointmentsOfQuitedSeller);
 
-        expect(seller.appointments).toEqual([]);
+        expect(seller.appointments).toEqual([
+          { postId: quitPostId, day: day6 },
+        ]);
       });
     });
   });
 
   describe('#getPostIdAt', () => {
-    context('when seller have no appointments', () => {
-      context('when seller is not recruited', () => {
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getPostIdAt(day1)).toBeUndefined();
-          });
-        });
-
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getPostIdAt()).toBeUndefined();
-          });
+    context('when seller is not recruited', () => {
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getPostIdAt(day1)).toBeUndefined();
         });
       });
-      context('when seller is quited', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfQuitedSeller);
-        });
 
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getPostIdAt(day4)).toBeUndefined();
-          });
-        });
-
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getPostIdAt()).toBeUndefined();
-          });
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getPostIdAt()).toBeUndefined();
         });
       });
     });
 
-    context('when seller have appointments', () => {
-      context('when seller is recruited once', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSeller);
-        });
-        context('at day', () => {
-          test('should return sooner appointment postId', () => {
-            expect(seller.getPostIdAt(day3)).toEqual(floristPost.postId);
-          });
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+      });
 
-          test('should not return later appointment postId', () => {
-            expect(seller.getPostIdAt(day3)).not.toBe(seniorFloristPost.postId);
-          });
-        });
-        context('now', () => {
-          test('should return postId of last appointment', () => {
-            expect(seller.getPostIdAt()).toBe(seniorFloristPost.postId);
-          });
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getPostIdAt(day4)).toBeUndefined();
         });
       });
-      context('when seller is recruited again', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getPostIdAt()).toBeUndefined();
         });
-        context('at day', () => {
-          test('should return postId appointed at these day', () => {
-            expect(seller.getPostIdAt(day4)).toBe(floristPost.postId);
-            expect(seller.getPostIdAt(day5)).toBe(floristPost.postId);
-          });
+      });
+    });
+
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+      });
+      context('at day', () => {
+        test('should return sooner appointment postId', () => {
+          expect(seller.getPostIdAt(day3)).toEqual(floristPost.postId);
         });
-        context('now', () => {
-          test('should return postId of last appointment', () => {
-            expect(seller.getPostIdAt()).toEqual(floristPost.postId);
-          });
+
+        test('should not return later appointment postId', () => {
+          expect(seller.getPostIdAt(day3)).not.toBe(seniorFloristPost.postId);
+        });
+      });
+      context('now', () => {
+        test('should return postId of last appointment', () => {
+          expect(seller.getPostIdAt()).toBe(seniorFloristPost.postId);
+        });
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      });
+      context('at day', () => {
+        test('should return postId appointed at these day', () => {
+          expect(seller.getPostIdAt(day4)).toBe(floristPost.postId);
+          expect(seller.getPostIdAt(day5)).toBe(floristPost.postId);
+        });
+      });
+      context('now', () => {
+        test('should return postId of last appointment', () => {
+          expect(seller.getPostIdAt()).toEqual(floristPost.postId);
         });
       });
     });
@@ -310,107 +319,103 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#getPostIdsAt', () => {
-    context('when seller have no appointments', () => {
-      context('when seller is not recruited', () => {
-        context('at day', () => {
-          beforeEach(() => {
-            expect(seller.isRecruitedAt(day1)).toBe(false);
-          });
-          test('should return empty array', () => {
-            expect(seller.getPostIdsAt(day1)).toEqual([]);
-          });
+    context('when seller is not recruited', () => {
+      context('at day', () => {
+        beforeEach(() => {
+          expect(seller.isRecruitedAt(day1)).toBe(false);
         });
-
-        context('now', () => {
-          beforeEach(() => {
-            expect(seller.isRecruitedAt()).toBe(false);
-          });
-          test('should return empty array', () => {
-            expect(seller.getPostIdsAt()).toEqual([]);
-          });
+        test('should return empty array', () => {
+          expect(seller.getPostIdsAt(day1)).toEqual([]);
         });
       });
 
-      context('when seller is quited', () => {
+      context('now', () => {
         beforeEach(() => {
-          seller.setAppointments(appointmentsOfQuitedSeller);
-          expect(seller.isQuitedAt(day4)).toBe(true);
-          expect(seller.isRecruitedAt(day4)).toBe(false);
-          expect(seller.getPostIdAt(day4)).toBeUndefined();
-          expect(seller.isQuitedAt()).toBe(true);
           expect(seller.isRecruitedAt()).toBe(false);
-          expect(seller.getPostIdAt()).toBeUndefined();
-
-          // test('seller should be quited', () => {
-          //   expect(seller.isQuitedAt(day5)).toBe(true);
-          // });
-          // test('seller should have not recruited at these day', () => {
-          //   expect(seller.isRecruitedAt(day5)).toBe(false);
-          // });
-          // test('seller should have no postId', () => {
-          //   expect(seller.getPostIdAt(day5)).toBeUndefined();
-          // });
         });
-
-        context('at day', () => {
-          test('should return empty array', () => {
-            expect(seller.getPostIdsAt(day4)).toEqual([]);
-            expect(seller.getPostIdsAt(day6)).toEqual([]);
-          });
-        });
-
-        context('now', () => {
-          test('should return empty array', () => {
-            expect(seller.getPostIdsAt()).toEqual([]);
-            expect(seller.getPostIdsAt()).toEqual([]);
-          });
+        test('should return empty array', () => {
+          expect(seller.getPostIdsAt()).toEqual([]);
         });
       });
     });
 
-    context('when seller have appointments', () => {
-      context('when seller is recruited once', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSeller);
-        });
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+        expect(seller.isQuitedAt(day4)).toBe(true);
+        expect(seller.isRecruitedAt(day4)).toBe(false);
+        expect(seller.getPostIdAt(day4)).toBeUndefined();
+        expect(seller.isQuitedAt()).toBe(true);
+        expect(seller.isRecruitedAt()).toBe(false);
+        expect(seller.getPostIdAt()).toBeUndefined();
 
-        context('at day', () => {
-          test('should return array with sooner appointment postIds', () => {
-            expect(seller.getPostIdsAt(day3)).toEqual([floristPost.postId]);
-          });
+        // test('seller should be quited', () => {
+        //   expect(seller.isQuitedAt(day5)).toBe(true);
+        // });
+        // test('seller should have not recruited at these day', () => {
+        //   expect(seller.isRecruitedAt(day5)).toBe(false);
+        // });
+        // test('seller should have no postId', () => {
+        //   expect(seller.getPostIdAt(day5)).toBeUndefined();
+        // });
+      });
 
-          test('should return array without later appointment postId', () => {
-            expect(seller.getPostIdsAt(day3)).not.toContainEqual(
-              seniorFloristPost.postId
-            );
-          });
-        });
-
-        context('now', () => {
-          test('should return array ended by last appointment postId', () => {
-            expect(seller.getPostIdsAt()).toEqual([
-              floristPost.postId,
-              seniorFloristPost.postId,
-            ]);
-          });
+      context('at day', () => {
+        test('should return empty array', () => {
+          expect(seller.getPostIdsAt(day4)).toEqual([]);
+          expect(seller.getPostIdsAt(day6)).toEqual([]);
         });
       });
 
-      context('when seller is recruited again', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      context('now', () => {
+        test('should return empty array', () => {
+          expect(seller.getPostIdsAt()).toEqual([]);
+          expect(seller.getPostIdsAt()).toEqual([]);
+        });
+      });
+    });
+
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+      });
+
+      context('at day', () => {
+        test('should return array with sooner appointment postIds', () => {
+          expect(seller.getPostIdsAt(day3)).toEqual([floristPost.postId]);
         });
 
-        context('at day', () => {
-          test('should return array containing only appointments postIds after recruit', () => {
-            expect(seller.getPostIdsAt(day5)).toEqual([floristPost.postId]);
-          });
+        test('should return array without later appointment postId', () => {
+          expect(seller.getPostIdsAt(day3)).not.toContainEqual(
+            seniorFloristPost.postId
+          );
         });
+      });
 
-        context('now', () => {
-          test('should return array containing last appointments', () => {
-            expect(seller.getPostIdsAt()).toEqual([floristPost.postId]);
-          });
+      context('now', () => {
+        test('should return array ended by last appointment postId', () => {
+          expect(seller.getPostIdsAt()).toEqual([
+            floristPost.postId,
+            seniorFloristPost.postId,
+          ]);
+        });
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      });
+
+      context('at day', () => {
+        test('should return array containing only appointments postIds after recruit', () => {
+          expect(seller.getPostIdsAt(day5)).toEqual([floristPost.postId]);
+        });
+      });
+
+      context('now', () => {
+        test('should return array containing last appointments', () => {
+          expect(seller.getPostIdsAt()).toEqual([floristPost.postId]);
         });
       });
     });
@@ -444,77 +449,75 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#getRecruitDayAt', () => {
-    context('when seller have no appointments', () => {
-      context('when seller is not recruited', () => {
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getRecruitDayAt(day1)).toBeUndefined();
-          });
-        });
-
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getRecruitDayAt()).toBeUndefined();
-          });
+    context('when seller is not recruited', () => {
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getRecruitDayAt(day1)).toBeUndefined();
         });
       });
-      context('when seller is quited', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfQuitedSeller);
-        });
 
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getRecruitDayAt(day4)).toBeUndefined();
-          });
-        });
-
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getRecruitDayAt()).toBeUndefined();
-          });
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getRecruitDayAt()).toBeUndefined();
         });
       });
     });
 
-    context('when seller have appointments', () => {
-      context('when seller is recruited once', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSeller);
-        });
-        context('at day', () => {
-          test('should return first appointment day', () => {
-            expect(seller.getRecruitDayAt(day3)).toBe(day2);
-          });
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+      });
 
-          test('should not return other appointment day', () => {
-            expect(seller.getRecruitDayAt(day3)).not.toBe(day4);
-          });
-        });
-        context('now', () => {
-          test('should return first appointment day', () => {
-            expect(seller.getRecruitDayAt()).toBe(day2);
-          });
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getRecruitDayAt(day4)).toBeUndefined();
         });
       });
-      context('when seller is recruited again', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getRecruitDayAt()).toBeUndefined();
         });
-        context('at day', () => {
-          test('should return current first appointment day after quit', () => {
-            expect(seller.getRecruitDayAt(day4)).toBe(day4);
-            expect(seller.getRecruitDayAt(day5)).toBe(day4);
-          });
-          test('should not return previuos first appointment day', () => {
-            expect(seller.getRecruitDayAt(day7)).not.toBe(day2);
-            expect(seller.getRecruitDayAt(day7)).not.toBe(day4);
-          });
+      });
+    });
+
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+      });
+      context('at day', () => {
+        test('should return first appointment day', () => {
+          expect(seller.getRecruitDayAt(day3)).toBe(day2);
         });
-        context('now', () => {
-          test('should return current first appointment day', () => {
-            expect(seller.getRecruitDayAt()).toBe(day7);
-          });
+
+        test('should not return other appointment day', () => {
+          expect(seller.getRecruitDayAt(day3)).not.toBe(day4);
+        });
+      });
+      context('now', () => {
+        test('should return first appointment day', () => {
+          expect(seller.getRecruitDayAt()).toBe(day2);
+        });
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      });
+      context('at day', () => {
+        test('should return current first appointment day after quit', () => {
+          expect(seller.getRecruitDayAt(day4)).toBe(day4);
+          expect(seller.getRecruitDayAt(day5)).toBe(day4);
+        });
+        test('should not return previuos first appointment day', () => {
+          expect(seller.getRecruitDayAt(day7)).not.toBe(day2);
+          expect(seller.getRecruitDayAt(day7)).not.toBe(day4);
+        });
+      });
+      context('now', () => {
+        test('should return current first appointment day', () => {
+          expect(seller.getRecruitDayAt()).toBe(day7);
         });
       });
     });
@@ -545,70 +548,67 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#isRecruitedAt', () => {
-    context('when seller have no appointments', () => {
-      context('when seller is not recruited', () => {
-        context('at day', () => {
-          test('should return false', () => {
-            expect(seller.isRecruitedAt(day1)).toBe(false);
-          });
-        });
-
-        context('now', () => {
-          test('should return false', () => {
-            expect(seller.isRecruitedAt()).toBe(false);
-          });
+    context('when seller is not recruited', () => {
+      context('at day', () => {
+        test('should return false', () => {
+          expect(seller.isRecruitedAt(day1)).toBe(false);
         });
       });
 
-      context('when seller is quited', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfQuitedSeller);
-        });
-
-        context('at day', () => {
-          test('should return false', () => {
-            expect(seller.isRecruitedAt(day4)).toBe(false);
-          });
-        });
-
-        context('now', () => {
-          test('should return false', () => {
-            expect(seller.isRecruitedAt()).toBe(false);
-          });
+      context('now', () => {
+        test('should return false', () => {
+          expect(seller.isRecruitedAt()).toBe(false);
         });
       });
     });
 
-    context('when seller have appointments', () => {
-      context('when seller is recruited once', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSeller);
-        });
-        context('at day', () => {
-          test('should return true', () => {
-            expect(seller.isRecruitedAt(day3)).toBe(true);
-          });
-        });
-        context('now', () => {
-          test('should return true', () => {
-            expect(seller.isRecruitedAt()).toBe(true);
-          });
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+      });
+
+      context('at day', () => {
+        test('should return false', () => {
+          expect(seller.isRecruitedAt(day4)).toBe(false);
         });
       });
-      context('when seller is recruited again', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+
+      context('now', () => {
+        test('should return false', () => {
+          expect(seller.isRecruitedAt()).toBe(false);
         });
-        context('at day', () => {
-          test('should return true', () => {
-            expect(seller.isRecruitedAt(day4)).toBe(true);
-            expect(seller.isRecruitedAt(day5)).toBe(true);
-          });
+      });
+    });
+
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+      });
+      context('at day', () => {
+        test('should return true', () => {
+          expect(seller.isRecruitedAt(day3)).toBe(true);
         });
-        context('now', () => {
-          test('should return true', () => {
-            expect(seller.isRecruitedAt()).toBe(true);
-          });
+      });
+      context('now', () => {
+        test('should return true', () => {
+          expect(seller.isRecruitedAt()).toBe(true);
+        });
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      });
+      context('at day', () => {
+        test('should return true', () => {
+          expect(seller.isRecruitedAt(day4)).toBe(true);
+          expect(seller.isRecruitedAt(day5)).toBe(true);
+        });
+      });
+      context('now', () => {
+        test('should return true', () => {
+          expect(seller.isRecruitedAt()).toBe(true);
         });
       });
     });
@@ -639,84 +639,81 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#getQuitDayAt', () => {
-    context('when seller have no appointments', () => {
-      context('when seller is not recruited', () => {
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getQuitDayAt(day1)).toBeUndefined();
-          });
-        });
-
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getQuitDayAt()).toBeUndefined();
-          });
+    context('when seller is not recruited', () => {
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getQuitDayAt(day1)).toBeUndefined();
         });
       });
-      context('when seller is quited', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfQuitedSeller);
-        });
 
-        context('at day', () => {
-          test('should return quit day', () => {
-            expect(seller.getQuitDayAt(day4)).toBe(day4);
-            expect(seller.getQuitDayAt(day7)).toBe(day6);
-          });
-
-          test('should not return previous quit day', () => {
-            expect(seller.getQuitDayAt(day6)).not.toBe(day4);
-          });
-        });
-
-        context('now', () => {
-          test('should return last quit day', () => {
-            expect(seller.getQuitDayAt()).toBe(day6);
-          });
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getQuitDayAt()).toBeUndefined();
         });
       });
     });
 
-    context('when seller have appointments', () => {
-      context('when seller is recruited once', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSeller);
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+      });
+
+      context('at day', () => {
+        test('should return quit day', () => {
+          expect(seller.getQuitDayAt(day4)).toBe(day4);
+          expect(seller.getQuitDayAt(day7)).toBe(day6);
         });
 
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getQuitDayAt(day3)).toBeUndefined();
-          });
-        });
-
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getQuitDayAt()).toBeUndefined();
-          });
+        test('should not return previous quit day', () => {
+          expect(seller.getQuitDayAt(day6)).not.toBe(day4);
         });
       });
 
-      context('when seller is recruited again', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      context('now', () => {
+        test('should return last quit day', () => {
+          expect(seller.getQuitDayAt()).toBe(day6);
+        });
+      });
+    });
+
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+      });
+
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getQuitDayAt(day3)).toBeUndefined();
+        });
+      });
+
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getQuitDayAt()).toBeUndefined();
+        });
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      });
+
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getQuitDayAt(day4)).toBeUndefined();
+          expect(seller.getQuitDayAt(day5)).toBeUndefined();
         });
 
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getQuitDayAt(day4)).toBeUndefined();
-            expect(seller.getQuitDayAt(day5)).toBeUndefined();
-          });
-
-          test('should not return previous quit day', () => {
-            expect(seller.getQuitDayAt(day7)).not.toBe(day3);
-            expect(seller.getQuitDayAt(day7)).not.toBe(day6);
-          });
+        test('should not return previous quit day', () => {
+          expect(seller.getQuitDayAt(day7)).not.toBe(day3);
+          expect(seller.getQuitDayAt(day7)).not.toBe(day6);
         });
+      });
 
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getQuitDayAt()).toBeUndefined();
-          });
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getQuitDayAt()).toBeUndefined();
         });
       });
     });
@@ -748,75 +745,72 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#isQuitedAt', () => {
-    context('when seller have no appointments', () => {
-      context('when seller is not recruited', () => {
-        context('at day', () => {
-          test('should return false', () => {
-            expect(seller.isQuitedAt(day1)).toBe(false);
-          });
-        });
-
-        context('now', () => {
-          test('should return false', () => {
-            expect(seller.isQuitedAt()).toBe(false);
-          });
+    context('when seller is not recruited', () => {
+      context('at day', () => {
+        test('should return false', () => {
+          expect(seller.isQuitedAt(day1)).toBe(false);
         });
       });
-      context('when seller is quited', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfQuitedSeller);
-        });
 
-        context('at day', () => {
-          test('should return true', () => {
-            expect(seller.isQuitedAt(day4)).toBe(true);
-            expect(seller.isQuitedAt(day7)).toBe(true);
-          });
-        });
-
-        context('now', () => {
-          test('should return true', () => {
-            expect(seller.isQuitedAt()).toBe(true);
-          });
+      context('now', () => {
+        test('should return false', () => {
+          expect(seller.isQuitedAt()).toBe(false);
         });
       });
     });
 
-    context('when seller have appointments', () => {
-      context('when seller is recruited once', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSeller);
-        });
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+      });
 
-        context('at day', () => {
-          test('should return false', () => {
-            expect(seller.isQuitedAt(day3)).toBe(false);
-          });
-        });
-
-        context('now', () => {
-          test('should return false', () => {
-            expect(seller.isQuitedAt()).toBe(false);
-          });
+      context('at day', () => {
+        test('should return true', () => {
+          expect(seller.isQuitedAt(day4)).toBe(true);
+          expect(seller.isQuitedAt(day7)).toBe(true);
         });
       });
 
-      context('when seller is recruited again', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      context('now', () => {
+        test('should return true', () => {
+          expect(seller.isQuitedAt()).toBe(true);
         });
+      });
+    });
 
-        context('at day', () => {
-          test('should return false', () => {
-            expect(seller.isQuitedAt(day4)).toBe(false);
-            expect(seller.isQuitedAt(day5)).toBe(false);
-          });
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+      });
+
+      context('at day', () => {
+        test('should return false', () => {
+          expect(seller.isQuitedAt(day3)).toBe(false);
         });
+      });
 
-        context('now', () => {
-          test('should return false', () => {
-            expect(seller.isQuitedAt()).toBe(false);
-          });
+      context('now', () => {
+        test('should return false', () => {
+          expect(seller.isQuitedAt()).toBe(false);
+        });
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      });
+
+      context('at day', () => {
+        test('should return false', () => {
+          expect(seller.isQuitedAt(day4)).toBe(false);
+          expect(seller.isQuitedAt(day5)).toBe(false);
+        });
+      });
+
+      context('now', () => {
+        test('should return false', () => {
+          expect(seller.isQuitedAt()).toBe(false);
         });
       });
     });
@@ -847,94 +841,90 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#getSeniorityAt', () => {
-    context('when seller have no appointments', () => {
-      context('when seller is not recruited', () => {
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getSeniorityAt(day1)).toBeUndefined();
-          });
-        });
-
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getSeniorityAt()).toBeUndefined();
-          });
+    context('when seller is not recruited', () => {
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getSeniorityAt(day1)).toBeUndefined();
         });
       });
-      context('when seller is quited', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfQuitedSeller);
-        });
 
-        context('at day', () => {
-          test('should return undefined', () => {
-            expect(seller.getSeniorityAt(day4)).toBeUndefined();
-            expect(seller.getSeniorityAt(day7)).toBeUndefined();
-          });
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getSeniorityAt()).toBeUndefined();
         });
+      });
+    });
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+      });
 
-        context('now', () => {
-          test('should return undefined', () => {
-            expect(seller.getSeniorityAt()).toBeUndefined();
-          });
+      context('at day', () => {
+        test('should return undefined', () => {
+          expect(seller.getSeniorityAt(day4)).toBeUndefined();
+          expect(seller.getSeniorityAt(day7)).toBeUndefined();
+        });
+      });
+
+      context('now', () => {
+        test('should return undefined', () => {
+          expect(seller.getSeniorityAt()).toBeUndefined();
         });
       });
     });
 
-    context('when seller have appointments', () => {
-      context('when seller is recruited once', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSeller);
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+      });
+
+      context('at day', () => {
+        test('should not return undefined', () => {
+          expect(seller.getSeniorityAt(day3)).not.toBeUndefined();
         });
 
-        context('at day', () => {
-          test('should not return undefined', () => {
-            expect(seller.getSeniorityAt(day3)).not.toBeUndefined();
-          });
-
-          test('should return 0 at recruit Day', () => {
-            expect(seller.getSeniorityAt(day2)).toBe(0);
-          });
-
-          test('should return increased value later', () => {
-            expect(seller.getSeniorityAt(day9)).toBeGreaterThan(
-              seller.getSeniorityAt(day4)
-            );
-          });
+        test('should return 0 at recruit Day', () => {
+          expect(seller.getSeniorityAt(day2)).toBe(0);
         });
 
-        context('now', () => {
-          test('should not return undefined', () => {
-            expect(seller.getSeniorityAt()).not.toBeUndefined();
-          });
+        test('should return increased value later', () => {
+          expect(seller.getSeniorityAt(day9)).toBeGreaterThan(
+            seller.getSeniorityAt(day4)
+          );
         });
       });
 
-      context('when seller is recruited again', () => {
-        beforeEach(() => {
-          seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      context('now', () => {
+        test('should not return undefined', () => {
+          expect(seller.getSeniorityAt()).not.toBeUndefined();
+        });
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+      });
+
+      context('at day', () => {
+        test('should not return undefined', () => {
+          expect(seller.getSeniorityAt(day4)).not.toBeUndefined();
         });
 
-        context('at day', () => {
-          test('should not return undefined', () => {
-            expect(seller.getSeniorityAt(day4)).not.toBeUndefined();
-          });
+        test('should return 0 at new recruit Day', () => {
+          expect(seller.getSeniorityAt(day7)).toBe(0);
+        });
+      });
 
-          test('should return 0 at new recruit Day', () => {
-            expect(seller.getSeniorityAt(day7)).toBe(0);
-          });
+      context('now', () => {
+        test('should not return undefined', () => {
+          expect(seller.getSeniorityAt()).not.toBeUndefined();
         });
 
-        context('now', () => {
-          test('should not return undefined', () => {
-            expect(seller.getSeniorityAt()).not.toBeUndefined();
-          });
-
-          test('should return bigger value', () => {
-            expect(seller.getSeniorityAt()).toBeGreaterThan(
-              seller.getSeniorityAt(day7)
-            );
-          });
+        test('should return bigger value', () => {
+          expect(seller.getSeniorityAt()).toBeGreaterThan(
+            seller.getSeniorityAt(day7)
+          );
         });
       });
     });
@@ -965,158 +955,476 @@ describe('Domain :: entities :: Seller', () => {
   });
 
   describe('#addAppointment', () => {
-    beforeEach(() => {
-      seller.addAppointment(floristPost.postId, day1);
-    });
+    context('when seller is not recruited', () => {
+      beforeEach(() => {
+        seller.addAppointment(floristPost.postId, day2);
 
-    context('when seller appointed to postId', () => {
+        expect(seller.isRecruitedAt(day1)).toBe(false);
+        expect(seller.getRecruitDayAt(day1)).toBeUndefined();
+        expect(seller.getPostIdAt(day1)).toBeUndefined();
+        expect(seller.getPostIdsAt(day1)).toEqual([]);
+        expect(seller.getPostIdsAt(day1)).toHaveLength(0);
+        expect(seller.getAppointmentsAt(day1)).toEqual([]);
+        expect(seller.getAppointmentsAt(day1)).toHaveLength(0);
+        expect(seller.getSeniorityAt(day1)).toBeUndefined();
+      });
+
       test('should recruit seller', () => {
-        expect(seller.isRecruitedAt()).toBe(true);
-        expect(seller.recruitDay).toBe(day1);
+        expect(seller.isRecruited).toBe(true);
       });
 
-      test('should return seniority not undefined', () => {
-        expect(seller.getSeniorityAt(day1)).not.toBeUndefined();
+      test('should set recruit day', () => {
+        expect(seller.recruitDay).toBe(day2);
       });
 
-      test('should have appointments length equal to 1', () => {
+      test('should set postId', () => {
+        expect(seller.postId).toBe(floristPost.postId);
+      });
+
+      test('should change appointments', () => {
+        expect(seller.appointments).toEqual([
+          { postId: floristPost.postId, day: day2 },
+        ]);
         expect(seller.appointments).toHaveLength(1);
       });
+
+      test('should change postIds', () => {
+        expect(seller.postIds).toEqual([floristPost.postId]);
+        expect(seller.postIds).toHaveLength(1);
+      });
+
+      test('should start seniority', () => {
+        expect(seller.seniority).not.toBeUndefined();
+      });
     });
 
-    // context('when appoint to same postId at same date', () => {
-    //   test('should throw exeption', () => {
-    //     try {
-    //       seller.addAppointment(floristPost.postId, day1);
-    //     } catch (e) {
-    //       expect(e.details).toEqual(['Seller already have this post']);
-    //       expect(seller.appointments).toHaveLength(1);
-    //     }
-    //   });
-    // });
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
 
-    // context('when appoint to same postId at another date', () => {
-    //   test('should throw exeption', () => {
-    //     try {
-    //       seller.addAppointment(floristPost.postId, newDay);
-    //     } catch (e) {
-    //       expect(e.details).toEqual(['Seller already have this post']);
-    //       expect(seller.appointments).toHaveLength(1);
-    //     }
-    //   });
-    // });
+        expect(seller.isRecruited).toBe(true);
+        expect(seller.postId).toBeTruthy();
+      });
+
+      context('when appointment already exist at passed day ', () => {
+        test('should return exception', () => {
+          expect(() => {
+            seller.addAppointment(floristPost.postId, day4);
+          }).toThrowError();
+        });
+      });
+
+      context('when no appointment exist at passed day ', () => {
+        context('when passed postId is the same as appointed', () => {
+          test('should return exception', () => {
+            expect(() => {
+              seller.addAppointment(floristPost.postId, day6);
+            }).toThrowError();
+          });
+        });
+
+        context('when passed postId is not the same as appointed', () => {
+          test('should change postId', () => {
+            seller.addAppointment(floristPost.postId, day6);
+
+            expect(seller.postId).toBe(floristPost.postId);
+          });
+        });
+      });
+    });
+
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+        expect(seller.isRecruited).toBe(false);
+        expect(seller.isQuited).toBe(true);
+        expect(seller.postId).toBeUndefined();
+        expect(seller.quitDay).toBeTruthy();
+
+        seller.addAppointment(floristPost.postId, day7);
+      });
+
+      test('should recruit seller', () => {
+        expect(seller.isRecruited).toBe(true);
+      });
+
+      test('should set postId', () => {
+        expect(seller.postId).toBe(floristPost.postId);
+      });
+
+      test('should make seller not quited', () => {
+        expect(seller.isQuited).toBe(false);
+        expect(seller.quitDay).toBeUndefined();
+      });
+
+      test('should change appointments', () => {
+        expect(seller.appointments).toEqual([
+          { postId: floristPost.postId, day: day7 },
+        ]);
+        expect(seller.appointments).toHaveLength(1);
+      });
+
+      test('should change postIds', () => {
+        expect(seller.postIds).toEqual([floristPost.postId]);
+        expect(seller.postIds).toHaveLength(1);
+      });
+
+      test('should start seniority again', () => {
+        expect(seller.seniority).not.toBeUndefined();
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+
+        expect(seller.isRecruited).toBe(true);
+        expect(seller.postId).toBeTruthy();
+      });
+
+      context('when appointment already exist at passed day ', () => {
+        test('should return exception', () => {
+          expect(() => {
+            seller.addAppointment(floristPost.postId, day4);
+          }).toThrowError();
+        });
+      });
+
+      context('when appointment not exist at passed day ', () => {
+        context('when passed postId is the same as appointed', () => {
+          test('should return exception', () => {
+            expect(() => {
+              seller.addAppointment(floristPost.postId, day6);
+            }).toThrowError();
+          });
+        });
+
+        context('when passed postId is not the same as appointed', () => {
+          context('when passed day is less than new recruit day', () => {
+            test('should return exception', () => {
+              expect(() => {
+                seller.addAppointment(floristPost.postId, day5);
+              }).toThrowError();
+            });
+          });
+
+          context('when passed day is later than new recruit day', () => {
+            test('should change postId', () => {
+              seller.addAppointment(floristPost.postId);
+              expect(seller.postId).toBe(floristPost.postId);
+            });
+          });
+        });
+      });
+    });
   });
 
   describe('#editAppointment', () => {
-    beforeEach(() => {
-      seller.addAppointment(floristPost.postId, day1);
-    });
+    context('when seller is not recruited', () => {
+      beforeEach(() => {
+        seller.editAppointment(floristPost.postId, day2);
 
-    context('when appointment has created with wrong postId', () => {
-      test('should change associated postId', () => {
-        seller.editAppointment(
-          floristPost.postId,
-          day1,
-          seniorFloristPost.postId,
-          day1
-        );
+        expect(seller.isRecruitedAt(day1)).toBe(false);
+        expect(seller.getRecruitDayAt(day1)).toBeUndefined();
+        expect(seller.getPostIdAt(day1)).toBeUndefined();
+        expect(seller.getPostIdsAt(day1)).toEqual([]);
+        expect(seller.getPostIdsAt(day1)).toHaveLength(0);
+        expect(seller.getAppointmentsAt(day1)).toEqual([]);
+        expect(seller.getAppointmentsAt(day1)).toHaveLength(0);
+        expect(seller.getSeniorityAt(day1)).toBeUndefined();
+      });
 
+      test('should recruit seller', () => {
+        expect(seller.isRecruited).toBe(true);
+      });
+
+      test('should set recruit day', () => {
+        expect(seller.recruitDay).toBe(day2);
+      });
+
+      test('should set postId', () => {
+        expect(seller.postId).toBe(floristPost.postId);
+      });
+
+      test('should change appointments', () => {
+        expect(seller.appointments).toEqual([
+          { postId: floristPost.postId, day: day2 },
+        ]);
         expect(seller.appointments).toHaveLength(1);
-        expect(seller.appointments[0].day).toEqual(day1);
-        expect(seller.getPostIdAt()).toBe(seniorFloristPost.postId);
+      });
+
+      test('should change postIds', () => {
+        expect(seller.postIds).toEqual([floristPost.postId]);
+        expect(seller.postIds).toHaveLength(1);
+      });
+
+      test('should start seniority', () => {
+        expect(seller.seniority).not.toBeUndefined();
       });
     });
 
-    context('when appointment has created with wrong date', () => {
-      test('should change associated date', () => {
-        seller.editAppointment(
-          floristPost.postId,
-          day1,
-          floristPost.postId,
-          day2
-        );
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+
+        expect(seller.isRecruited).toBe(true);
+        expect(seller.postId).toBeTruthy();
+      });
+
+      context('when appointment already exist at passed day ', () => {
+        test('should return exception', () => {
+          expect(() => {
+            seller.editAppointment(floristPost.postId, day4);
+          }).toThrowError();
+        });
+      });
+
+      context('when no appointment exist at passed day ', () => {
+        context('when passed postId is the same as appointed', () => {
+          test('should return exception', () => {
+            expect(() => {
+              seller.editAppointment(floristPost.postId, day6);
+            }).toThrowError();
+          });
+        });
+
+        context('when passed postId is not the same as appointed', () => {
+          test('should change postId', () => {
+            seller.editAppointment(floristPost.postId, day6);
+
+            expect(seller.postId).toBe(floristPost.postId);
+          });
+        });
+      });
+    });
+
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+        expect(seller.isRecruited).toBe(false);
+        expect(seller.isQuited).toBe(true);
+        expect(seller.postId).toBeUndefined();
+        expect(seller.quitDay).toBeTruthy();
+
+        seller.editAppointment(floristPost.postId, day7);
+      });
+
+      test('should recruit seller', () => {
+        expect(seller.isRecruited).toBe(true);
+      });
+
+      test('should set postId', () => {
+        expect(seller.postId).toBe(floristPost.postId);
+      });
+
+      test('should make seller not quited', () => {
+        expect(seller.isQuited).toBe(false);
+        expect(seller.quitDay).toBeUndefined();
+      });
+
+      test('should change appointments', () => {
+        expect(seller.appointments).toEqual([
+          { postId: floristPost.postId, day: day7 },
+        ]);
         expect(seller.appointments).toHaveLength(1);
-        expect(seller.getPostIdAt(day1)).toEqual(undefined);
-        expect(seller.getPostIdAt(day2)).toBe(floristPost.postId);
+      });
+
+      test('should change postIds', () => {
+        expect(seller.postIds).toEqual([floristPost.postId]);
+        expect(seller.postIds).toHaveLength(1);
+      });
+
+      test('should start seniority again', () => {
+        expect(seller.seniority).not.toBeUndefined();
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+
+        expect(seller.isRecruited).toBe(true);
+        expect(seller.postId).toBeTruthy();
+      });
+
+      context('when appointment already exist at passed day ', () => {
+        test('should return exception', () => {
+          expect(() => {
+            seller.editAppointment(floristPost.postId, day4);
+          }).toThrowError();
+        });
+      });
+
+      context('when appointment not exist at passed day ', () => {
+        context('when passed postId is the same as appointed', () => {
+          test('should return exception', () => {
+            expect(() => {
+              seller.editAppointment(floristPost.postId, day6);
+            }).toThrowError();
+          });
+        });
+
+        context('when passed postId is not the same as appointed', () => {
+          context('when passed day is less than new recruit day', () => {
+            test('should return exception', () => {
+              expect(() => {
+                seller.editAppointment(floristPost.postId, day5);
+              }).toThrowError();
+            });
+          });
+
+          context('when passed day is later than new recruit day', () => {
+            test('should change postId', () => {
+              seller.editAppointment(floristPost.postId);
+              expect(seller.postId).toBe(floristPost.postId);
+            });
+          });
+        });
       });
     });
   });
 
-  describe('#deleteAppointment', () => {
-    beforeEach(() => {
-      seller.addAppointment(floristPost.postId, day1);
-      seller.addAppointment(seniorFloristPost.postId, day2);
-      seller.addAppointment(floristPost.postId, day3);
-    });
-
-    context('when delete existing appointment', () => {
-      test('should decrease appointments length', () => {
-        expect(seller.appointments).toHaveLength(3);
-
-        seller.deleteAppointment(floristPost.postId, day3);
-
-        expect(seller.getPostIdAt()).toBe(seniorFloristPost.postId);
-        expect(seller.appointments).toHaveLength(2);
-      });
-    });
-
-    // context('when delete appointment twice', () => {
-    //   test('should throw exeption', () => {
-    //     seller.deleteAppointment(floristPost.postId, day3);
-
-    //     try {
-    //       seller.deleteAppointment(floristPost.postId, day3);
-    //     } catch (e) {
-    //       expect(e.details).toEqual([
-    //         'Seller have not such appointment to this postId',
-    //       ]);
-    //       expect(seller.appointments).toHaveLength(2);
-    //     }
-    //   });
-    // });
-  });
+  describe('#deleteAppointment', () => {});
 
   describe('#takeQuit', () => {
-    context('when seller have appointments', () => {
+    context('when seller is not recruited', () => {
       beforeEach(() => {
-        seller.addAppointment(floristPost.postId, day1);
-        seller.addAppointment(seniorFloristPost.postId, day2);
+        seller.takeQuit(floristPost.postId, day2);
+
+        expect(seller.isRecruitedAt(day1)).toBe(false);
+        expect(seller.getRecruitDayAt(day1)).toBeUndefined();
+        expect(seller.getPostIdAt(day1)).toBeUndefined();
+        expect(seller.getPostIdsAt(day1)).toEqual([]);
+        expect(seller.getPostIdsAt(day1)).toHaveLength(0);
+        expect(seller.getAppointmentsAt(day1)).toEqual([]);
+        expect(seller.getAppointmentsAt(day1)).toHaveLength(0);
+        expect(seller.getSeniorityAt(day1)).toBeUndefined();
       });
 
-      test('should be add quitPostId', () => {
-        seller.takeQuit(newDay);
-
-        expect(seller.quitDay).toEqual(newDay);
-        expect(seller.appointments).toHaveLength(0);
+      test('should return exception', () => {
+        expect(seller.seniority).not.toBeUndefined();
       });
-
-      // test('should throw exeption if quit day before reqruit day', () => {
-      //   try {
-      //     seller.takeQuit(day1.prev());
-      //   } catch (e) {
-      //     expect(e.details).toEqual([
-      //       'Seller cannot take quit before get recruit or on the same day',
-      //     ]);
-      //     expect(seller.quitDay).toBeUndefined();
-      //     expect(seller.appointments).toHaveLength(2);
-      //   }
-      // });
     });
 
-    // context('when seller have no appointments', () => {
-    //   test('should throw exeption', () => {
-    //     try {
-    //       seller.takeQuit(day1.prev());
-    //     } catch (e) {
-    //       expect(e.details).toEqual([
-    //         'Seller cannot take quit before get recruit or on the same day',
-    //       ]);
-    //       expect(seller.quitDay).toBeUndefined();
-    //       expect(seller.reqruitDay).toBeUndefined();
-    //       expect(seller.appointments).toHaveLength(0);
-    //     }
-    //   });
-    // });
+    context('when seller is recruited once', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSeller);
+
+        expect(seller.isRecruited).toBe(true);
+        expect(seller.postId).toBeTruthy();
+      });
+
+      context('when appointment already exist at passed day ', () => {
+        test('should return exception', () => {
+          expect(() => {
+            seller.takeQuit(floristPost.postId, day4);
+          }).toThrowError();
+        });
+      });
+
+      context('when no appointment exist at passed day ', () => {
+        context('when passed postId is the same as appointed', () => {
+          test('should return exception', () => {
+            expect(() => {
+              seller.takeQuit(floristPost.postId, day6);
+            }).toThrowError();
+          });
+        });
+
+        context('when passed postId is not the same as appointed', () => {
+          test('should change postId', () => {
+            seller.takeQuit(floristPost.postId, day6);
+
+            expect(seller.postId).toBe(floristPost.postId);
+          });
+        });
+      });
+    });
+
+    context('when seller is quited', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfQuitedSeller);
+        expect(seller.isRecruited).toBe(false);
+        expect(seller.isQuited).toBe(true);
+        expect(seller.postId).toBeUndefined();
+        expect(seller.quitDay).toBeTruthy();
+
+        seller.takeQuit(floristPost.postId, day7);
+      });
+
+      test('should recruit seller', () => {
+        expect(seller.isRecruited).toBe(true);
+      });
+
+      test('should set postId', () => {
+        expect(seller.postId).toBe(floristPost.postId);
+      });
+
+      test('should make seller not quited', () => {
+        expect(seller.isQuited).toBe(false);
+        expect(seller.quitDay).toBeUndefined();
+      });
+
+      test('should change appointments', () => {
+        expect(seller.appointments).toEqual([
+          { postId: floristPost.postId, day: day7 },
+        ]);
+        expect(seller.appointments).toHaveLength(1);
+      });
+
+      test('should change postIds', () => {
+        expect(seller.postIds).toEqual([floristPost.postId]);
+        expect(seller.postIds).toHaveLength(1);
+      });
+
+      test('should start seniority again', () => {
+        expect(seller.seniority).not.toBeUndefined();
+      });
+    });
+
+    context('when seller is recruited again', () => {
+      beforeEach(() => {
+        seller.setAppointments(appointmentsOfSellerRecruitedAgain);
+
+        expect(seller.isRecruited).toBe(true);
+        expect(seller.postId).toBeTruthy();
+      });
+
+      context('when appointment already exist at passed day ', () => {
+        test('should return exception', () => {
+          expect(() => {
+            seller.takeQuit(floristPost.postId, day4);
+          }).toThrowError();
+        });
+      });
+
+      context('when appointment not exist at passed day ', () => {
+        context('when passed postId is the same as appointed', () => {
+          test('should return exception', () => {
+            expect(() => {
+              seller.takeQuit(floristPost.postId, day6);
+            }).toThrowError();
+          });
+        });
+
+        context('when passed postId is not the same as appointed', () => {
+          context('when passed day is less than new recruit day', () => {
+            test('should return exception', () => {
+              expect(() => {
+                seller.takeQuit(floristPost.postId, day5);
+              }).toThrowError();
+            });
+          });
+
+          context('when passed day is later than new recruit day', () => {
+            test('should change postId', () => {
+              seller.takeQuit(floristPost.postId);
+              expect(seller.postId).toBe(floristPost.postId);
+            });
+          });
+        });
+      });
+    });
   });
 
   // describe('#setAppointments', () => {});

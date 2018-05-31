@@ -46,7 +46,12 @@ export class Seller extends BaseEntity {
 
   get postIds() {
     return new Array(
-      ...new Set(this.getAppointmentsAt().map(({ postId }) => postId))
+      //...new Set(this.getAppointmentsAt().map(({ postId }) => postId))
+      ...new Set(
+        this.getAppointmentsAt()
+          .filter((appointment) => !appointment.postId.isQuitPostId())
+          .map(({ postId }) => postId)
+      )
     );
   }
 
@@ -93,8 +98,12 @@ export class Seller extends BaseEntity {
 
   getAppointmentsAt(day = new Day()) {
     if (!this.isRecruitedAt(day)) {
+      if (this.isQuitedAt(day)) {
+        return [this._getAppointmentAt(this.getQuitDayAt(day))];
+      }
       return [];
     }
+
     const recruitDay = this.getRecruitDayAt(day);
     const currentAppointments = this._getAllAppointmentsAt(day).filter(
       ({ day: currentDay }) => currentDay >= recruitDay
@@ -179,7 +188,9 @@ export class Seller extends BaseEntity {
   }
 
   getPostIdsAt(day = new Day()) {
-    return this.getAppointmentsAt(day).map(({ postId }) => postId);
+    return this.getAppointmentsAt(day)
+      .filter((appointment) => !appointment.postId.isQuitPostId())
+      .map(({ postId }) => postId);
   }
 
   getRecruitDayAt(day = new Day()) {

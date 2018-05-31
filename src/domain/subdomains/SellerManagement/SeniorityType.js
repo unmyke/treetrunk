@@ -41,7 +41,7 @@ export class SeniorityType extends BaseEntity {
     const award = new Award({ value, day });
     this._checkAwardUniqueness(award);
 
-    this.awards = [...this.awards, award].sort(this._dayComparator);
+    this.awards = [...this.awards, award].sort(this._getDayComparator());
   }
 
   editAward(valueToEdit, dayToEdit, value, day) {

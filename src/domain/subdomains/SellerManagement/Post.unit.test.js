@@ -32,10 +32,6 @@ describe('Domain :: entities :: Post', () => {
       expect(post.postId).toBeInstanceOf(PostId);
       expect(post.pieceRates).toHaveLength(0);
     });
-
-    test('should have no pieceRate', () => {
-      expect(post.getPieceRateAt()).toBeUndefined();
-    });
   });
 
   describe('#setPieceRates', () => {
@@ -58,8 +54,8 @@ describe('Domain :: entities :: Post', () => {
           post.setPieceRates(pieceRates);
         } catch (e) {
           expect(e.message).toBe('Not allowed');
-          expect(e.details).toBe({
-            post: ['Not allowed set piece rate at inactive state'],
+          expect(e.details).toEqual({
+            post: ['Not allowed to set piece rates from inactive state'],
           });
         }
 
@@ -120,32 +116,6 @@ describe('Domain :: entities :: Post', () => {
           });
         }
         expect(post.pieceRates).toHaveLength(2);
-      });
-    });
-  });
-
-  describe('#getPieceRateAt', () => {
-    beforeEach(() => {
-      post.addPieceRate(pieceRate2value, pieceRate2day);
-      post.addPieceRate(pieceRate3value, pieceRate3day);
-      post.addPieceRate(pieceRate1value, pieceRate1day);
-    });
-
-    context('when requested before any pieceRate added to post', () => {
-      test('should return undefined', () => {
-        expect(post.getPieceRateAt(pieceRate1day.subDays(1))).toBeUndefined();
-      });
-    });
-
-    context('when requested past pieceRate', () => {
-      test("should return pieceRate's value belongs to that dateRange", () => {
-        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
-      });
-    });
-
-    context('when requested current pieceRate associated with post', () => {
-      test("should return last pieceRate's value", () => {
-        expect(post.pieceRate).toBe(pieceRate3value);
       });
     });
   });
@@ -270,7 +240,7 @@ describe('Domain :: entities :: Post', () => {
     });
   });
 
-  describe('#instanceAt', () => {
+  describe('#getInstanceAt', () => {
     beforeEach(() => {
       post.setPieceRates([
         { value: pieceRate3value, day: pieceRate3day },
@@ -282,9 +252,9 @@ describe('Domain :: entities :: Post', () => {
 
     context('when passed no props', () => {
       test('should return equal post, but not this', () => {
-        const newPost = post.instanceAt();
+        const newPost = post.getInstanceAt();
         expect(JSON.stringify(newPost)).toEqual(JSON.stringify(post));
-        expect(post.instanceAt()).not.toBe(post);
+        expect(post.getInstanceAt()).not.toBe(post);
       });
     });
 
@@ -298,7 +268,7 @@ describe('Domain :: entities :: Post', () => {
         ]);
       });
       test('should return equal post without last piece rate', () => {
-        const newPost = post.instanceAt(
+        const newPost = post.getInstanceAt(
           post.pieceRates[post.pieceRates.length - 2].day
         );
 
@@ -313,7 +283,7 @@ describe('Domain :: entities :: Post', () => {
       });
 
       test('should return equal post with empty piece rates array', () => {
-        const newPost = post.instanceAt(post.pieceRates[0].day.prev());
+        const newPost = post.getInstanceAt(post.pieceRates[0].day.prev());
 
         expect(JSON.stringify(newPost)).toEqual(JSON.stringify(expectedPost));
       });
@@ -378,7 +348,7 @@ describe('Domain :: entities :: Post', () => {
         } catch (e) {
           expect(e.message).toBe('Not allowed');
           expect(e.details).toEqual({
-            post: ['Not allowed inactivate from inactive state'],
+            post: ['Not allowed to inactivate from inactive state'],
           });
         }
 
@@ -410,7 +380,7 @@ describe('Domain :: entities :: Post', () => {
       } catch (e) {
         expect(e.message).toBe('Not allowed');
         expect(e.details).toEqual({
-          post: ['Not allowed activate from active state'],
+          post: ['Not allowed to activate from active state'],
         });
       }
 

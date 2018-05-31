@@ -24,7 +24,7 @@ class AnotherConcreteValue extends BaseValue {
   }
 }
 
-describe('Domain :: lib :: BaseClasses:: BaseValue', () => {
+describe('Domain :: lib :: BaseValue', () => {
   context('when two instance reference to same object', () => {
     test('should be equal', () => {
       const valueObject = new BaseValue();

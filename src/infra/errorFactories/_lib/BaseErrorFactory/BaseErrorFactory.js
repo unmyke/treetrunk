@@ -1,5 +1,5 @@
 import { snakeCase } from 'lodash';
-import { BaseClass } from 'src/domain/_lib';
+import { BaseClass } from 'src/domain/_lib/BaseClass';
 
 export class BaseErrorFactory {
   constructor(type) {

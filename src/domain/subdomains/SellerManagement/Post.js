@@ -3,6 +3,7 @@ import {} from 'javascript-state-machine';
 import { BaseEntity } from '../../_lib';
 import { PostId, Day } from '../../commonTypes';
 import { PieceRate } from './PieceRate';
+import { PieceRateCollection } from './PieceRateCollection';
 
 export class Post extends BaseEntity {
   static fsm = {
@@ -132,7 +133,7 @@ export class Post extends BaseEntity {
   constructor({ postId = new PostId(), name, state = 'active' }) {
     super(postId);
     this.name = name;
-    this._pieceRates = [];
+    this._pieceRates = new PieceRateCollection();
 
     this.setState(state);
   }
@@ -177,46 +178,23 @@ export class Post extends BaseEntity {
   // private
 
   _getPieceRatesAt(day = new Day()) {
-    return this._pieceRates
-      .sort(this._getDayComparator())
-      .filter(({ day: currentDay }) => currentDay <= day);
+    return this._pieceRates.getCollectionAt(day);
   }
 
   _getPrevPieceRateAt(day = new Day()) {
-    if (!this.hasPieceRateAt(day)) {
-      return;
-    }
-
-    const pieceRates = this._getPieceRatesAt(day);
-    return pieceRates[pieceRates.length - 1];
+    return this._pieceRates.getPrevItemAt(day);
   }
 
   _getNextPieceRateAt(day = new Day()) {
-    const [lastPieceRate, ...restPieceRates] = this._pieceRates.sort(
-      this._getDayComparator('desc')
-    );
-
-    if (lastPieceRate === undefined || lastPieceRate.day < day) {
-      return undefined;
-    }
-
-    const pieceRate = restPieceRates.reduce((pieceRate, currentPieceRate) => {
-      return currentPieceRate.day >= day ? currentPieceRate : pieceRate;
-    }, lastPieceRate);
-
-    return pieceRate;
+    return this._pieceRates.getNextItemAt(day);
   }
 
   _getPieceRateAt(day = new Day()) {
-    const index = this._pieceRates.findIndex(({ day: currentDay }) =>
-      day.equals(currentDay)
-    );
-
-    return this._pieceRates[index];
+    return this._pieceRates.getItemAt(day);
   }
 
   _isPieceRateExistsAt(day = new Day()) {
-    return !!this._getPieceRateAt(day);
+    return this._pieceRates.isItemExistsAt(day);
   }
 }
 

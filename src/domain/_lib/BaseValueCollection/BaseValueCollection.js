@@ -1,4 +1,4 @@
-import { lowerFirst, lowerCase } from 'lodash';
+import { lowerFirst, lowerCase, upperFirst } from 'lodash';
 
 import { applyFSM, getDayComparator } from '../BaseMethods';
 import { BaseClass } from '../BaseClass';
@@ -6,21 +6,9 @@ import { BaseClass } from '../BaseClass';
 import { OperationErrorFactory as ErrorFactory } from 'src/infra/errorFactories/OperationErrorFactory';
 import { Day } from '../../commonTypes';
 
-function getOperation(operation) {
-  switch (operation) {
-    case 'set':
-      return 'setCollection';
-    case 'add':
-      return 'validateAddition';
-    case 'delete':
-      return 'validateDeletion';
-    default:
-      return 'iddle';
-  }
-}
-
+// state-transition functions
 function getPostValidationState() {
-  if (Object.keys(this.validationErrors).length === 0) {
+  if (this.validationErrors.length === 0) {
     return 'result';
   }
   return 'error';
@@ -30,25 +18,21 @@ export class BaseValueCollection extends BaseClass {
   static errorFactory = new ErrorFactory();
   static fsm = {
     init: 'idle',
+
     transitions: [
-      { name: 'operate', from: 'idle', to: getOperation },
+      { name: 'operate', from: 'idle', to: 'validate' },
       {
         name: 'process',
-        from: ['validateAddition', 'validateDeletion', 'setCollection'],
+        from: 'validate',
         to: getPostValidationState,
       },
       { name: 'reset', from: ['result', 'error'], to: 'idle' },
     ],
 
-    // data: function(collection) {
-    //   return {
-    //     collection: collection,
-    //   };
-    // },
-
     methods: {
       onIdle() {
-        this.validationErrors = {};
+        this.operation = '';
+        this.validationErrors = [];
         this.operationArgs = {};
       },
 
@@ -57,23 +41,23 @@ export class BaseValueCollection extends BaseClass {
         this.operationArgs = operationArgs;
       },
 
-      onValidateAddition() {
-        const { item } = this.operationArgs;
+      onValidate() {
+        const methodName = `_validate${upperFirst(this.operation)}Operation`;
 
-        const validationErrors = this.getAdditionErrors(item);
-        if (validationErrors.length !== 0) {
-          this.validationErrors = {
-            [lowerFirst(item.constructor.name)]: validationErrors,
-          };
-        }
+        this[methodName]();
       },
+
       onResult() {
-        console.log(this.operationArgs.item.value);
-        this[this.operation](this.operationArgs);
+        const primitiveOperationName = `_${this.operation}`;
+
+        this[primitiveOperationName](this.operationArgs);
       },
 
       onError() {
-        return this.validationErrors;
+        throw this.constructor.errorFactory.createNotAllowed(
+          this,
+          ...this.validationErrors
+        );
       },
     },
   };
@@ -90,12 +74,20 @@ export class BaseValueCollection extends BaseClass {
     return this.getCollectionAt();
   }
 
-  set collection(collection) {
+  set collection(collection = []) {
     this._collection = collection;
   }
 
-  add({ item }) {
-    this.collection = [...this.collection, item];
+  setItems(items = [], collection = [...this.collection]) {
+    this._emit('set', { items });
+  }
+
+  addItem(item, collection = [...this.collection]) {
+    this._emit('add', { item });
+  }
+
+  deleteItem(item, collection = [...this.collection]) {
+    this._emit('delete', { item });
   }
 
   getPrevItemAt(day = new Day(), collection = [...this.collection]) {
@@ -113,9 +105,9 @@ export class BaseValueCollection extends BaseClass {
     return collectionAfterDay[0];
   }
 
-  isItemExists(item, collection = [...this.collection]) {
-    const persistedItem = this.getItemAt(item.day, collection);
-    return persistedItem !== undefined && item.equals(persistedItem);
+  isItemExistsAt(day, collection = [...this.collection]) {
+    const persistedItem = this.getItemAt(day, collection);
+    return !!persistedItem;
   }
 
   getItemAt(day = new Day(), collection = [...this.collection]) {
@@ -134,23 +126,87 @@ export class BaseValueCollection extends BaseClass {
       .filter(({ day: currentDay }) => currentDay <= day);
   }
 
-  getAdditionErrors(item) {
-    return [
-      ...this.getAlreadyExistsError(item),
-      ...this.getPrevNotAllowedError(item),
-      ...this.getNextNotAllowedError(item),
+  // private
+
+  // operation runner
+  _emit(operation, operationArgs) {
+    // console.log(operation);
+    // console.log(operationArgs);
+    this.operate(operation, operationArgs);
+    this.process();
+    this.reset();
+  }
+
+  // primitive oparations
+  _set({ collection }) {
+    this.collection = collection;
+  }
+
+  _add({ item }) {
+    this.collection = [...this.collection, item];
+  }
+
+  _delete({ item }) {
+    this.collection = this.collection.filter(
+      (currentItem) => !item.equals(currentItem)
+    );
+  }
+
+  // operation validators
+  _validateAddOperation() {
+    this._setAdditionErrors(this.operationArgs.item);
+  }
+
+  _validateDeleteOperation() {
+    this._setDeletionErrors(this.operationArgs.item);
+  }
+
+  _validateSetOperation() {
+    this._setSetterErrors();
+  }
+
+  // validation error setters
+  _setAdditionErrors(item) {
+    this.validationErrors = [
+      ...this._getAlreadyExistsError(item),
+      ...this._getPrevNotAllowedError(item),
+      ...this._getNextNotAllowedError(item),
     ];
   }
 
-  getAlreadyExistsError(item, collection = [...this.collection]) {
-    if (this.isItemExists(item, collection)) {
+  _setDeletionErrors(item) {
+    this.validationErrors = [
+      ...this._getPrevAndNextEqualityError(item),
+      ...this._getNotFoundError(item),
+    ];
+  }
+
+  _setSetterErrors(item) {
+    this.validationErrors = [];
+  }
+
+  // validation error generators
+  _getAlreadyExistsError(item, collection = [...this.collection]) {
+    if (this.isItemExistsAt(item, collection)) {
       return [`${item.constructor.name} ${item.toString()} already exists`];
     }
 
     return [];
   }
 
-  getPrevNotAllowedError(item, collection = [...this.collection]) {
+  _getNotFoundError(item, collection = [...this.collection]) {
+    if (!this.isItemExistsAt(item, collection)) {
+      return [
+        `${
+          item.constructor.name
+        } with value "${item.value.toString()}" at ${item.day.toString()} not found`,
+      ];
+    }
+
+    return [];
+  }
+
+  _getPrevNotAllowedError(item, collection = [...this.collection]) {
     const itemName = lowerCase(item.constructor.name);
     const prevItem = this.getPrevItemAt(item.day);
 
@@ -160,12 +216,24 @@ export class BaseValueCollection extends BaseClass {
     return [];
   }
 
-  getNextNotAllowedError(item, collection = [...this.collection]) {
+  _getNextNotAllowedError(item, collection = [...this.collection]) {
     const itemName = lowerCase(item.constructor.name);
     const nextItem = this.getNextItemAt(item.day);
 
     if (nextItem !== undefined && item.value === nextItem.value) {
       return [`Next ${itemName} already have value ${prevItem.value}`];
+    }
+
+    return [];
+  }
+  _getPrevAndNextEqualityError(item, collection = [...this.collection]) {
+    const itemName = lowerCase(item.constructor.name);
+
+    const prev = this.getPrevItemAt(item.day.prev());
+    const next = this.getNextItemAt(item.day.next());
+
+    if (prev !== undefined && next !== undefined && prev.equals(next)) {
+      return [`Previous and next ${itemName} are equal`];
     }
 
     return [];

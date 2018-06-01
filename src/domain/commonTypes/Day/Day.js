@@ -144,7 +144,7 @@ export class Day extends BaseValue {
   }
 
   toString() {
-    return this.format();
+    return this.format('DD.MM.YYYY');
   }
 
   valueOf() {

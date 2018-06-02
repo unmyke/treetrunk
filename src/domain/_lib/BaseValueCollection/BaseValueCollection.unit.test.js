@@ -26,7 +26,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
     coll = new BaseValueCollection();
   });
 
-  context('when collection is empty', () => {
+  context('when items is empty', () => {
     context('when initialized', () => {
       test('should be at idle state', () => {
         expect(coll.state).toBe('idle');
@@ -40,8 +40,8 @@ describe('Domain :: lib :: BaseValueCollection', () => {
         expect(coll.addItem(item1)).toEqual({ done: true, error: null });
 
         expect(coll.state).toBe('idle');
-        expect(coll.collection).toHaveLength(1);
-        expect(coll.collection[0]).toBe(item1);
+        expect(coll.items).toHaveLength(1);
+        expect(coll.items[0]).toBe(item1);
       });
     });
 
@@ -55,29 +55,29 @@ describe('Domain :: lib :: BaseValueCollection', () => {
         });
 
         expect(coll.state).toBe('idle');
-        expect(coll.collection).toHaveLength(0);
+        expect(coll.items).toHaveLength(0);
       });
     });
 
     context('when operation "set" is emitted', () => {
-      test('should set new collection', () => {
+      test('should set new items', () => {
         expect(coll.state).toBe('idle');
 
         expect(coll.setItems(items)).toEqual({ done: true, error: null });
 
         expect(coll.state).toBe('idle');
-        expect(coll.collection).toHaveLength(3);
+        expect(coll.items).toHaveLength(3);
       });
     });
   });
 
-  context('when collection is not empty', () => {
+  context('when items is not empty', () => {
     context('when operation "add" is emitted', () => {
       const items = [item1, item3];
       const itemsForDeleteTests = [item1, item3];
       beforeEach(() => {
         coll.setItems(items);
-        expect(coll.collection).toHaveLength(2);
+        expect(coll.items).toHaveLength(2);
       });
 
       context('when item already exists', () => {
@@ -90,7 +90,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
           });
 
           expect(coll.state).toBe('idle');
-          expect(coll.collection).toHaveLength(2);
+          expect(coll.items).toHaveLength(2);
         });
       });
 
@@ -100,11 +100,11 @@ describe('Domain :: lib :: BaseValueCollection', () => {
 
           expect(coll.addItem({ value: 1, day: day2 })).toEqual({
             done: false,
-            error: ['Previous object already have value 1'],
+            error: ['Previous object already have value "1"'],
           });
 
           expect(coll.state).toBe('idle');
-          expect(coll.collection).toHaveLength(2);
+          expect(coll.items).toHaveLength(2);
         });
       });
 
@@ -114,11 +114,11 @@ describe('Domain :: lib :: BaseValueCollection', () => {
 
           expect(coll.addItem({ value: 3, day: day2 })).toEqual({
             done: false,
-            error: ['Next object already have value 3'],
+            error: ['Next object already have value "3"'],
           });
 
           expect(coll.state).toBe('idle');
-          expect(coll.collection).toHaveLength(2);
+          expect(coll.items).toHaveLength(2);
         });
       });
 
@@ -131,7 +131,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
             expect(coll.addItem(item2)).toEqual({ done: true, error: null });
 
             expect(coll.state).toBe('idle');
-            expect(coll.collection).toEqual([item1, item2, item3]);
+            expect(coll.items).toEqual([item1, item2, item3]);
           });
         }
       );
@@ -141,7 +141,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
 
       beforeEach(() => {
         coll.setItems(items);
-        expect(coll.collection).toHaveLength(3);
+        expect(coll.items).toHaveLength(3);
       });
 
       context('when item not found', () => {
@@ -154,7 +154,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
           });
 
           expect(coll.state).toBe('idle');
-          expect(coll.collection).toHaveLength(3);
+          expect(coll.items).toHaveLength(3);
         });
       });
 
@@ -170,7 +170,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
           });
 
           expect(coll.state).toBe('idle');
-          expect(coll.collection).toHaveLength(3);
+          expect(coll.items).toHaveLength(3);
         });
       });
 
@@ -181,7 +181,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
           expect(coll.deleteItem(item1)).toEqual({ done: true, error: null });
 
           expect(coll.state).toBe('idle');
-          expect(coll.collection).toHaveLength(2);
+          expect(coll.items).toHaveLength(2);
         });
       });
     });

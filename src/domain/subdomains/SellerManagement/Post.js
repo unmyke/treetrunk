@@ -15,6 +15,7 @@ export class Post extends BaseEntity {
       { name: 'setPieceRates', from: 'active', to: 'active' },
       { name: 'addPieceRate', from: 'active', to: 'active' },
       { name: 'deletePieceRate', from: 'active', to: 'active' },
+      { name: 'editPieceRate', from: 'active', to: 'active' },
       { name: 'setState', from: ['active', 'inactive'], to: (state) => state },
     ],
     methods: {
@@ -55,6 +56,20 @@ export class Post extends BaseEntity {
 
         return this._emitPieceRateOperation('deleteItem', pieceRate);
       },
+
+      onEditPieceRate(lifecycle, value, day, newValue, newDay) {
+        const pieceRate = new PieceRate({ value, day });
+        const newPieceRate = new PieceRate({
+          value: newValue,
+          day: newDay,
+        });
+
+        return this._emitPieceRateOperation(
+          'editItem',
+          pieceRate,
+          newPieceRate
+        );
+      },
     },
   };
 
@@ -67,25 +82,29 @@ export class Post extends BaseEntity {
   }
 
   get pieceRates() {
-    return this._pieceRates.collection;
+    return this._pieceRates.items;
   }
 
   get pieceRate() {
-    return this._pieceRates.itemValue;
+    return this._pieceRates.getItemValueAt();
   }
 
   get hasPieceRates() {
-    return this._pieceRates.hasCollection;
+    return this._pieceRates.hasItems;
   }
 
-  hasPieceRateAt(day = new Day()) {
-    return this._pieceRates.hasItemAt(day);
+  getPieceRateAt(day = new Day()) {
+    return this._pieceRates.getItemValueAt(day);
+  }
+
+  hasPieceRatesAt(day = new Day()) {
+    return this._pieceRates.hasItemsAt(day);
   }
 
   getInstanceAt(day = new Day()) {
     const post = new Post(this);
 
-    const pieceRates = this._getPieceRatesAt(day);
+    const pieceRates = this._pieceRates.getItemsAt(day);
     post.setPieceRates(pieceRates);
 
     return post;
@@ -103,35 +122,15 @@ export class Post extends BaseEntity {
 
   // private
 
-  _getPieceRatesAt(day = new Day()) {
-    return this._pieceRates.getCollectionAt(day);
-  }
-
-  // _getPrevPieceRateAt(day = new Day()) {
-  //   return this._pieceRates.getPrevItemAt(day);
-  // }
-
-  // _getNextPieceRateAt(day = new Day()) {
-  //   return this._pieceRates.getNextItemAt(day);
-  // }
-
-  // _getPieceRateAt(day = new Day()) {
-  //   return this._pieceRates.getItemAt(day);
-  // }
-
-  // _isPieceRateExistsAt(day = new Day()) {
-  //   return this._pieceRates.isItemExistsAt(day);
-  // }
-
   _generateError(entity, details) {
     throw this.constructor.errorFactory.createNotAllowed(entity, details);
   }
 
-  _emitPieceRateOperation(operation, args) {
-    const { done, error } = this._pieceRates[operation](args);
+  _emitPieceRateOperation(operation, ...args) {
+    const { done, error } = this._pieceRates[operation](...args);
 
     if (!done) {
-      this._generateError(args, ...error);
+      this._generateError(this, ...error);
     }
     return done;
   }

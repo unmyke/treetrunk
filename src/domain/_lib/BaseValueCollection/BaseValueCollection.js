@@ -58,98 +58,76 @@ export class BaseValueCollection extends BaseClass {
     },
   };
 
-  constructor(collection = []) {
+  constructor(items = []) {
     super();
-    this.collection = collection;
+    this.items = items;
 
     applyFSM(this.constructor);
     this._fsm();
   }
 
-  get collection() {
-    return this.getCollectionAt();
+  get items() {
+    return this.getItemsAt();
   }
 
   get itemValue() {
-    return this.getPrevItemValueAt();
+    return this.getItemValueAt();
   }
 
-  get hasCollection() {
-    return this.hasItemAt();
+  get hasItems() {
+    return this.getItemsAt().length !== 0;
   }
 
-  set collection(collection) {
-    this._collection = collection;
+  set items(items) {
+    this._items = items;
   }
 
-  setItems(items = [], collection = [...this.collection]) {
-    return this._emit('set', { items });
-  }
-
-  addItem(item, collection = [...this.collection]) {
-    return this._emit('add', { item });
-  }
-
-  deleteItem(item, collection = [...this.collection]) {
-    return this._emit('delete', { item });
-  }
-
-  getPrevItemAt(day = new Day(), collection = [...this.collection]) {
-    const collectionBeforeDay = collection
-      .sort(getDayComparator())
-      .filter(({ day: currentDay }) => currentDay < day);
-
-    return collectionBeforeDay[collectionBeforeDay.length - 1];
-  }
-
-  getPrevItemValueAt(day = new Day(), collection = [...this.collection]) {
-    const item = this.getPrevItemAt(day);
-    return item === undefined ? undefined : item.value;
-  }
-
-  getNextItemAt(day = new Day(), collection = [...this.collection]) {
-    const collectionAfterDay = collection
-      .sort(getDayComparator())
-      .filter(({ day: currentDay }) => currentDay > day);
-    return collectionAfterDay[0];
-  }
-
-  hasItemAt(day, collection = [...this.collection]) {
-    const persistedItem = this.getItemAt(day, collection);
-    return !!persistedItem;
-  }
-
-  hasItem(item, collection = [...this.collection]) {
-    const persistedItem = this.getItemAt(item.day, collection);
-    return persistedItem !== undefined && item.equals(persistedItem);
-  }
-
-  getItemAt(day = new Day(), collection = [...this.collection]) {
-    return this.getCollectionAt(day, collection).find(({ day: currentDay }) =>
-      currentDay.equals(day)
-    );
-  }
-
-  getCollectionAt(day = new Day(), collection = [...this._collection]) {
-    if (collection.length === 0) {
+  getItemsAt(day = new Day(), items = [...this._items]) {
+    if (items.length === 0) {
       return [];
     }
 
-    return collection
+    return items
       .sort(getDayComparator())
       .filter(({ day: currentDay }) => currentDay <= day);
   }
 
-  map(fn, collection = this.collection) {
-    return this.collection.map(fn);
+  getItemValueAt(day = new Day(), items = [...this.items]) {
+    const item = this._getItemAt(day, items);
+
+    return item !== undefined ? item.value : undefined;
   }
 
-  reduce(fn, collection = this.collection) {
-    return this.collection.reduce(fn);
+  setItems(newItems = [], items = [...this.items]) {
+    return this._emit('set', { newItems, items });
   }
 
-  filter(fn, collection = this.collection) {
-    return this.collection.filter(fn);
+  addItem(item, items = [...this.items]) {
+    return this._emit('add', { item, items });
+  }
+
+  deleteItem(item, items = [...this.items]) {
+    return this._emit('delete', { item, items });
+  }
+
+  editItem(item, newItem, items = [...this.items]) {
+    return this._emit('edit', { item, newItem, items });
+  }
+
+  hasItemsAt(day = new Day()) {
+    return this.getItemsAt(day).length !== 0;
+  }
+
+  map(fn, items = this.items) {
+    return this.items.map(fn);
+  }
+
+  reduce(fn, items = this.items) {
+    return this.items.reduce(fn);
+  }
+
+  filter(fn, items = this.items) {
+    return this.items.filter(fn);
   }
 
   // private
@@ -163,58 +141,115 @@ export class BaseValueCollection extends BaseClass {
   }
 
   // primitive oparations
-  _set({ items }) {
-    this.collection = items;
+  _set({ newItems }) {
+    this.items = newItems;
   }
 
   _add({ item }) {
-    this.collection = [...this.collection, item];
+    this.items = [...this.items, item];
   }
 
   _delete({ item }) {
-    this.collection = this.collection.filter(
-      (currentItem) => !item.equals(currentItem)
-    );
+    this.items = this.items.filter((currentItem) => !item.equals(currentItem));
+  }
+
+  _edit({ item, newItem }) {
+    this._delete({ item });
+    this._add({ item: newItem });
   }
 
   // validation error setters
   _validateAddOperation() {
-    const { item } = this.operationArgs;
-
-    this.validationErrors = [
-      ...this._getAlreadyExistsError(item),
-      ...this._getPrevNotAllowedError(item),
-      ...this._getNextNotAllowedError(item),
-    ];
+    this.validationErrors = this._getAddError(
+      this.operationArgs.item,
+      this.operationArgs.items
+    );
   }
 
   _validateDeleteOperation() {
-    const { item } = this.operationArgs;
-
-    this.validationErrors = [
-      ...this._getPrevAndNextEqualityError(item),
-      ...this._getNotFoundError(item),
-    ];
+    this.validationErrors = this._getDeleteError(
+      this.operationArgs.item,
+      this.operationArgs.items
+    );
   }
 
   _validateEditOperation() {
-    const { item, newItem } = this.operationArgs;
-
-    this.validationErrors = [
-      ...this._getPrevAndNextEqualityError(item),
-      ...this._getNotFoundError(item),
-    ];
+    this.validationErrors = this._getEditError(
+      this.operationArgs.item,
+      this.operationArgs.newItem,
+      this.operationArgs.items
+    );
   }
 
   _validateSetOperation() {
     this.validationErrors = [];
   }
 
-  // validation error generators
-  _getAlreadyExistsError(item, collection = [...this.collection]) {
-    const upperFirstItemName = upperFirst(lowerCase(item.constructor.name));
+  // operation validation error generators
+  _getAddError(item, items = [...this.items]) {
+    return [
+      ...this._getAlreadyExistsError(item, items),
+      ...this._getPrevNotAllowedError(item, items),
+      ...this._getNextNotAllowedError(item, items),
+    ];
+  }
 
-    if (this.hasItemAt(item.day, collection)) {
+  _getDeleteError(item, items = [...this.items]) {
+    return [
+      ...this._getPrevAndNextEqualityError(item, items),
+      ...this._getNotFoundError(item, items),
+    ];
+  }
+
+  _getEditError(item, newItem, items = [...this.items]) {
+    const nothingToUpdateError = this._getNothingToUpdateError(
+      item,
+      newItem,
+      items
+    );
+
+    if (nothingToUpdateError.length !== 0) {
+      return nothingToUpdateError;
+    }
+
+    const itemsWithoutItem = items.filter(
+      (currentItem) => !item.equals(currentItem)
+    );
+
+    const itemNotFoundError = this._getNotFoundError(item, items);
+    const newAlreadyItemExistsError = this._getAlreadyExistsError(
+      newItem,
+      itemsWithoutItem
+    );
+
+    if (
+      itemNotFoundError.length !== 0 ||
+      newAlreadyItemExistsError.length !== 0
+    ) {
+      return [...itemNotFoundError, ...newAlreadyItemExistsError];
+    }
+
+    const prevOfItem = this._getPrevItemAt(item.day.prev(), items);
+    const prevOfNewItem = this._getPrevItemAt(newItem.day, itemsWithoutItem);
+
+    if (prevOfItem !== undefined && prevOfItem.equals(prevOfNewItem)) {
+      return [
+        ...this._getPrevNotAllowedError(newItem, itemsWithoutItem),
+        ...this._getNextNotAllowedError(newItem, itemsWithoutItem),
+      ];
+    }
+
+    return [
+      ...this._getAddError(newItem, itemsWithoutItem),
+      ...this._getDeleteError(item, items),
+    ];
+  }
+
+  // validation error generators
+  _getAlreadyExistsError(item, items = [...this.items]) {
+    if (item === undefined || this._hasItemOn(item.day, items)) {
+      const upperFirstItemName = upperFirst(lowerCase(item.constructor.name));
+
       return [
         `${upperFirstItemName} with value "${item.value.toString()}" at ${item.day.toString()} already exists`,
       ];
@@ -223,10 +258,10 @@ export class BaseValueCollection extends BaseClass {
     return [];
   }
 
-  _getNotFoundError(item, collection = [...this.collection]) {
-    const upperFirstItemName = upperFirst(lowerCase(item.constructor.name));
+  _getNotFoundError(item, items = [...this.items]) {
+    if (!this._hasItem(item, items)) {
+      const upperFirstItemName = upperFirst(lowerCase(item.constructor.name));
 
-    if (!this.hasItem(item)) {
       return [
         `${upperFirstItemName} with value "${item.value.toString()}" at ${item.day.toString()} not found`,
       ];
@@ -235,9 +270,9 @@ export class BaseValueCollection extends BaseClass {
     return [];
   }
 
-  _getPrevNotAllowedError(item, collection = [...this.collection]) {
+  _getPrevNotAllowedError(item, items = [...this.items]) {
     const itemName = lowerCase(item.constructor.name);
-    const prevItem = this.getPrevItemAt(item.day);
+    const prevItem = this._getPrevItemAt(item.day, items);
 
     if (prevItem !== undefined && item.value === prevItem.value) {
       return [`Previous ${itemName} already have value "${prevItem.value}"`];
@@ -245,9 +280,9 @@ export class BaseValueCollection extends BaseClass {
     return [];
   }
 
-  _getNextNotAllowedError(item, collection = [...this.collection]) {
+  _getNextNotAllowedError(item, items = [...this.items]) {
     const itemName = lowerCase(item.constructor.name);
-    const nextItem = this.getNextItemAt(item.day);
+    const nextItem = this._getNextItemAt(item.day, items);
 
     if (nextItem !== undefined && item.value === nextItem.value) {
       return [`Next ${itemName} already have value "${nextItem.value}"`];
@@ -255,11 +290,11 @@ export class BaseValueCollection extends BaseClass {
 
     return [];
   }
-  _getPrevAndNextEqualityError(item, collection = [...this.collection]) {
+  _getPrevAndNextEqualityError(item, items = [...this.items]) {
     const itemName = lowerCase(item.constructor.name);
 
-    const prev = this.getPrevItemAt(item.day.prev());
-    const next = this.getNextItemAt(item.day.next());
+    const prev = this._getPrevItemAt(item.day.prev(), items);
+    const next = this._getNextItemAt(item.day.next(), items);
 
     if (prev !== undefined && next !== undefined && prev.value === next.value) {
       return [
@@ -268,5 +303,50 @@ export class BaseValueCollection extends BaseClass {
     }
 
     return [];
+  }
+
+  _getNothingToUpdateError(item, newItem, items = [...this.items]) {
+    if (item !== undefined && item.equals(newItem)) {
+      return ['Nothing to update'];
+    }
+
+    return [];
+  }
+
+  // search items
+  _getPrevItemAt(day = new Day(), items = [...this.items]) {
+    const itemsBeforeDay = items
+      .sort(getDayComparator())
+      .filter(({ day: currentDay }) => currentDay < day);
+
+    return itemsBeforeDay[itemsBeforeDay.length - 1];
+  }
+
+  _getNextItemAt(day = new Day(), items = [...this.items]) {
+    const itemsAfterDay = items
+      .sort(getDayComparator())
+      .filter(({ day: currentDay }) => currentDay > day);
+    return itemsAfterDay[0];
+  }
+  _hasItemOn(day = new Day(), items = [...this.items]) {
+    const persistedItem = this._getItemOn(day, items);
+    return !!persistedItem;
+  }
+
+  _hasItem(item, items = [...this.items]) {
+    const persistedItem = this._getItemOn(item.day, items);
+    return persistedItem !== undefined && item.equals(persistedItem);
+  }
+
+  _getItemOn(day = new Day(), items = [...this.items]) {
+    return this.getItemsAt(day, items).find(({ day: currentDay }) =>
+      currentDay.equals(day)
+    );
+  }
+
+  _getItemAt(day = new Day(), items = [...this.items]) {
+    const itemsAt = this.getItemsAt(day);
+
+    return itemsAt[itemsAt.length - 1];
   }
 }

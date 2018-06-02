@@ -14,11 +14,20 @@ const pieceRate1day = new Day({ value: new Date('2018.01.14 11:00') });
 const pieceRate2day = new Day({ value: new Date('2018.02.20 11:00') });
 const pieceRate3day = new Day({ value: new Date('2018.03.14 11:00') });
 
-const pieceRates = [
-  { value: pieceRate1value, day: pieceRate1day },
-  { value: pieceRate2value, day: pieceRate2day },
-  { value: pieceRate3value, day: pieceRate3day },
-];
+const pieceRate1 = new PieceRate({
+  value: pieceRate1value,
+  day: pieceRate1day,
+});
+const pieceRate2 = new PieceRate({
+  value: pieceRate2value,
+  day: pieceRate2day,
+});
+const pieceRate3 = new PieceRate({
+  value: pieceRate3value,
+  day: pieceRate3day,
+});
+
+const pieceRates = [pieceRate3, pieceRate1, pieceRate2];
 
 describe('Domain :: entities :: Post', () => {
   let post;
@@ -38,7 +47,10 @@ describe('Domain :: entities :: Post', () => {
     context('when post is active', () => {
       test('should set piece rates', () => {
         post.setPieceRates(pieceRates);
-        expect(post.pieceRates).toEqual(pieceRates);
+
+        expect(post.pieceRates).toEqual(
+          pieceRates.sort((a, b) => a.day > b.day)
+        );
         expect(post.pieceRates).not.toBe(pieceRates);
       });
     });
@@ -80,9 +92,7 @@ describe('Domain :: entities :: Post', () => {
           post.addPieceRate(pieceRate1value, pieceRate1day);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: [
-              'Piece rate with value "4" at 14.01.2018 already exists',
-            ],
+            post: ['Piece rate with value "4" at 14.01.2018 already exists'],
           });
         }
         expect(post.pieceRates).toHaveLength(1);
@@ -97,7 +107,7 @@ describe('Domain :: entities :: Post', () => {
           post.addPieceRate(pieceRate1value, newDay);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: ['Previous piece rate already have value "4"'],
+            post: ['Previous piece rate already have value "4"'],
           });
         }
         expect(post.pieceRates).toHaveLength(1);
@@ -114,7 +124,7 @@ describe('Domain :: entities :: Post', () => {
           post.addPieceRate(pieceRate1value, pieceRate1day);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: ['Next piece rate already have value "4"'],
+            post: ['Next piece rate already have value "4"'],
           });
         }
         expect(post.pieceRates).toHaveLength(2);
@@ -148,7 +158,7 @@ describe('Domain :: entities :: Post', () => {
           post.deletePieceRate(pieceRate3value, pieceRate3day);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: ['Piece rate with value "5.5" at 14.03.2018 not found'],
+            post: ['Piece rate with value "5.5" at 14.03.2018 not found'],
           });
           expect(post.pieceRates).toHaveLength(2);
         }
@@ -166,7 +176,7 @@ describe('Domain :: entities :: Post', () => {
           post.deletePieceRate(pieceRate2value, pieceRate2day);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: [
+            post: [
               'Previous piece rate value and next piece rate value are equal',
             ],
           });
@@ -225,41 +235,42 @@ describe('Domain :: entities :: Post', () => {
       });
     });
   });
-  // describe('#editPieceRate', () => {
-  //   beforeEach(() => {
-  //     post.addPieceRate(pieceRate1value, pieceRate1day);
-  //   });
+  describe('#editPieceRate', () => {
+    beforeEach(() => {
+      post.addPieceRate(pieceRate1value, pieceRate1day);
+    });
 
-  //   context('when appointment has created with wrong pieceRate', () => {
-  //     test('should change associated pieceRate', () => {
-  //       post.editPieceRate(
-  //         pieceRate1value,
-  //         pieceRate1day,
-  //         pieceRate2value,
-  //         pieceRate1day
-  //       );
+    context('when appointment has created with wrong pieceRate', () => {
+      test('should change associated pieceRate', () => {
+        post.editPieceRate(
+          pieceRate1value,
+          pieceRate1day,
+          pieceRate2value,
+          pieceRate1day
+        );
 
-  //       expect(post.pieceRates[0].day).toEqual(
-  //         new Day({ value: startOfDay(pieceRate1day) })
-  //       );
-  //       expect(post.getPieceRateAt()).toBe(pieceRate2value);
-  //     });
-  //   });
+        expect(post.pieceRates[0].day).toEqual(
+          new Day({ value: startOfDay(pieceRate1day) })
+        );
 
-  //   context('when pieceRate has created with wrong date', () => {
-  //     test('should change associated date', () => {
-  //       post.editPieceRate(
-  //         pieceRate1value,
-  //         pieceRate1day,
-  //         pieceRate1value,
-  //         pieceRate2day
-  //       );
-  //       expect(post.getPieceRateAt(pieceRate1day)).toEqual(undefined);
-  //       expect(post.pieceRates).toHaveLength(1);
-  //       expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate1value);
-  //     });
-  //   });
-  // });
+        expect(post.getPieceRateAt()).toBe(pieceRate2value);
+      });
+    });
+
+    context('when pieceRate has created with wrong date', () => {
+      test('should change associated date', () => {
+        post.editPieceRate(
+          pieceRate1value,
+          pieceRate1day,
+          pieceRate1value,
+          pieceRate2day
+        );
+        expect(post.getPieceRateAt(pieceRate1day)).toEqual(undefined);
+        expect(post.pieceRates).toHaveLength(1);
+        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate1value);
+      });
+    });
+  });
   describe('#inactivate', () => {
     context('when post\'s state is "active"', () => {
       beforeEach(() => {
@@ -344,6 +355,41 @@ describe('Domain :: entities :: Post', () => {
         }
 
         expect(post.name).toBe('Флорист');
+      });
+    });
+  });
+
+  describe('#getters', () => {
+    context('when piece rates is empty', () => {
+      test('should return undefinded', () => {
+        expect(post.pieceRates).toEqual([]);
+        expect(post.pieceRate).toBeUndefined();
+        expect(post.hasPieceRates).toBeFalsy();
+        expect(post.getPieceRateAt()).toBeUndefined();
+        expect(post.getPieceRateAt(pieceRate1day)).toBeUndefined();
+      });
+    });
+
+    context('when piece rates is exist', () => {
+      beforeEach(() => {
+        post.setPieceRates(pieceRates);
+      });
+      test('should return values', () => {
+        expect(JSON.stringify(post.pieceRates)).toEqual(
+          '[{"value":4,"date":"2018-01-14T00:00:00.000+08:00"},{"value":2,"date":"2018-02-20T00:00:00.000+08:00"},{"value":5.5,"date":"2018-03-14T00:00:00.000+08:00"}]'
+        );
+        expect(post.hasPieceRates).toBeTruthy();
+        expect(post.hasPieceRatesAt()).toBeTruthy();
+        expect(post.hasPieceRatesAt(pieceRate1day.prev())).toBeFalsy();
+        expect(post.hasPieceRatesAt(pieceRate1day)).toBeTruthy();
+        expect(post.hasPieceRatesAt(pieceRate2day)).toBeTruthy();
+        expect(post.hasPieceRatesAt(pieceRate3day)).toBeTruthy();
+
+        expect(post.pieceRate).toBe(pieceRate3value);
+        expect(post.getPieceRateAt()).toBe(pieceRate3value);
+        // expect(post.getPieceRateAt(pieceRate1day)).toBe(pieceRate1value);
+        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
+        expect(post.getPieceRateAt(pieceRate3day)).toBe(pieceRate3value);
       });
     });
   });

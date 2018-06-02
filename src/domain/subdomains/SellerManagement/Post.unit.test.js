@@ -176,68 +176,6 @@ describe('Domain :: entities :: Post', () => {
     });
   });
 
-  describe('#_getPrevPieceRateAt', () => {
-    beforeEach(() => {
-      post.setPieceRates([
-        { value: pieceRate3value, day: pieceRate3day },
-        { value: pieceRate1value, day: pieceRate1day },
-      ]);
-      expect(post.pieceRates).toHaveLength(2);
-    });
-
-    context('when passed day before first piece rate', () => {
-      test('should return undefined', () => {
-        expect(post._getPrevPieceRateAt(pieceRate1day.prev())).toBeUndefined();
-      });
-    });
-
-    context('when passed day between piece rates', () => {
-      test('should return previous piece rate', () => {
-        expect(post._getPrevPieceRateAt(pieceRate2day)).toBe(
-          post.pieceRates[0]
-        );
-      });
-    });
-
-    context('when passed current day', () => {
-      test('should return last piece rate', () => {
-        expect(post._getPrevPieceRateAt(new Day())).toBe(post.pieceRates[1]);
-      });
-    });
-  });
-
-  describe('#_getNextPieceRateAt', () => {
-    beforeEach(() => {
-      post.setPieceRates([
-        { value: pieceRate3value, day: pieceRate3day },
-        { value: pieceRate1value, day: pieceRate1day },
-      ]);
-      expect(post.pieceRates).toHaveLength(2);
-    });
-
-    context('when passed current day', () => {
-      test('should return undefined', () => {
-        expect(post._getNextPieceRateAt(new Day())).toBeUndefined();
-      });
-    });
-
-    context('when passed day between piece rates', () => {
-      test('should return next piece rate', () => {
-        expect(post._getNextPieceRateAt(pieceRate2day)).toBe(
-          post.pieceRates[1]
-        );
-      });
-    });
-
-    context('when passed day before first piece rate', () => {
-      test('should return first piece rate', () => {
-        const prevDay = pieceRate1day.prev();
-        // console.log(`prevDay: ${prevDay.toString()}`);
-        expect(post._getNextPieceRateAt(prevDay)).toBe(post.pieceRates[0]);
-      });
-    });
-  });
-
   describe('#getInstanceAt', () => {
     beforeEach(() => {
       post.setPieceRates([

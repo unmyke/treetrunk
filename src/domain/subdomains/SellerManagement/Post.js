@@ -107,21 +107,21 @@ export class Post extends BaseEntity {
     return this._pieceRates.getCollectionAt(day);
   }
 
-  _getPrevPieceRateAt(day = new Day()) {
-    return this._pieceRates.getPrevItemAt(day);
-  }
+  // _getPrevPieceRateAt(day = new Day()) {
+  //   return this._pieceRates.getPrevItemAt(day);
+  // }
 
-  _getNextPieceRateAt(day = new Day()) {
-    return this._pieceRates.getNextItemAt(day);
-  }
+  // _getNextPieceRateAt(day = new Day()) {
+  //   return this._pieceRates.getNextItemAt(day);
+  // }
 
-  _getPieceRateAt(day = new Day()) {
-    return this._pieceRates.getItemAt(day);
-  }
+  // _getPieceRateAt(day = new Day()) {
+  //   return this._pieceRates.getItemAt(day);
+  // }
 
-  _isPieceRateExistsAt(day = new Day()) {
-    return this._pieceRates.isItemExistsAt(day);
-  }
+  // _isPieceRateExistsAt(day = new Day()) {
+  //   return this._pieceRates.isItemExistsAt(day);
+  // }
 
   _generateError(entity, details) {
     throw this.constructor.errorFactory.createNotAllowed(entity, details);

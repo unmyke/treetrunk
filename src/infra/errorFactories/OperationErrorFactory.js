@@ -8,23 +8,23 @@ export class OperationErrorFactory extends BaseErrorFactory {
   }
 
   createNothingToUpdate(entity, ...details) {
-    return this._createOperation(entity, 'Nothing to update', ...details);
+    return this._createOperation(entity, 'NothingToUpdate', ...details);
   }
 
   createNotAllowed(entity, ...details) {
-    return this._createOperation(entity, 'Not allowed', ...details);
+    return this._createOperation(entity, 'NotAllowed', ...details);
   }
 
   createNotFound(entity, ...details) {
-    return this._createOperation(entity, 'Not found', ...details);
+    return this._createOperation(entity, 'NotFound', ...details);
   }
 
   createAlreadyExists(entity, ...details) {
-    return this._createOperation(entity, 'Already exists', ...details);
+    return this._createOperation(entity, 'AlreadyExists', ...details);
   }
   _createOperation(entity, message, ...details) {
     if (!this._isInstanceOfBaseClass(entity)) {
-      return new Error('Not a Entity');
+      return new Error('NotAEntity');
     }
 
     const entityPropName = `${lowerFirst(entity.constructor.name)}`;

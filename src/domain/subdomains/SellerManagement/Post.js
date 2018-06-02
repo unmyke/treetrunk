@@ -15,117 +15,45 @@ export class Post extends BaseEntity {
       { name: 'setPieceRates', from: 'active', to: 'active' },
       { name: 'addPieceRate', from: 'active', to: 'active' },
       { name: 'deletePieceRate', from: 'active', to: 'active' },
+      { name: 'setState', from: ['active', 'inactive'], to: (state) => state },
     ],
     methods: {
+      onActive() {
+        this.pieceRateOperationResult = { done: true };
+      },
+
       // update({ name })
       onBeforeUpdate(lifecycle, { name }) {
         if (name === this.name) {
           throw this.constructor.errorFactory.createNothingToUpdate(
             this,
-            `Post already has name "${name}"`
+            `Post in ${this.state} state already has name "${name}"`
           );
         }
       },
+
       onUpdate(lifecycle, { name }) {
         this.name = name;
       },
 
-      //setPieceRates([ { value, day } ])
-      onSetPieceRates(lifecycle, pieceRates) {
-        this._pieceRates = pieceRates.map(
+      onSetPieceRates(lifecycle, pieceRateEntries) {
+        const pieceRates = pieceRateEntries.map(
           ({ value, day }) => new PieceRate({ value, day })
         );
+
+        return this._emitPieceRateOperation('setItems', pieceRates);
       },
 
-      //addPieceRates(value, day = new Day())
-      onBeforeAddPieceRate({ transition, from, to }, value, day = new Day()) {
+      onAddPieceRate(lifecycle, value, day = new Day()) {
         const pieceRate = new PieceRate({ value, day });
 
-        if (this._isPieceRateExistsAt(pieceRate.day)) {
-          throw this.constructor.errorFactory.createAlreadyExists(
-            pieceRate,
-            `Piece rate at ${pieceRate.day.format('DD.MM.YYYY')} already exists`
-          );
-        }
-
-        const prevPieceRate = this._getPrevPieceRateAt(pieceRate.day.prev());
-        if (
-          prevPieceRate !== undefined &&
-          pieceRate.value === prevPieceRate.value
-        ) {
-          throw this.constructor.errorFactory.createAlreadyExists(
-            pieceRate,
-            `Piece rate value at ${prevPieceRate.day.format(
-              'DD.MM.YYYY'
-            )} already equals "${prevPieceRate.value}"`
-          );
-        }
-
-        const nextPieceRate = this._getNextPieceRateAt(pieceRate.day.next());
-        if (
-          nextPieceRate !== undefined &&
-          pieceRate.value === nextPieceRate.value
-        ) {
-          throw this.constructor.errorFactory.createAlreadyExists(
-            pieceRate,
-            `Piece rate value at ${nextPieceRate.day.format(
-              'DD.MM.YYYY'
-            )} already equals "${nextPieceRate.value}"`
-          );
-        }
+        return this._emitPieceRateOperation('addItem', pieceRate);
       },
 
-      onAddPieceRate({ transition, from, to }, value, day = new Day()) {
+      onDeletePieceRate(lifecycle, value, day = new Day()) {
         const pieceRate = new PieceRate({ value, day });
-        this._pieceRates = [...this._pieceRates, pieceRate].sort(
-          this._getDayComparator
-        );
-      },
 
-      // deletePieceRate({ value, day })
-      onBeforeDeletePieceRate(
-        { transition, from, to },
-        value,
-        day = new Day()
-      ) {
-        const pieceRateToDelete = new PieceRate({ value, day });
-
-        const persistedPieceRate = this._getPieceRateAt(day);
-
-        if (!pieceRateToDelete.equals(persistedPieceRate)) {
-          throw this.constructor.errorFactory.createNotFound(
-            pieceRateToDelete,
-            `Piece rate with value ${value} at ${day.format(
-              'DD.MM.YYYY'
-            )} not found`
-          );
-        }
-
-        const prevPieceRate = this._getPrevPieceRateAt(day.prev());
-        const nextPieceRate = this._getNextPieceRateAt(day.next());
-
-        if (
-          prevPieceRate !== undefined &&
-          nextPieceRate !== undefined &&
-          prevPieceRate.value === nextPieceRate.value
-        ) {
-          throw this.constructor.errorFactory.createNotAllowed(
-            pieceRateToDelete,
-            `Piece rate with value ${value} at ${day.format(
-              'DD.MM.YYYY'
-            )} not allowed to delete: piece rate at ${prevPieceRate.day.format(
-              'DD.MM.YYYY'
-            )} equals piece rate at ${nextPieceRate.day.format('DD.MM.YYYY')}`
-          );
-        }
-      },
-      onDeletePieceRate({ transition, from, to }, value, day = new Day()) {
-        const pieceRateToDelete = new PieceRate({ value, day });
-
-        const filteredPieceRates = this._pieceRates.filter(
-          (pieceRate) => !pieceRate.equals(pieceRateToDelete)
-        );
-        this._pieceRates = filteredPieceRates;
+        return this._emitPieceRateOperation('deleteItem', pieceRate);
       },
     },
   };
@@ -139,21 +67,19 @@ export class Post extends BaseEntity {
   }
 
   get pieceRates() {
-    return this._getPieceRatesAt();
+    return this._pieceRates.collection;
   }
 
   get pieceRate() {
-    const pieceRate = this._getPrevPieceRateAt();
-    return pieceRate === undefined ? undefined : pieceRate.value;
+    return this._pieceRates.itemValue;
   }
 
   get hasPieceRates() {
-    return this.hasPieceRateAt();
+    return this._pieceRates.hasCollection;
   }
 
   hasPieceRateAt(day = new Day()) {
-    const [firstPieceRate] = this._getPieceRatesAt(day);
-    return !!firstPieceRate && firstPieceRate.day <= day;
+    return this._pieceRates.hasItemAt(day);
   }
 
   getInstanceAt(day = new Day()) {
@@ -196,24 +122,17 @@ export class Post extends BaseEntity {
   _isPieceRateExistsAt(day = new Day()) {
     return this._pieceRates.isItemExistsAt(day);
   }
+
+  _generateError(entity, details) {
+    throw this.constructor.errorFactory.createNotAllowed(entity, details);
+  }
+
+  _emitPieceRateOperation(operation, args) {
+    const { done, error } = this._pieceRates[operation](args);
+
+    if (!done) {
+      this._generateError(args, ...error);
+    }
+    return done;
+  }
 }
-
-// editPieceRate(valueToEdit, dayToEdit, value, day) {
-//   const pieceRateToEdit = new PieceRate({
-//     value: valueToEdit,
-//     day: dayToEdit,
-//   });
-//   const pieceRate = new PieceRate({ value, day });
-
-//   if (pieceRate.equals(pieceRateToEdit)) {
-//     throw this.constructor.errorFactory.createNothingToUpdate(
-//       pieceRateToEdit,
-//       `Updated piece rate at ${day.format(
-//         'DD.MM.YYYY'
-//       )} for post "Флорист" already equlas ${value}%`
-//     );
-//   }
-
-//   this.addPieceRate(value, day);
-//   this.deletePieceRate(valueToEdit, dayToEdit);
-// }

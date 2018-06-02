@@ -1,4 +1,4 @@
-import { snakeCase } from 'lodash';
+import { upperFirst, lowerCase } from 'lodash';
 import { BaseClass } from 'src/domain/_lib/BaseClass';
 
 export class BaseErrorFactory {
@@ -6,10 +6,10 @@ export class BaseErrorFactory {
     this.type = type;
   }
 
-  _create(message, details) {
-    const error = new Error(message);
+  _create(code, details) {
+    const error = new Error(upperFirst(lowerCase(code)));
     error.details = details;
-    error.code = snakeCase(message).toUpperCase();
+    error.code = code;
     error.type = this.type;
 
     return error;

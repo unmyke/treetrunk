@@ -16,7 +16,7 @@ export class PersistenceErrorFactory extends BaseErrorFactory {
     const EntityName = id.constructor.name.slice(0, -2);
     const entityIdPropName = lowerFirst(id.constructor.name);
 
-    return this._create('Not found', {
+    return this._create('NotFound', {
       [entityIdPropName]: [
         `${EntityName} with ${entityIdPropName}: "${id}" not found`,
       ],
@@ -31,7 +31,7 @@ export class PersistenceErrorFactory extends BaseErrorFactory {
     const EntityName = ids[0].constructor.name.slice(0, -2);
     const entityIdPropName = lowerFirst(ids[0].constructor.name);
 
-    return this._create('Not found', {
+    return this._create('NotFound', {
       [entityIdPropName]: [
         `${EntityName} with ${entityIdPropName} in ["${ids.join(
           '", "'
@@ -42,7 +42,7 @@ export class PersistenceErrorFactory extends BaseErrorFactory {
 
   createAlreadyExists(entity, uniqueless) {
     if (!(entity instanceof BaseEntity)) {
-      return new Error('Not a Entity');
+      return new Error('NotAEntity');
     }
 
     const details = {};
@@ -61,6 +61,6 @@ export class PersistenceErrorFactory extends BaseErrorFactory {
       details[key] = [`${EntityName} with ${keyDetails} already exists`];
     });
 
-    return this._create('Already exists', details);
+    return this._create('AlreadyExists', details);
   }
 }

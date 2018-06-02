@@ -80,7 +80,9 @@ describe('Domain :: entities :: Post', () => {
           post.addPieceRate(pieceRate1value, pieceRate1day);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: ['Piece rate at 14.01.2018 already exists'],
+            pieceRate: [
+              'Piece rate with value "4" at 14.01.2018 already exists',
+            ],
           });
         }
         expect(post.pieceRates).toHaveLength(1);
@@ -95,7 +97,7 @@ describe('Domain :: entities :: Post', () => {
           post.addPieceRate(pieceRate1value, newDay);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: ['Piece rate value at 14.01.2018 already equals "4"'],
+            pieceRate: ['Previous piece rate already have value "4"'],
           });
         }
         expect(post.pieceRates).toHaveLength(1);
@@ -112,7 +114,7 @@ describe('Domain :: entities :: Post', () => {
           post.addPieceRate(pieceRate1value, pieceRate1day);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: ['Piece rate value at 20.02.2018 already equals "4"'],
+            pieceRate: ['Next piece rate already have value "4"'],
           });
         }
         expect(post.pieceRates).toHaveLength(2);
@@ -146,7 +148,7 @@ describe('Domain :: entities :: Post', () => {
           post.deletePieceRate(pieceRate3value, pieceRate3day);
         } catch (e) {
           expect(e.details).toEqual({
-            pieceRate: ['Piece rate with value 5.5 at 14.03.2018 not found'],
+            pieceRate: ['Piece rate with value "5.5" at 14.03.2018 not found'],
           });
           expect(post.pieceRates).toHaveLength(2);
         }
@@ -165,11 +167,7 @@ describe('Domain :: entities :: Post', () => {
         } catch (e) {
           expect(e.details).toEqual({
             pieceRate: [
-              `Piece rate with value ${pieceRate2value} at ${pieceRate2day.format(
-                'DD.MM.YYYY'
-              )} not allowed to delete: piece rate at ${pieceRate1day.format(
-                'DD.MM.YYYY'
-              )} equals piece rate at ${pieceRate3day.format('DD.MM.YYYY')}`,
+              'Previous piece rate value and next piece rate value are equal',
             ],
           });
         }
@@ -403,7 +401,7 @@ describe('Domain :: entities :: Post', () => {
         } catch (e) {
           expect(e.message).toBe('Nothing to update');
           expect(e.details).toEqual({
-            post: ['Post already has name "Флорист"'],
+            post: ['Post in active state already has name "Флорист"'],
           });
         }
 

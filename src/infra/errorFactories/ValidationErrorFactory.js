@@ -7,6 +7,6 @@ export class ValidationErrorFactory extends BaseErrorFactory {
   }
 
   create(details) {
-    return this._create('Invalid Value', details);
+    return this._create('InvalidValue', details);
   }
 }

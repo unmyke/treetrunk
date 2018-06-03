@@ -1,6 +1,6 @@
-import { BaseValueCollection } from './BaseValueCollection';
-import { BaseValue } from '../BaseValue';
-import { Day } from '../../commonTypes';
+import { ValueDayProgress } from './ValueDayProgress';
+import { BaseValue } from '../../_lib';
+import { Day } from '../Day';
 
 class MockItem extends BaseValue {
   constructor({ value, day }) {
@@ -20,10 +20,10 @@ const item3 = new MockItem({ value: 3, day: day3 });
 
 let coll;
 
-describe('Domain :: lib :: BaseValueCollection', () => {
+describe('Domain :: lib :: ValueDayProgress', () => {
   const items = [item1, item2, item3];
   beforeEach(() => {
-    coll = new BaseValueCollection();
+    coll = new ValueDayProgress();
   });
 
   context('when items is empty', () => {
@@ -33,7 +33,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
       });
     });
 
-    context('when operation "add" is emitted', () => {
+    describe('#add', () => {
       test('should be at add item', () => {
         expect(coll.state).toBe('idle');
 
@@ -45,7 +45,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
       });
     });
 
-    context('when operation "delete" is emitted', () => {
+    describe('#delete', () => {
       test('should return unsuccessful result', () => {
         expect(coll.state).toBe('idle');
 
@@ -59,7 +59,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
       });
     });
 
-    context('when operation "set" is emitted', () => {
+    describe('#set', () => {
       test('should set new items', () => {
         expect(coll.state).toBe('idle');
 
@@ -72,7 +72,7 @@ describe('Domain :: lib :: BaseValueCollection', () => {
   });
 
   context('when items is not empty', () => {
-    context('when operation "add" is emitted', () => {
+    describe('#add', () => {
       const items = [item1, item3];
       const itemsForDeleteTests = [item1, item3];
       beforeEach(() => {
@@ -136,7 +136,8 @@ describe('Domain :: lib :: BaseValueCollection', () => {
         }
       );
     });
-    context('when operation "delete" is emitted', () => {
+
+    describe('#delete', () => {
       const items = [item1, item2, new MockItem({ value: 1, day: day3 })];
 
       beforeEach(() => {

@@ -1,16 +1,15 @@
-import { BaseValue } from '../../_lib';
+import { DayMetric } from '../../commonTypes';
 
-export class Appointment extends BaseValue {
-  constructor({ postId, day }) {
-    super();
-    this.postId = postId;
-    this.day = day;
+export class Appointment extends DayMetric {
+  constructor({ postId: value, day }) {
+    super({ value, day });
   }
 
-  toJSON() {
-    return {
-      postId: this.postId.toJSON(),
-      date: this.day.toJSON(),
-    };
+  get postId() {
+    return this.value;
+  }
+
+  set postId(postId) {
+    this.value = postId;
   }
 }

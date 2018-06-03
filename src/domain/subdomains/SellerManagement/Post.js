@@ -1,9 +1,8 @@
 import {} from 'javascript-state-machine';
 
 import { BaseEntity } from '../../_lib';
-import { PostId, Day } from '../../commonTypes';
+import { PostId, Day, ValueDayProgress } from '../../commonTypes';
 import { PieceRate } from './PieceRate';
-import { PieceRateCollection } from './PieceRateCollection';
 
 export class Post extends BaseEntity {
   static fsm = {
@@ -37,6 +36,7 @@ export class Post extends BaseEntity {
         this.name = name;
       },
 
+      // setPieceRates([{ value, day }])
       onSetPieceRates(lifecycle, pieceRateEntries) {
         const pieceRates = pieceRateEntries.map(
           ({ value, day }) => new PieceRate({ value, day })
@@ -45,18 +45,21 @@ export class Post extends BaseEntity {
         return this._emitPieceRateOperation('setItems', pieceRates);
       },
 
+      // addPieceRate(value, day)
       onAddPieceRate(lifecycle, value, day = new Day()) {
         const pieceRate = new PieceRate({ value, day });
 
         return this._emitPieceRateOperation('addItem', pieceRate);
       },
 
+      // deletePieceRate(value, day)
       onDeletePieceRate(lifecycle, value, day = new Day()) {
         const pieceRate = new PieceRate({ value, day });
 
         return this._emitPieceRateOperation('deleteItem', pieceRate);
       },
 
+      // editPieceRate(value, day, newValue, newDay)
       onEditPieceRate(lifecycle, value, day, newValue, newDay) {
         const pieceRate = new PieceRate({ value, day });
         const newPieceRate = new PieceRate({
@@ -76,7 +79,7 @@ export class Post extends BaseEntity {
   constructor({ postId = new PostId(), name, state = 'active' }) {
     super(postId);
     this.name = name;
-    this._pieceRates = new PieceRateCollection();
+    this._pieceRates = new ValueDayProgress();
 
     this.setState(state);
   }

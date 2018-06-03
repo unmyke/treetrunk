@@ -52,7 +52,11 @@ describe('Domain :: entities :: SeniorityType', () => {
         try {
           seniorityType.addAward(award1value, award1day);
         } catch (e) {
-          expect(e.details).toEqual(['SeniorityType already have this award']);
+          expect(e.details).toEqual({
+            seniorityType: [
+              'Award with value "400" at 14.01.2018 already exists',
+            ],
+          });
           expect(seniorityType.awards).toHaveLength(1);
         }
       });
@@ -65,7 +69,9 @@ describe('Domain :: entities :: SeniorityType', () => {
         try {
           seniorityType.addAward(award1value, newDay);
         } catch (e) {
-          expect(e.details).toEqual(['SeniorityType already have this award']);
+          expect(e.details).toEqual({
+            seniorityType: ['Previous award already have value "400"'],
+          });
           expect(seniorityType.awards).toHaveLength(1);
         }
       });
@@ -125,8 +131,10 @@ describe('Domain :: entities :: SeniorityType', () => {
         try {
           seniorityType.deleteAward(award3value, award3day);
         } catch (e) {
-          expect(e.details).toEqual(['SeniorityType have not such award']);
-          expect(seller.appointments).toHaveLength(2);
+          expect(e.details).toEqual({
+            seniorityType: ['Award with value "500" at 14.03.2018 not found'],
+          });
+          expect(seniorityType.awards).toHaveLength(2);
         }
       });
     });

@@ -1,136 +1,146 @@
+import {} from 'javascript-state-machine';
+
 import { BaseEntity } from '../../_lib';
-import { SeniorityTypeId, Day } from '../../commonTypes';
+import { SeniorityTypeId, Day, ValueDayProgress } from '../../commonTypes';
 import { Award } from './Award';
 
 export class SeniorityType extends BaseEntity {
-  constructor({ seniorityTypeId = new SeniorityTypeId(), name, months }) {
+  static fsm = {
+    init: 'active',
+    transitions: [
+      { name: 'inactivate', from: 'active', to: 'inactive' },
+      { name: 'activate', from: 'inactive', to: 'active' },
+      { name: 'update', from: 'active', to: 'active' },
+      { name: 'setAwards', from: 'active', to: 'active' },
+      { name: 'addAward', from: 'active', to: 'active' },
+      { name: 'deleteAward', from: 'active', to: 'active' },
+      { name: 'editAward', from: 'active', to: 'active' },
+      { name: 'setState', from: ['active', 'inactive'], to: (state) => state },
+    ],
+    methods: {
+      onActive() {
+        this.awardOperationResult = { done: true };
+      },
+
+      // update({ name })
+      onBeforeUpdate(lifecycle, { name }) {
+        const errors = [];
+        if (name === this.name) {
+          throw this.constructor.errorFactory.createNothingToUpdate(
+            this,
+            `SeniorityType in ${
+              this.state
+            } state already has name "${name}" and months "${months}"`
+          );
+        }
+      },
+
+      onUpdate(lifecycle, { name }) {
+        this.name = name;
+        this.months = months;
+      },
+
+      // setAwards([{ value, day }])
+      onSetAwards(lifecycle, awardEntries) {
+        const awards = awardEntries.map(
+          ({ value, day }) => new Award({ value, day })
+        );
+
+        return this._emitAwardOperation('setItems', awards);
+      },
+
+      // addAward(value, day)
+      onAddAward(lifecycle, value, day = new Day()) {
+        const award = new Award({ value, day });
+
+        return this._emitAwardOperation('addItem', award);
+      },
+
+      // deleteAward(value, day)
+      onDeleteAward(lifecycle, value, day = new Day()) {
+        const award = new Award({ value, day });
+
+        return this._emitAwardOperation('deleteItem', award);
+      },
+
+      // editAward(value, day, newValue, newDay)
+      onEditAward(lifecycle, value, day, newValue, newDay) {
+        const award = new Award({ value, day });
+        const newAward = new Award({
+          value: newValue,
+          day: newDay,
+        });
+
+        return this._emitAwardOperation('editItem', award, newAward);
+      },
+    },
+  };
+
+  constructor({
+    seniorityTypeId = new SeniorityTypeId(),
+    name,
+    months,
+    state = 'active',
+  }) {
     super(seniorityTypeId);
     this.name = name;
     this.months = months;
-    this.awards = [];
+    this._awards = new ValueDayProgress();
+
+    this.setState(state);
+  }
+
+  get awards() {
+    return this._awards.items;
   }
 
   get award() {
-    return this.getAwardValueAt();
+    return this._awards.getItemValueAt();
   }
 
-  update({ name, months }) {
-    const errors = [];
-    if (name === this.name) {
-      errors.push(`SeniorityType already has name "${name}"`);
-    }
-    if (months === this.months) {
-      errors.push(`SeniorityType already has months "${months}"`);
-    }
-
-    if (errors.length > 0) {
-      throw this.constructor.errorFactory.createNothingToUpdate(
-        this,
-        ...errors
-      );
-    }
-    this.name = name;
-    this.months = months;
+  get hasAwards() {
+    return this._awards.hasItems;
   }
 
-  setAwards(awards) {
-    this.awards = awards.map(({ value, day }) => new Award({ value, day }));
+  getAwardAt(day = new Day()) {
+    return this._awards.getItemValueAt(day);
   }
 
-  addAward(value, day = new Day()) {
-    const award = new Award({ value, day });
-    this._checkAwardUniqueness(award);
-
-    this.awards = [...this.awards, award].sort(this._getDayComparator());
+  hasAwardsAt(day = new Day()) {
+    return this._awards.hasItemsAt(day);
   }
 
-  editAward(valueToEdit, dayToEdit, value, day) {
-    const awardToEdit = new Award({ value: valueToEdit, day: dayToEdit });
-    const award = new Award({ value, day });
+  getInstanceAt(day = new Day()) {
+    const seniorityType = new SeniorityType(this);
 
-    if (awardToEdit.equals(award)) {
-      throw this.constructor.errorFactory.createNothingToUpdate(
-        award,
-        `Updated award at ${day.format('DD.MM.YYYY')} for seniority type "${
-          this.name
-        }" already equlas ${value}%`
-      );
-    }
+    const awards = this._awards.getItemsAt(day);
+    seniorityType.setAwards(awards);
 
-    this.addAward(value, day);
-    this.deleteAward(valueToEdit, dayToEdit);
-  }
-
-  deleteAward(value, day) {
-    const seniorityTypeToDelete = new Award({ value, day });
-    const filteredAwards = this.awards.filter(
-      (award) => !award.equals(seniorityTypeToDelete)
-    );
-    if (this.awards.length === filteredAwards.length) {
-      throw this.constructor.errorFactory.createNotFound(
-        seniorityTypeToDelete,
-        `Award with value ${value} at ${day.format('DD.MM.YYYY')} not found`
-      );
-    }
-
-    this.awards = filteredAwards;
-  }
-
-  getAwardValueAt(day = new Day()) {
-    if (!this.hasAward(day)) {
-      return;
-    }
-
-    const [firstAward, ...restAwards] = this.awards;
-
-    const { value } = restAwards.reduce((award, currentAward) => {
-      return currentAward.day <= day ? currentAward : award;
-    }, firstAward);
-
-    return value;
-  }
-
-  hasAward(day = new Day()) {
-    const [firstAward] = this.awards;
-    return !!firstAward && firstAward.day <= day;
+    return seniorityType;
   }
 
   toJSON() {
     return {
-      seniorityTypeId: this.seniorityTypeId,
+      seniorityTypeId: this.seniorityTypeId.toJSON(),
       name: this.name,
-      months: this.months,
       award: this.award,
-      awards: this.awards.map((award) => award.toJSON()),
+      awards: this._awards.map((award) => award.toJSON()),
+      state: this.state,
     };
   }
 
   // private
 
-  _checkAwardUniqueness(award) {
-    if (this._isAwardExistsAt(award.day)) {
-      throw this.constructor.errorFactory.createAlreadyExists(
-        award,
-        `Award at ${award.day.format('DD.MM.YYYY')} already exists`
-      );
-    }
-
-    const prevValue = this.getAwardValueAt(award.day);
-    if (award.value === prevValue) {
-      throw this.constructor.errorFactory.createAlreadyExists(
-        award,
-        `Award value at ${award.day.format('DD.MM.YYYY')} already equals "${
-          award.value
-        }"`
-      );
-    }
+  _generateError(entity, details) {
+    throw this.constructor.errorFactory.createNotAllowed(entity, details);
   }
 
-  _isAwardExistsAt(day = new Day()) {
-    const index = this.awards.findIndex(({ day: currentDay }) =>
-      day.equals(currentDay)
-    );
+  _emitAwardOperation(operation, ...args) {
+    const { done, error } = this._awards[operation](...args);
 
-    return index !== -1;
+    if (!done) {
+      this._generateError(this, ...error);
+    }
+    return done;
   }
 }

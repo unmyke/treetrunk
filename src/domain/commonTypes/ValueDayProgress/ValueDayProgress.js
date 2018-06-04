@@ -449,8 +449,8 @@ export class ValueDayProgress extends BaseClass {
       return [];
     }
 
-    const prevInerruptDay = this._getPrevInerruptDayAt(day);
-    const nextInerruptDay = this._getNextInerruptDayAt(day);
+    const prevInterruptDay = this._getPrevInterruptDayAt(day);
+    const nextInterruptDay = this._getNextInterruptDayAt(day);
 
     return this._items
       .sort(getDayComparator('asc'))
@@ -463,10 +463,10 @@ export class ValueDayProgress extends BaseClass {
       );
   }
 
-  _getPrevInerruptDayAt(day = new Day()) {
-    const inerruptItems = this._getInerruptDays();
+  _getPrevInterruptDayAt(day = new Day()) {
+    const interruptItems = this._getInterruptDays();
 
-    return inerruptItems
+    return interruptItems
       .sort(getDayComparator('asc'))
       .reduce(
         (interruptDay, { day: currentInterruptDay }) =>
@@ -475,10 +475,10 @@ export class ValueDayProgress extends BaseClass {
       );
   }
 
-  _getNextInerruptDayAt(day = new Day()) {
-    const inerruptItems = this._getInerruptDays();
+  _getNextInterruptDayAt(day = new Day()) {
+    const interruptItems = this._getInterruptDays();
 
-    return inerruptItems
+    return interruptItems
       .sort(getDayComparator('desc'))
       .reduce(
         (interruptDay, { day: currentInterruptDay }) =>
@@ -487,7 +487,7 @@ export class ValueDayProgress extends BaseClass {
       );
   }
 
-  _getInerruptDays() {
+  _getInterruptDays() {
     if (this.interruptValue === undefined) {
       return [];
     }

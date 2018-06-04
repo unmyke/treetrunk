@@ -10,6 +10,7 @@ import { Operation as ErrorFactory } from 'src/infra/errorFactories';
 export class ValueDayProgress extends BaseClass {
   static errorFactory = new ErrorFactory();
 
+  // FSM
   static fsm = {
     init: 'idle',
 
@@ -27,7 +28,7 @@ export class ValueDayProgress extends BaseClass {
       onValidation(lifecycle, operation) {
         this.operation = { ...operation, errors: [] };
 
-        this._validation();
+        this._validation(operation.args);
       },
 
       onResult() {
@@ -49,6 +50,7 @@ export class ValueDayProgress extends BaseClass {
     },
   };
 
+  // factories
   static create(items = []) {
     return new ValueDayProgress(items);
   }
@@ -65,27 +67,74 @@ export class ValueDayProgress extends BaseClass {
     return 'error';
   }
 
-  static constraints = {
-    add: {
-      item: {
-        operationArgument: {
-          isExist: true,
-          notEqualPrev: true,
-          notEqualNext: true,
-        },
-      },
-      item: {
-        operationArgument: {
-          isExist: true,
-          notEqualPrev: true,
-          notEqualNext: true,
-        },
-      },
-    },
-    delete: {},
-    edit: {},
-    set: {},
-  };
+  // validation constraints
+  // static constraints = {
+  //   add: {
+  //     args: {
+  //       item: {
+  //         rules: {
+  //           notExists: {
+  //             in: 'items',
+  //           },
+  //           notEquals: {
+  //             values: [{ method: '_getPrevItem' }, { method: '_getPrevItem' }],
+  //             in: 'items',
+  //           },
+  //           prevItemNotInterrupt: {
+  //             in: 'items',
+  //           },
+  //           prevItemNotInterrupt: {
+  //             in: 'items',
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  //   delete: {
+  //     args: {
+  //       item: {
+  //         rules: {
+  //           exists: {
+  //             in: 'items',
+  //           },
+  //           prevAndNextNotEqual: {
+  //             in: 'items',
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  //   edit: {
+  //     ruleSet: {
+  //       newItemExists: {
+  //         args: {
+  //           newItem: {
+  //             rules: {
+  //               notExists: true,
+  //             },
+  //           },
+  //         },
+  //       },
+  //       args: {
+  //         item: {
+  //           rules: {
+  //             notEquals: {
+  //               values: [
+  //                 {
+  //                   args: ['newItem'],
+  //                 },
+  //               ],
+  //               in: 'items',
+  //               message: 'Nothing to update',
+  //             },
+  //             exists: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  //   set: {},
+  // };
 
   constructor(items = [], interruptValue) {
     super();
@@ -109,8 +158,18 @@ export class ValueDayProgress extends BaseClass {
     return this.getItemsAt().length !== 0;
   }
 
-  getItemsAt(day = new Day()) {
-    const items = this._getItemsContainsDay(day);
+  getStartValueAt(day = new Day(), options = {}) {
+    const items = this.getItemsAt(day);
+
+    if (items.length === 0) {
+      return;
+    }
+
+    return items[0].value;
+  }
+
+  getItemsAt(day = new Day(), options = {}) {
+    const items = this._getItemsContainsDay(day, options);
 
     return items.filter(({ day: currentDay }) => currentDay <= day);
   }
@@ -185,80 +244,58 @@ export class ValueDayProgress extends BaseClass {
   }
 
   // validation runner
-  _validation() {
+  _validation(args) {
     const validationMethod = `_validate${upperFirst(
       this.operation.name
     )}Operation`;
 
-    this[validationMethod]();
+    this[validationMethod](args);
   }
 
   // operation validation error generators
-  _validateAddOperation() {
-    const { item } = this.operation.args;
-
+  _validateAddOperation({ item }, options = {}) {
     this.operation.errors = this._collectErrors(
-      this._getAlreadyExistsError(item),
-      this._getPrevNotAllowedError(item),
-      this._getNextNotAllowedError(item)
+      this._getAlreadyExistsError(item, options),
+      this._getPrevValueNotEqualsError(item, options),
+      this._getNextValueNotEqualsError(item, options),
+      this._getBeforeOrEqualPreviousInterruptDayError(item)
     );
   }
 
-  _validateDeleteOperation() {
-    const { item } = this.operation.args;
-
+  _validateDeleteOperation({ item }, options = {}) {
     this.operation.errors = this._collectErrors(
-      this._getPrevAndNextEqualityError(item),
-      this._getNotFoundError(item)
+      this._getPrevAndNextEqualityError(item, options),
+      this._getNotFoundError(item, options)
     );
   }
 
-  _validateEditOperation() {
-    const { item, newItem } = this.operation.args;
+  _validateEditOperation({ item, newItem }, options = {}) {
+    const errors = [];
 
-    const nothingToUpdateError = this._getNothingToUpdateError(item, newItem);
+    errors.push(this._getNothingToUpdateError(item, newItem, options));
 
-    if (nothingToUpdateError.length !== 0) {
-      this.operation.errors = this._collectErrors(nothingToUpdateError);
-    }
-
-    const itemsWithoutItem = this.items.filter(
-      (currentItem) => !item.equals(currentItem)
-    );
-
-    const itemNotFoundError = this._getNotFoundError(item, this.items);
-    const newAlreadyItemExistsError = this._getAlreadyExistsError(
-      newItem,
-      itemsWithoutItem
-    );
-
-    if (
-      itemNotFoundError.length !== 0 ||
-      newAlreadyItemExistsError.length !== 0
-    ) {
-      this.operation.errors = this._collectErrors(
-        itemNotFoundError,
-        newAlreadyItemExistsError
+    if (this._isDayBetweenSameRangeWithItem(newItem.day, item, options)) {
+      errors.push(
+        this._getPrevValueNotEqualsError(newItem, {
+          ...options,
+          excludeItems: [item],
+        }),
+        this._getNextValueNotEqualsError(newItem, {
+          ...options,
+          excludeItems: [item],
+        })
       );
     }
 
-    const prevOfItem = this._getPrevItemAt(item.day.prev());
-    const prevOfNewItem = this._getPrevItemAt(newItem.dayWithoutItem);
-
-    if (prevOfItem !== undefined && prevOfItem.equals(prevOfNewItem)) {
-      this.operation.errors = this._collectErrors(
-        this._getPrevNotAllowedError(newItem),
-        this._getNextNotAllowedError(newItem)
-      );
-    }
-
-    this.operation.errors = this._collectErrors(
-      this._getAddError(newItem),
-      this._getDeleteError(item)
+    errors.push(
+      this._getDeleteError(item, options),
+      this._getAddError(newItem, { ...options, excludeItems: [item] })
     );
+
+    this.operation.errors = this._collectErrors(errors);
   }
 
-  _validateSetOperation() {
+  _validateSetOperation({ items }, options = {}) {
     this.operation.errors = [];
   }
 
@@ -268,8 +305,8 @@ export class ValueDayProgress extends BaseClass {
   }
 
   // validation error generators
-  _getAlreadyExistsError(item) {
-    if (item === undefined || this._hasItemOn(item.day)) {
+  _getAlreadyExistsError(item, options = {}) {
+    if (item === undefined || this._hasItemOn(item.day, options)) {
       const upperFirstItemName = upperFirst(lowerCase(item.constructor.name));
 
       return `${upperFirstItemName} with value "${item.value.toString()}" at ${item.day.toString()} already exists`;
@@ -278,8 +315,8 @@ export class ValueDayProgress extends BaseClass {
     return null;
   }
 
-  _getNotFoundError(item) {
-    if (!this._hasItem(item)) {
+  _getNotFoundError(item, options = {}) {
+    if (!this._hasItem(item, (options = {}))) {
       const upperFirstItemName = upperFirst(lowerCase(item.constructor.name));
 
       return `${upperFirstItemName} with value "${item.value.toString()}" at ${item.day.toString()} not found`;
@@ -288,9 +325,9 @@ export class ValueDayProgress extends BaseClass {
     return null;
   }
 
-  _getPrevNotAllowedError(item) {
+  _getPrevValueNotEqualsError(item, options = {}) {
     const itemName = lowerCase(item.constructor.name);
-    const prevItem = this._getPrevItemAt(item.day);
+    const prevItem = this._getPrevItemAt(item.day, options);
 
     if (prevItem !== undefined && item.value === prevItem.value) {
       return `Previous ${itemName} already have value "${prevItem.value}"`;
@@ -298,9 +335,9 @@ export class ValueDayProgress extends BaseClass {
     return null;
   }
 
-  _getNextNotAllowedError(item) {
+  _getNextValueNotEqualsError(item, options = {}) {
     const itemName = lowerCase(item.constructor.name);
-    const nextItem = this._getNextItemAt(item.day);
+    const nextItem = this._getNextItemAt(item.day, options);
 
     if (nextItem !== undefined && item.value === nextItem.value) {
       return `Next ${itemName} already have value "${nextItem.value}"`;
@@ -309,20 +346,32 @@ export class ValueDayProgress extends BaseClass {
     return null;
   }
 
-  _getPrevAndNextEqualityError(item) {
-    const itemName = lowerCase(item.constructor.name);
+  _getPrevAndNextEqualityError(item, options = {}) {
+    const prevItem = this._getPrevItem(item, options);
+    const nextItem = this._getNextItem(item, options);
 
-    const prev = this._getPrevItemAt(item.day);
-    const next = this._getNextItemAt(item.day);
-
-    if (prev !== undefined && next !== undefined && prev.value === next.value) {
-      return `Previous ${itemName} value and next ${itemName} value are equal`;
+    if (prevItem !== undefined && prevItem.equals(nextItem)) {
+      return `Previous ${itemName} eqauls next ${itemName}`;
     }
 
     return null;
   }
 
-  _getNothingToUpdateError(item, newItem) {
+  _getBeforeOrEqualPreviousInterruptDayError(item) {
+    const itemName = lowerCase(item.constructor.name);
+
+    const prevInerruptDayAt = this._getPrevInerruptDayAt();
+
+    if (prevInerruptDayAt !== undefined && item.day <= prevInerruptDayAt) {
+      return `${
+        item.constructor.name
+      } cannot be before or equals previous end day`;
+    }
+
+    return null;
+  }
+
+  _getNothingToUpdateError(item, newItem, options = {}) {
     if (item !== undefined && item.equals(newItem)) {
       return 'Nothing to update';
     }
@@ -330,31 +379,25 @@ export class ValueDayProgress extends BaseClass {
     return null;
   }
 
+  // validators utils
+
+  _isExcludedItem(item, itemsToExclude) {
+    return itemsToExclude.find(itemToExclude.equals(item));
+  }
+
   // search items
-  _getPrevItemAt(day = new Day()) {
-    const itemsBeforeDay = this._getItemsBeforeDay(day);
-
-    return itemsBeforeDay[itemsBeforeDay.length - 1];
-  }
-
-  _getNextItemAt(day = new Day()) {
-    const itemsAfterDay = this._getItemsAfterDay(day);
-
-    return itemsAfterDay[0];
-  }
-
-  _hasItemOn(day = new Day()) {
-    const persistedItem = this._getItemOn(day);
+  _hasItemOn(day = new Day(), options = {}) {
+    const persistedItem = this._getItemOn(day, options);
     return !!persistedItem;
   }
 
-  _hasItem(item) {
-    const persistedItem = this._getItemOn(item.day);
+  _hasItem(item, options = {}) {
+    const persistedItem = this._getItemOn(item.day, options);
     return persistedItem !== undefined && item.equals(persistedItem);
   }
 
-  _getItemOn(day = new Day()) {
-    const itemAtDay = this._getItemAt(day);
+  _getItemOn(day = new Day(), options = {}) {
+    const itemAtDay = this._getItemAt(day, options);
 
     if (itemAtDay === undefined || !day.equals(itemAtDay.day)) {
       return;
@@ -363,21 +406,45 @@ export class ValueDayProgress extends BaseClass {
     return itemAtDay;
   }
 
-  _getItemAt(day = new Day()) {
-    const itemsAt = this.getItemsAt(day);
+  _getItemAt(day = new Day(), options = {}) {
+    const itemsAt = this.getItemsAt(day, options);
 
     return itemsAt[itemsAt.length - 1];
   }
 
-  _getItemsBeforeDay(day = new Day(), items = this._getItemsContainsDay(day)) {
-    return items.filter(({ day: currentDay }) => currentDay < day);
+  _getPrevItem(item, options = {}) {
+    return this._getPrevItemAt(item.day, options);
   }
 
-  _getItemsAfterDay(day = new Day(), items = this._getItemsContainsDay(day)) {
-    return items.filter(({ day: currentDay }) => currentDay > day);
+  _getNextItem(item, options = {}) {
+    return this._getNextItemAt(item.day, options);
   }
 
-  _getItemsContainsDay(day = new Day()) {
+  _getPrevItemAt(day = new Day(), options = {}) {
+    const itemsBeforeDay = this._getItemsBeforeDay(day, options);
+
+    return itemsBeforeDay[itemsBeforeDay.length - 1];
+  }
+
+  _getNextItemAt(day = new Day(), options = {}) {
+    const itemsAfterDay = this._getItemsAfterDay(day, options);
+
+    return itemsAfterDay[0];
+  }
+
+  _getItemsBeforeDay(day = new Day(), options = {}) {
+    return this._getItemsContainsDay(day).filter(
+      ({ day: currentDay }) => currentDay < day
+    );
+  }
+
+  _getItemsAfterDay(day = new Day(), options = {}) {
+    return this._getItemsContainsDay(day, options).filter(
+      ({ day: currentDay }) => currentDay > day
+    );
+  }
+
+  _getItemsContainsDay(day = new Day(), options = {}) {
     if (this._items.length === 0) {
       return [];
     }
@@ -388,9 +455,11 @@ export class ValueDayProgress extends BaseClass {
     return this._items
       .sort(getDayComparator('asc'))
       .filter(
-        ({ day: currentDay }) =>
-          (!prevInerruptDay || currentDay > prevInerruptDay) &&
-          (!nextInerruptDay || currentDay < nextInerruptDay)
+        (item) =>
+          (!prevInerruptDay || item.currentDay > prevInerruptDay) &&
+          (!nextInerruptDay || item.currentDay < nextInerruptDay) &&
+          (!options.excludeItems ||
+            !this._isExcludedItem(item, options.excludeItems))
       );
   }
 
@@ -435,5 +504,14 @@ export class ValueDayProgress extends BaseClass {
     }
 
     return value1 === value2;
+  }
+
+  _isDayBetweenSameRangeWithItem(day, item) {
+    const prevItemForDay = this._getPrevItemAt(day);
+    const prevItemForItem = this._getPrevItem(item);
+
+    return (
+      prevItemForDay !== undefined && prevItemForDay.equals(prevItemForItem)
+    );
   }
 }

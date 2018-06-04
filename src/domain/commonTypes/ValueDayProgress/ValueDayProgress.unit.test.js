@@ -22,7 +22,7 @@ const item2 = new MockItem({ value: 2, day: day2 });
 const item3 = new MockItem({ value: 'interrupt', day: day3 });
 const item4 = new MockItem({ value: 5, day: day5 });
 
-const items = [item1, item2, item3, item4];
+// const items = [item1, item2, item3, item4];
 
 const items = [item1, item2, item3];
 
@@ -59,7 +59,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
       });
 
       test('should set added item value', () => {
-        expect(coll.items).toBe([item1]);
+        expect(coll.items).toEqual([item1]);
         expect(coll.itemValue).toBe(item1.value);
       });
 
@@ -75,10 +75,11 @@ describe('Domain :: lib :: ValueDayProgress', () => {
     describe('#delete', () => {
       let result;
       beforeEach(() => {
-        result = expect(coll.deleteItem(item1));
+        result = coll.deleteItem(item1);
       });
 
       test('should return unsuccessful result', () => {
+        console.log(result);
         expect(result).toEqual({
           done: false,
           error: ['Mock item with value "1" at 20.01.2017 not found'],
@@ -100,7 +101,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
       });
 
       test('should set added item value', () => {
-        expect(coll.items).toBe(items);
+        expect(coll.items).toEqual(items);
         expect(coll.itemValue).toBe(item3.value);
       });
 
@@ -151,7 +152,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
                 })
               ).toEqual({
                 done: true,
-                error: [],
+                error: null,
               });
               expect(coll.getStartValueAt(day0).toBe(3));
             });

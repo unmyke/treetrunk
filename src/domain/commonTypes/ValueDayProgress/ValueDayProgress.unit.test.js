@@ -63,7 +63,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
 
       test('should fill items', () => {
         expect(coll.hasItems).toBe(true);
-        expect(coll.items).toBe([item1]);
+        expect(coll.items).toEqual([item1]);
         expect(coll.items).toHaveLength(1);
       });
 
@@ -91,7 +91,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
 
       test('should leave items unchanged', () => {
         expect(coll.hasItems).toBe(false);
-        expect(coll.items).toBe([]);
+        expect(coll.items).toEqual([]);
         expect(coll.items).toHaveLength(0);
       });
 
@@ -113,8 +113,8 @@ describe('Domain :: lib :: ValueDayProgress', () => {
 
       test('should fill items', () => {
         expect(coll.hasItems).toBe(true);
-        expect(coll.items).toBe(items);
-        expect(coll.items).toHaveLength(3);
+        expect(coll.items).toEqual(items);
+        expect(coll.items).toHaveLength(4);
       });
 
       test('should set added item value', () => {
@@ -136,7 +136,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
     context('when initialized', () => {
       test('should items be filled', () => {
         expect(coll.hasItems).toBe(true);
-        expect(coll.items).toBe(items);
+        expect(coll.items).toEqual(items);
         expect(coll.items).toHaveLength(items.length);
       });
 
@@ -206,7 +206,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
                 })
               ).toEqual({
                 done: true,
-                error: [],
+                error: null,
               });
               expect(coll.getStartDayAt(day0).toBe(day0));
             });

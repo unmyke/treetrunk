@@ -1,7 +1,7 @@
 import { lowerFirst, lowerCase, upperFirst, upperCase } from 'lodash';
 
 import { applyFSM, getDayComparator } from '../../_lib/BaseMethods';
-import { BaseClass } from '../../_lib';
+import { BaseClass, BaseValue } from '../../_lib';
 
 import { Day } from '../Day';
 
@@ -158,14 +158,18 @@ export class ValueDayProgress extends BaseClass {
     return this.getItemsAt().length !== 0;
   }
 
-  getStartValueAt(day = new Day(), options = {}) {
-    const items = this.getItemsAt(day);
+  get startDay() {
+    return this.getStartDayAt();
+  }
+
+  getStartDayAt(day = new Day(), options = {}) {
+    const items = this.getItemsAt(day, options);
 
     if (items.length === 0) {
       return;
     }
 
-    return items[0].value;
+    return items[0].day;
   }
 
   getItemsAt(day = new Day(), options = {}) {
@@ -360,7 +364,7 @@ export class ValueDayProgress extends BaseClass {
   _getBeforeOrEqualPreviousInterruptDayError(item) {
     const itemName = lowerCase(item.constructor.name);
 
-    const prevInerruptDayAt = this._getPrevInerruptDayAt();
+    const prevInerruptDayAt = this._getPrevInterruptDayAt();
 
     if (prevInerruptDayAt !== undefined && item.day <= prevInerruptDayAt) {
       return `${
@@ -456,8 +460,8 @@ export class ValueDayProgress extends BaseClass {
       .sort(getDayComparator('asc'))
       .filter(
         (item) =>
-          (!prevInerruptDay || item.currentDay > prevInerruptDay) &&
-          (!nextInerruptDay || item.currentDay < nextInerruptDay) &&
+          (!prevInterruptDay || item.currentDay > prevInerruptDay) &&
+          (!nextInterruptDay || item.currentDay < nextInerruptDay) &&
           (!options.excludeItems ||
             !this._isExcludedItem(item, options.excludeItems))
       );
@@ -493,7 +497,7 @@ export class ValueDayProgress extends BaseClass {
     }
 
     return this._items
-      .filter(({ value }) => _compareValues(value, this.interruptValue))
+      .filter(({ value }) => this._compareValues(value, this.interruptValue))
       .map(({ day }) => day);
   }
 

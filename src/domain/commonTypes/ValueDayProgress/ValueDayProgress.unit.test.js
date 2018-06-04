@@ -18,6 +18,8 @@ const item1 = new MockItem({ value: 1, day: day1 });
 const item2 = new MockItem({ value: 2, day: day2 });
 const item3 = new MockItem({ value: 3, day: day3 });
 
+const items = [item1, item2, item3];
+
 let coll;
 
 describe('Domain :: lib :: ValueDayProgress', () => {
@@ -76,7 +78,6 @@ describe('Domain :: lib :: ValueDayProgress', () => {
   });
 
   context('when items is not empty', () => {
-    const items = [item1, item2, item3];
     describe('#add', () => {
       const items = [item1, item3];
       const itemsForDeleteTests = [item1, item3];

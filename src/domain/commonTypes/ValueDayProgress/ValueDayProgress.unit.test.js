@@ -10,13 +10,19 @@ class MockItem extends BaseValue {
   }
 }
 
+const day0 = new Day({ value: new Date('2017.01.01') });
 const day1 = new Day({ value: new Date('2017.01.20') });
 const day2 = new Day({ value: new Date('2017.02.20') });
 const day3 = new Day({ value: new Date('2017.03.20') });
+const day4 = new Day({ value: new Date('2017.04.20') });
+const day5 = new Day({ value: new Date('2017.05.20') });
 
 const item1 = new MockItem({ value: 1, day: day1 });
 const item2 = new MockItem({ value: 2, day: day2 });
-const item3 = new MockItem({ value: 3, day: day3 });
+const item3 = new MockItem({ value: 'interrupt', day: day3 });
+const item4 = new MockItem({ value: 5, day: day5 });
+
+const items = [item1, item2, item3, item4];
 
 const items = [item1, item2, item3];
 
@@ -29,11 +35,17 @@ describe('Domain :: lib :: ValueDayProgress', () => {
 
   context('when items is empty', () => {
     context('when initialized', () => {
+      test('should items be empty', () => {
+        expect(coll.items).toHaveLength(0);
+        expect(coll.hasItems).toBe(false);
+      });
+
+      test('should have item value undefined', () => {
+        expect(coll.itemValue).toBeUndefined();
+      });
+
       test('should be at idle state', () => {
         expect(coll.state).toBe('idle');
-      });
-      test('should items length equal 0', () => {
-        expect(coll.items).toHaveLength(0);
       });
     });
 
@@ -41,38 +53,63 @@ describe('Domain :: lib :: ValueDayProgress', () => {
       beforeEach(() => {
         expect(coll.addItem(item1)).toEqual({ done: true, error: null });
       });
-      test('should increase items length', () => {
-        expect(coll.state).toBe('idle');
 
-        expect(coll.state).toBe('idle');
-        expect(coll.itemValue).toBe(item1.value);
+      test('should increase items length', () => {
         expect(coll.items).toHaveLength(1);
-        expect(coll.items[0]).toBe(item1);
+      });
+
+      test('should set added item value', () => {
+        expect(coll.items).toBe([item1]);
+        expect(coll.itemValue).toBe(item1.value);
+      });
+
+      test('should set hasItems to true', () => {
+        expect(coll.hasItems).toBe(true);
+      });
+
+      test('should return to idle state', () => {
+        expect(coll.state).toBe('idle');
       });
     });
 
     describe('#delete', () => {
-      test('should return unsuccessful result', () => {
-        expect(coll.state).toBe('idle');
+      let result;
+      beforeEach(() => {
+        result = expect(coll.deleteItem(item1));
+      });
 
-        expect(coll.deleteItem(item1)).toEqual({
+      test('should return unsuccessful result', () => {
+        expect(result).toEqual({
           done: false,
           error: ['Mock item with value "1" at 20.01.2017 not found'],
         });
+      });
 
+      test('should return to idle state', () => {
         expect(coll.state).toBe('idle');
-        expect(coll.items).toHaveLength(0);
       });
     });
 
     describe('#set', () => {
-      test('should set new items', () => {
-        expect(coll.state).toBe('idle');
-
+      beforeEach(() => {
         expect(coll.setItems(items)).toEqual({ done: true, error: null });
+      });
 
-        expect(coll.state).toBe('idle');
+      test('should increase items length', () => {
         expect(coll.items).toHaveLength(3);
+      });
+
+      test('should set added item value', () => {
+        expect(coll.items).toBe(items);
+        expect(coll.itemValue).toBe(item3.value);
+      });
+
+      test('should set hasItems to true', () => {
+        expect(coll.hasItems).toBe(true);
+      });
+
+      test('should return to idle state', () => {
+        expect(coll.state).toBe('idle');
       });
     });
   });
@@ -83,64 +120,46 @@ describe('Domain :: lib :: ValueDayProgress', () => {
       const itemsForDeleteTests = [item1, item3];
       beforeEach(() => {
         coll.setItems(items);
-        expect(coll.items).toHaveLength(2);
       });
 
-      context('when item already exists', () => {
+      context('when item already exists at passed day', () => {
         test('should throw error', () => {
-          expect(coll.state).toBe('idle');
-
           expect(coll.addItem(item1)).toEqual({
             done: false,
             error: ['Mock item with value "1" at 20.01.2017 already exists'],
           });
-
-          expect(coll.state).toBe('idle');
-          expect(coll.items).toHaveLength(2);
         });
       });
 
-      context('when passed item value equals previous value', () => {
-        test('should throw error', () => {
-          expect(coll.state).toBe('idle');
+      context('when no item exists at passed day', () => {
+        context('when passed item value is the same as persisted', () => {
+          test('should throw error', () => {
+            expect(coll.addItem({ value: 1, day: day2 })).toEqual({
+              done: false,
+              error: ['Previous object already have value "1"'],
+            });
+          });
+        });
 
-          expect(coll.addItem({ value: 1, day: day2 })).toEqual({
-            done: false,
-            error: ['Previous object already have value "1"'],
+        context('when passed item value is not the same as persisted', () => {
+          context('when passed day is sooner than first item was added', () => {
+            test('should change start item value', () => {
+              expect(
+                coll.addItem({
+                  value: 3,
+                  day: day0,
+                })
+              ).toEqual({
+                done: true,
+                error: [],
+              });
+              expect(coll.getStartValueAt(day0).toBe(3));
+            });
           });
 
-          expect(coll.state).toBe('idle');
-          expect(coll.items).toHaveLength(2);
+          context('when passed day is later than start item value', () => {});
         });
       });
-
-      context('when passed item value equals next value', () => {
-        test('should throw error', () => {
-          expect(coll.state).toBe('idle');
-
-          expect(coll.addItem({ value: 3, day: day2 })).toEqual({
-            done: false,
-            error: ['Next object already have value "3"'],
-          });
-
-          expect(coll.state).toBe('idle');
-          expect(coll.items).toHaveLength(2);
-        });
-      });
-
-      context(
-        'when passed item is not exists and value not equals prev or next value',
-        () => {
-          test('should add item', () => {
-            expect(coll.state).toBe('idle');
-
-            expect(coll.addItem(item2)).toEqual({ done: true, error: null });
-
-            expect(coll.state).toBe('idle');
-            expect(coll.items).toEqual([item1, item2, item3]);
-          });
-        }
-      );
     });
 
     describe('#delete', () => {

@@ -5,6 +5,7 @@ import { BaseClass } from '../../_lib';
 
 import { Day } from '../Day';
 import { Operation as ErrorFactory } from 'src/infra/errorFactories';
+import { create } from 'domain';
 
 // state-transition functions
 function getPostValidationState() {
@@ -57,6 +58,14 @@ export class ValueDayProgress extends BaseClass {
       },
     },
   };
+
+  static create(items = []) {
+    return new ValueDayProgress(items, (interruptValue = undefined));
+  }
+
+  static createInterruptible(items = [], interruptValue) {
+    return new ValueDayProgress(items, interruptValue);
+  }
 
   constructor(items = [], interruptValue) {
     super();

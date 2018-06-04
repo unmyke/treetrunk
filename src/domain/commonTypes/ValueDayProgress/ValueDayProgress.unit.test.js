@@ -21,9 +21,8 @@ const item3 = new MockItem({ value: 3, day: day3 });
 let coll;
 
 describe('Domain :: lib :: ValueDayProgress', () => {
-  const items = [item1, item2, item3];
   beforeEach(() => {
-    coll = new ValueDayProgress();
+    coll = ValueDayProgress.create();
   });
 
   context('when items is empty', () => {
@@ -31,15 +30,20 @@ describe('Domain :: lib :: ValueDayProgress', () => {
       test('should be at idle state', () => {
         expect(coll.state).toBe('idle');
       });
+      test('should items length equal 0', () => {
+        expect(coll.items).toHaveLength(0);
+      });
     });
 
     describe('#add', () => {
-      test('should be at add item', () => {
-        expect(coll.state).toBe('idle');
-
+      beforeEach(() => {
         expect(coll.addItem(item1)).toEqual({ done: true, error: null });
+      });
+      test('should increase items length', () => {
+        expect(coll.state).toBe('idle');
 
         expect(coll.state).toBe('idle');
+        expect(coll.itemValue).toBe(item1.value);
         expect(coll.items).toHaveLength(1);
         expect(coll.items[0]).toBe(item1);
       });
@@ -72,6 +76,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
   });
 
   context('when items is not empty', () => {
+    const items = [item1, item2, item3];
     describe('#add', () => {
       const items = [item1, item3];
       const itemsForDeleteTests = [item1, item3];
@@ -179,7 +184,10 @@ describe('Domain :: lib :: ValueDayProgress', () => {
         test('should throw error', () => {
           expect(coll.state).toBe('idle');
 
-          expect(coll.deleteItem(item1)).toEqual({ done: true, error: null });
+          expect(coll.deleteItem(item1)).toEqual({
+            done: true,
+            error: null,
+          });
 
           expect(coll.state).toBe('idle');
           expect(coll.items).toHaveLength(2);

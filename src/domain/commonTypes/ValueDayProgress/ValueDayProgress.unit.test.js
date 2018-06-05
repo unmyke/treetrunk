@@ -25,8 +25,8 @@ const item3 = new MockItem({ value: 'interrupt', day: day3 });
 const item4 = new MockItem({ value: 5, day: day5 });
 const item5 = new MockItem({ value: 'interrupt', day: day7 });
 
+const interruptedItems = [item1, item2, item3];
 const items = [item1, item2, item3, item4];
-const interruptedItems = [item1, item2, item3, item4, item5];
 
 let coll;
 let result;
@@ -118,7 +118,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
       });
 
       test('should set added item value', () => {
-        expect(coll.itemValue).toBe(item3.value);
+        expect(coll.itemValue).toBe(item4.value);
       });
 
       test('should return to idle state', () => {
@@ -181,19 +181,17 @@ describe('Domain :: lib :: ValueDayProgress', () => {
                 done: true,
                 error: null,
               });
-              expect(coll.getStartDayAt(day0).toBe(day0));
+              expect(coll.getStartDayAt(day0)).toBe(day0);
             });
 
             test('should change items', () => {
-              expect(
-                coll.getItemsAt(day2).toBe([
-                  {
-                    value: 3,
-                    day: day0,
-                  },
-                  ...items,
-                ])
-              );
+              expect(coll.getItemsAt(day2)).toBe([
+                {
+                  value: 3,
+                  day: day0,
+                },
+                ...items,
+              ]);
             });
           });
 
@@ -208,7 +206,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
                 done: true,
                 error: null,
               });
-              expect(coll.getStartDayAt(day0).toBe(day0));
+              expect(coll.getStartDayAt(day0)).toBe(day0);
             });
           });
         });
@@ -285,7 +283,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
         expect(coll.items).toHaveLength(0);
       });
 
-      test('should have item value not undefined', () => {
+      test('should have item value undefined', () => {
         expect(coll.itemValue).toBeUndefined();
       });
 
@@ -294,11 +292,179 @@ describe('Domain :: lib :: ValueDayProgress', () => {
       });
     });
 
-    describe('#add', () => {});
+    describe('#add', () => {
+      context('when passed interrupt item', () => {
+        beforeEach(() => {
+          result = coll.addItem(item3);
+        });
 
-    describe('#delete', () => {});
+        test('should return unsuccessful result', () => {
+          expect(result).toEqual({
+            done: false,
+            error: ['Mock item with value "1" at 20.01.2017 already exists'],
+          });
+        });
 
-    describe('#edit', () => {});
+        test('should leave items unchanged', () => {
+          expect(coll.hasItems).toBe(false);
+          expect(coll.items).toEqual([]);
+          expect(coll.items).toHaveLength(0);
+        });
+
+        test('should return to idle state', () => {
+          expect(coll.state).toBe('idle');
+        });
+      });
+
+      context('when passed not interrupt item', () => {
+        beforeEach(() => {
+          result = coll.addItem(item4);
+        });
+
+        test('should return successful result', () => {
+          expect(result).toEqual({ done: true, error: null });
+        });
+
+        test('should fill items', () => {
+          expect(coll.hasItems).toBe(true);
+          expect(coll.items).toEqual([item4]);
+          expect(coll.items).toHaveLength(1);
+        });
+
+        test('should set added item value', () => {
+          expect(coll.itemValue).toBe(item4.value);
+        });
+
+        test('should return to idle state', () => {
+          expect(coll.state).toBe('idle');
+        });
+      });
+    });
+
+    describe('#delete', () => {
+      context('when interrupt item exists at passed day', () => {
+        beforeEach(() => {
+          result = coll.deleteItem(item3);
+        });
+
+        test('should return successful result', () => {
+          expect(result).toEqual({ done: true, error: null });
+        });
+
+        test('should restore items', () => {
+          expect(coll.hasItems).toBe(true);
+          expect(coll.items).toEqual([item1, item2]);
+          expect(coll.items).toHaveLength(1);
+        });
+
+        test('should set added item value', () => {
+          expect(coll.itemValue).toBe(item2.value);
+        });
+
+        test('should return to idle state', () => {
+          expect(coll.state).toBe('idle');
+        });
+      });
+
+      context('when no interrupt item exists at passed day', () => {
+        beforeEach(() => {
+          result = coll.deleteItem({ value: 'interrupt', day: day4 });
+        });
+
+        test('should return unsuccessful result', () => {
+          expect(result).toEqual({
+            done: false,
+            error: ['Mock item with value "interrupt" at 20.04.2017 not found'],
+          });
+        });
+
+        test('should leave items unchanged', () => {
+          expect(coll.hasItems).toBe(false);
+          expect(coll.items).toEqual([]);
+          expect(coll.items).toHaveLength(0);
+        });
+
+        test('should return to idle state', () => {
+          expect(coll.state).toBe('idle');
+        });
+      });
+    });
+
+    describe('#edit', () => {
+      context('when interrupt item exists at passed day', () => {
+        context('when passed not interrupt item', () => {
+          beforeEach(() => {
+            result = coll.editItem(item3, { value: 3, day: day3 });
+          });
+
+          test('should return successful result', () => {
+            expect(result).toEqual({ done: true, error: null });
+          });
+
+          test('should restore items', () => {
+            expect(coll.hasItems).toBe(true);
+            expect(coll.items).toEqual([item1, item2, { value: 3, day: day3 }]);
+            expect(coll.items).toHaveLength(3);
+          });
+
+          test('should set added item value', () => {
+            expect(coll.itemValue).toBe(item3.value);
+          });
+
+          test('should return to idle state', () => {
+            expect(coll.state).toBe('idle');
+          });
+        });
+
+        context('when passed interrupt item', () => {
+          beforeEach(() => {
+            result = coll.editItem(item3, item3);
+          });
+
+          test('should return unsuccessful result', () => {
+            expect(result).toEqual({
+              done: false,
+              error: [
+                'Mock item with value "interrupt" at 20.03.2017 already exists',
+              ],
+            });
+          });
+
+          test('should leave items unchanged', () => {
+            expect(coll.hasItems).toBe(false);
+            expect(coll.items).toEqual([]);
+            expect(coll.items).toHaveLength(0);
+          });
+
+          test('should return to idle state', () => {
+            expect(coll.state).toBe('idle');
+          });
+        });
+      });
+
+      context('when no interrupt item exists at passed day', () => {
+        beforeEach(() => {
+          result = coll.deleteItem({ value: 'interrupt', day: day4 });
+        });
+
+        test('should return unsuccessful result', () => {
+          expect(result).toEqual({
+            done: false,
+            error: ['Mock item with value "interrupt" at 20.04.2017 not found'],
+          });
+        });
+
+        test('should leave items unchanged', () => {
+          expect(coll.hasItems).toBe(false);
+          expect(coll.items).toEqual([]);
+          expect(coll.items).toHaveLength(0);
+        });
+
+        test('should return to idle state', () => {
+          expect(coll.state).toBe('idle');
+        });
+      });
+    });
 
     describe('#set', () => {});
   });

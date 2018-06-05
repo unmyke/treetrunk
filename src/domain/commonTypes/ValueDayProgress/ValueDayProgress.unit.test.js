@@ -162,9 +162,9 @@ describe('Domain :: lib :: ValueDayProgress', () => {
       context('when no item exists at passed day', () => {
         context('when passed item value is the same as persisted', () => {
           test('should return unsuccessful result', () => {
-            expect(coll.addItem({ value: 1, day: day2 })).toEqual({
+            expect(coll.addItem({ value: 5, day: day6 })).toEqual({
               done: false,
-              error: ['Previous object already have value "1"'],
+              error: ['Previous object already have value "5"'],
             });
           });
         });

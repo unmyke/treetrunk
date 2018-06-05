@@ -256,9 +256,26 @@ export class ValueDayProgress extends BaseClass {
     this[validationMethod](args);
   }
 
-  // operation validation error generators
+  // validation setters
   _validateAddOperation({ item }, options = {}) {
-    this.operation.errors = this._collectErrors(
+    this.operation.errors = this._getAddErrors({ item }, options);
+  }
+
+  _validateDeleteOperation({ item }, options = {}) {
+    this.operation.errors = this._getDeleteErrors({ item }, options);
+  }
+
+  _validateEditOperation({ item, newItem }, options = {}) {
+    this.operation.errors = this._getEditErrors({ item, newItem }, options);
+  }
+
+  _validateSetOperation({ items }, options = {}) {
+    this.operation.errors = [];
+  }
+
+  // operation validation error generators
+  _getAddErrors({ item }, options = {}) {
+    return this._collectErrors(
       this._getAlreadyExistsError(item, options),
       this._getPrevValueNotEqualsError(item, options),
       this._getNextValueNotEqualsError(item, options),
@@ -266,14 +283,14 @@ export class ValueDayProgress extends BaseClass {
     );
   }
 
-  _validateDeleteOperation({ item }, options = {}) {
-    this.operation.errors = this._collectErrors(
+  _getDeleteErrors({ item }, options = {}) {
+    return this._collectErrors(
       this._getPrevAndNextEqualityError(item, options),
       this._getNotFoundError(item, options)
     );
   }
 
-  _validateEditOperation({ item, newItem }, options = {}) {
+  _getEditErrors({ item, newItem }, options = {}) {
     const errors = [];
 
     errors.push(this._getNothingToUpdateError(item, newItem, options));
@@ -292,15 +309,11 @@ export class ValueDayProgress extends BaseClass {
     }
 
     errors.push(
-      this._getDeleteError(item, options),
-      this._getAddError(newItem, { ...options, excludeItems: [item] })
+      this._getDeleteErrors(item, options),
+      this._getAddErrors(newItem, { ...options, excludeItems: [item] })
     );
 
-    this.operation.errors = this._collectErrors(errors);
-  }
-
-  _validateSetOperation({ items }, options = {}) {
-    this.operation.errors = [];
+    return this._collectErrors(errors);
   }
 
   // validation errors collector
@@ -354,7 +367,11 @@ export class ValueDayProgress extends BaseClass {
     const prevItem = this._getPrevItem(item, options);
     const nextItem = this._getNextItem(item, options);
 
-    if (prevItem !== undefined && prevItem.equals(nextItem)) {
+    if (
+      prevItem !== undefined &&
+      nextItem !== undefined &&
+      this._compareItemValues(prevItem, nextItem)
+    ) {
       return `Previous ${itemName} eqauls next ${itemName}`;
     }
 
@@ -386,7 +403,9 @@ export class ValueDayProgress extends BaseClass {
   // validators utils
 
   _isExcludedItem(item, itemsToExclude) {
-    return itemsToExclude.find(itemToExclude.equals(item));
+    return (
+      itemsToExclude.find((itemToExclude) => itemToExclude.equals(item)) !== -1
+    );
   }
 
   // search items
@@ -396,6 +415,10 @@ export class ValueDayProgress extends BaseClass {
   }
 
   _hasItem(item, options = {}) {
+    if (item === undefined) {
+      return;
+    }
+
     const persistedItem = this._getItemOn(item.day, options);
     return persistedItem !== undefined && item.equals(persistedItem);
   }
@@ -417,10 +440,18 @@ export class ValueDayProgress extends BaseClass {
   }
 
   _getPrevItem(item, options = {}) {
+    if (item === undefined) {
+      return;
+    }
+
     return this._getPrevItemAt(item.day, options);
   }
 
   _getNextItem(item, options = {}) {
+    if (item === undefined) {
+      return;
+    }
+
     return this._getNextItemAt(item.day, options);
   }
 
@@ -502,6 +533,14 @@ export class ValueDayProgress extends BaseClass {
   }
 
   // utils
+  _compareItemValues(item1, item2) {
+    return (
+      item1 !== undefined &&
+      item2 !== undefined &&
+      this._compareValues(item1.value, item2.value)
+    );
+  }
+
   _compareValues(value1, value2) {
     if (value1 instanceof BaseValue) {
       return value1.equals(value2);

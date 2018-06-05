@@ -1,0 +1,36 @@
+get fullName()
+get lastName()
+get firstName()
+get middleName()
+update({ lastName, firstName, middleName, phone })
+
+#getItemsAt(day = new Day())
+#get items()
+
+#getPostIdAt(day = new Day())
+#get value()
+#getPostIdsAt(day = new Day())
+#get values()
+
+#getStartDayAt(day = new Day())
+#get startDay()
+#isStartedAt(day = new Day())
+#get isStarted()
+
+#getInterruptDayAt(day = new Day())
+#get interruptDay()
+#isInterruptedAt(day = new Day())
+#get isInterrupted()
+
+#getSeniorityAt(day = new Day())
+#get seniority()
+
+addItem(value, day)
+editItem(valueToEdit, dayToEdit, value, day)
+deleteItem(value, day)
+takeInterrupt(day = new Day())
+setItems(items)
+
+// private
+_itemsComparator(a, b)
+_getPostIdItemsAt(day, value)

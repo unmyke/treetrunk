@@ -1,44 +1,40 @@
-◻︎ - item
-◼ - newItem
-︎
-'when seller have no appointments'
+'when valueDayProgress have no items'
 2017.01.01       now
     |
     |             |
     |             ▶︎
     |             |
-  false         false
+   [ ]           [ ]
 
-'when seller have appointments and not quited'
+'when valueDayProgress have items and not interrupted'
 2017.01.01    2017.02.01      2017.03.01      2017.04.01        now
     |       senior_florist                     florist
     |             |               |               |               |
     |             ◎———————————————————————————————○———————————————▶︎
     |             |               |               |               |
-   [ ]          [ ◎ ]           [ ◎ ]          [ ◎, ○ ]        [ ◎, ○ ]
+ [ ◎, ○ ]      [ ◎, ○ ]        [ ◎, ○ ]        [ ◎, ○ ]        [ ◎, ○ ]
 
 
-
-'when seller have quited'
+'when valueDayProgress have interrupted'
 2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01         now
     |       senior_florist                     florist
     |             |               |               |               |               |               |
     |             ◎———————————————————————————————○———————————————————————————————●———————————————▶︎
     |             |               |               |               |               |               |
-   [ ]          [ ◎ ]           [ ◎ ]          [ ◎, ○ ]        [ ◎, ○ ]          [ ]             [ ]
+ [ ◎, ○ ]      [ ◎, ○ ]        [ ◎, ○ ]        [ ◎, ○ ]        [ ◎, ○ ]          [ ]             [ ]
 
-'when seller have quited and recruited again'
+'when valueDayProgress have interrupted and started again'
 2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01      2017.07.01      2017.08.01         now
     |       senior_florist                     florist                                                     senior_florist
     |             |               |               |               |               |               |               |               |
     |             ◎———————————————————————————————○———————————————————————————————●———————————————————————————————◎———————————————▶︎
     |             |               |               |               |               |               |               |               |
-   [ ]          [ ◎ ]           [ ◎ ]          [ ◎, ○ ]        [ ◎, ○ ]          [ ]             [ ]            [ ◎ ]           [ ◎ ]
+ [ ◎, ○ ]      [ ◎, ○ ]        [ ◎, ○ ]        [ ◎, ○ ]        [ ◎, ○ ]          [ ]            [ ◎ ]           [ ◎ ]           [ ◎ ]
 
-'when seller have quited, recruited again and quit again'
+'when valueDayProgress have interrupted, started again and interrupt again'
 2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01      2017.07.01      2017.08.01      2017.09.01      2017.10.01          now
     |       senior_florist                     florist                                                         florist
     |             |               |               |               |               |               |               |               |               |                |
     |             ◎———————————————————————————————○———————————————————————————————●———————————————————————————————◎———————————————————————————————●————————————————▶︎
     |             |               |               |               |               |               |               |               |               |                |
-   [ ]          [ ◎ ]           [ ◎ ]          [ ◎, ○ ]        [ ◎, ○ ]          [ ]             [ ]            [ ◎ ]           [ ◎ ]            [ ]              [ ]
+ [ ◎, ○ ]      [ ◎, ○ ]        [ ◎, ○ ]        [ ◎, ○ ]        [ ◎, ○ ]          [ ]             [ ]            [ ◎ ]           [ ◎ ]            [ ]              [ ]

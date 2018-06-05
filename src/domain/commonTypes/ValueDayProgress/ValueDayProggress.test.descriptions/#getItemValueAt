@@ -1,0 +1,39 @@
+'when valueDayProgress have no items'
+2017.01.01       now
+    |
+    |             |
+    |             ▶︎
+    |             |
+undefined     undefined
+
+'when valueDayProgress have items and not interrupted'
+2017.01.01    2017.02.01      2017.03.01      2017.04.01        now
+    |          florist                      senior_florist
+    |             |               |               |               |
+    |             ◎———————————————————————————————○———————————————▶︎
+    |             |               |               |               |
+undefined      florist         florist      senior_florist  senior_florist
+
+'when valueDayProgress have interrupted'
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.011     2017.06.01      2017.07.01
+    |          florist                      senior_florist
+    |             |               |               |               |               |               |
+    |             ◎———————————————————————————————○———————————————————————————————●———————————————▶︎
+    |             |               |               |               |               |               |
+undefined      florist         florist      senior_florist  senior_florist    undefined       undefined
+
+'when valueDayProgress have interrupted and started again'
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.011     2017.06.01      2017.07.01      2017.08.01         now
+    |          florist                      senior_florist                                                  senior_florist
+    |             |               |               |               |               |               |               |               |
+    |             ◎———————————————————————————————○———————————————————————————————●———————————————————————————————◎———————————————▶︎
+    |             |               |               |               |               |               |               |               |
+undefined      florist         florist      senior_florist  senior_florist    undefined       undefined    senior_florist  senior_florist
+
+'when valueDayProgress have interrupted, started again and interrupt again'
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.011     2017.06.01      2017.07.01      2017.08.01      2017.09.01      2017.10.01          now
+    |          florist                      senior_florist                                                  senior_florist
+    |             |               |               |               |               |               |               |               |               |                |
+    |             ◎———————————————————————————————○———————————————————————————————●———————————————————————————————◎———————————————————————————————●————————————————▶︎
+    |             |               |               |               |               |               |               |               |               |                |
+undefined      florist         florist      senior_florist  senior_florist    undefined       undefined    senior_florist  senior_florist     undefined        undefined

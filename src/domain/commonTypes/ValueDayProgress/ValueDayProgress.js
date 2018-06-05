@@ -50,15 +50,6 @@ export class ValueDayProgress extends BaseClass {
     },
   };
 
-  // factories
-  static create(items = []) {
-    return new ValueDayProgress(items);
-  }
-
-  static createInterruptible(items = [], interruptValue) {
-    return new ValueDayProgress(items, interruptValue);
-  }
-
   // state-transition functions
   static getPostValidationState() {
     if (this.operation.errors.length === 0) {
@@ -67,79 +58,11 @@ export class ValueDayProgress extends BaseClass {
     return 'error';
   }
 
-  // validation constraints
-  // static constraints = {
-  //   add: {
-  //     args: {
-  //       item: {
-  //         rules: {
-  //           notExists: {
-  //             in: 'items',
-  //           },
-  //           notEquals: {
-  //             values: [{ method: '_getPrevItem' }, { method: '_getPrevItem' }],
-  //             in: 'items',
-  //           },
-  //           prevItemNotInterrupt: {
-  //             in: 'items',
-  //           },
-  //           prevItemNotInterrupt: {
-  //             in: 'items',
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  //   delete: {
-  //     args: {
-  //       item: {
-  //         rules: {
-  //           exists: {
-  //             in: 'items',
-  //           },
-  //           prevAndNextNotEqual: {
-  //             in: 'items',
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  //   edit: {
-  //     ruleSet: {
-  //       newItemExists: {
-  //         args: {
-  //           newItem: {
-  //             rules: {
-  //               notExists: true,
-  //             },
-  //           },
-  //         },
-  //       },
-  //       args: {
-  //         item: {
-  //           rules: {
-  //             notEquals: {
-  //               values: [
-  //                 {
-  //                   args: ['newItem'],
-  //                 },
-  //               ],
-  //               in: 'items',
-  //               message: 'Nothing to update',
-  //             },
-  //             exists: true,
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  //   set: {},
-  // };
-
-  constructor(items = [], interruptValue) {
+  constructor({ interruptValue } = {}) {
     super();
-    this._items = [...items];
-    this.interruptValue = interruptValue;
+    this._interruptValue = interruptValue;
+
+    this._items = [];
 
     applyFSM(this.constructor);
     this._fsm();
@@ -148,6 +71,10 @@ export class ValueDayProgress extends BaseClass {
   // getters
   get items() {
     return this.getItemsAt();
+  }
+
+  get interruptValue() {
+    return this._interruptValue;
   }
 
   get itemValue() {
@@ -186,6 +113,10 @@ export class ValueDayProgress extends BaseClass {
 
   hasItemsAt(day = new Day()) {
     return items.length !== 0;
+  }
+
+  getInterruptDayAt(day = new Day()) {
+    return;
   }
 
   // operations
@@ -372,6 +303,7 @@ export class ValueDayProgress extends BaseClass {
       nextItem !== undefined &&
       this._compareItemValues(prevItem, nextItem)
     ) {
+      const itemName = lowerCase(item.constructor.name);
       return `Previous ${itemName} eqauls next ${itemName}`;
     }
 
@@ -406,6 +338,14 @@ export class ValueDayProgress extends BaseClass {
     return (
       itemsToExclude.find((itemToExclude) => itemToExclude.equals(item)) !== -1
     );
+  }
+
+  _isInterruptItem(item) {
+    if (item === undefined) {
+      return false;
+    }
+
+    return this._compareItemValues(item.value, this.interruptValue);
   }
 
   // search items
@@ -491,45 +431,41 @@ export class ValueDayProgress extends BaseClass {
       .sort(getDayComparator('asc'))
       .filter(
         (item) =>
-          (!prevInterruptDay || item.currentDay > prevInerruptDay) &&
-          (!nextInterruptDay || item.currentDay < nextInerruptDay) &&
+          (!prevInterruptDay || item.currentDay > prevInterruptDay) &&
+          (!nextInterruptDay || item.currentDay < nextInterruptDay) &&
           (!options.excludeItems ||
             !this._isExcludedItem(item, options.excludeItems))
       );
   }
 
   _getPrevInterruptDayAt(day = new Day()) {
-    const interruptItems = this._getInterruptDays();
+    const interruptItems = this._getInterruptItems();
 
     return interruptItems
       .sort(getDayComparator('asc'))
-      .reduce(
-        (interruptDay, { day: currentInterruptDay }) =>
-          currentInterruptDay <= day ? currentInterruptDay : interruptDay,
-        undefined
-      );
+      .reduce((interruptDay, { day: currentInterruptDay }) => {
+        return currentInterruptDay < day ? currentInterruptDay : interruptDay;
+      }, undefined);
   }
 
   _getNextInterruptDayAt(day = new Day()) {
-    const interruptItems = this._getInterruptDays();
+    const interruptItems = this._getInterruptItems();
 
     return interruptItems
       .sort(getDayComparator('desc'))
-      .reduce(
-        (interruptDay, { day: currentInterruptDay }) =>
-          currentInterruptDay > day ? currentInterruptDay : interruptDay,
-        undefined
-      );
+      .reduce((interruptDay, { day: currentInterruptDay }) => {
+        return currentInterruptDay > day ? currentInterruptDay : interruptDay;
+      }, undefined);
   }
 
-  _getInterruptDays() {
+  _getInterruptItems() {
     if (this.interruptValue === undefined) {
       return [];
     }
 
-    return this._items
-      .filter(({ value }) => this._compareValues(value, this.interruptValue))
-      .map(({ day }) => day);
+    return this._items.filter(({ value }) =>
+      this._compareValues(value, this.interruptValue)
+    );
   }
 
   // utils

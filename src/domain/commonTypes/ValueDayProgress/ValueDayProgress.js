@@ -363,16 +363,6 @@ export class ValueDayProgress extends BaseClass {
     return persistedItem !== undefined && item.equals(persistedItem);
   }
 
-  _getItemOn(day = new Day(), options = {}) {
-    const itemAtDay = this._getItemAt(day, options);
-
-    if (itemAtDay === undefined || !day.equals(itemAtDay.day)) {
-      return;
-    }
-
-    return itemAtDay;
-  }
-
   _getItemAt(day = new Day(), options = {}) {
     const itemsAt = this.getItemsAt(day, options);
 
@@ -424,18 +414,21 @@ export class ValueDayProgress extends BaseClass {
       return [];
     }
 
+    if (this._isInterruptItem(this._getItemOn(day))) {
+      return [];
+    }
+
     const prevInterruptDay = this._getPrevInterruptDayAt(day);
     const nextInterruptDay = this._getNextInterruptDayAt(day);
 
-    return this._items
-      .sort(getDayComparator('asc'))
-      .filter(
-        (item) =>
-          (!prevInterruptDay || item.currentDay > prevInterruptDay) &&
-          (!nextInterruptDay || item.currentDay < nextInterruptDay) &&
-          (!options.excludeItems ||
-            !this._isExcludedItem(item, options.excludeItems))
+    return this._items.sort(getDayComparator('asc')).filter((item) => {
+      return (
+        (prevInterruptDay === undefined || item.day > prevInterruptDay) &&
+        (nextInterruptDay === undefined || item.day < nextInterruptDay) &&
+        (options.excludeItems === undefined ||
+          !this._isExcludedItem(item, options.excludeItems))
       );
+    });
   }
 
   _getPrevInterruptDayAt(day = new Day()) {
@@ -466,6 +459,10 @@ export class ValueDayProgress extends BaseClass {
     return this._items.filter(({ value }) =>
       this._compareValues(value, this.interruptValue)
     );
+  }
+
+  _getItemOn(day = new Day(), options = {}) {
+    return this._items.find((item) => item.day.equals(day));
   }
 
   // utils

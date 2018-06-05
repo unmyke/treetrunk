@@ -51,7 +51,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       ]);
     });
     context('when passed day before items', () => {
-      test('should return empty array', () => {
+      test('should return array with all items', () => {
         expect(valueDayProgress._getItemsContainsDay(day1)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -59,7 +59,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day of first item', () => {
-      test('should return array with only first item', () => {
+      test('should return array with all items', () => {
         expect(valueDayProgress._getItemsContainsDay(day2)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -67,7 +67,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day between first and second items', () => {
-      test('should return array with only first item', () => {
+      test('should return array with all items', () => {
         expect(valueDayProgress._getItemsContainsDay(day3)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -75,7 +75,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day of item after first', () => {
-      test('should return array with all items between first item and passed day', () => {
+      test('should return array with all items', () => {
         expect(valueDayProgress._getItemsContainsDay(day4)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -83,7 +83,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when no props passed', () => {
-      test('should return array with all items at moment', () => {
+      test('should return array with all items', () => {
         expect(valueDayProgress._getItemsContainsDay()).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -101,7 +101,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       ]);
     });
     context('when passed day before items', () => {
-      test('should return empty array', () => {
+      test('should return array with items without interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day1)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -109,7 +109,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day of first item', () => {
-      test('should return array with only first item', () => {
+      test('should return array with items without interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day2)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -117,7 +117,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day between first and second items', () => {
-      test('should return array with only first item', () => {
+      test('should return array with items without interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day3)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -125,7 +125,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day of item after first', () => {
-      test('should return array with all items between first item and passed day', () => {
+      test('should return array with items without interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day4)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -133,7 +133,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day between last item and interrupt', () => {
-      test('should return array with all items between first item and passed day', () => {
+      test('should return array with items without interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day5)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -162,7 +162,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       ]);
     });
     context('when passed day before items', () => {
-      test('should return empty array', () => {
+      test('should return array with items before interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day1)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -170,7 +170,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day of first item', () => {
-      test('should return array with only first item', () => {
+      test('should return array with items before interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day2)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -178,7 +178,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day between first and second items', () => {
-      test('should return array with only first item', () => {
+      test('should return array with items before interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day3)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -186,7 +186,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day of item after first', () => {
-      test('should return array with all items between first item and passed day', () => {
+      test('should return array with items before interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day4)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -194,7 +194,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed day between last item and interrupt', () => {
-      test('should return array with all items between first item and passed day', () => {
+      test('should return array with items before interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day5)).toEqual([
           new PieceRate({ value: value1, day: day2 }),
           new PieceRate({ value: value2, day: day4 }),
@@ -202,24 +202,26 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
       });
     });
     context('when passed interrupt day', () => {
-      test('should return empty array', () => {
+      test('should return array with items after interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day6)).toEqual([]);
       });
     });
     context('when passed day between interrupt and second start', () => {
-      test('should return empty array', () => {
-        expect(valueDayProgress._getItemsContainsDay(day7)).toEqual([]);
+      test('should return array with items after interrupt item', () => {
+        expect(valueDayProgress._getItemsContainsDay(day7)).toEqual([
+          new PieceRate({ value: value2, day: day8 }),
+        ]);
       });
     });
     context('when passed second start day', () => {
-      test('should return array with only first item of second start', () => {
+      test('should return array with items after interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay(day8)).toEqual([
           new PieceRate({ value: value2, day: day8 }),
         ]);
       });
     });
     context('when no props passed', () => {
-      test('should return array with all items of second start at moment', () => {
+      test('should return array with items after interrupt item', () => {
         expect(valueDayProgress._getItemsContainsDay()).toEqual([
           new PieceRate({ value: value2, day: day8 }),
         ]);
@@ -240,7 +242,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
         ]);
       });
       context('when passed day before items', () => {
-        test('should return empty array', () => {
+        test('should return array with items before first interrupt item', () => {
           expect(valueDayProgress._getItemsContainsDay(day1)).toEqual([
             new PieceRate({ value: value1, day: day2 }),
             new PieceRate({ value: value2, day: day4 }),
@@ -248,7 +250,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
         });
       });
       context('when passed day of first item', () => {
-        test('should return array with only first item', () => {
+        test('should return array with items before first interrupt item', () => {
           expect(valueDayProgress._getItemsContainsDay(day2)).toEqual([
             new PieceRate({ value: value1, day: day2 }),
             new PieceRate({ value: value2, day: day4 }),
@@ -256,7 +258,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
         });
       });
       context('when passed day between first and second items', () => {
-        test('should return array with only first item', () => {
+        test('should return array with items before first interrupt item', () => {
           expect(valueDayProgress._getItemsContainsDay(day3)).toEqual([
             new PieceRate({ value: value1, day: day2 }),
             new PieceRate({ value: value2, day: day4 }),
@@ -264,7 +266,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
         });
       });
       context('when passed day of item after first', () => {
-        test('should return array with all items between first item and passed day', () => {
+        test('should return array with items before first interrupt item', () => {
           expect(valueDayProgress._getItemsContainsDay(day4)).toEqual([
             new PieceRate({ value: value1, day: day2 }),
             new PieceRate({ value: value2, day: day4 }),
@@ -272,7 +274,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
         });
       });
       context('when passed day between last item and interrupt', () => {
-        test('should return array with all items between first item and passed day', () => {
+        test('should return array with items before first interrupt item', () => {
           expect(valueDayProgress._getItemsContainsDay(day5)).toEqual([
             new PieceRate({ value: value1, day: day2 }),
             new PieceRate({ value: value2, day: day4 }),
@@ -280,13 +282,15 @@ describe('Domain :: entities :: ValueDayProgress :: #_getItemsContainsDay', () =
         });
       });
       context('when passed interrupt day', () => {
-        test('should return empty array', () => {
+        test('should return array with items beteewn first and second interrupt items', () => {
           expect(valueDayProgress._getItemsContainsDay(day6)).toEqual([]);
         });
       });
       context('when passed day between interrupt and second start', () => {
-        test('should return empty array', () => {
-          expect(valueDayProgress._getItemsContainsDay(day7)).toEqual([]);
+        test('should return array with items beteewn first and second interrupt items', () => {
+          expect(valueDayProgress._getItemsContainsDay(day7)).toEqual([
+            new PieceRate({ value: value2, day: day8 }),
+          ]);
         });
       });
       context('when passed second start day', () => {

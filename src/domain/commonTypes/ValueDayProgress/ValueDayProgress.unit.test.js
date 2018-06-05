@@ -35,7 +35,7 @@ let result;
 
 describe('Domain :: lib :: ValueDayProgress', () => {
   beforeEach(() => {
-    coll = new ValueDayProgress(interruptValue);
+    coll = new ValueDayProgress({ interruptValue });
   });
 
   context('when items is empty', () => {
@@ -247,7 +247,7 @@ describe('Domain :: lib :: ValueDayProgress', () => {
         test('should return unsuccessful result', () => {
           expect(result).toEqual({
             done: false,
-            error: [`Mock item with value "5" at 20.04.2017 not found`],
+            error: ['Mock item with value "5" at 20.04.2017 not found'],
           });
         });
 

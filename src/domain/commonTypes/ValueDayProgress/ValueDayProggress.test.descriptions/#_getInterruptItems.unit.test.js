@@ -48,7 +48,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getInterruptItems', () => 
       valueDayProgress.setItems([]);
     });
     context('when no props passed', () => {
-      test('should return array with all items at moment', () => {
+      test('should return empty array', () => {
         expect(valueDayProgress._getInterruptItems()).toEqual([]);
       });
     });
@@ -63,7 +63,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getInterruptItems', () => 
       ]);
     });
     context('when no props passed', () => {
-      test('should return empty array', () => {
+      test('should return array with one interrupt item', () => {
         expect(valueDayProgress._getInterruptItems()).toEqual([
           new PieceRate({ value: interruptValue, day: day6 }),
         ]);
@@ -81,7 +81,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getInterruptItems', () => 
       ]);
     });
     context('when no props passed', () => {
-      test('should return array with all items of second start at moment', () => {
+      test('should return array with one interrupt item', () => {
         expect(valueDayProgress._getInterruptItems()).toEqual([
           new PieceRate({ value: interruptValue, day: day6 }),
         ]);
@@ -102,7 +102,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getInterruptItems', () => 
         ]);
       });
       context('when no props passed', () => {
-        test('should return empty array', () => {
+        test('should return array with one interrupt item', () => {
           expect(valueDayProgress._getInterruptItems()).toEqual([
             new PieceRate({ value: interruptValue, day: day6 }),
             new PieceRate({ value: interruptValue, day: day10 }),

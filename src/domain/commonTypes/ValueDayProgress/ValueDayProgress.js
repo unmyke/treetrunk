@@ -148,7 +148,7 @@ export class ValueDayProgress extends BaseClass {
       return day;
     }
 
-    return !this._hasItemsBeforeDay(day)
+    return this._getItemAt(day) === undefined
       ? this._getPrevInterruptDayAt(day)
       : undefined;
   }
@@ -177,8 +177,6 @@ export class ValueDayProgress extends BaseClass {
 
     return itemsAt[itemsAt.length - 1];
   }
-
-  _isInterruptAtDay(day = new Day()) {}
 
   _getPrevItem(item, options = {}) {
     if (item === undefined) {
@@ -257,6 +255,14 @@ export class ValueDayProgress extends BaseClass {
     }
 
     return false;
+  }
+
+  _isInterruptItem(item) {
+    if (item === undefined) {
+      return false;
+    }
+
+    return this._isInterruptDay(item.day);
   }
 
   _getPrevInterruptDayAt(day = new Day()) {

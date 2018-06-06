@@ -25,10 +25,8 @@ describe('Domain :: entities :: ValueDayProgress :: #items', () => {
   let valueDayProgress;
   beforeEach(() => {
     valueDayProgress = new ValueDayProgress({
-      lastName,
-      firstName,
-      middleName,
-      phone,
+      interruptValue,
+      ItemClass: PieceRate,
     });
   });
 

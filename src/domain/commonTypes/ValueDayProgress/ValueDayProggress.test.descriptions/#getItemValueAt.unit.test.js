@@ -21,27 +21,25 @@ const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 
 const interruptValue = new PostId();
 
-describe('Domain :: entities :: ValueDayProgress :: #getPostIdAt', () => {
+describe('Domain :: entities :: ValueDayProgress :: #getItemValueAt', () => {
   let valueDayProgress;
   beforeEach(() => {
     valueDayProgress = new ValueDayProgress({
-      lastName,
-      firstName,
-      middleName,
-      phone,
+      interruptValue,
+      ItemCalss: PieceRate,
     });
   });
 
   context('when valueDayProgress have no items', () => {
     context('when passed custom day', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt(day1)).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt(day1)).toBeUndefined();
       });
     });
 
     context('when no props passed', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt()).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt()).toBeUndefined();
       });
     });
   });
@@ -55,27 +53,27 @@ describe('Domain :: entities :: ValueDayProgress :: #getPostIdAt', () => {
     });
     context('when passed day before items', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt(day1)).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt(day1)).toBeUndefined();
       });
     });
     context('when passed day of first item', () => {
       test('should return value of first item', () => {
-        expect(valueDayProgress.getPostIdAt(day2)).toBe(value1);
+        expect(valueDayProgress.getItemValueAt(day2)).toBe(value1);
       });
     });
     context('when passed day between first and second items', () => {
       test('should return value of first item', () => {
-        expect(valueDayProgress.getPostIdAt(day3)).toBe(value1);
+        expect(valueDayProgress.getItemValueAt(day3)).toBe(value1);
       });
     });
     context('when passed day of item after first', () => {
       test('should return value of item', () => {
-        expect(valueDayProgress.getPostIdAt(day4)).toBe(value2);
+        expect(valueDayProgress.getItemValueAt(day4)).toBe(value2);
       });
     });
     context('when no props passed', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt()).toBe(value2);
+        expect(valueDayProgress.getItemValueAt()).toBe(value2);
       });
     });
   });
@@ -90,37 +88,37 @@ describe('Domain :: entities :: ValueDayProgress :: #getPostIdAt', () => {
     });
     context('when passed day before items', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt(day1)).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt(day1)).toBeUndefined();
       });
     });
     context('when passed day of first item', () => {
       test('should return value of first item', () => {
-        expect(valueDayProgress.getPostIdAt(day2)).toBe(value1);
+        expect(valueDayProgress.getItemValueAt(day2)).toBe(value1);
       });
     });
     context('when passed day between first and second items', () => {
       test('should return value of first item', () => {
-        expect(valueDayProgress.getPostIdAt(day3)).toBe(value1);
+        expect(valueDayProgress.getItemValueAt(day3)).toBe(value1);
       });
     });
     context('when passed day of item after first', () => {
       test('should return value of item', () => {
-        expect(valueDayProgress.getPostIdAt(day4)).toBe(value2);
+        expect(valueDayProgress.getItemValueAt(day4)).toBe(value2);
       });
     });
     context('when passed day between last item and interrupt', () => {
       test('should return value of item', () => {
-        expect(valueDayProgress.getPostIdAt(day5)).toBe(value2);
+        expect(valueDayProgress.getItemValueAt(day5)).toBe(value2);
       });
     });
     context('when passed interrupt day', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt(day6)).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt(day6)).toBeUndefined();
       });
     });
     context('when no props passed', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt()).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt()).toBeUndefined();
       });
     });
   });
@@ -136,47 +134,47 @@ describe('Domain :: entities :: ValueDayProgress :: #getPostIdAt', () => {
     });
     context('when passed day before items', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt(day1)).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt(day1)).toBeUndefined();
       });
     });
     context('when passed day of first item', () => {
       test('should return value of first item', () => {
-        expect(valueDayProgress.getPostIdAt(day2)).toBe(value1);
+        expect(valueDayProgress.getItemValueAt(day2)).toBe(value1);
       });
     });
     context('when passed day between first and second items', () => {
       test('should return value of first item', () => {
-        expect(valueDayProgress.getPostIdAt(day3)).toBe(value1);
+        expect(valueDayProgress.getItemValueAt(day3)).toBe(value1);
       });
     });
     context('when passed day of item after first', () => {
       test('should return value of item', () => {
-        expect(valueDayProgress.getPostIdAt(day4)).toBe(value2);
+        expect(valueDayProgress.getItemValueAt(day4)).toBe(value2);
       });
     });
     context('when passed day between last item and interrupt', () => {
       test('should return value of item', () => {
-        expect(valueDayProgress.getPostIdAt(day5)).toBe(value2);
+        expect(valueDayProgress.getItemValueAt(day5)).toBe(value2);
       });
     });
     context('when passed interrupt day', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt(day6)).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt(day6)).toBeUndefined();
       });
     });
     context('when passed day between interrupt and second start', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getPostIdAt(day7)).toBeUndefined();
+        expect(valueDayProgress.getItemValueAt(day7)).toBeUndefined();
       });
     });
     context('when passed second start day', () => {
       test('should return value of second start', () => {
-        expect(valueDayProgress.getPostIdAt(day8)).toBe(value2);
+        expect(valueDayProgress.getItemValueAt(day8)).toBe(value2);
       });
     });
     context('when no props passed', () => {
       test('should return value of second start', () => {
-        expect(valueDayProgress.getPostIdAt()).toBe(value2);
+        expect(valueDayProgress.getItemValueAt()).toBe(value2);
       });
     });
   });
@@ -195,57 +193,57 @@ describe('Domain :: entities :: ValueDayProgress :: #getPostIdAt', () => {
       });
       context('when passed day before items', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getPostIdAt(day1)).toBeUndefined();
+          expect(valueDayProgress.getItemValueAt(day1)).toBeUndefined();
         });
       });
       context('when passed day of first item', () => {
         test('should return value of first item', () => {
-          expect(valueDayProgress.getPostIdAt(day2)).toBe(value1);
+          expect(valueDayProgress.getItemValueAt(day2)).toBe(value1);
         });
       });
       context('when passed day between first and second items', () => {
         test('should return value of first item', () => {
-          expect(valueDayProgress.getPostIdAt(day3)).toBe(value1);
+          expect(valueDayProgress.getItemValueAt(day3)).toBe(value1);
         });
       });
       context('when passed day of item after first', () => {
         test('should return value of item', () => {
-          expect(valueDayProgress.getPostIdAt(day4)).toBe(value2);
+          expect(valueDayProgress.getItemValueAt(day4)).toBe(value2);
         });
       });
       context('when passed day between last item and interrupt', () => {
         test('should return value of item', () => {
-          expect(valueDayProgress.getPostIdAt(day5)).toBe(value2);
+          expect(valueDayProgress.getItemValueAt(day5)).toBe(value2);
         });
       });
       context('when passed interrupt day', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getPostIdAt(day6)).toBeUndefined();
+          expect(valueDayProgress.getItemValueAt(day6)).toBeUndefined();
         });
       });
       context('when passed day between interrupt and second start', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getPostIdAt(day7)).toBeUndefined();
+          expect(valueDayProgress.getItemValueAt(day7)).toBeUndefined();
         });
       });
       context('when passed second start day', () => {
         test('should return value of second start', () => {
-          expect(valueDayProgress.getPostIdAt(day8)).toBe(value2);
+          expect(valueDayProgress.getItemValueAt(day8)).toBe(value2);
         });
       });
       context('when passed day after second start day', () => {
         test('should return value of second start', () => {
-          expect(valueDayProgress.getPostIdAt(day9)).toBe(value2);
+          expect(valueDayProgress.getItemValueAt(day9)).toBe(value2);
         });
       });
       context('when passed second interrupt day', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getPostIdAt(day10)).toBeUndefined();
+          expect(valueDayProgress.getItemValueAt(day10)).toBeUndefined();
         });
       });
       context('when no props passed', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getPostIdAt()).toBeUndefined();
+          expect(valueDayProgress.getItemValueAt()).toBeUndefined();
         });
       });
     }

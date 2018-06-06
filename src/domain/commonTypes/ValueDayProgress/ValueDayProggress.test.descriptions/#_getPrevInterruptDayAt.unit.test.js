@@ -112,7 +112,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getPrevInterruptDayAt', ()
     });
     context('when passed interrupt day', () => {
       test('should return interrupt day', () => {
-        expect(valueDayProgress._getPrevInterruptDayAt(day6)).toBe(day6);
+        expect(valueDayProgress._getPrevInterruptDayAt(day6)).toBeUndefined();
       });
     });
     context('when no props passed', () => {
@@ -158,7 +158,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getPrevInterruptDayAt', ()
     });
     context('when passed interrupt day', () => {
       test('should return interrupt day', () => {
-        expect(valueDayProgress._getPrevInterruptDayAt(day6)).toBe(day6);
+        expect(valueDayProgress._getPrevInterruptDayAt(day6)).toBeUndefined();
       });
     });
     context('when passed day between interrupt and second start', () => {
@@ -217,7 +217,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getPrevInterruptDayAt', ()
       });
       context('when passed interrupt day', () => {
         test('should return interrupt day', () => {
-          expect(valueDayProgress._getPrevInterruptDayAt(day6)).toBe(day6);
+          expect(valueDayProgress._getPrevInterruptDayAt(day6)).toBeUndefined();
         });
       });
       context('when passed day between interrupt and second start', () => {
@@ -237,7 +237,7 @@ describe('Domain :: entities :: ValueDayProgress :: #_getPrevInterruptDayAt', ()
       });
       context('when passed second interrupt day', () => {
         test('should return second interrupt day', () => {
-          expect(valueDayProgress._getPrevInterruptDayAt(day10)).toBe(day10);
+          expect(valueDayProgress._getPrevInterruptDayAt(day10)).toBe(day6);
         });
       });
       context('when no props passed', () => {

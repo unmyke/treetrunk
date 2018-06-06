@@ -9,7 +9,7 @@ update({ lastName, firstName, middleName, phone })
 
 #getPostIdAt(day = new Day())
 #get value()
-#getPostIdsAt(day = new Day())
+#getItemValuesAt(day = new Day())
 #get values()
 
 #getStartDayAt(day = new Day())

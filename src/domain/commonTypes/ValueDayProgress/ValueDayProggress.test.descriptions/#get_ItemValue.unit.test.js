@@ -25,16 +25,14 @@ describe('Domain :: entities :: ValueDayProgress :: #value', () => {
   let valueDayProgress;
   beforeEach(() => {
     valueDayProgress = new ValueDayProgress({
-      lastName,
-      firstName,
-      middleName,
-      phone,
+      interruptValue,
+      ItemClass: PieceRate,
     });
   });
 
   context('when valueDayProgress have no items', () => {
     test('should return undefined', () => {
-      expect(valueDayProgress.value).toBeUndefined();
+      expect(valueDayProgress.itemValue).toBeUndefined();
     });
   });
 
@@ -46,7 +44,7 @@ describe('Domain :: entities :: ValueDayProgress :: #value', () => {
       ]);
     });
     test('should return undefined', () => {
-      expect(valueDayProgress.value).toBe(value2);
+      expect(valueDayProgress.itemValue).toBe(value2);
     });
   });
 
@@ -59,7 +57,7 @@ describe('Domain :: entities :: ValueDayProgress :: #value', () => {
       ]);
     });
     test('should return undefined', () => {
-      expect(valueDayProgress.value).toBeUndefined();
+      expect(valueDayProgress.itemValue).toBeUndefined();
     });
   });
 
@@ -73,7 +71,7 @@ describe('Domain :: entities :: ValueDayProgress :: #value', () => {
       ]);
     });
     test('should return value of second start', () => {
-      expect(valueDayProgress.value).toBe(value2);
+      expect(valueDayProgress.itemValue).toBe(value2);
     });
   });
 
@@ -90,7 +88,7 @@ describe('Domain :: entities :: ValueDayProgress :: #value', () => {
         ]);
       });
       test('should return undefined', () => {
-        expect(valueDayProgress.value).toBeUndefined();
+        expect(valueDayProgress.itemValue).toBeUndefined();
       });
     }
   );

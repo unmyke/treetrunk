@@ -25,16 +25,14 @@ describe('Domain :: entities :: ValueDayProgress :: #values', () => {
   let valueDayProgress;
   beforeEach(() => {
     valueDayProgress = new ValueDayProgress({
-      lastName,
-      firstName,
-      middleName,
-      phone,
+      interruptValue,
+      ItemClass: PieceRate,
     });
   });
 
   context('when valueDayProgress have no items', () => {
     test('should return empty array', () => {
-      expect(valueDayProgress.values).toEqual([]);
+      expect(valueDayProgress.itemValues).toEqual([]);
     });
   });
 
@@ -46,7 +44,7 @@ describe('Domain :: entities :: ValueDayProgress :: #values', () => {
       ]);
     });
     test('should return array with all values between first item and passed day', () => {
-      expect(valueDayProgress.values).toEqual([value1, value2]);
+      expect(valueDayProgress.itemValues).toEqual([value1, value2]);
     });
   });
 
@@ -59,7 +57,7 @@ describe('Domain :: entities :: ValueDayProgress :: #values', () => {
       ]);
     });
     test('should return empty array', () => {
-      expect(valueDayProgress.values).toEqual([]);
+      expect(valueDayProgress.itemValues).toEqual([]);
     });
   });
 
@@ -73,7 +71,7 @@ describe('Domain :: entities :: ValueDayProgress :: #values', () => {
       ]);
     });
     test('should return array with all values between first item and today', () => {
-      expect(valueDayProgress.values).toEqual([value2]);
+      expect(valueDayProgress.itemValues).toEqual([value2]);
     });
   });
 
@@ -90,7 +88,7 @@ describe('Domain :: entities :: ValueDayProgress :: #values', () => {
         ]);
       });
       test('should return empty array', () => {
-        expect(valueDayProgress.values).toEqual([]);
+        expect(valueDayProgress.itemValues).toEqual([]);
       });
     }
   );

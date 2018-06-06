@@ -414,10 +414,6 @@ export class ValueDayProgress extends BaseClass {
       return [];
     }
 
-    if (this._isInterruptItem(this._getItemOn(day))) {
-      return [];
-    }
-
     const prevInterruptDay = this._getPrevInterruptDayAt(day);
     const nextInterruptDay = this._getNextInterruptDayAt(day);
 
@@ -437,7 +433,7 @@ export class ValueDayProgress extends BaseClass {
     return interruptItems
       .sort(getDayComparator('asc'))
       .reduce((interruptDay, { day: currentInterruptDay }) => {
-        return currentInterruptDay < day ? currentInterruptDay : interruptDay;
+        return currentInterruptDay <= day ? currentInterruptDay : interruptDay;
       }, undefined);
   }
 
@@ -447,7 +443,7 @@ export class ValueDayProgress extends BaseClass {
     return interruptItems
       .sort(getDayComparator('desc'))
       .reduce((interruptDay, { day: currentInterruptDay }) => {
-        return currentInterruptDay > day ? currentInterruptDay : interruptDay;
+        return currentInterruptDay >= day ? currentInterruptDay : interruptDay;
       }, undefined);
   }
 

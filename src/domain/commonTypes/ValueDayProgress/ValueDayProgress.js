@@ -6,6 +6,7 @@ import { BaseClass, BaseValue } from '../../_lib';
 import { Day } from '../Day';
 
 import { Operation as ErrorFactory } from 'src/infra/errorFactories';
+import { REFUSED } from 'dns';
 
 export class ValueDayProgress extends BaseClass {
   static errorFactory = new ErrorFactory();
@@ -430,13 +431,30 @@ export class ValueDayProgress extends BaseClass {
 
   //    validation error generators
   _getAddErrors({ item }, options = {}) {
-    return this._collectErrors(
-      this._getInterruptItemError(item, options),
-      this._getAlreadyExistsError(item, options),
-      this._getPrevValueNotEqualsError(item, options),
-      this._getNextValueNotEqualsError(item, options),
-      this._getBeforeOrEqualPreviousInterruptDayError(item)
-    );
+    const errors = {};
+
+    const alreadyExistsError = this._getAlreadyExistsError(item, options);
+
+    if (alreadyExistsError !== null) {
+      error.item = [alreadyExistsError];
+    } else {
+      const prevOrNextValuesNotEqualPassedItemValueErrors = this._collectErrors(
+        this._getPrevValueNotEqualsError(item, options),
+        this._getNextValueNotEqualsError(item, options)
+      );
+
+      if (prevOrNextValuesNotEqualPassedItemValueErrors.length !== 0) {
+        error.item = prevOrNextValuesNotEqualPassedItemValueErrors;
+      } else {
+        const notInCurrentItemsError = this._getNotInCurrentItemsError(item);
+
+        if (notInCurrentItemsError !== null) {
+          errors.item = [notInCurrentItemsError];
+        }
+      }
+    }
+
+    return errors;
   }
 
   _getAddInterruptErrors({ day }, options = {}) {
@@ -491,6 +509,14 @@ export class ValueDayProgress extends BaseClass {
   }
 
   //    validation error generators
+  _getInterruptItemError(item, options = {}) {
+    if (this._isInterruptItem(item)) {
+      return 'Interrupt item not allowed by method';
+    }
+
+    return null;
+  }
+
   _getAlreadyExistsError(item, options = {}) {
     if (item === undefined || this._hasItemOn(item.day, options)) {
       const upperFirstItemName = upperFirst(lowerCase(item.constructor.name));

@@ -5,7 +5,6 @@ import { Day } from './Day';
 import { DayRange } from './DayRange';
 import { DayMetric } from './DayMetric';
 import { DayRangeMetric } from './DayRangeMetric';
-import { ValueDayProgress } from './ValueDayProgress';
 import { PersonName } from './PersonName';
 
 export {
@@ -16,6 +15,5 @@ export {
   DayRange,
   DayMetric,
   DayRangeMetric,
-  ValueDayProgress,
   PersonName,
 };

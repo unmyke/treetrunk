@@ -1,7 +1,7 @@
 import {} from 'javascript-state-machine';
 
 import { BaseEntity } from '../../_lib';
-import { SeniorityTypeId, Day, ValueDayProgress } from '../../commonTypes';
+import { SeniorityTypeId, Day, BaseDiary } from '../../commonTypes';
 import { Award } from './Award';
 
 export class SeniorityType extends BaseEntity {
@@ -85,7 +85,7 @@ export class SeniorityType extends BaseEntity {
     super(seniorityTypeId);
     this.name = name;
     this.months = months;
-    this._awards = new ValueDayProgress();
+    this._awards = new BaseDiary();
 
     this.setState(state);
   }

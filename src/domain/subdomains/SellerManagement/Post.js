@@ -1,7 +1,7 @@
 import {} from 'javascript-state-machine';
 
 import { BaseEntity } from '../../_lib';
-import { PostId, Day, ValueDayProgress } from '../../commonTypes';
+import { PostId, Day, BaseDiary } from '../../commonTypes';
 import { PieceRate } from './PieceRate';
 
 export class Post extends BaseEntity {
@@ -79,7 +79,7 @@ export class Post extends BaseEntity {
   constructor({ postId = new PostId(), name, state = 'active' }) {
     super(postId);
     this.name = name;
-    this._pieceRates = new ValueDayProgress();
+    this._pieceRates = new BaseDiary();
 
     this.setState(state);
   }

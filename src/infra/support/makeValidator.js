@@ -3,7 +3,7 @@ import { upperFirst, lowerFirst, snakeCase } from 'lodash';
 import { Day, DayRange } from 'src/domain/commonTypes';
 import isValidDate from 'date-fns/is_valid';
 
-export const makeValidator = (constraints, errorFactory) => {
+export const makeValidator = (constraints, errors) => {
   const validator = (entity, options = { exception: false }) => {
     const errors = validate(
       entity,
@@ -11,7 +11,7 @@ export const makeValidator = (constraints, errorFactory) => {
     );
 
     if (errors && options.exception) {
-      const err = errorFactory.create(errors);
+      const err = errors.create(errors);
       throw err;
     }
 

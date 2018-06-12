@@ -21,7 +21,7 @@ const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 const closeValue = new PostId();
 PostId.quitPostId = closeValue;
 
-describe('Domain :: entities :: Appointments :: #isQuitedAt', () => {
+describe('Domain :: entities :: Appointments :: #getPostIdsAt', () => {
   let appointments;
   beforeEach(() => {
     appointments = new Appointments();
@@ -29,14 +29,14 @@ describe('Domain :: entities :: Appointments :: #isQuitedAt', () => {
 
   context('when appointments have no appointments', () => {
     context('when passed custom day', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day1)).toBeFalsy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt(day1)).toEqual([]);
       });
     });
 
     context('when no props passed', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt()).toBeFalsy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt()).toEqual([]);
       });
     });
   });
@@ -49,28 +49,28 @@ describe('Domain :: entities :: Appointments :: #isQuitedAt', () => {
       ]);
     });
     context('when passed day before appointments', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day1)).toBeFalsy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt(day1)).toEqual([]);
       });
     });
     context('when passed day of first appointment', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day2)).toBeFalsy();
+      test('should return array with first appointment value', () => {
+        expect(appointments.getPostIdsAt(day2)).toEqual([value1]);
       });
     });
     context('when passed day between first and second appointments', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day3)).toBeFalsy();
+      test('should return array with first appointment value', () => {
+        expect(appointments.getPostIdsAt(day3)).toEqual([value1]);
       });
     });
     context('when passed day of appointment after first', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day4)).toBeFalsy();
+      test('should return array with all values between first appointment and passed day', () => {
+        expect(appointments.getPostIdsAt(day4)).toEqual([value1, value2]);
       });
     });
     context('when no props passed', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt()).toBeFalsy();
+      test('should return array with all values between first appointment and passed day', () => {
+        expect(appointments.getPostIdsAt()).toEqual([value1, value2]);
       });
     });
   });
@@ -84,38 +84,38 @@ describe('Domain :: entities :: Appointments :: #isQuitedAt', () => {
       ]);
     });
     context('when passed day before appointments', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day1)).toBeFalsy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt(day1)).toEqual([]);
       });
     });
     context('when passed day of first appointment', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day2)).toBeFalsy();
+      test('should return array with first appointment value', () => {
+        expect(appointments.getPostIdsAt(day2)).toEqual([value1]);
       });
     });
     context('when passed day between first and second appointments', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day3)).toBeFalsy();
+      test('should return array with first appointment value', () => {
+        expect(appointments.getPostIdsAt(day3)).toEqual([value1]);
       });
     });
     context('when passed day of appointment after first', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day4)).toBeFalsy();
+      test('should return array with all values between first appointment and passed day', () => {
+        expect(appointments.getPostIdsAt(day4)).toEqual([value1, value2]);
       });
     });
     context('when passed day between last appointment and close', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day5)).toBeFalsy();
+      test('should return array with all values between first appointment and passed day', () => {
+        expect(appointments.getPostIdsAt(day5)).toEqual([value1, value2]);
       });
     });
     context('when passed close day', () => {
-      test('should return true', () => {
-        expect(appointments.isQuitedAt(day6)).toBeTruthy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt(day6)).toEqual([]);
       });
     });
     context('when no props passed', () => {
-      test('should return true', () => {
-        expect(appointments.isQuitedAt()).toBeTruthy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt()).toEqual([]);
       });
     });
   });
@@ -130,48 +130,48 @@ describe('Domain :: entities :: Appointments :: #isQuitedAt', () => {
       ]);
     });
     context('when passed day before appointments', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day1)).toBeFalsy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt(day1)).toEqual([]);
       });
     });
     context('when passed day of first appointment', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day2)).toBeFalsy();
+      test('should return array with first appointment value', () => {
+        expect(appointments.getPostIdsAt(day2)).toEqual([value1]);
       });
     });
     context('when passed day between first and second appointments', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day3)).toBeFalsy();
+      test('should return array with first appointment value', () => {
+        expect(appointments.getPostIdsAt(day3)).toEqual([value1]);
       });
     });
     context('when passed day of appointment after first', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day4)).toBeFalsy();
+      test('should return array with all values between first appointment and passed day', () => {
+        expect(appointments.getPostIdsAt(day4)).toEqual([value1, value2]);
       });
     });
     context('when passed day between last appointment and close', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day5)).toBeFalsy();
+      test('should return array with all values between first appointment and passed day', () => {
+        expect(appointments.getPostIdsAt(day5)).toEqual([value1, value2]);
       });
     });
     context('when passed close day', () => {
-      test('should return true', () => {
-        expect(appointments.isQuitedAt(day6)).toBeTruthy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt(day6)).toEqual([]);
       });
     });
     context('when passed day between close and second recruit', () => {
-      test('should return true', () => {
-        expect(appointments.isQuitedAt(day7)).toBeTruthy();
+      test('should return empty array', () => {
+        expect(appointments.getPostIdsAt(7)).toEqual([]);
       });
     });
     context('when passed second recruit day', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt(day8)).toBeFalsy();
+      test('should return array with value of second recruit', () => {
+        expect(appointments.getPostIdsAt(day8)).toEqual([value2]);
       });
     });
     context('when no props passed', () => {
-      test('should return false', () => {
-        expect(appointments.isQuitedAt()).toBeFalsy();
+      test('should return array with all values between first appointment and today', () => {
+        expect(appointments.getPostIdsAt()).toEqual([value2]);
       });
     });
   });
@@ -189,58 +189,58 @@ describe('Domain :: entities :: Appointments :: #isQuitedAt', () => {
         ]);
       });
       context('when passed day before appointments', () => {
-        test('should return false', () => {
-          expect(appointments.isQuitedAt(day1)).toBeFalsy();
+        test('should return empty array', () => {
+          expect(appointments.getPostIdsAt(day1)).toEqual([]);
         });
       });
       context('when passed day of first appointment', () => {
-        test('should return false', () => {
-          expect(appointments.isQuitedAt(day2)).toBeFalsy();
+        test('should return array with first appointment value', () => {
+          expect(appointments.getPostIdsAt(day2)).toEqual([value1]);
         });
       });
       context('when passed day between first and second appointments', () => {
-        test('should return false', () => {
-          expect(appointments.isQuitedAt(day3)).toBeFalsy();
+        test('should return array with first appointment value', () => {
+          expect(appointments.getPostIdsAt(day3)).toEqual([value1]);
         });
       });
       context('when passed day of appointment after first', () => {
-        test('should return false', () => {
-          expect(appointments.isQuitedAt(day4)).toBeFalsy();
+        test('should return array with all values between first appointment and passed day', () => {
+          expect(appointments.getPostIdsAt(day4)).toEqual([value1, value2]);
         });
       });
       context('when passed day between last appointment and close', () => {
-        test('should return false', () => {
-          expect(appointments.isQuitedAt(day5)).toBeFalsy();
+        test('should return array with all values between first appointment and passed day', () => {
+          expect(appointments.getPostIdsAt(day5)).toEqual([value1, value2]);
         });
       });
       context('when passed close day', () => {
-        test('should return true', () => {
-          expect(appointments.isQuitedAt(day6)).toBeTruthy();
+        test('should return empty array', () => {
+          expect(appointments.getPostIdsAt(day6)).toEqual([]);
         });
       });
       context('when passed day between close and second recruit', () => {
-        test('should return true', () => {
-          expect(appointments.isQuitedAt(day7)).toBeTruthy();
+        test('should return empty array', () => {
+          expect(appointments.getPostIdsAt(7)).toEqual([]);
         });
       });
       context('when passed second recruit day', () => {
-        test('should return false', () => {
-          expect(appointments.isQuitedAt(day8)).toBeFalsy();
+        test('should return array with value of second recruit', () => {
+          expect(appointments.getPostIdsAt(day8)).toEqual([value2]);
         });
       });
       context('when passed day after second recruit day', () => {
-        test('should return false', () => {
-          expect(appointments.isQuitedAt(day9)).toBeFalsy();
+        test('should return array with all values between first appointment and passed day', () => {
+          expect(appointments.getPostIdsAt(day9)).toEqual([value2]);
         });
       });
       context('when passed second close day', () => {
-        test('should return second close day', () => {
-          expect(appointments.isQuitedAt(day10)).toBeTruthy();
+        test('should return empty array', () => {
+          expect(appointments.getPostIdsAt(day10)).toEqual([]);
         });
       });
       context('when no props passed', () => {
-        test('should return second close day', () => {
-          expect(appointments.isQuitedAt()).toBeTruthy();
+        test('should return empty array', () => {
+          expect(appointments.getPostIdsAt()).toEqual([]);
         });
       });
     }

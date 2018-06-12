@@ -9,11 +9,14 @@ const {
       entities: { Post },
     },
   },
-  commonTypes: { Day },
+  commonTypes: { Day, PostId },
   repositories: {
     SellerManagement: { Post: postRepo },
   },
 } = container;
+
+const quitPostId = new PostId();
+PostId.quitPostId = quitPostId;
 
 const dateDTO1 = '2018-01-21T00:00:00.000+08:00';
 const dateDTO2 = '2018-02-21T00:00:00.000+08:00';

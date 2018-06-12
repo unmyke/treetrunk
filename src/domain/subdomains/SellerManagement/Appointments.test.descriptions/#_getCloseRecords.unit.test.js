@@ -21,15 +21,15 @@ const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 const closeValue = new PostId();
 PostId.quitPostId = closeValue;
 
-describe('Domain :: entities :: Appointments :: #quitDay', () => {
+describe('Domain :: entities :: Appointments :: #_getCloseRecords', () => {
   let appointments;
   beforeEach(() => {
     appointments = new Appointments();
   });
 
   context('when appointments have no appointments', () => {
-    test('should return undefined', () => {
-      expect(appointments.quitDay).toBeUndefined();
+    test('should return empty array', () => {
+      expect(appointments._getCloseRecords()).toEqual([]);
     });
   });
 
@@ -40,8 +40,8 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
         new Appointment({ postId: value2, day: day4 }),
       ]);
     });
-    test('should return undefined', () => {
-      expect(appointments.quitDay).toBeUndefined();
+    test('should return empty array', () => {
+      expect(appointments._getCloseRecords()).toEqual([]);
     });
   });
 
@@ -53,8 +53,10 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
         new Appointment({ postId: closeValue, day: day6 }),
       ]);
     });
-    test('should return close day', () => {
-      expect(appointments.quitDay).toBe(day6);
+    test('should return array with one close appointment', () => {
+      expect(appointments._getCloseRecords()).toEqual([
+        new Appointment({ postId: closeValue, day: day6 }),
+      ]);
     });
   });
 
@@ -67,8 +69,10 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
         new Appointment({ postId: value2, day: day8 }),
       ]);
     });
-    test('should return undefined', () => {
-      expect(appointments.quitDay).toBeUndefined();
+    test('should return array with one close appointment', () => {
+      expect(appointments._getCloseRecords()).toEqual([
+        new Appointment({ postId: closeValue, day: day6 }),
+      ]);
     });
   });
 
@@ -84,8 +88,11 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
           new Appointment({ postId: closeValue, day: day10 }),
         ]);
       });
-      test('should return second close day', () => {
-        expect(appointments.quitDay).toBe(day10);
+      test('should return array with one close appointment', () => {
+        expect(appointments._getCloseRecords()).toEqual([
+          new Appointment({ postId: closeValue, day: day6 }),
+          new Appointment({ postId: closeValue, day: day10 }),
+        ]);
       });
     }
   );

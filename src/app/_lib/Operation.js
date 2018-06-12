@@ -13,7 +13,7 @@ export class Operation extends EventEmitter {
     domainServices,
     validate,
     repositories,
-    errorFactory,
+    errors,
   }) {
     super();
     this.commonTypes = commonTypes;
@@ -21,7 +21,7 @@ export class Operation extends EventEmitter {
     this.domainServices = domainServices;
     this.repositories = repositories;
     this.validate = validate;
-    this.errorFactory = errorFactory;
+    this.errors = errors;
   }
 
   on(output, handler) {

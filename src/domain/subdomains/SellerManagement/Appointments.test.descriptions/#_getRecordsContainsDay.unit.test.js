@@ -21,7 +21,7 @@ const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 const closeValue = new PostId();
 PostId.quitPostId = closeValue;
 
-describe('Domain :: entities :: Appointments :: #getAppointmentsAt', () => {
+describe('Domain :: entities :: Appointments :: #_getRecordsContainsDay', () => {
   let appointments;
   beforeEach(() => {
     appointments = new Appointments();
@@ -30,13 +30,13 @@ describe('Domain :: entities :: Appointments :: #getAppointmentsAt', () => {
   context('when appointments have no appointments', () => {
     context('when passed custom day', () => {
       test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt(day1)).toEqual([]);
+        expect(appointments._getRecordsContainsDay(day1)).toEqual([]);
       });
     });
 
     context('when no props passed', () => {
       test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt()).toEqual([]);
+        expect(appointments._getRecordsContainsDay()).toEqual([]);
       });
     });
   });
@@ -49,35 +49,40 @@ describe('Domain :: entities :: Appointments :: #getAppointmentsAt', () => {
       ]);
     });
     context('when passed day before appointments', () => {
-      test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt(day1)).toEqual([]);
+      test('should return array with all appointments', () => {
+        expect(appointments._getRecordsContainsDay(day1)).toEqual([
+          new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
+        ]);
       });
     });
     context('when passed day of first appointment', () => {
-      test('should return array with only first appointment', () => {
-        expect(appointments.getAppointmentsAt(day2)).toEqual([
+      test('should return array with all appointments', () => {
+        expect(appointments._getRecordsContainsDay(day2)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed day between first and second appointments', () => {
-      test('should return array with only first appointment', () => {
-        expect(appointments.getAppointmentsAt(day3)).toEqual([
+      test('should return array with all appointments', () => {
+        expect(appointments._getRecordsContainsDay(day3)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed day of appointment after first', () => {
-      test('should return array with all appointments between first appointment and passed day', () => {
-        expect(appointments.getAppointmentsAt(day4)).toEqual([
+      test('should return array with all appointments', () => {
+        expect(appointments._getRecordsContainsDay(day4)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when no props passed', () => {
-      test('should return array with all appointments at moment', () => {
-        expect(appointments.getAppointmentsAt()).toEqual([
+      test('should return array with all appointments', () => {
+        expect(appointments._getRecordsContainsDay()).toEqual([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
         ]);
@@ -94,35 +99,40 @@ describe('Domain :: entities :: Appointments :: #getAppointmentsAt', () => {
       ]);
     });
     context('when passed day before appointments', () => {
-      test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt(day1)).toEqual([]);
+      test('should return array with appointments without close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day1)).toEqual([
+          new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
+        ]);
       });
     });
     context('when passed day of first appointment', () => {
-      test('should return array with only first appointment', () => {
-        expect(appointments.getAppointmentsAt(day2)).toEqual([
+      test('should return array with appointments without close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day2)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed day between first and second appointments', () => {
-      test('should return array with only first appointment', () => {
-        expect(appointments.getAppointmentsAt(day3)).toEqual([
+      test('should return array with appointments without close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day3)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed day of appointment after first', () => {
-      test('should return array with all appointments between first appointment and passed day', () => {
-        expect(appointments.getAppointmentsAt(day4)).toEqual([
+      test('should return array with appointments without close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day4)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed day between last appointment and close', () => {
-      test('should return array with all appointments between first appointment and passed day', () => {
-        expect(appointments.getAppointmentsAt(day5)).toEqual([
+      test('should return array with appointments without close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day5)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
         ]);
@@ -130,12 +140,12 @@ describe('Domain :: entities :: Appointments :: #getAppointmentsAt', () => {
     });
     context('when passed close day', () => {
       test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt(day6)).toEqual([]);
+        expect(appointments._getRecordsContainsDay(day6)).toEqual([]);
       });
     });
     context('when no props passed', () => {
       test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt()).toEqual([]);
+        expect(appointments._getRecordsContainsDay()).toEqual([]);
       });
     });
   });
@@ -150,60 +160,67 @@ describe('Domain :: entities :: Appointments :: #getAppointmentsAt', () => {
       ]);
     });
     context('when passed day before appointments', () => {
-      test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt(day1)).toEqual([]);
+      test('should return array with appointments before close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day1)).toEqual([
+          new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
+        ]);
       });
     });
     context('when passed day of first appointment', () => {
-      test('should return array with only first appointment', () => {
-        expect(appointments.getAppointmentsAt(day2)).toEqual([
+      test('should return array with appointments before close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day2)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed day between first and second appointments', () => {
-      test('should return array with only first appointment', () => {
-        expect(appointments.getAppointmentsAt(day3)).toEqual([
+      test('should return array with appointments before close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day3)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
+          new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed day of appointment after first', () => {
-      test('should return array with all appointments between first appointment and passed day', () => {
-        expect(appointments.getAppointmentsAt(day4)).toEqual([
+      test('should return array with appointments before close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day4)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed day between last appointment and close', () => {
-      test('should return array with all appointments between first appointment and passed day', () => {
-        expect(appointments.getAppointmentsAt(day5)).toEqual([
+      test('should return array with appointments before close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day5)).toEqual([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
         ]);
       });
     });
     context('when passed close day', () => {
-      test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt(day6)).toEqual([]);
+      test('should return array with appointments after close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day6)).toEqual([]);
       });
     });
     context('when passed day between close and second recruit', () => {
-      test('should return empty array', () => {
-        expect(appointments.getAppointmentsAt(day7)).toEqual([]);
+      test('should return array with appointments after close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day7)).toEqual([
+          new Appointment({ postId: value2, day: day8 }),
+        ]);
       });
     });
     context('when passed second recruit day', () => {
-      test('should return array with only first appointment of second recruit', () => {
-        expect(appointments.getAppointmentsAt(day8)).toEqual([
+      test('should return array with appointments after close appointment', () => {
+        expect(appointments._getRecordsContainsDay(day8)).toEqual([
           new Appointment({ postId: value2, day: day8 }),
         ]);
       });
     });
     context('when no props passed', () => {
-      test('should return array with all appointments of second recruit at moment', () => {
-        expect(appointments.getAppointmentsAt()).toEqual([
+      test('should return array with appointments after close appointment', () => {
+        expect(appointments._getRecordsContainsDay()).toEqual([
           new Appointment({ postId: value2, day: day8 }),
         ]);
       });
@@ -223,72 +240,79 @@ describe('Domain :: entities :: Appointments :: #getAppointmentsAt', () => {
         ]);
       });
       context('when passed day before appointments', () => {
-        test('should return empty array', () => {
-          expect(appointments.getAppointmentsAt(day1)).toEqual([]);
+        test('should return array with appointments before first close appointment', () => {
+          expect(appointments._getRecordsContainsDay(day1)).toEqual([
+            new Appointment({ postId: value1, day: day2 }),
+            new Appointment({ postId: value2, day: day4 }),
+          ]);
         });
       });
       context('when passed day of first appointment', () => {
-        test('should return array with only first appointment', () => {
-          expect(appointments.getAppointmentsAt(day2)).toEqual([
+        test('should return array with appointments before first close appointment', () => {
+          expect(appointments._getRecordsContainsDay(day2)).toEqual([
             new Appointment({ postId: value1, day: day2 }),
+            new Appointment({ postId: value2, day: day4 }),
           ]);
         });
       });
       context('when passed day between first and second appointments', () => {
-        test('should return array with only first appointment', () => {
-          expect(appointments.getAppointmentsAt(day3)).toEqual([
+        test('should return array with appointments before first close appointment', () => {
+          expect(appointments._getRecordsContainsDay(day3)).toEqual([
             new Appointment({ postId: value1, day: day2 }),
+            new Appointment({ postId: value2, day: day4 }),
           ]);
         });
       });
       context('when passed day of appointment after first', () => {
-        test('should return array with all appointments between first appointment and passed day', () => {
-          expect(appointments.getAppointmentsAt(day4)).toEqual([
+        test('should return array with appointments before first close appointment', () => {
+          expect(appointments._getRecordsContainsDay(day4)).toEqual([
             new Appointment({ postId: value1, day: day2 }),
             new Appointment({ postId: value2, day: day4 }),
           ]);
         });
       });
       context('when passed day between last appointment and close', () => {
-        test('should return array with all appointments between first appointment and passed day', () => {
-          expect(appointments.getAppointmentsAt(day5)).toEqual([
+        test('should return array with appointments before first close appointment', () => {
+          expect(appointments._getRecordsContainsDay(day5)).toEqual([
             new Appointment({ postId: value1, day: day2 }),
             new Appointment({ postId: value2, day: day4 }),
           ]);
         });
       });
       context('when passed close day', () => {
-        test('should return empty array', () => {
-          expect(appointments.getAppointmentsAt(day6)).toEqual([]);
+        test('should return array with appointments beteewn first and second close appointments', () => {
+          expect(appointments._getRecordsContainsDay(day6)).toEqual([]);
         });
       });
       context('when passed day between close and second recruit', () => {
-        test('should return empty array', () => {
-          expect(appointments.getAppointmentsAt(day7)).toEqual([]);
+        test('should return array with appointments beteewn first and second close appointments', () => {
+          expect(appointments._getRecordsContainsDay(day7)).toEqual([
+            new Appointment({ postId: value2, day: day8 }),
+          ]);
         });
       });
       context('when passed second recruit day', () => {
         test('should return array with only first appointment of second recruit', () => {
-          expect(appointments.getAppointmentsAt(day8)).toEqual([
+          expect(appointments._getRecordsContainsDay(day8)).toEqual([
             new Appointment({ postId: value2, day: day8 }),
           ]);
         });
       });
       context('when passed day after second recruit day', () => {
         test('should return array with all appointments of second recruit between first appointment and passed day', () => {
-          expect(appointments.getAppointmentsAt(day9)).toEqual([
+          expect(appointments._getRecordsContainsDay(day9)).toEqual([
             new Appointment({ postId: value2, day: day8 }),
           ]);
         });
       });
       context('when passed second close day', () => {
         test('should return empty array', () => {
-          expect(appointments.getAppointmentsAt(day10)).toEqual([]);
+          expect(appointments._getRecordsContainsDay(day10)).toEqual([]);
         });
       });
       context('when no props passed', () => {
         test('should return empty array', () => {
-          expect(appointments.getAppointmentsAt()).toEqual([]);
+          expect(appointments._getRecordsContainsDay()).toEqual([]);
         });
       });
     }

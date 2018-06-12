@@ -6,9 +6,8 @@ import { InitializeApplication } from './app/Initializer';
 import { Application } from './app/Application';
 import * as services from './app';
 
-import { subdomains, commonTypes } from './domain';
+import { subdomains, commonTypes, errors } from './domain';
 
-import * as errorFactories from './infra/errorFactories';
 import * as repositories from './infra/repositories';
 import { makeValidator } from './infra/support/makeValidator';
 
@@ -42,12 +41,7 @@ bottle.factory('app', (container) => new Application(container));
 
 bottle.factory('subdomains', () => subdomains);
 bottle.factory('commonTypes', () => commonTypes);
-bottle.factory('errorFactories', () => {
-  return Object.keys(errorFactories).reduce((acc, ErrorFactoryName) => {
-    const errorFactory = new errorFactories[ErrorFactoryName]();
-    return { ...acc, [ErrorFactoryName]: errorFactory };
-  }, {});
-});
+bottle.constant('errors', errors);
 
 bottle.factory('mappers.commonTypes', () => {
   return Object.keys(commonTypesMappers).reduce((acc, СommonTypeName) => {
@@ -80,7 +74,7 @@ bottle.factory(
   'repositories',
   ({
     commonTypes,
-    errorFactories: { Persistence: errorFactory },
+    errors,
     mappers: { commonTypes: commonTypesMappers, subdomains: subdomainsMappers },
   }) => {
     return Object.keys(repositories).reduce((acc, SubdomainName) => {
@@ -91,7 +85,7 @@ bottle.factory(
             const entityMapper = subdomainsMappers[SubdomainName][EntityName];
             const repository = new repositories[SubdomainName][EntityName]({
               commonTypes,
-              errorFactory,
+              errors,
               commonTypesMappers,
               entityMapper,
             });
@@ -106,16 +100,7 @@ bottle.factory(
 
 bottle.factory(
   'services',
-  ({
-    makeValidator,
-    subdomains,
-    commonTypes,
-    errorFactories: {
-      Operation: errorFactory,
-      Validation: validationErrorFactory,
-    },
-    repositories,
-  }) => {
+  ({ makeValidator, subdomains, commonTypes, errors, repositories }) => {
     const subdomainsServices = Object.keys(services).reduce(
       (acc, SubdomainName) => {
         const subdomainRepositories = repositories[SubdomainName];
@@ -132,11 +117,10 @@ bottle.factory(
                   [lowerFirst(operationName)]: () =>
                     new Operations[operationName]({
                       validate: makeValidator(
-                        Operations[operationName].constraints,
-                        validationErrorFactory
+                        Operations[operationName].constraints
                       ),
                       commonTypes,
-                      errorFactory,
+                      errors,
                       repositories: subdomainRepositories,
                       entities,
                       domainServices,

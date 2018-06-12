@@ -1,7 +1,7 @@
 import {} from 'javascript-state-machine';
 
 import { BaseEntity } from '../../_lib';
-import { SeniorityTypeId, Day, BaseDiary } from '../../commonTypes';
+import { SeniorityTypeId, Day, Diary } from '../../commonTypes';
 import { Award } from './Award';
 
 export class SeniorityType extends BaseEntity {
@@ -26,12 +26,12 @@ export class SeniorityType extends BaseEntity {
       onBeforeUpdate(lifecycle, { name }) {
         const errors = [];
         if (name === this.name) {
-          throw this.constructor.errorFactory.createNothingToUpdate(
-            this,
-            `SeniorityType in ${
-              this.state
-            } state already has name "${name}" and months "${months}"`
-          );
+          // throw this.constructor.errorFactory.createNothingToUpdate(
+          //   this,
+          //   `SeniorityType in ${
+          //     this.state
+          //   } state already has name "${name}" and months "${months}"`
+          // );
         }
       },
 
@@ -85,7 +85,7 @@ export class SeniorityType extends BaseEntity {
     super(seniorityTypeId);
     this.name = name;
     this.months = months;
-    this._awards = new BaseDiary();
+    this._awards = new Diary();
 
     this.setState(state);
   }
@@ -131,15 +131,11 @@ export class SeniorityType extends BaseEntity {
 
   // private
 
-  _generateError(entity, details) {
-    throw this.constructor.errorFactory.createNotAllowed(entity, details);
-  }
-
   _emitAwardOperation(operation, ...args) {
-    const { done, error } = this._awards[operation](...args);
+    const { done, errors } = this._awards[operation](...args);
 
     if (!done) {
-      this._generateError(this, ...error);
+      throw errors;
     }
     return done;
   }

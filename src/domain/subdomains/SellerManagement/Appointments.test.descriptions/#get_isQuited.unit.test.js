@@ -1,6 +1,7 @@
 import { PostId, Day } from '../../../commonTypes';
 
 import { Appointments } from '../Appointments';
+import { Appointment } from '../Appointment';
 
 const value1 = new PostId();
 const value2 = new PostId();
@@ -18,47 +19,48 @@ const day9 = new Day({ value: new Date('2017.09.01 00:00.000+08:00') });
 const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 
 const closeValue = new PostId();
+PostId.quitPostId = closeValue;
 
-describe('Domain :: entities :: Appointments :: #isCloseedAt', () => {
-  let valueDayProgress;
+describe('Domain :: entities :: Appointments :: #isQuitedAt', () => {
+  let appointments;
   beforeEach(() => {
-    valueDayProgress = new Appointments({});
+    appointments = new Appointments();
   });
 
-  context('when valueDayProgress have no appointments', () => {
+  context('when appointments have no appointments', () => {
     test('should return false', () => {
-      expect(valueDayProgress.isCloseedAt()).toBeFalsy();
+      expect(appointments.isQuitedAt()).toBeFalsy();
     });
   });
 
-  context('when valueDayProgress have appointments and not closeed', () => {
+  context('when appointments have appointments and not closed', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
       ]);
     });
     test('should return false', () => {
-      expect(valueDayProgress.isCloseedAt()).toBeFalsy();
+      expect(appointments.isQuitedAt()).toBeFalsy();
     });
   });
 
-  context('when valueDayProgress have closeed', () => {
+  context('when appointments have closed', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
         new Appointment({ postId: closeValue, day: day6 }),
       ]);
     });
     test('should return true', () => {
-      expect(valueDayProgress.isCloseedAt()).toBeTruthy();
+      expect(appointments.isQuitedAt()).toBeTruthy();
     });
   });
 
-  context('when valueDayProgress have closeed and recruited again', () => {
+  context('when appointments have closed and recruited again', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
         new Appointment({ postId: closeValue, day: day6 }),
@@ -66,15 +68,15 @@ describe('Domain :: entities :: Appointments :: #isCloseedAt', () => {
       ]);
     });
     test('should return false', () => {
-      expect(valueDayProgress.isCloseedAt()).toBeFalsy();
+      expect(appointments.isQuitedAt()).toBeFalsy();
     });
   });
 
   context(
-    'when valueDayProgress have closeed, recruited again and close again',
+    'when appointments have closed, recruited again and close again',
     () => {
       beforeEach(() => {
-        valueDayProgress.setAppointments([
+        appointments.setAppointments([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
           new Appointment({ postId: closeValue, day: day6 }),
@@ -83,7 +85,7 @@ describe('Domain :: entities :: Appointments :: #isCloseedAt', () => {
         ]);
       });
       test('should return second close day', () => {
-        expect(valueDayProgress.isCloseedAt()).toBeTruthy();
+        expect(appointments.isQuitedAt()).toBeTruthy();
       });
     }
   );

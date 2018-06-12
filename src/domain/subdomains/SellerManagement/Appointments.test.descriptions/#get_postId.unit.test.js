@@ -21,7 +21,7 @@ const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 const closeValue = new PostId();
 PostId.quitPostId = closeValue;
 
-describe('Domain :: entities :: Appointments :: #quitDay', () => {
+describe('Domain :: entities :: Appointments :: #postId', () => {
   let appointments;
   beforeEach(() => {
     appointments = new Appointments();
@@ -29,7 +29,7 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
 
   context('when appointments have no appointments', () => {
     test('should return undefined', () => {
-      expect(appointments.quitDay).toBeUndefined();
+      expect(appointments.postId).toBeUndefined();
     });
   });
 
@@ -41,7 +41,7 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
       ]);
     });
     test('should return undefined', () => {
-      expect(appointments.quitDay).toBeUndefined();
+      expect(appointments.postId).toBe(value2);
     });
   });
 
@@ -53,8 +53,8 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
         new Appointment({ postId: closeValue, day: day6 }),
       ]);
     });
-    test('should return close day', () => {
-      expect(appointments.quitDay).toBe(day6);
+    test('should return undefined', () => {
+      expect(appointments.postId).toBeUndefined();
     });
   });
 
@@ -67,8 +67,8 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
         new Appointment({ postId: value2, day: day8 }),
       ]);
     });
-    test('should return undefined', () => {
-      expect(appointments.quitDay).toBeUndefined();
+    test('should return value of second recruit', () => {
+      expect(appointments.postId).toBe(value2);
     });
   });
 
@@ -84,8 +84,8 @@ describe('Domain :: entities :: Appointments :: #quitDay', () => {
           new Appointment({ postId: closeValue, day: day10 }),
         ]);
       });
-      test('should return second close day', () => {
-        expect(appointments.quitDay).toBe(day10);
+      test('should return undefined', () => {
+        expect(appointments.postId).toBeUndefined();
       });
     }
   );

@@ -34,7 +34,7 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (item === undefined) {
-      throw this.errorFactory.createIdNotFound(id);
+      throw this.errors[`${lowerFirst(entity.constructor.name)}NotFound`]();
     }
 
     return this.entityMapper.toEntity(item);
@@ -48,7 +48,7 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (entities.length === 0) {
-      throw this.errorFactory.createIdsNotFound(ids);
+      throw this.errors[`${lowerFirst(entity.constructor.name)}NotFound`]();
     }
 
     return entities;
@@ -73,7 +73,7 @@ export class InMemoryRepository extends BaseRepository {
     this.store[index] = this.entityMapper.toDatabase(entity);
 
     if (index === -1) {
-      throw this.errorFactory.createIdNotFound(entityId);
+      throw this.errors[`${lowerFirst(entity.constructor.name)}NotFound`]();
     }
 
     return this.entityMapper.toEntity(this.store[index]);
@@ -86,7 +86,7 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (store.length === this.store.length) {
-      throw this.errorFactory.createIdNotFound(id);
+      throw this.errors[`${lowerFirst(entity.constructor.name)}sNotFound`]();
     }
     this.store = store;
   }
@@ -166,7 +166,9 @@ export class InMemoryRepository extends BaseRepository {
     });
 
     if (Object.keys(uniqueless).length !== 0) {
-      throw this.errorFactory.createAlreadyExists(entity, uniqueless);
+      throw this.errors[
+        `${lowerFirst(entity.constructor.name)}AlreadyExists`
+      ]();
     }
 
     return null;

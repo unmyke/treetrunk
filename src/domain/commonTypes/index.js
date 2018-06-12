@@ -6,6 +6,7 @@ import { DayRange } from './DayRange';
 import { DayMetric } from './DayMetric';
 import { DayRangeMetric } from './DayRangeMetric';
 import { PersonName } from './PersonName';
+import { Diary } from './Diary';
 
 export {
   SellerId,
@@ -16,4 +17,5 @@ export {
   DayMetric,
   DayRangeMetric,
   PersonName,
+  Diary,
 };

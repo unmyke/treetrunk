@@ -1,6 +1,7 @@
 import { BaseEntity } from '../../_lib';
 import { SellerId, PostId, PersonName, Day } from '../../commonTypes';
 import { Appointment } from './Appointment';
+import { Appointments } from './Appointments';
 
 export class Seller extends BaseEntity {
   constructor({
@@ -17,7 +18,7 @@ export class Seller extends BaseEntity {
       middleName,
     });
     this.phone = phone;
-    this._appointments = [];
+    this._appointments = new Appointments();
   }
 
   get fullName() {
@@ -37,38 +38,31 @@ export class Seller extends BaseEntity {
   }
 
   get appointments() {
-    return this.getAppointmentsAt();
+    return this._appointments.appointments;
   }
 
   get postId() {
-    return this.getPostIdAt();
+    return this._appointments.postId;
   }
 
   get postIds() {
-    return new Array(
-      //...new Set(this.getAppointmentsAt().map(({ postId }) => postId))
-      ...new Set(
-        this.getAppointmentsAt()
-          .filter((appointment) => !appointment.postId.isQuitPostId())
-          .map(({ postId }) => postId)
-      )
-    );
+    return this._appointments.postIds;
   }
 
   get recruitDay() {
-    return this.getRecruitDayAt();
+    return this._appointments.recruitDay;
   }
 
   get isRecruited() {
-    return this.isRecruitedAt();
+    return this._appointments.isRecruited;
   }
 
   get quitDay() {
-    return this.getQuitDayAt();
+    return this._appointments.quitDay;
   }
 
   get isQuited() {
-    return this.isQuitedAt();
+    return this._appointments.isQuited;
   }
 
   get seniority() {
@@ -84,10 +78,7 @@ export class Seller extends BaseEntity {
     });
 
     if (this.personName.equals(newPersonName) && this.phone === phone) {
-      throw this.constructor.errorFactory.createNothingToUpdate(
-        this,
-        `Seller already has lastName "${lastName}", firstName "${firstName}", middleName "${middleName}" and phone "${phone}"`
-      );
+      throw this.errors.sellerNothingToUpdate();
     }
 
     this.personName = newPersonName;
@@ -97,130 +88,83 @@ export class Seller extends BaseEntity {
   }
 
   getAppointmentsAt(day = new Day()) {
-    if (!this.isRecruitedAt(day)) {
-      if (this.isQuitedAt(day)) {
-        return [this._getAppointmentAt(this.getQuitDayAt(day))];
-      }
-      return [];
-    }
-
-    const recruitDay = this.getRecruitDayAt(day);
-    const currentAppointments = this._getAllAppointmentsAt(day).filter(
-      ({ day: currentDay }) => currentDay >= recruitDay
-    );
-    return currentAppointments;
+    return this._appointments.getAppointmentsAt(day);
   }
 
   addAppointment(postId, day) {
-    const previousPostId = this.getPostIdAt(day);
-
-    if (previousPostId === postId) {
-      throw this.constructor.errorFactory.createNotAllowed(
-        this,
-        `Seller already appoint to post with postId ${postId} at ${day.format(
-          'DD.MM.YYYY'
-        )}`
-      );
-    }
-
     const appointment = new Appointment({ postId, day });
-    this._appointments = [...this._appointments, appointment];
-  }
+    const { done, error } = this._appointments.addAppointment(appointment);
 
-  editAppointment(postIdToEdit, dayToEdit, postId, day) {
-    if (postIdToEdit.equals(postId) && dayToEdit.equals(day)) {
-      this.constructor.errorFactory.createNothingToUpdate(
-        this,
-        `Updated appoint at ${day.format('DD.MM.YYYY')} for Seller "${
-          this.fullName
-        }" already equlas ${postId}`
-      );
+    if (!done) {
+      throw error;
     }
-    this.deleteAppointment(postIdToEdit, dayToEdit);
-    this.addAppointment(postId, day);
   }
 
   deleteAppointment(postId, day) {
-    const appointmentToDelete = new Appointment({ postId, day });
-    const filteredAppointments = this._appointments.filter(
-      (appointment) => !appointment.equals(appointmentToDelete)
-    );
-    if (this._appointments.length === filteredAppointments.length) {
-      throw this.constructor.errorFactory.createNotFound(
-        this,
-        `Appointment with postId ${postId} at ${day.format(
-          'DD.MM.YYYY'
-        )} not found`
-      );
-    }
+    const appointment = new Appointment({ postId, day });
+    const { done, error } = this._appointments.deleteAppointment(appointment);
 
-    this._appointments = filteredAppointments;
+    if (!done) {
+      throw error;
+    }
+  }
+
+  editAppointment(postId, day, newPostId, newDay) {
+    const appointment = new Appointment({ postId, day });
+    const newAppointment = new Appointment({ postId: newPostId, day: newDay });
+    const { done, error } = this._appointments.editAppointment(appointment);
+
+    if (!done) {
+      throw error;
+    }
   }
 
   takeQuit(day = new Day()) {
-    const recruitDay = this.getRecruitDayAt(day);
-    if (!recruitDay || day <= recruitDay) {
-      throw this.constructor.errorFactory.createNotAllowed(
-        this,
-        'Seller cannot take quit if there is no recruit day or take quit day is early or equals recruit day'
-      );
+    const { done, error } = this._appointments.takeQuitAt(day);
+
+    if (!done) {
+      throw error;
     }
-    this.addAppointment(PostId.quitPostId, day);
   }
 
   setAppointments(appointments) {
-    this._appointments = appointments.map(
-      ({ postId, day }) =>
-        new Appointment({
-          postId,
-          day,
-        })
+    const { done, error } = this._appointments.setAppointments(
+      appointments.map(
+        ({ postId, day }) =>
+          new Appointment({
+            postId,
+            day,
+          })
+      )
     );
+
+    if (!done) {
+      throw error;
+    }
   }
 
   getPostIdAt(day = new Day()) {
-    const appointment = this._getAppointmentAt(day);
-
-    if (!appointment || appointment.postId.isQuitPostId()) {
-      return;
-    }
-    return appointment.postId;
+    return this._appointments.getPostIdAt(day);
   }
 
   getPostIdsAt(day = new Day()) {
-    return this.getAppointmentsAt(day)
-      .filter((appointment) => !appointment.postId.isQuitPostId())
-      .map(({ postId }) => postId);
+    return this._appointments.getPostIdsAt(day);
   }
 
   getRecruitDayAt(day = new Day()) {
-    if (!this.isRecruitedAt(day)) {
-      return;
-    }
-
-    const [firstAppointment, ...appointments] = this._getAllAppointmentsAt(day);
-    return appointments.reduce((recruitDay, { postId }, index) => {
-      if (postId.isQuitPostId()) {
-        return appointments[index + 1].day;
-      }
-      return recruitDay;
-    }, firstAppointment.day);
+    return this._appointments.getRecruitDayAt(day);
   }
 
   isRecruitedAt(day = new Day()) {
-    return !!this.getPostIdAt(day);
+    return this._appointments.isRecruitedAt(day);
   }
 
   getQuitDayAt(day = new Day()) {
-    const appointment = this._getAppointmentAt(day);
-    if (!appointment || !appointment.postId.isQuitPostId()) {
-      return;
-    }
-    return appointment.day;
+    return this._appointments.getQuitDayAt(day);
   }
 
   isQuitedAt(day = new Day()) {
-    return !!this.getQuitDayAt(day);
+    return this._appointments.isQuitedAt(day);
   }
 
   getSeniorityAt(day = new Day()) {
@@ -248,22 +192,5 @@ export class Seller extends BaseEntity {
       seniority: this.seniority,
       appointments: this.appointments,
     };
-  }
-
-  // private
-  _getAllAppointmentsAt(day = new Day()) {
-    return this._appointments
-      .sort(this._getDayComparator())
-      .filter(({ day: currentDay }) => currentDay <= day);
-  }
-
-  _getAppointmentAt(day = new Day()) {
-    const appointments = this._getAllAppointmentsAt(day);
-
-    if (appointments.length === 0) {
-      return;
-    }
-
-    return appointments[appointments.length - 1];
   }
 }

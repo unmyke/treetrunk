@@ -1,6 +1,7 @@
 import { PostId, Day } from '../../../commonTypes';
 
 import { Appointments } from '../Appointments';
+import { Appointment } from '../Appointment';
 
 const value1 = new PostId();
 const value2 = new PostId();
@@ -18,64 +19,65 @@ const day9 = new Day({ value: new Date('2017.09.01 00:00.000+08:00') });
 const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 
 const closeValue = new PostId();
+PostId.quitPostId = closeValue;
 
-describe('Domain :: entities :: Appointments :: #getCloseDayAt', () => {
-  let valueDayProgress;
+describe('Domain :: entities :: Appointments :: #getQuitDayAt', () => {
+  let appointments;
   beforeEach(() => {
-    valueDayProgress = new Appointments({});
+    appointments = new Appointments();
   });
 
-  context('when valueDayProgress have no appointments', () => {
+  context('when appointments have no appointments', () => {
     context('when passed custom day', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day1)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day1)).toBeUndefined();
       });
     });
 
     context('when no props passed', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt()).toBeUndefined();
+        expect(appointments.getQuitDayAt()).toBeUndefined();
       });
     });
   });
 
-  context('when valueDayProgress have appointments and not closeed', () => {
+  context('when appointments have appointments and not closed', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
       ]);
     });
     context('when passed day before appointments', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day1)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day1)).toBeUndefined();
       });
     });
     context('when passed day of first appointment', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day2)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day2)).toBeUndefined();
       });
     });
     context('when passed day between first and second appointments', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day3)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day3)).toBeUndefined();
       });
     });
     context('when passed day of appointment after first', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day4)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day4)).toBeUndefined();
       });
     });
     context('when no props passed', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt()).toBeUndefined();
+        expect(appointments.getQuitDayAt()).toBeUndefined();
       });
     });
   });
 
-  context('when valueDayProgress have closeed', () => {
+  context('when appointments have closed', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
         new Appointment({ postId: closeValue, day: day6 }),
@@ -83,44 +85,44 @@ describe('Domain :: entities :: Appointments :: #getCloseDayAt', () => {
     });
     context('when passed day before appointments', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day1)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day1)).toBeUndefined();
       });
     });
     context('when passed day of first appointment', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day2)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day2)).toBeUndefined();
       });
     });
     context('when passed day between first and second appointments', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day3)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day3)).toBeUndefined();
       });
     });
     context('when passed day of appointment after first', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day4)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day4)).toBeUndefined();
       });
     });
     context('when passed day between last appointment and close', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day5)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day5)).toBeUndefined();
       });
     });
     context('when passed close day', () => {
       test('should return close day', () => {
-        expect(valueDayProgress.getCloseDayAt(day6)).toBe(day6);
+        expect(appointments.getQuitDayAt(day6)).toBe(day6);
       });
     });
     context('when no props passed', () => {
       test('should return close day', () => {
-        expect(valueDayProgress.getCloseDayAt()).toBe(day6);
+        expect(appointments.getQuitDayAt()).toBe(day6);
       });
     });
   });
 
-  context('when valueDayProgress have closeed and recruited again', () => {
+  context('when appointments have closed and recruited again', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
         new Appointment({ postId: closeValue, day: day6 }),
@@ -129,56 +131,56 @@ describe('Domain :: entities :: Appointments :: #getCloseDayAt', () => {
     });
     context('when passed day before appointments', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day1)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day1)).toBeUndefined();
       });
     });
     context('when passed day of first appointment', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day2)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day2)).toBeUndefined();
       });
     });
     context('when passed day between first and second appointments', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day3)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day3)).toBeUndefined();
       });
     });
     context('when passed day of appointment after first', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day4)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day4)).toBeUndefined();
       });
     });
     context('when passed day between last appointment and close', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day5)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day5)).toBeUndefined();
       });
     });
     context('when passed close day', () => {
       test('should return close day', () => {
-        expect(valueDayProgress.getCloseDayAt(day6)).toBe(day6);
+        expect(appointments.getQuitDayAt(day6)).toBe(day6);
       });
     });
     context('when passed day between close and second recruit', () => {
       test('should return close day', () => {
-        expect(valueDayProgress.getCloseDayAt(day7)).toBe(day6);
+        expect(appointments.getQuitDayAt(day7)).toBe(day6);
       });
     });
     context('when passed second recruit day', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt(day8)).toBeUndefined();
+        expect(appointments.getQuitDayAt(day8)).toBeUndefined();
       });
     });
     context('when no props passed', () => {
       test('should return undefined', () => {
-        expect(valueDayProgress.getCloseDayAt()).toBeUndefined();
+        expect(appointments.getQuitDayAt()).toBeUndefined();
       });
     });
   });
 
   context(
-    'when valueDayProgress have closeed, recruited again and close again',
+    'when appointments have closed, recruited again and close again',
     () => {
       beforeEach(() => {
-        valueDayProgress.setAppointments([
+        appointments.setAppointments([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
           new Appointment({ postId: closeValue, day: day6 }),
@@ -188,57 +190,57 @@ describe('Domain :: entities :: Appointments :: #getCloseDayAt', () => {
       });
       context('when passed day before appointments', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getCloseDayAt(day1)).toBeUndefined();
+          expect(appointments.getQuitDayAt(day1)).toBeUndefined();
         });
       });
       context('when passed day of first appointment', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getCloseDayAt(day2)).toBeUndefined();
+          expect(appointments.getQuitDayAt(day2)).toBeUndefined();
         });
       });
       context('when passed day between first and second appointments', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getCloseDayAt(day3)).toBeUndefined();
+          expect(appointments.getQuitDayAt(day3)).toBeUndefined();
         });
       });
       context('when passed day of appointment after first', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getCloseDayAt(day4)).toBeUndefined();
+          expect(appointments.getQuitDayAt(day4)).toBeUndefined();
         });
       });
       context('when passed day between last appointment and close', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getCloseDayAt(day5)).toBeUndefined();
+          expect(appointments.getQuitDayAt(day5)).toBeUndefined();
         });
       });
       context('when passed close day', () => {
         test('should return close day', () => {
-          expect(valueDayProgress.getCloseDayAt(day6)).toBe(day6);
+          expect(appointments.getQuitDayAt(day6)).toBe(day6);
         });
       });
       context('when passed day between close and second recruit', () => {
         test('should return close day', () => {
-          expect(valueDayProgress.getCloseDayAt(day7)).toBe(day6);
+          expect(appointments.getQuitDayAt(day7)).toBe(day6);
         });
       });
       context('when passed second recruit day', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getCloseDayAt(day8)).toBeUndefined();
+          expect(appointments.getQuitDayAt(day8)).toBeUndefined();
         });
       });
       context('when passed day after second recruit day', () => {
         test('should return undefined', () => {
-          expect(valueDayProgress.getCloseDayAt(day9)).toBeUndefined();
+          expect(appointments.getQuitDayAt(day9)).toBeUndefined();
         });
       });
       context('when passed second close day', () => {
         test('should return second close day', () => {
-          expect(valueDayProgress.getCloseDayAt(day10)).toBe(day10);
+          expect(appointments.getQuitDayAt(day10)).toBe(day10);
         });
       });
       context('when no props passed', () => {
         test('should return second close day', () => {
-          expect(valueDayProgress.getCloseDayAt()).toBe(day10);
+          expect(appointments.getQuitDayAt()).toBe(day10);
         });
       });
     }

@@ -1,6 +1,7 @@
 import { PostId, Day } from '../../../commonTypes';
 
 import { Appointments } from '../Appointments';
+import { Appointment } from '../Appointment';
 
 const value1 = new PostId();
 const value2 = new PostId();
@@ -18,64 +19,65 @@ const day9 = new Day({ value: new Date('2017.09.01 00:00.000+08:00') });
 const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 
 const closeValue = new PostId();
+PostId.quitPostId = closeValue;
 
 describe('Domain :: entities :: Appointments :: #isRecruitedAt', () => {
-  let valueDayProgress;
+  let appointments;
   beforeEach(() => {
-    valueDayProgress = new Appointments({});
+    appointments = new Appointments();
   });
 
-  context('when valueDayProgress have no appointments', () => {
+  context('when appointments have no appointments', () => {
     context('when passed custom day', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt(day1)).toBeFalsy();
+        expect(appointments.isRecruitedAt(day1)).toBeFalsy();
       });
     });
 
     context('when no props passed', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt()).toBeFalsy();
+        expect(appointments.isRecruitedAt()).toBeFalsy();
       });
     });
   });
 
-  context('when valueDayProgress have appointments and not closeed', () => {
+  context('when appointments have appointments and not closed', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
       ]);
     });
     context('when passed day before appointments', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt(day1)).toBeFalsy();
+        expect(appointments.isRecruitedAt(day1)).toBeFalsy();
       });
     });
     context('when passed day of first appointment', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day2)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day2)).toBeTruthy();
       });
     });
     context('when passed day between first and second appointments', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day3)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day3)).toBeTruthy();
       });
     });
     context('when passed day of appointment after first', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day4)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day4)).toBeTruthy();
       });
     });
     context('when no props passed', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt()).toBeTruthy();
+        expect(appointments.isRecruitedAt()).toBeTruthy();
       });
     });
   });
 
-  context('when valueDayProgress have closeed', () => {
+  context('when appointments have closed', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
         new Appointment({ postId: closeValue, day: day6 }),
@@ -83,44 +85,44 @@ describe('Domain :: entities :: Appointments :: #isRecruitedAt', () => {
     });
     context('when passed day before appointments', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt(day1)).toBeFalsy();
+        expect(appointments.isRecruitedAt(day1)).toBeFalsy();
       });
     });
     context('when passed day of first appointment', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day2)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day2)).toBeTruthy();
       });
     });
     context('when passed day between first and second appointments', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day3)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day3)).toBeTruthy();
       });
     });
     context('when passed day of appointment after first', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day4)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day4)).toBeTruthy();
       });
     });
     context('when passed day between last appointment and close', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day5)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day5)).toBeTruthy();
       });
     });
     context('when passed close day', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt(day6)).toBeFalsy();
+        expect(appointments.isRecruitedAt(day6)).toBeFalsy();
       });
     });
     context('when no props passed', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt()).toBeFalsy();
+        expect(appointments.isRecruitedAt()).toBeFalsy();
       });
     });
   });
 
-  context('when valueDayProgress have closeed and recruited again', () => {
+  context('when appointments have closed and recruited again', () => {
     beforeEach(() => {
-      valueDayProgress.setAppointments([
+      appointments.setAppointments([
         new Appointment({ postId: value1, day: day2 }),
         new Appointment({ postId: value2, day: day4 }),
         new Appointment({ postId: closeValue, day: day6 }),
@@ -129,56 +131,56 @@ describe('Domain :: entities :: Appointments :: #isRecruitedAt', () => {
     });
     context('when passed day before appointments', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt(day1)).toBeFalsy();
+        expect(appointments.isRecruitedAt(day1)).toBeFalsy();
       });
     });
     context('when passed day of first appointment', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day2)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day2)).toBeTruthy();
       });
     });
     context('when passed day between first and second appointments', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day3)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day3)).toBeTruthy();
       });
     });
     context('when passed day of appointment after first', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day4)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day4)).toBeTruthy();
       });
     });
     context('when passed day between last appointment and close', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day5)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day5)).toBeTruthy();
       });
     });
     context('when passed close day', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt(day6)).toBeFalsy();
+        expect(appointments.isRecruitedAt(day6)).toBeFalsy();
       });
     });
     context('when passed day between close and second recruit', () => {
       test('should return false', () => {
-        expect(valueDayProgress.isRecruitedAt(day7)).toBeFalsy();
+        expect(appointments.isRecruitedAt(day7)).toBeFalsy();
       });
     });
     context('when passed second recruit day', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt(day8)).toBeTruthy();
+        expect(appointments.isRecruitedAt(day8)).toBeTruthy();
       });
     });
     context('when no props passed', () => {
       test('should return true', () => {
-        expect(valueDayProgress.isRecruitedAt()).toBeTruthy();
+        expect(appointments.isRecruitedAt()).toBeTruthy();
       });
     });
   });
 
   context(
-    'when valueDayProgress have closeed, recruited again and close again',
+    'when appointments have closed, recruited again and close again',
     () => {
       beforeEach(() => {
-        valueDayProgress.setAppointments([
+        appointments.setAppointments([
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
           new Appointment({ postId: closeValue, day: day6 }),
@@ -188,57 +190,57 @@ describe('Domain :: entities :: Appointments :: #isRecruitedAt', () => {
       });
       context('when passed day before appointments', () => {
         test('should return false', () => {
-          expect(valueDayProgress.isRecruitedAt(day1)).toBeFalsy();
+          expect(appointments.isRecruitedAt(day1)).toBeFalsy();
         });
       });
       context('when passed day of first appointment', () => {
         test('should return true', () => {
-          expect(valueDayProgress.isRecruitedAt(day2)).toBeTruthy();
+          expect(appointments.isRecruitedAt(day2)).toBeTruthy();
         });
       });
       context('when passed day between first and second appointments', () => {
         test('should return true', () => {
-          expect(valueDayProgress.isRecruitedAt(day3)).toBeTruthy();
+          expect(appointments.isRecruitedAt(day3)).toBeTruthy();
         });
       });
       context('when passed day of appointment after first', () => {
         test('should return true', () => {
-          expect(valueDayProgress.isRecruitedAt(day4)).toBeTruthy();
+          expect(appointments.isRecruitedAt(day4)).toBeTruthy();
         });
       });
       context('when passed day between last appointment and close', () => {
         test('should return true', () => {
-          expect(valueDayProgress.isRecruitedAt(day5)).toBeTruthy();
+          expect(appointments.isRecruitedAt(day5)).toBeTruthy();
         });
       });
       context('when passed close day', () => {
         test('should return false', () => {
-          expect(valueDayProgress.isRecruitedAt(day6)).toBeFalsy();
+          expect(appointments.isRecruitedAt(day6)).toBeFalsy();
         });
       });
       context('when passed day between close and second recruit', () => {
         test('should return false', () => {
-          expect(valueDayProgress.isRecruitedAt(day7)).toBeFalsy();
+          expect(appointments.isRecruitedAt(day7)).toBeFalsy();
         });
       });
       context('when passed second recruit day', () => {
         test('should return true', () => {
-          expect(valueDayProgress.isRecruitedAt(day8)).toBeTruthy();
+          expect(appointments.isRecruitedAt(day8)).toBeTruthy();
         });
       });
       context('when passed day after second recruit day', () => {
         test('should return true', () => {
-          expect(valueDayProgress.isRecruitedAt(day9)).toBeTruthy();
+          expect(appointments.isRecruitedAt(day9)).toBeTruthy();
         });
       });
       context('when passed second close day', () => {
         test('should return false', () => {
-          expect(valueDayProgress.isRecruitedAt(day10)).toBeFalsy();
+          expect(appointments.isRecruitedAt(day10)).toBeFalsy();
         });
       });
       context('when no props passed', () => {
         test('should return false', () => {
-          expect(valueDayProgress.isRecruitedAt()).toBeFalsy();
+          expect(appointments.isRecruitedAt()).toBeFalsy();
         });
       });
     }

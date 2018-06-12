@@ -3,34 +3,37 @@
     |
     |             |
     |             ▶︎
-                  |
-                false
+    |             |
+undefined     undefined
 
 'when appointments have appointments and not closed'
 2017.01.01    2017.02.01      2017.03.01      2017.04.01        now
+    |          florist                      senior_florist
     |             |               |               |               |
     |             ◎———————————————————————————————○———————————————▶︎
-                                                                  |
-                                                                false  
-
+    |             |               |               |               |
+undefined      florist         florist      senior_florist  senior_florist
 
 'when appointments have closed'
-2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01         now
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.011     2017.06.01      2017.07.01
+    |          florist                      senior_florist
     |             |               |               |               |               |               |
     |             ◎———————————————————————————————○———————————————————————————————●———————————————▶︎
-                                                                                                  |
-                                                                                                 true
+    |             |               |               |               |               |               |
+undefined      florist         florist      senior_florist  senior_florist    undefined       undefined
 
 'when appointments have closed and recruited again'
-2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01      2017.07.01      2017.08.01         now
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.011     2017.06.01      2017.07.01      2017.08.01         now
+    |          florist                      senior_florist                                                  senior_florist
     |             |               |               |               |               |               |               |               |
     |             ◎———————————————————————————————○———————————————————————————————●———————————————————————————————◎———————————————▶︎
-                                                                                                                                  |
-                                                                                                                                false
+    |             |               |               |               |               |               |               |               |
+undefined      florist         florist      senior_florist  senior_florist    undefined       undefined    senior_florist  senior_florist
 
 'when appointments have closed, recruited again and close again'
-2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01      2017.07.01      2017.08.01      2017.09.01      2017.10.01          now
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.011     2017.06.01      2017.07.01      2017.08.01      2017.09.01      2017.10.01          now
+    |          florist                      senior_florist                                                  senior_florist
     |             |               |               |               |               |               |               |               |               |                |
     |             ◎———————————————————————————————○———————————————————————————————●———————————————————————————————◎———————————————————————————————●————————————————▶︎
-                                                                                                                                                                   |
-                                                                                                                                                                  true
+    |             |               |               |               |               |               |               |               |               |                |
+undefined      florist         florist      senior_florist  senior_florist    undefined       undefined    senior_florist  senior_florist     undefined        undefined

@@ -19,8 +19,8 @@ update({ lastName, firstName, middleName, phone })
 
 #getCloseDayAt(day = new Day())
 #get closeDay()
-#isCloseedAt(day = new Day())
-#get isCloseed()
+#isClosedAt(day = new Day())
+#get isClosed()
 
 #getSeniorityAt(day = new Day())
 #get seniority()

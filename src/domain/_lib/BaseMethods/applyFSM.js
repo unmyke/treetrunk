@@ -1,5 +1,5 @@
 import StateMachine from 'javascript-state-machine';
-import { lowerCase } from 'lodash';
+import { makeError, errors } from '../../errors';
 
 export const applyFSM = (EntityClass) => {
   StateMachine.factory(EntityClass, {
@@ -17,10 +17,7 @@ export const applyFSM = (EntityClass) => {
     data: EntityClass.fsm.data,
     methods: {
       onInvalidTransition(transition, from, to) {
-        throw this.constructor.errorFactory.createNotAllowed(
-          this,
-          `Not allowed to ${lowerCase(transition)} from ${from} state`
-        );
+        throw makeError({ state: errors.transitionNotAllowed });
       },
       ...EntityClass.fsm.methods,
     },

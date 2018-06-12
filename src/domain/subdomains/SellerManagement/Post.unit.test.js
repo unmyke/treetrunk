@@ -47,6 +47,7 @@ describe('Domain :: entities :: Post', () => {
     context('when post is active', () => {
       test('should set piece rates', () => {
         post.setPieceRates(pieceRates);
+        // console.log(post.pieceRates);
 
         expect(post.pieceRates).toEqual(
           pieceRates.sort((a, b) => a.day > b.day)
@@ -64,10 +65,10 @@ describe('Domain :: entities :: Post', () => {
       test('should not set piece rates and throw NOT_ALLOWED error', () => {
         try {
           post.setPieceRates(pieceRates);
-        } catch (e) {
-          expect(e.message).toBe('Not allowed');
-          expect(e.details).toEqual({
-            post: ['Not allowed to set piece rates from inactive state'],
+        } catch (error) {
+          expect(error.message).toBe('NOT_ALLOWED');
+          expect(error.details).toEqual({
+            state: 'TRANSITION_NOT_ALLOWED',
           });
         }
 
@@ -80,6 +81,7 @@ describe('Domain :: entities :: Post', () => {
     context('when add one pieceRate value', () => {
       test('should have pieceRates length equal 1', () => {
         post.addPieceRate(pieceRate1value, pieceRate1day);
+
         expect(post.pieceRates).toHaveLength(1);
       });
     });
@@ -90,11 +92,11 @@ describe('Domain :: entities :: Post', () => {
 
         try {
           post.addPieceRate(pieceRate1value, pieceRate1day);
-        } catch (e) {
-          expect(e.details).toEqual({
-            post: ['Piece rate with value "4" at 14.01.2018 already exists'],
-          });
+        } catch (error) {
+          expect(error.message).toBe('NOT_ALLOWED');
+          expect(error.details).toEqual({ pieceRate: 'ALREADY_EXISTS' });
         }
+
         expect(post.pieceRates).toHaveLength(1);
       });
     });
@@ -105,11 +107,13 @@ describe('Domain :: entities :: Post', () => {
 
         try {
           post.addPieceRate(pieceRate1value, newDay);
-        } catch (e) {
-          expect(e.details).toEqual({
-            post: ['Previous piece rate already have value "4"'],
+        } catch (error) {
+          expect(error.message).toBe('NOT_ALLOWED');
+          expect(error.details).toEqual({
+            pieceRate: 'EQUALS_TO_SURROUNDING_VALUE',
           });
         }
+
         expect(post.pieceRates).toHaveLength(1);
       });
     });
@@ -122,11 +126,13 @@ describe('Domain :: entities :: Post', () => {
 
         try {
           post.addPieceRate(pieceRate1value, pieceRate1day);
-        } catch (e) {
-          expect(e.details).toEqual({
-            post: ['Next piece rate already have value "4"'],
+        } catch (error) {
+          expect(error.message).toBe('NOT_ALLOWED');
+          expect(error.details).toEqual({
+            pieceRate: 'EQUALS_TO_SURROUNDING_VALUE',
           });
         }
+
         expect(post.pieceRates).toHaveLength(2);
       });
     });
@@ -156,11 +162,9 @@ describe('Domain :: entities :: Post', () => {
 
         try {
           post.deletePieceRate(pieceRate3value, pieceRate3day);
-        } catch (e) {
-          expect(e.details).toEqual({
-            post: ['Piece rate with value "5.5" at 14.03.2018 not found'],
-          });
-          expect(post.pieceRates).toHaveLength(2);
+        } catch (error) {
+          expect(error.message).toBe('NOT_ALLOWED');
+          expect(error.details).toEqual({ pieceRate: 'NOT_FOUND' });
         }
       });
     });
@@ -174,13 +178,13 @@ describe('Domain :: entities :: Post', () => {
 
         try {
           post.deletePieceRate(pieceRate2value, pieceRate2day);
-        } catch (e) {
-          expect(e.details).toEqual({
-            post: [
-              'Previous piece rate value and next piece rate value are equal',
-            ],
+        } catch (error) {
+          expect(error.message).toBe('NOT_ALLOWED');
+          expect(error.details).toEqual({
+            pieceRate: 'SURROUNDING_VALUES_ARE_EQUAL',
           });
         }
+
         expect(post.pieceRates).toHaveLength(3);
       });
     });
@@ -235,14 +239,14 @@ describe('Domain :: entities :: Post', () => {
       });
     });
   });
-  describe('#editPieceRate', () => {
+  describe('#updatePieceRate', () => {
     beforeEach(() => {
       post.addPieceRate(pieceRate1value, pieceRate1day);
     });
 
     context('when appointment has created with wrong pieceRate', () => {
       test('should change associated pieceRate', () => {
-        post.editPieceRate(
+        post.updatePieceRate(
           pieceRate1value,
           pieceRate1day,
           pieceRate2value,
@@ -259,7 +263,7 @@ describe('Domain :: entities :: Post', () => {
 
     context('when pieceRate has created with wrong date', () => {
       test('should change associated date', () => {
-        post.editPieceRate(
+        post.updatePieceRate(
           pieceRate1value,
           pieceRate1day,
           pieceRate1value,
@@ -292,10 +296,10 @@ describe('Domain :: entities :: Post', () => {
       test('should not change state and throw NOT_ALLOWED error', () => {
         try {
           post.inactivate();
-        } catch (e) {
-          expect(e.message).toBe('Not allowed');
-          expect(e.details).toEqual({
-            post: ['Not allowed to inactivate from inactive state'],
+        } catch (error) {
+          expect(error.message).toBe('NOT_ALLOWED');
+          expect(error.details).toEqual({
+            state: 'TRANSITION_NOT_ALLOWED',
           });
         }
 
@@ -324,11 +328,9 @@ describe('Domain :: entities :: Post', () => {
     test('should not change state and throw NOT_ALLOWED error', () => {
       try {
         post.activate();
-      } catch (e) {
-        expect(e.message).toBe('Not allowed');
-        expect(e.details).toEqual({
-          post: ['Not allowed to activate from active state'],
-        });
+      } catch (error) {
+        expect(error.message).toBe('NOT_ALLOWED');
+        expect(error.details).toEqual({ state: 'TRANSITION_NOT_ALLOWED' });
       }
 
       expect(post.state).toBe('active');
@@ -347,11 +349,9 @@ describe('Domain :: entities :: Post', () => {
       test('should not change state and throw NOTHING_TO_UPDATE error', () => {
         try {
           post.update({ name: 'Флорист' });
-        } catch (e) {
-          expect(e.message).toBe('Nothing to update');
-          expect(e.details).toEqual({
-            post: ['Post in active state already has name "Флорист"'],
-          });
+        } catch (error) {
+          expect(error.message).toBe('NOT_ALLOWED');
+          expect(error.details).toEqual({ name: 'NOTHING_TO_UPDATE' });
         }
 
         expect(post.name).toBe('Флорист');

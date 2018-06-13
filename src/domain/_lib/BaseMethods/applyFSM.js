@@ -17,7 +17,7 @@ export const applyFSM = (EntityClass) => {
     data: EntityClass.fsm.data,
     methods: {
       onInvalidTransition(transition, from, to) {
-        throw makeError({ state: errors.transitionNotAllowed });
+        throw makeError({ state: [errors.transitionNotAllowed] });
       },
       ...EntityClass.fsm.methods,
     },

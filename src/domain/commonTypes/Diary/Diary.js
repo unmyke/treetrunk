@@ -48,7 +48,15 @@ export class Diary extends BaseClass {
 
   // state-transition functions
   static getPostValidationState() {
-    if (Object.keys(this.operation.error).length === 0) {
+    const argNames = Object.keys(this.operation.error);
+
+    const errorsExists = argNames.reduce(
+      (errorExists, argName) =>
+        errorExists || this.operation.error[argName].length !== 0,
+      false
+    );
+
+    if (!errorsExists) {
       return 'result';
     }
 
@@ -210,7 +218,7 @@ export class Diary extends BaseClass {
   }
 
   _getRecordsBeforeDay(day = new Day(), options = {}) {
-    return this._getRecordsContainsDay(day.prev()).filter(
+    return this._getRecordsContainsDay(day.prev(), options).filter(
       ({ day: currentDay }) => currentDay < day
     );
   }
@@ -292,10 +300,9 @@ export class Diary extends BaseClass {
 
   _getRecordOn(day = new Day(), options = {}) {
     return this.__records.find((record) => {
-      if (this.operation.name === 'update') {
-        console.log(record);
-        console.log(options);
-      }
+      // console.log(record);
+      // console.log(options);
+
       return (
         record.day.equals(day) &&
         !(
@@ -451,7 +458,7 @@ export class Diary extends BaseClass {
   }
 
   _validateSetOperation({ records }, options = {}) {
-    this.operation.error = [];
+    this.operation.error = {};
   }
 
   _validateAddClosingOperation({ records }, options = {}) {
@@ -460,17 +467,17 @@ export class Diary extends BaseClass {
 
   //    validation error generators
   _getAddErrors({ record }, options = {}) {
-    const error = {};
+    const error = { record: [] };
 
     const outOfActiveDiaryError = this._getOutOfActiveDiaryError(record);
 
     if (outOfActiveDiaryError !== null) {
-      error.record = outOfActiveDiaryError;
+      error.record.push(outOfActiveDiaryError);
     } else {
       const alreadyExistsError = this._getAlreadyExistsError(record, options);
 
       if (alreadyExistsError !== null) {
-        error.record = alreadyExistsError;
+        error.record.push(alreadyExistsError);
       } else {
         const equalsToSurroundingValueError = this._getEqualsToSurroundingValueError(
           record,
@@ -484,7 +491,7 @@ export class Diary extends BaseClass {
             options.ignoreRules.contains(this._getEqualsToSurroundingValueError)
           )
         ) {
-          error.record = equalsToSurroundingValueError;
+          error.record.push(equalsToSurroundingValueError);
         }
       }
     }
@@ -493,34 +500,29 @@ export class Diary extends BaseClass {
   }
 
   _getAddClosingErrors({ day }, options = {}) {
-    const error = {};
+    const error = { day: [] };
 
     if (this._isClosed) {
-      error.day = errors.alreadyDefined;
+      error.day.push(errors.alreadyDefined);
     } else {
       const lastRecordDay = this._recordDay;
 
       if (day <= lastRecordDay) {
         // define error
-        error.day = errors.backdatingNotPermitted;
+        error.day.push(errors.backdatingNotPermitted);
       }
-
-      const closeRecord = new this.RecordClass({
-        value: this.closeValue,
-        day,
-      });
     }
 
     return error;
   }
 
   _getDeleteErrors({ record }, options = {}) {
-    const error = {};
+    const error = { record: [] };
 
     const notFoundError = this._getNotFoundError(record, options);
 
     if (notFoundError !== null) {
-      error.record = notFoundError;
+      error.record.push(notFoundError);
     } else {
       const surroundingValuesEqualityError = this._getSurroundingValuesEqualityError(
         record,
@@ -533,7 +535,7 @@ export class Diary extends BaseClass {
           options.ignoreRules.contains(this._getEqualsToSurroundingValueError)
         )
       ) {
-        error.record = surroundingValuesEqualityError;
+        error.record.push(surroundingValuesEqualityError);
       }
     }
 
@@ -541,7 +543,7 @@ export class Diary extends BaseClass {
   }
 
   _getUpdateErrors({ record, newRecord }, options = {}) {
-    const error = {};
+    const error = { record: [], newRecord: [] };
 
     const nothingToUpdateError = this._getNothingToUpdateError(
       record,
@@ -549,25 +551,30 @@ export class Diary extends BaseClass {
     );
 
     if (nothingToUpdateError !== null) {
-      error.record = nothingToUpdateError;
+      error.record.push(nothingToUpdateError);
     } else {
       if (this._isDayBetweenSurroundingRecords(record, newRecord)) {
-        error.record = this._getDeleteErrors(record, {
-          ignoreRules: [this._getEqualsToSurroundingValueError],
-        }).record;
-        error.newRecord = this._getAddErrors(newRecord, {
-          excludeRecords: [record],
-          excludeRules: [this._getSurroundingValuesEqualityError],
-        }).record;
-      } else {
-        error.record = this._getDeleteErrors({ record }).record;
-        error.newRecord = this._getAddErrors(
-          { record: newRecord },
-          {
+        error.record.push(
+          ...this._getDeleteErrors(record, {
+            ignoreRules: [this._getEqualsToSurroundingValueError],
+          }).record
+        );
+        error.newRecord.push(
+          ...this._getAddErrors(newRecord, {
             excludeRecords: [record],
-          }
-        ).record;
-        console.log(error);
+            excludeRules: [this._getSurroundingValuesEqualityError],
+          }).record
+        );
+      } else {
+        error.record.push(...this._getDeleteErrors({ record }).record);
+        error.newRecord.push(
+          ...this._getAddErrors(
+            { record: newRecord },
+            {
+              excludeRecords: [record],
+            }
+          ).record
+        );
       }
     }
 

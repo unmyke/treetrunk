@@ -25,7 +25,7 @@ export class Post extends BaseEntity {
       // update({ name })
       onBeforeUpdate(lifecycle, { name }) {
         if (name === this.name) {
-          throw makeError({ name: errors.nothingToUpdate });
+          throw makeError({ name: [errors.nothingToUpdate] });
         }
       },
 
@@ -133,15 +133,15 @@ export class Post extends BaseEntity {
     if (!done) {
       const details = {};
 
-      if (error.record) {
+      if (error.record !== undefined && error.record.length !== 0) {
         details.pieceRate = error.record;
       }
 
-      if (error.newRecords) {
+      if (error.newRecords !== undefined && error.newRecords.length !== 0) {
         details.newPieceRates = error.newRecords;
       }
 
-      if (error.newRecord) {
+      if (error.newRecord !== undefined && error.newRecord.length !== 0) {
         details.newPieceRate = error.newRecord;
       }
 

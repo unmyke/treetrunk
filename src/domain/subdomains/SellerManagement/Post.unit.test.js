@@ -68,7 +68,7 @@ describe('Domain :: entities :: Post', () => {
         } catch (error) {
           expect(error.message).toBe('NOT_ALLOWED');
           expect(error.details).toEqual({
-            state: 'TRANSITION_NOT_ALLOWED',
+            state: ['TRANSITION_NOT_ALLOWED'],
           });
         }
 
@@ -94,7 +94,7 @@ describe('Domain :: entities :: Post', () => {
           post.addPieceRate(pieceRate1value, pieceRate1day);
         } catch (error) {
           expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({ pieceRate: 'ALREADY_EXISTS' });
+          expect(error.details).toEqual({ pieceRate: ['ALREADY_EXISTS'] });
         }
 
         expect(post.pieceRates).toHaveLength(1);
@@ -110,7 +110,7 @@ describe('Domain :: entities :: Post', () => {
         } catch (error) {
           expect(error.message).toBe('NOT_ALLOWED');
           expect(error.details).toEqual({
-            pieceRate: 'EQUALS_TO_SURROUNDING_VALUE',
+            pieceRate: ['EQUALS_TO_SURROUNDING_VALUE'],
           });
         }
 
@@ -129,7 +129,7 @@ describe('Domain :: entities :: Post', () => {
         } catch (error) {
           expect(error.message).toBe('NOT_ALLOWED');
           expect(error.details).toEqual({
-            pieceRate: 'EQUALS_TO_SURROUNDING_VALUE',
+            pieceRate: ['EQUALS_TO_SURROUNDING_VALUE'],
           });
         }
 
@@ -164,7 +164,7 @@ describe('Domain :: entities :: Post', () => {
           post.deletePieceRate(pieceRate3value, pieceRate3day);
         } catch (error) {
           expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({ pieceRate: 'NOT_FOUND' });
+          expect(error.details).toEqual({ pieceRate: ['NOT_FOUND'] });
         }
       });
     });
@@ -181,7 +181,7 @@ describe('Domain :: entities :: Post', () => {
         } catch (error) {
           expect(error.message).toBe('NOT_ALLOWED');
           expect(error.details).toEqual({
-            pieceRate: 'SURROUNDING_VALUES_ARE_EQUAL',
+            pieceRate: ['SURROUNDING_VALUES_ARE_EQUAL'],
           });
         }
 
@@ -299,7 +299,7 @@ describe('Domain :: entities :: Post', () => {
         } catch (error) {
           expect(error.message).toBe('NOT_ALLOWED');
           expect(error.details).toEqual({
-            state: 'TRANSITION_NOT_ALLOWED',
+            state: ['TRANSITION_NOT_ALLOWED'],
           });
         }
 
@@ -330,7 +330,7 @@ describe('Domain :: entities :: Post', () => {
         post.activate();
       } catch (error) {
         expect(error.message).toBe('NOT_ALLOWED');
-        expect(error.details).toEqual({ state: 'TRANSITION_NOT_ALLOWED' });
+        expect(error.details).toEqual({ state: ['TRANSITION_NOT_ALLOWED'] });
       }
 
       expect(post.state).toBe('active');
@@ -351,7 +351,7 @@ describe('Domain :: entities :: Post', () => {
           post.update({ name: 'Флорист' });
         } catch (error) {
           expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({ name: 'NOTHING_TO_UPDATE' });
+          expect(error.details).toEqual({ name: ['NOTHING_TO_UPDATE'] });
         }
 
         expect(post.name).toBe('Флорист');

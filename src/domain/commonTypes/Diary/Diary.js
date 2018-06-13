@@ -432,6 +432,10 @@ export class Diary extends BaseClass {
     this._add({ record: closeRecord });
   }
 
+  _addDelete() {
+    this.__records = this.__records.slice(0, -1);
+  }
+
   //    validation runner
   _validation(args) {
     const validationMethod = `_validate${upperFirst(
@@ -462,7 +466,11 @@ export class Diary extends BaseClass {
   }
 
   _validateAddClosingOperation({ records }, options = {}) {
-    this.operation.error = this._getCloseErrors({ day }, options);
+    this.operation.error = this._getAddCloseErrors({ day }, options);
+  }
+
+  _validateDeleteClosingOperation() {
+    this.operation.error = this._getDeleteCloseErrors();
   }
 
   //    validation error generators
@@ -493,23 +501,6 @@ export class Diary extends BaseClass {
         ) {
           error.record.push(equalsToSurroundingValueError);
         }
-      }
-    }
-
-    return error;
-  }
-
-  _getAddClosingErrors({ day }, options = {}) {
-    const error = { day: [] };
-
-    if (this._isClosed) {
-      error.day.push(errors.alreadyDefined);
-    } else {
-      const lastRecordDay = this._recordDay;
-
-      if (day <= lastRecordDay) {
-        // define error
-        error.day.push(errors.backdatingNotPermitted);
       }
     }
 
@@ -575,6 +566,39 @@ export class Diary extends BaseClass {
             }
           ).record
         );
+      }
+    }
+
+    return error;
+  }
+
+  _getAddClosingErrors({ day }, options = {}) {
+    const error = { record: [] };
+
+    if (this._isClosed) {
+      error.record.push(errors.alreadyDefined);
+    } else {
+      const lastRecordDay = this._recordDay;
+
+      if (day <= lastRecordDay) {
+        // define error
+        error.record.push(errors.backdatingNotPermitted);
+      }
+    }
+
+    return error;
+  }
+
+  _getDeleteClosingErrors() {
+    const error = { record: [] };
+
+    if (!this._isClosed) {
+      error.record.push(errors.dairyAlreadyClosed);
+    } else {
+      const records = this._records;
+
+      if (records.length === 0) {
+        error.record.push(errors.dairyNotStarted);
       }
     }
 

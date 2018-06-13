@@ -14,6 +14,8 @@ export const errors = {
   surroundingValuesAreEquals: 'SURROUNDING_VALUES_ARE_EQUAL',
   equalsToSurroundingValue: 'EQUALS_TO_SURROUNDING_VALUE',
   backdatingNotPermitted: 'BACKDATING_NOT_PERMITTED',
+  dairyAlreadyClosed: 'DAIRY_ALREADY_CLOSED',
+  dairyNotStarted: 'DAIRY_NOT_STARTED',
 
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),

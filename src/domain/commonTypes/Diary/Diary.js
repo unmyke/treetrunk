@@ -386,13 +386,15 @@ export class Diary extends BaseClass {
   }
 
   _updateRecord({ record, newRecord }) {
-    // console.log(record);
-    // console.log(newRecord);
     return this._emit({ name: 'update', args: { record, newRecord } });
   }
 
-  _addClose(day) {
+  _addCloseRecord(day) {
     return this._emit({ name: 'addClose', args: { day } });
+  }
+
+  _deleteCloseRecord() {
+    return this._emit({ name: 'deleteClose' });
   }
 
   //    operation runner
@@ -432,7 +434,7 @@ export class Diary extends BaseClass {
     this._add({ record: closeRecord });
   }
 
-  _addDelete() {
+  _deleteClose() {
     this.__records = this.__records.slice(0, -1);
   }
 
@@ -465,11 +467,11 @@ export class Diary extends BaseClass {
     this.operation.error = {};
   }
 
-  _validateAddClosingOperation({ records }, options = {}) {
+  _validateAddCloseOperation({ records }, options = {}) {
     this.operation.error = this._getAddCloseErrors({ day }, options);
   }
 
-  _validateDeleteClosingOperation() {
+  _validateDeleteCloseOperation() {
     this.operation.error = this._getDeleteCloseErrors();
   }
 
@@ -572,7 +574,7 @@ export class Diary extends BaseClass {
     return error;
   }
 
-  _getAddClosingErrors({ day }, options = {}) {
+  _getAddCloseErrors({ day }, options = {}) {
     const error = { record: [] };
 
     if (this._isClosed) {
@@ -589,7 +591,7 @@ export class Diary extends BaseClass {
     return error;
   }
 
-  _getDeleteClosingErrors() {
+  _getDeleteCloseErrors() {
     const error = { record: [] };
 
     if (!this._isClosed) {

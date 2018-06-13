@@ -86,11 +86,11 @@ export class Appointments extends Diary {
     return this._editRecord(appointment, newAppointment);
   }
 
-  takeQuitAt(day) {
-    return this._addClosing(day);
+  addQuitAt(day) {
+    return this._addCloseRecord(day);
   }
 
-  deleteQuitAt(day) {
-    return this._deleteClosing(day);
+  deleteQuit() {
+    return this._deleteCloseRecord();
   }
 }

@@ -47,16 +47,16 @@ describe('Domain :: lib :: Diary', () => {
     context('when diary is empty', () => {
       context('when initialized', () => {
         test('should records be empty', () => {
-          expect(diary._records).toHaveLength(0);
-          expect(diary._hasRecords).toBe(false);
+          expect(diary.records).toHaveLength(0);
+          expect(diary.hasRecords).toBe(false);
         });
 
         test('should have record value undefined', () => {
-          expect(diary._recordValue).toBeUndefined();
+          expect(diary.recordValue).toBeUndefined();
         });
 
         test('should have start day undefined', () => {
-          expect(diary._startDay).toBeUndefined();
+          expect(diary.startDay).toBeUndefined();
         });
 
         test('should have close day undefined', () => {
@@ -70,7 +70,7 @@ describe('Domain :: lib :: Diary', () => {
 
       describe('#add', () => {
         beforeEach(() => {
-          result = diary._addRecord({ record: record1 });
+          result = diary.addRecord({ record: record1 });
         });
 
         test('should return successful result', () => {
@@ -78,17 +78,17 @@ describe('Domain :: lib :: Diary', () => {
         });
 
         test('should fill records', () => {
-          expect(diary._hasRecords).toBe(true);
-          expect(diary._records).toEqual([record1]);
-          expect(diary._records).toHaveLength(1);
+          expect(diary.hasRecords).toBe(true);
+          expect(diary.records).toEqual([record1]);
+          expect(diary.records).toHaveLength(1);
         });
 
         test('should set added record value', () => {
-          expect(diary._recordValue).toBe(record1.value);
+          expect(diary.recordValue).toBe(record1.value);
         });
 
         test('should set start day', () => {
-          expect(diary._startDay).toBe(record1.day);
+          expect(diary.startDay).toBe(record1.day);
         });
 
         test('should return to idle state', () => {
@@ -98,7 +98,7 @@ describe('Domain :: lib :: Diary', () => {
 
       describe('#delete', () => {
         beforeEach(() => {
-          result = diary._deleteRecord({ record: record1 });
+          result = diary.deleteRecord({ record: record1 });
         });
 
         test('should return unsuccessful result', () => {
@@ -109,9 +109,9 @@ describe('Domain :: lib :: Diary', () => {
         });
 
         test('should leave records unchanged', () => {
-          expect(diary._hasRecords).toBe(false);
-          expect(diary._records).toEqual([]);
-          expect(diary._records).toHaveLength(0);
+          expect(diary.hasRecords).toBe(false);
+          expect(diary.records).toEqual([]);
+          expect(diary.records).toHaveLength(0);
         });
 
         test('should return to idle state', () => {
@@ -121,7 +121,7 @@ describe('Domain :: lib :: Diary', () => {
 
       describe('#update', () => {
         beforeEach(() => {
-          result = diary._updateRecord({ record: record1, newRecord: record2 });
+          result = diary.updateRecord({ record: record1, newRecord: record2 });
         });
 
         test('should return unsuccessful result', () => {
@@ -135,9 +135,9 @@ describe('Domain :: lib :: Diary', () => {
         });
 
         test('should leave records unchanged', () => {
-          expect(diary._hasRecords).toBe(false);
-          expect(diary._records).toEqual([]);
-          expect(diary._records).toHaveLength(0);
+          expect(diary.hasRecords).toBe(false);
+          expect(diary.records).toEqual([]);
+          expect(diary.records).toHaveLength(0);
         });
 
         test('should return to idle state', () => {
@@ -147,7 +147,7 @@ describe('Domain :: lib :: Diary', () => {
 
       describe('#set', () => {
         beforeEach(() => {
-          result = diary._setRecords({ newRecords: records });
+          result = diary.setRecords({ newRecords: records });
         });
 
         test('should return successful result', () => {
@@ -155,17 +155,17 @@ describe('Domain :: lib :: Diary', () => {
         });
 
         test('should fill records', () => {
-          expect(diary._hasRecords).toBe(true);
-          expect(diary._records).toEqual([records[3]]);
-          expect(diary._records).toHaveLength(1);
+          expect(diary.hasRecords).toBe(true);
+          expect(diary.records).toEqual([records[3]]);
+          expect(diary.records).toHaveLength(1);
         });
 
         test('should set added record value', () => {
-          expect(diary._recordValue).toBe(records[3].value);
+          expect(diary.recordValue).toBe(records[3].value);
         });
 
         test('should set start day', () => {
-          expect(diary._recordDay).toBe(records[3].day);
+          expect(diary.recordDay).toBe(records[3].day);
         });
 
         test('should return to idle state', () => {
@@ -176,22 +176,22 @@ describe('Domain :: lib :: Diary', () => {
 
     context('when diary have records', () => {
       beforeEach(() => {
-        diary._setRecords({ newRecords: records });
+        diary.setRecords({ newRecords: records });
       });
 
       context('when initialized', () => {
         test('should records be filled', () => {
-          expect(diary._hasRecords).toBe(true);
-          expect(diary._records).toEqual([records[3]]);
-          expect(diary._records).toHaveLength(1);
+          expect(diary.hasRecords).toBe(true);
+          expect(diary.records).toEqual([records[3]]);
+          expect(diary.records).toHaveLength(1);
         });
 
         test('should have record value not undefined', () => {
-          expect(diary._recordValue).toBe(records[3].value);
+          expect(diary.recordValue).toBe(records[3].value);
         });
 
         test('should have start day', () => {
-          expect(diary._startDay).toBe(records[3].day);
+          expect(diary.startDay).toBe(records[3].day);
         });
 
         test('should be at idle state', () => {
@@ -202,23 +202,22 @@ describe('Domain :: lib :: Diary', () => {
       describe('#add', () => {
         context('when passed existing record', () => {
           beforeEach(() => {
-            result = diary._addRecord({ record: record3 });
+            result = diary.addRecord({ record: record3 });
           });
 
           test('should return unsuccessful result', () => {
             expect(result).toEqual({
               done: false,
               error: {
-                newRecord: [],
-                record: [errors.nothingToUpdate],
+                record: [errors.alreadyExists],
               },
             });
           });
 
           test('should leave records unchanged', () => {
-            expect(diary._hasRecords).toBe(true);
-            expect(diary._records).toEqual([records[3]]);
-            expect(diary._records).toHaveLength(1);
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([records[3]]);
+            expect(diary.records).toHaveLength(1);
           });
 
           test('should return to idle state', () => {
@@ -228,7 +227,7 @@ describe('Domain :: lib :: Diary', () => {
 
         context('when diary already have record at passed day', () => {
           beforeEach(() => {
-            result = diary._addRecord({ record: recordWithSameDay });
+            result = diary.addRecord({ record: recordWithSameDay });
           });
           test('should return unsuccessful result', () => {
             expect(result).toEqual({
@@ -238,9 +237,9 @@ describe('Domain :: lib :: Diary', () => {
           });
 
           test('should leave records unchanged', () => {
-            expect(diary._hasRecords).toBe(true);
-            expect(diary._records).toEqual([records[3]]);
-            expect(diary._records).toHaveLength(1);
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([records[3]]);
+            expect(diary.records).toHaveLength(1);
           });
 
           test('should return to idle state', () => {
@@ -250,7 +249,7 @@ describe('Domain :: lib :: Diary', () => {
 
         context('when diary already have record with passed value', () => {
           beforeEach(() => {
-            result = diary._addRecord({ record: recordWithSameValue });
+            result = diary.addRecord({ record: recordWithSameValue });
           });
 
           test('should return unsuccessful result', () => {
@@ -261,9 +260,9 @@ describe('Domain :: lib :: Diary', () => {
           });
 
           test('should leave records unchanged', () => {
-            expect(diary._hasRecords).toBe(true);
-            expect(diary._records).toEqual([records[3]]);
-            expect(diary._records).toHaveLength(1);
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([records[3]]);
+            expect(diary.records).toHaveLength(1);
           });
 
           test('should return to idle state', () => {
@@ -273,7 +272,7 @@ describe('Domain :: lib :: Diary', () => {
 
         context('when passed record to closed diary', () => {
           beforeEach(() => {
-            result = diary._addRecord(forgottenRecord);
+            result = diary.addRecord({ record: forgottenRecord });
           });
 
           test('should return unsuccessful result', () => {
@@ -284,9 +283,9 @@ describe('Domain :: lib :: Diary', () => {
           });
 
           test('should leave records unchanged', () => {
-            expect(diary._hasRecords).toBe(true);
-            expect(diary._records).toEqual([records[3]]);
-            expect(diary._records).toHaveLength(1);
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([records[3]]);
+            expect(diary.records).toHaveLength(1);
           });
 
           test('should return to idle state', () => {
@@ -309,7 +308,7 @@ describe('Domain :: lib :: Diary', () => {
 
         context('when no record existed at diary', () => {
           beforeEach(() => {
-            result = diary._deleteRecord({
+            result = diary.deleteRecord({
               record: new MockRecord({
                 value: 5,
                 day: day4,
@@ -325,9 +324,9 @@ describe('Domain :: lib :: Diary', () => {
           });
 
           test('should leave records unchanged', () => {
-            expect(diary._hasRecords).toBe(true);
-            expect(diary._records).toEqual([record4]);
-            expect(diary._records).toHaveLength(1);
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([record4]);
+            expect(diary.records).toHaveLength(1);
           });
 
           test('should return to idle state', () => {
@@ -347,22 +346,22 @@ describe('Domain :: lib :: Diary', () => {
 
     context('when diary is closed', () => {
       beforeEach(() => {
-        diary._setRecords({ newRecords: closedRecords });
+        diary.setRecords({ newRecords: closedRecords });
       });
 
       context('when initialized', () => {
         test('should records be empty', () => {
-          expect(diary._hasRecords).toBe(false);
-          expect(diary._records).toBe([]);
-          expect(diary._records).toHaveLength(0);
+          expect(diary.hasRecords).toBe(false);
+          expect(diary.records).toBe([]);
+          expect(diary.records).toHaveLength(0);
         });
 
         test('should have record value undefined', () => {
-          expect(diary._recordValue).toBeUndefined();
+          expect(diary.recordValue).toBeUndefined();
         });
 
         test('should have no start day', () => {
-          expect(diary._startDay).toBeUndefined();
+          expect(diary.startDay).toBeUndefined();
         });
 
         test('should be at idle state', () => {
@@ -373,7 +372,7 @@ describe('Domain :: lib :: Diary', () => {
       describe('#add', () => {
         context('when passed close record', () => {
           beforeEach(() => {
-            result = diary._addRecord({ record: closeRecord });
+            result = diary.addRecord({ record: closeRecord });
           });
 
           test('should return unsuccessful result', () => {
@@ -388,9 +387,9 @@ describe('Domain :: lib :: Diary', () => {
           });
 
           test('should leave records unchanged', () => {
-            expect(diary._hasRecords).toBe(false);
-            expect(diary._records).toEqual([]);
-            expect(diary._records).toHaveLength(0);
+            expect(diary.hasRecords).toBe(false);
+            expect(diary.records).toEqual([]);
+            expect(diary.records).toHaveLength(0);
           });
 
           test('should return to idle state', () => {
@@ -400,7 +399,7 @@ describe('Domain :: lib :: Diary', () => {
 
         context('when passed not close record', () => {
           beforeEach(() => {
-            result = diary._addRecord({ record: record4 });
+            result = diary.addRecord({ record: record4 });
           });
 
           test('should return successful result', () => {
@@ -408,13 +407,13 @@ describe('Domain :: lib :: Diary', () => {
           });
 
           test('should fill records', () => {
-            expect(diary._hasRecords).toBe(true);
-            expect(diary._records).toEqual([record4]);
-            expect(diary._records).toHaveLength(1);
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([record4]);
+            expect(diary.records).toHaveLength(1);
           });
 
           test('should set added record value', () => {
-            expect(diary._recordValue).toBe(record4.value);
+            expect(diary.recordValue).toBe(record4.value);
           });
 
           test('should return to idle state', () => {
@@ -426,7 +425,7 @@ describe('Domain :: lib :: Diary', () => {
       describe('#delete', () => {
         context('when close record exists at passed day', () => {
           beforeEach(() => {
-            result = diary._deleteRecord({ record: closeRecord });
+            result = diary.deleteRecord({ record: closeRecord });
           });
 
           test('should return successful result', () => {
@@ -434,13 +433,13 @@ describe('Domain :: lib :: Diary', () => {
           });
 
           test('should restore records', () => {
-            expect(diary._hasRecords).toBe(true);
-            expect(diary._records).toEqual([record1, record2]);
-            expect(diary._records).toHaveLength(2);
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([record1, record2]);
+            expect(diary.records).toHaveLength(2);
           });
 
           test('should set added record value', () => {
-            expect(diary._recordValue).toBe(record2.value);
+            expect(diary.recordValue).toBe(record2.value);
           });
 
           test('should return to idle state', () => {
@@ -450,7 +449,7 @@ describe('Domain :: lib :: Diary', () => {
 
         context('when no close record exists at passed day', () => {
           beforeEach(() => {
-            result = diary._deleteRecord({
+            result = diary.deleteRecord({
               record: new MockRecord({
                 value: closeValue,
                 day: day4,
@@ -466,9 +465,9 @@ describe('Domain :: lib :: Diary', () => {
           });
 
           test('should leave records unchanged', () => {
-            expect(diary._hasRecords).toBe(false);
-            expect(diary._records).toEqual([]);
-            expect(diary._records).toHaveLength(0);
+            expect(diary.hasRecords).toBe(false);
+            expect(diary.records).toEqual([]);
+            expect(diary.records).toHaveLength(0);
           });
 
           test('should return to idle state', () => {
@@ -479,7 +478,7 @@ describe('Domain :: lib :: Diary', () => {
 
       describe('#update', () => {
         beforeEach(() => {
-          result = diary._updateRecord({
+          result = diary.updateRecord({
             record: closeRecord,
             newRecord: record1,
           });
@@ -493,24 +492,22 @@ describe('Domain :: lib :: Diary', () => {
         });
 
         test('should leave records unchanged', () => {
-          expect(diary._hasRecords).toBe(false);
-          expect(diary._records).toEqual([]);
-          expect(diary._records).toHaveLength(0);
+          expect(diary.hasRecords).toBe(false);
+          expect(diary.records).toEqual([]);
+          expect(diary.records).toHaveLength(0);
         });
 
         test('should return to idle state', () => {
           expect(diary.state).toBe('idle');
         });
       });
-
-      describe('#set', () => {});
     });
   });
 
   context('when passed close record', () => {
     describe('#add', () => {
       beforeEach(() => {
-        result = diary._addRecord({ record: closeRecord });
+        result = diary.addRecord({ record: closeRecord });
       });
 
       test('should return unsuccessful result', () => {
@@ -523,9 +520,9 @@ describe('Domain :: lib :: Diary', () => {
       });
 
       test('should leave records unchanged', () => {
-        expect(diary._hasRecords).toBe(false);
-        expect(diary._records).toEqual([]);
-        expect(diary._records).toHaveLength(0);
+        expect(diary.hasRecords).toBe(false);
+        expect(diary.records).toEqual([]);
+        expect(diary.records).toHaveLength(0);
       });
 
       test('should return to idle state', () => {
@@ -535,7 +532,7 @@ describe('Domain :: lib :: Diary', () => {
 
     describe('#delete', () => {
       beforeEach(() => {
-        result = diary._deleteRecord({ record: closeRecord });
+        result = diary.deleteRecord({ record: closeRecord });
       });
 
       test('should return unsuccessful result', () => {
@@ -549,9 +546,9 @@ describe('Domain :: lib :: Diary', () => {
       });
 
       test('should leave records unchanged', () => {
-        expect(diary._hasRecords).toBe(false);
-        expect(diary._records).toEqual([]);
-        expect(diary._records).toHaveLength(0);
+        expect(diary.hasRecords).toBe(false);
+        expect(diary.records).toEqual([]);
+        expect(diary.records).toHaveLength(0);
       });
 
       test('should return to idle state', () => {
@@ -562,7 +559,7 @@ describe('Domain :: lib :: Diary', () => {
     describe('#update', () => {
       context('when passed as record to update', () => {
         beforeEach(() => {
-          result = diary._updateRecord({
+          result = diary.updateRecord({
             record: closeRecord,
             newRecord: record1,
           });
@@ -579,9 +576,9 @@ describe('Domain :: lib :: Diary', () => {
         });
 
         test('should leave records unchanged', () => {
-          expect(diary._hasRecords).toBe(false);
-          expect(diary._records).toEqual([]);
-          expect(diary._records).toHaveLength(0);
+          expect(diary.hasRecords).toBe(false);
+          expect(diary.records).toEqual([]);
+          expect(diary.records).toHaveLength(0);
         });
 
         test('should return to idle state', () => {
@@ -591,7 +588,7 @@ describe('Domain :: lib :: Diary', () => {
 
       context('when passed as new record', () => {
         beforeEach(() => {
-          result = diary._updateRecord({
+          result = diary.updateRecord({
             record: closeRecord,
             newRecord: record1,
           });
@@ -608,9 +605,9 @@ describe('Domain :: lib :: Diary', () => {
         });
 
         test('should leave records unchanged', () => {
-          expect(diary._hasRecords).toBe(false);
-          expect(diary._records).toEqual([]);
-          expect(diary._records).toHaveLength(0);
+          expect(diary.hasRecords).toBe(false);
+          expect(diary.records).toEqual([]);
+          expect(diary.records).toHaveLength(0);
         });
 
         test('should return to idle state', () => {

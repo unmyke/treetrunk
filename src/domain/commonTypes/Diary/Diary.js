@@ -69,7 +69,7 @@ export class Diary extends BaseClass {
     this.closeValue = closeValue;
     this.RecordClass = RecordClass;
 
-    this.__records = [];
+    this._records = [];
 
     applyFSM(this.constructor);
     this._fsm();
@@ -77,71 +77,72 @@ export class Diary extends BaseClass {
 
   // getters
 
-  //  private metods
-  get _records() {
-    return this._getRecordsAt();
+  //   public metods
+
+  get records() {
+    return this.getRecordsAt();
   }
 
-  get _hasRecords() {
-    return this._hasRecordsAt();
+  get hasRecords() {
+    return this.hasRecordsAt();
   }
 
-  get _recordValue() {
-    return this._getRecordValueAt();
+  get recordValue() {
+    return this.getRecordValueAt();
   }
 
-  get _recordDay() {
-    return this._getRecordDayAt();
+  get recordDay() {
+    return this.getRecordDayAt();
   }
 
-  get _recordValues() {
-    return this._getRecordValuesAt();
+  get recordValues() {
+    return this.getRecordValuesAt();
   }
 
-  get _startDay() {
-    return this._getStartDayAt();
+  get startDay() {
+    return this.getStartDayAt();
   }
 
-  get _isStarted() {
-    return this._isStartedAt();
+  get isStarted() {
+    return this.isStartedAt();
   }
 
-  get _closeDay() {
-    return this._getCloseDayAt();
+  get closeDay() {
+    return this.getCloseDayAt();
   }
 
-  get _isClosed() {
-    return this._isClosedAt(day);
+  get isClosed() {
+    return this.isClosedAt(day);
   }
 
-  _getRecordsAt(day = new Day(), options = {}) {
+  getRecordsAt(day = new Day(), options = {}) {
     return this._getRecordsContainsDay(day, options).filter(
       ({ day: currentDay }) => currentDay <= day
     );
   }
 
-  _hasRecordsAt(day = new Day()) {
-    return this._getRecordsAt(day).length !== 0;
+  hasRecordsAt(day = new Day()) {
+    return this.getRecordsAt(day).length !== 0;
   }
 
-  _getRecordValueAt(day = new Day()) {
+  getRecordValueAt(day = new Day()) {
     const record = this._getRecordAt(day);
 
     return record !== undefined ? record.value : undefined;
   }
 
-  _getRecordValuesAt(day = new Day(), options = {}) {
-    return this._getRecordsAt(day, options).map(({ value }) => value);
+  getRecordValuesAt(day = new Day(), options = {}) {
+    return this.getRecordsAt(day, options).map(({ value }) => value);
   }
 
-  _getRecordDayAt(day = new Day()) {
+  getRecordDayAt(day = new Day()) {
     const record = this._getRecordAt(day);
 
     return record !== undefined ? record.day : undefined;
   }
 
-  _getStartDayAt(day = new Day(), options = {}) {
-    const records = this._getRecordsAt(day, options);
+  getStartDayAt(day = new Day(), options = {}) {
+    const records = this.getRecordsAt(day, options);
 
     if (records.length === 0) {
       return;
@@ -150,11 +151,11 @@ export class Diary extends BaseClass {
     return records[0].day;
   }
 
-  _isStartedAt(day = new Day()) {
-    return !!this._getStartDayAt(day);
+  isStartedAt(day = new Day()) {
+    return !!this.getStartDayAt(day);
   }
 
-  _getCloseDayAt(day = new Day()) {
+  getCloseDayAt(day = new Day()) {
     if (this._isCloseDay(day)) {
       return day;
     }
@@ -164,9 +165,11 @@ export class Diary extends BaseClass {
       : undefined;
   }
 
-  _isClosedAt(day = new Day()) {
-    return !!this._getCloseDayAt(day);
+  isClosedAt(day = new Day()) {
+    return !!this.getCloseDayAt(day);
   }
+
+  //   private metods
 
   _hasRecordOn(day = new Day(), options = {}) {
     const persistedRecord = this._getRecordOn(day, options);
@@ -183,7 +186,7 @@ export class Diary extends BaseClass {
   }
 
   _getRecordAt(day = new Day(), options = {}) {
-    const recordsAt = this._getRecordsAt(day, options);
+    const recordsAt = this.getRecordsAt(day, options);
 
     return recordsAt[recordsAt.length - 1];
   }
@@ -229,8 +232,6 @@ export class Diary extends BaseClass {
   }
 
   _hasRecordsBeforeDay(day = new Day(), options = {}) {
-    console.log(this._getRecordsBeforeDay(day, options));
-    console.log(this._getRecordsBeforeDay(day, options).length !== 0);
     return this._getRecordsBeforeDay(day, options).length !== 0;
   }
 
@@ -239,14 +240,14 @@ export class Diary extends BaseClass {
   }
 
   _getRecordsContainsDay(day = new Day(), options = {}) {
-    if (this.__records.length === 0) {
+    if (this._records.length === 0) {
       return [];
     }
 
     const prevCloseDay = this._getPrevCloseDayAt(day);
     const nextCloseDay = this._getNextCloseDayAt(day);
 
-    return this.__records.sort(getDayComparator('asc')).filter((record) => {
+    return this._records.sort(getDayComparator('asc')).filter((record) => {
       return (
         !this._isCloseDay(day) &&
         (prevCloseDay === undefined || record.day > prevCloseDay) &&
@@ -292,13 +293,13 @@ export class Diary extends BaseClass {
       return [];
     }
 
-    return this.__records.filter(({ value }) =>
+    return this._records.filter(({ value }) =>
       this._compareValues(value, this.closeValue)
     );
   }
 
   _getRecordOn(day = new Day(), options = {}) {
-    return this.__records.find((record) => {
+    return this._records.find((record) => {
       // console.log(record);
       // console.log(options);
 
@@ -329,7 +330,7 @@ export class Diary extends BaseClass {
       return false;
     }
 
-    const startRecord = this._getStartDayAt(record.day);
+    const startRecord = this.getStartDayAt(record.day);
     if (startRecord === undefined) {
       return false;
     }
@@ -358,41 +359,41 @@ export class Diary extends BaseClass {
 
   //  public methods
   map(fn) {
-    return this._records.map(fn);
+    return this.records.map(fn);
   }
 
   reduce(fn) {
-    return this._records.reduce(fn);
+    return this.records.reduce(fn);
   }
 
   filter(fn) {
-    return this._records.filter(fn);
+    return this.records.filter(fn);
   }
 
   //  private methods
 
   //    oparations
-  _setRecords({ newRecords } = { newRecords: [] }) {
+  setRecords({ newRecords } = { newRecords: [] }) {
     return this._emit({ name: 'set', args: { newRecords } });
   }
 
-  _addRecord({ record }) {
+  addRecord({ record }) {
     return this._emit({ name: 'add', args: { record } });
   }
 
-  _deleteRecord({ record }) {
+  deleteRecord({ record }) {
     return this._emit({ name: 'delete', args: { record } });
   }
 
-  _updateRecord({ record, newRecord }) {
+  updateRecord({ record, newRecord }) {
     return this._emit({ name: 'update', args: { record, newRecord } });
   }
 
-  _addCloseRecord(day) {
+  addCloseRecord(day) {
     return this._emit({ name: 'addClose', args: { day } });
   }
 
-  _deleteCloseRecord() {
+  deleteCloseRecord() {
     return this._emit({ name: 'deleteClose' });
   }
 
@@ -406,15 +407,15 @@ export class Diary extends BaseClass {
 
   //    primitive oparations
   _set({ newRecords }) {
-    this.__records = [...newRecords];
+    this._records = [...newRecords];
   }
 
   _add({ record }) {
-    this.__records = [...this.__records, record];
+    this._records = [...this._records, record];
   }
 
   _delete({ record }) {
-    this.__records = this.__records.filter(
+    this._records = this._records.filter(
       (currentRecord) => !record.equals(currentRecord)
     );
   }
@@ -434,7 +435,7 @@ export class Diary extends BaseClass {
   }
 
   _deleteClose() {
-    this.__records = this.__records.slice(0, -1);
+    this._records = this._records.slice(0, -1);
   }
 
   //    validation runner
@@ -576,10 +577,10 @@ export class Diary extends BaseClass {
   _getAddCloseErrors({ day }, options = {}) {
     const error = { record: [] };
 
-    if (this._isClosed) {
+    if (this.isClosed) {
       error.record.push(errors.alreadyDefined);
     } else {
-      const lastRecordDay = this._recordDay;
+      const lastRecordDay = this.recordDay;
 
       if (day <= lastRecordDay) {
         // define error
@@ -593,10 +594,10 @@ export class Diary extends BaseClass {
   _getDeleteCloseErrors() {
     const error = { record: [] };
 
-    if (!this._isClosed) {
+    if (!this.isClosed) {
       error.record.push(errors.dairyAlreadyClosed);
     } else {
-      const records = this._records;
+      const records = this.records;
 
       if (records.length === 0) {
         error.record.push(errors.dairyNotStarted);

@@ -151,8 +151,7 @@ export class Diary extends BaseClass {
   }
 
   _isStartedAt(day = new Day()) {
-    const startDay = this._getStartDayAt(day);
-    return !!startDay;
+    return !!this._getStartDayAt(day);
   }
 
   _getCloseDayAt(day = new Day()) {

@@ -6,18 +6,17 @@ export const makeError = (details) => {
 
 export const errors = {
   notFound: 'NOT_FOUND',
-  alreadyExists: 'ALREADY_EXISTS',
+  alreadyExists: 'ALREADY_ADDED',
   alreadyDefined: 'ALREADY_DEFINED',
-  nothingToUpdate: 'NOTHING_TO_UPDATE',
+  nothingToUpdate: 'ALREADY_EXISTS',
   transitionNotAllowed: 'TRANSITION_NOT_ALLOWED',
-  archiveIsReadOnly: 'ARCHIVE_IS_READ_ONLY',
+  archiveReadOnly: 'ARCHIVE_READ_ONLY',
   surroundingValuesAreEquals: 'SURROUNDING_VALUES_ARE_EQUAL',
   equalsToSurroundingValue: 'EQUALS_TO_SURROUNDING_VALUE',
   backdatingNotPermitted: 'BACKDATING_NOT_PERMITTED',
-  dairyAlreadyClosed: 'DAIRY_ALREADY_CLOSED',
-  dairyNotStarted: 'DAIRY_NOT_STARTED',
-  operationsWithCloseRecordNotPermitted:
-    'OPERATIONS_WITH_CLOSE_RECORD_NOT_PERMITTED',
+  diaryAlreadyClosed: 'DIARY_ALREADY_CLOSED',
+  diaryNotStarted: 'NOT_STARTED',
+  closeRecordReadOnly: 'CLOSE_RECORD_READ_ONLY',
 
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),

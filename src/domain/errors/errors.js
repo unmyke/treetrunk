@@ -16,6 +16,8 @@ export const errors = {
   backdatingNotPermitted: 'BACKDATING_NOT_PERMITTED',
   dairyAlreadyClosed: 'DAIRY_ALREADY_CLOSED',
   dairyNotStarted: 'DAIRY_NOT_STARTED',
+  operationsWithCloseRecordNotPermitted:
+    'OPERATIONS_WITH_CLOSE_RECORD_NOT_PERMITTED',
 
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),

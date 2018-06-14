@@ -1,8 +1,7 @@
-import { BaseEntity } from '../../_lib';
 import { PostId, Day } from '../../commonTypes';
-import { PieceRate } from './PieceRate';
 import { PieceRates } from './PieceRates';
 import { makeError, errors } from '../../errors';
+import { BaseEntity } from '../../_lib';
 
 export class Post extends BaseEntity {
   static fsm = {
@@ -17,6 +16,7 @@ export class Post extends BaseEntity {
       { name: 'updatePieceRate', from: 'active', to: 'active' },
       { name: 'setState', from: ['active', 'inactive'], to: (state) => state },
     ],
+
     methods: {
       onActive() {
         this.pieceRateOperationResult = { done: true };
@@ -33,47 +33,20 @@ export class Post extends BaseEntity {
         this.name = name;
       },
 
-      // setPieceRates([{ value, day }])
       onSetPieceRates(lifecycle, pieceRateEntries) {
-        const pieceRates = pieceRateEntries.map(
-          ({ value, day }) => new PieceRate({ value, day })
-        );
-
-        return this._emitPieceRateOperation('_setRecords', {
-          newRecords: pieceRates,
-        });
+        return this._pieceRates.setPieceRates(pieceRateEntries);
       },
 
-      // addPieceRate(value, day)
       onAddPieceRate(lifecycle, value, day = new Day()) {
-        const pieceRate = new PieceRate({ value, day });
-
-        return this._emitPieceRateOperation('_addRecord', {
-          record: pieceRate,
-        });
+        return this._pieceRates.addPieceRate(value, day);
       },
 
-      // deletePieceRate(value, day)
       onDeletePieceRate(lifecycle, value, day = new Day()) {
-        const pieceRate = new PieceRate({ value, day });
-
-        return this._emitPieceRateOperation('_deleteRecord', {
-          record: pieceRate,
-        });
+        return this._pieceRates.deletePieceRate(value, day);
       },
 
-      // updatePieceRate(value, day, newValue, newDay)
       onUpdatePieceRate(lifecycle, value, day, newValue, newDay) {
-        const pieceRate = new PieceRate({ value, day });
-        const newPieceRate = new PieceRate({
-          value: newValue,
-          day: newDay,
-        });
-
-        return this._emitPieceRateOperation('_updateRecord', {
-          record: pieceRate,
-          newRecord: newPieceRate,
-        });
+        return this._pieceRates.updatePieceRate(value, day, newValue, newDay);
       },
     },
   };
@@ -87,29 +60,29 @@ export class Post extends BaseEntity {
   }
 
   get pieceRates() {
-    return this._pieceRates._records;
+    return this._pieceRates.pieceRates;
   }
 
   get pieceRate() {
-    return this._pieceRates._getRecordValueAt();
+    return this._pieceRates.pieceRateValue;
   }
 
   get hasPieceRates() {
-    return this._pieceRates._hasRecords;
+    return this._pieceRates.hasPieceRates;
   }
 
   getPieceRateAt(day = new Day()) {
-    return this._pieceRates._getRecordValueAt(day);
+    return this._pieceRates.getPieceRateValueAt(day);
   }
 
   hasPieceRatesAt(day = new Day()) {
-    return this._pieceRates._hasRecordsAt(day);
+    return this._pieceRates.hasPieceRatesAt(day);
   }
 
   getInstanceAt(day = new Day()) {
     const post = new Post(this);
 
-    const pieceRates = this._pieceRates._getRecordsAt(day);
+    const pieceRates = this._pieceRates.getPieceRatesAt(day);
     post.setPieceRates(pieceRates);
 
     return post;
@@ -123,31 +96,5 @@ export class Post extends BaseEntity {
       pieceRates: this._pieceRates.map((pieceRate) => pieceRate.toJSON()),
       state: this.state,
     };
-  }
-
-  // private
-
-  _emitPieceRateOperation(operation, args) {
-    const { done, error } = this._pieceRates[operation](args);
-
-    if (!done) {
-      const details = {};
-
-      if (error.record !== undefined && error.record.length !== 0) {
-        details.pieceRate = error.record;
-      }
-
-      if (error.newRecords !== undefined && error.newRecords.length !== 0) {
-        details.newPieceRates = error.newRecords;
-      }
-
-      if (error.newRecord !== undefined && error.newRecord.length !== 0) {
-        details.newPieceRate = error.newRecord;
-      }
-
-      throw makeError(details);
-    }
-
-    return done;
   }
 }

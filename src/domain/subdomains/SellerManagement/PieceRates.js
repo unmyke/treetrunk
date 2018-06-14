@@ -1,56 +1,81 @@
-import { Day, Diary } from '../../commonTypes';
+import { Day, DiaryComposite } from '../../commonTypes';
 import { PieceRate } from './PieceRate';
 
-export class PieceRates extends Diary {
+const diaryArgsMap = {
+  record: 'pieceRate',
+  newRecord: 'newPieceRate',
+  newRecords: 'newPieceRates',
+};
+
+export class PieceRates extends DiaryComposite {
   constructor() {
-    super({ RecordClass: PieceRate });
+    super({ RecordClass: PieceRate, mapper: diaryArgsMap });
   }
 
   get pieceRates() {
-    return this._records;
+    return this._diary.records;
   }
 
   get hasPieceRates() {
-    return this._hasRecords;
+    return this._diary.hasRecords;
   }
 
   get pieceRateValue() {
-    return this._recordValue;
-  }
-
-  get pieceRateValues() {
-    return this._recordValues;
+    return this._diary.recordValue;
   }
 
   getPieceRatesAt(day = new Day(), options = {}) {
-    return this._getRecordsAt(day);
+    return this._diary.getRecordsAt(day);
   }
 
   hasPieceRatesAt(day = new Day()) {
-    return this._hasRecordsAt(day);
+    return this._diary.hasRecordsAt(day);
   }
 
   getPieceRateValueAt(day = new Day()) {
-    return this._getRecordValueAt(day);
+    return this._diary.getRecordValueAt(day);
   }
 
   getPieceRateValuesAt(day = new Day(), options = {}) {
-    return this._getRecordValuesAt(day, options);
+    return this._diary.getRecordValuesAt(day, options);
   }
 
-  setPieceRates(pieceRates) {
-    return this._setRecords(pieceRates);
+  setPieceRates(pieceRateEntries) {
+    const pieceRates = pieceRateEntries.map(
+      ({ value, day }) => new PieceRate({ value, day })
+    );
+
+    return this._emit('setRecords', {
+      newRecords: pieceRates,
+    });
   }
 
-  addPieceRate(pieceRate) {
-    return this._addRecord(pieceRate);
+  addPieceRate(value, day = new Day()) {
+    const pieceRate = new PieceRate({ value, day });
+
+    return this._emit('addRecord', {
+      record: pieceRate,
+    });
   }
 
-  deletePieceRate(pieceRate) {
-    return this._deleteRecord(pieceRate);
+  deletePieceRate(value, day = new Day()) {
+    const pieceRate = new PieceRate({ value, day });
+
+    return this._emit('deleteRecord', {
+      record: pieceRate,
+    });
   }
 
-  editPieceRate(pieceRate, newPieceRate) {
-    return this._editRecord(pieceRate, newPieceRate);
+  updatePieceRate(value, day, newValue, newDay) {
+    const pieceRate = new PieceRate({ value, day });
+    const newPieceRate = new PieceRate({
+      value: newValue,
+      day: newDay,
+    });
+
+    return this._emit('updateRecord', {
+      record: pieceRate,
+      newRecord: newPieceRate,
+    });
   }
 }

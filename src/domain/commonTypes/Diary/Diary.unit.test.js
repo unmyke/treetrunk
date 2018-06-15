@@ -29,11 +29,16 @@ const record3 = new MockRecord({ value: 3, day: day6 });
 const recordWithSameDay = new MockRecord({ value: 4, day: record3.day });
 const recordWithSameValue = new MockRecord({ value: record3.value, day: day7 });
 
-const newRecord = new MockRecord({ value: 5, day: day5 });
+const pastRecord = new MockRecord({ value: 5, day: day3 });
+const forgottenRecord = new MockRecord({ value: 5, day: day5 });
+const newRecord = new MockRecord({ value: 5, day: day7 });
 
 const closedRecords = [record1, record2, closeRecord];
 const records = [record1, record2, closeRecord, record3];
-const forgottenRecord = new MockRecord({ value: 4, day: day3 });
+const nonExistentRecord = new MockRecord({
+  value: 5,
+  day: day4,
+});
 
 let diary;
 let result;
@@ -200,31 +205,6 @@ describe('Domain :: lib :: Diary', () => {
       });
 
       describe('#add', () => {
-        context('when passed existing record', () => {
-          beforeEach(() => {
-            result = diary.addRecord({ record: record3 });
-          });
-
-          test('should return unsuccessful result', () => {
-            expect(result).toEqual({
-              done: false,
-              error: {
-                record: [errors.alreadyExists],
-              },
-            });
-          });
-
-          test('should leave records unchanged', () => {
-            expect(diary.hasRecords).toBe(true);
-            expect(diary.records).toEqual([records[3]]);
-            expect(diary.records).toHaveLength(1);
-          });
-
-          test('should return to idle state', () => {
-            expect(diary.state).toBe('idle');
-          });
-        });
-
         context('when diary already have record at passed day', () => {
           beforeEach(() => {
             result = diary.addRecord({ record: recordWithSameDay });
@@ -238,7 +218,7 @@ describe('Domain :: lib :: Diary', () => {
 
           test('should leave records unchanged', () => {
             expect(diary.hasRecords).toBe(true);
-            expect(diary.records).toEqual([records[3]]);
+            expect(diary.records).toEqual([record3]);
             expect(diary.records).toHaveLength(1);
           });
 
@@ -261,7 +241,7 @@ describe('Domain :: lib :: Diary', () => {
 
           test('should leave records unchanged', () => {
             expect(diary.hasRecords).toBe(true);
-            expect(diary.records).toEqual([records[3]]);
+            expect(diary.records).toEqual([record3]);
             expect(diary.records).toHaveLength(1);
           });
 
@@ -270,176 +250,53 @@ describe('Domain :: lib :: Diary', () => {
           });
         });
 
-        context('when passed record to closed diary', () => {
+        context('when passed record of closed diary', () => {
+          beforeEach(() => {
+            result = diary.addRecord({ record: pastRecord });
+          });
+
+          test('should return unsuccessful result', () => {
+            expect(result).toEqual({
+              done: false,
+              error: { record: [errors.diaryAlreadyClosed] },
+            });
+          });
+
+          test('should leave records unchanged', () => {
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([record3]);
+            expect(diary.records).toHaveLength(1);
+          });
+
+          test('should return to idle state', () => {
+            expect(diary.state).toBe('idle');
+          });
+        });
+
+        context('when diary has been closed', () => {
           beforeEach(() => {
             result = diary.addRecord({ record: forgottenRecord });
           });
 
-          test('should return unsuccessful result', () => {
-            expect(result).toEqual({
-              done: false,
-              error: { record: [errors.alreadyDefined] },
-            });
-          });
-
-          test('should leave records unchanged', () => {
-            expect(diary.hasRecords).toBe(true);
-            expect(diary.records).toEqual([records[3]]);
-            expect(diary.records).toHaveLength(1);
-          });
-
-          test('should return to idle state', () => {
-            expect(diary.state).toBe('idle');
-          });
-        });
-
-        context('when passed new record', () => {});
-      });
-
-      describe('#delete', () => {
-        context('when diary have record at passed day', () => {
-          context('when previous and next records have same values', () => {});
-
-          context(
-            'when previous and next record values are not the same',
-            () => {}
-          );
-        });
-
-        context('when no record existed at diary', () => {
-          beforeEach(() => {
-            result = diary.deleteRecord({
-              record: new MockRecord({
-                value: 5,
-                day: day4,
-              }),
-            });
-          });
-
-          test('should return unsuccessful result', () => {
-            expect(result).toEqual({
-              done: false,
-              error: { record: [errors.notFound] },
-            });
-          });
-
-          test('should leave records unchanged', () => {
-            expect(diary.hasRecords).toBe(true);
-            expect(diary.records).toEqual([record4]);
-            expect(diary.records).toHaveLength(1);
-          });
-
-          test('should return to idle state', () => {
-            expect(diary.state).toBe('idle');
-          });
-        });
-      });
-
-      describe('#update', () => {
-        context('when record already exists at passed day', () => {});
-
-        context('when no record exists at passed day', () => {});
-      });
-
-      describe('#set', () => {});
-    });
-
-    context('when diary is closed', () => {
-      beforeEach(() => {
-        diary.setRecords({ newRecords: closedRecords });
-      });
-
-      context('when initialized', () => {
-        test('should records be empty', () => {
-          expect(diary.hasRecords).toBe(false);
-          expect(diary.records).toBe([]);
-          expect(diary.records).toHaveLength(0);
-        });
-
-        test('should have record value undefined', () => {
-          expect(diary.recordValue).toBeUndefined();
-        });
-
-        test('should have no start day', () => {
-          expect(diary.startDay).toBeUndefined();
-        });
-
-        test('should be at idle state', () => {
-          expect(diary.state).toBe('idle');
-        });
-      });
-
-      describe('#add', () => {
-        context('when passed close record', () => {
-          beforeEach(() => {
-            result = diary.addRecord({ record: closeRecord });
-          });
-
-          test('should return unsuccessful result', () => {
-            expect(result).toEqual({
-              done: false,
-              error: [
-                `Mock record with value "${
-                  closeRecord.value
-                }" at 20.01.2017 already exists`,
-              ],
-            });
-          });
-
-          test('should leave records unchanged', () => {
-            expect(diary.hasRecords).toBe(false);
-            expect(diary.records).toEqual([]);
-            expect(diary.records).toHaveLength(0);
-          });
-
-          test('should return to idle state', () => {
-            expect(diary.state).toBe('idle');
-          });
-        });
-
-        context('when passed not close record', () => {
-          beforeEach(() => {
-            result = diary.addRecord({ record: record4 });
-          });
-
           test('should return successful result', () => {
-            expect(result).toEqual({ done: true, error: null });
+            expect(result).toEqual({
+              done: true,
+              error: { record: [] },
+            });
           });
 
-          test('should fill records', () => {
+          test('should change records', () => {
             expect(diary.hasRecords).toBe(true);
-            expect(diary.records).toEqual([record4]);
-            expect(diary.records).toHaveLength(1);
-          });
-
-          test('should set added record value', () => {
-            expect(diary.recordValue).toBe(record4.value);
-          });
-
-          test('should return to idle state', () => {
-            expect(diary.state).toBe('idle');
-          });
-        });
-      });
-
-      describe('#delete', () => {
-        context('when close record exists at passed day', () => {
-          beforeEach(() => {
-            result = diary.deleteRecord({ record: closeRecord });
-          });
-
-          test('should return successful result', () => {
-            expect(result).toEqual({ done: true, error: null });
-          });
-
-          test('should restore records', () => {
-            expect(diary.hasRecords).toBe(true);
-            expect(diary.records).toEqual([record1, record2]);
+            expect(diary.records).toEqual([forgottenRecord, record3]);
             expect(diary.records).toHaveLength(2);
           });
 
-          test('should set added record value', () => {
-            expect(diary.recordValue).toBe(record2.value);
+          test('should leave record value unchanged', () => {
+            expect(diary.recordValue).toBe(record3.value);
+          });
+
+          test('should change start day', () => {
+            expect(diary.startDay).toBe(forgottenRecord.day);
           });
 
           test('should return to idle state', () => {
@@ -447,27 +304,30 @@ describe('Domain :: lib :: Diary', () => {
           });
         });
 
-        context('when no close record exists at passed day', () => {
+        context('when passed new record', () => {
           beforeEach(() => {
-            result = diary.deleteRecord({
-              record: new MockRecord({
-                value: closeValue,
-                day: day4,
-              }),
-            });
+            result = diary.addRecord({ record: newRecord });
           });
 
-          test('should return unsuccessful result', () => {
+          test('should return successful result', () => {
             expect(result).toEqual({
-              done: false,
-              error: ['Mock record with value "close" at 20.04.2017 not found'],
+              done: true,
+              error: { record: [] },
             });
           });
 
-          test('should leave records unchanged', () => {
-            expect(diary.hasRecords).toBe(false);
-            expect(diary.records).toEqual([]);
-            expect(diary.records).toHaveLength(0);
+          test('should change records', () => {
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([record3, newRecord]);
+            expect(diary.records).toHaveLength(2);
+          });
+
+          test('should change record value', () => {
+            expect(diary.recordValue).toBe(newRecord.value);
+          });
+
+          test('should leave start day unchanged', () => {
+            expect(diary.startDay).toBe(record3.day);
           });
 
           test('should return to idle state', () => {
@@ -476,31 +336,16 @@ describe('Domain :: lib :: Diary', () => {
         });
       });
 
-      describe('#update', () => {
-        beforeEach(() => {
-          result = diary.updateRecord({
-            record: closeRecord,
-            newRecord: record1,
-          });
-        });
-
-        test('should return unsuccessful result', () => {
-          expect(result).toEqual({
-            done: false,
-            error: { newRecord: [], record: ['NOTHING_TO_UPDATE'] },
-          });
-        });
-
-        test('should leave records unchanged', () => {
-          expect(diary.hasRecords).toBe(false);
-          expect(diary.records).toEqual([]);
-          expect(diary.records).toHaveLength(0);
-        });
-
-        test('should return to idle state', () => {
-          expect(diary.state).toBe('idle');
-        });
+      describe('#delete', () => {
+        context('when passed non-existent record', () => {});
+        context('when passed existing record', () => {});
+        context('when passed record of closed diary', () => {});
+        context('when diary has been closed', () => {});
       });
+
+      describe('#update', () => {});
+
+      describe('#set', () => {});
     });
   });
 

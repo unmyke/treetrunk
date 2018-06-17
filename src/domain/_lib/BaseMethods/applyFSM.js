@@ -5,7 +5,6 @@ export const applyFSM = (EntityClass) => {
   StateMachine.factory(EntityClass, {
     init: EntityClass.fsm.init,
     transitions: [
-      ...EntityClass.fsm.transitions,
       {
         name: 'setState',
         from: '*',
@@ -13,6 +12,7 @@ export const applyFSM = (EntityClass) => {
           return s;
         },
       },
+      ...EntityClass.fsm.transitions,
     ],
     data: EntityClass.fsm.data,
     methods: {

@@ -1,9 +1,153 @@
 import { BaseEntity } from '../../_lib';
-import { SellerId, PostId, PersonName, Day } from '../../commonTypes';
-import { Appointment } from './Appointment';
+import { makeError, errors } from '../../errors';
+import { SellerId, PersonName, Day } from '../../commonTypes';
 import { Appointments } from './Appointments';
 
+const sellerState = {
+  vacationer: 'vacationer',
+  new: '',
+};
+
 export class Seller extends BaseEntity {
+  // Seller states
+
+  static states = {
+    NEW: 'new',
+    RECRUITED: 'recruited',
+    VACATIONER: 'vacationer',
+    DISMISSED: 'dismissed',
+    DELETED: 'deleted',
+  };
+
+  // state-transition functions
+
+  static addAppointmentStateCondition() {
+    switch (true) {
+      case this.is(this.constructor.states.RECRUITED) ||
+        this.is(this.constructor.states.NEW) ||
+        this.is(this.constructor.states.DISMISSED):
+        return this.constructor.states.RECRUITED;
+      case this.is(this.constructor.states.VACATIONER):
+        return this.state;
+    }
+  }
+
+  static deleteAppointmentStateCondition() {
+    if (this.isDismissed) {
+      return this.constructor.states.DISMISSED;
+    } else {
+      if (this.hasAppointments === flase) {
+        return this.constructor.states.NEW;
+      } else {
+        return this.state;
+      }
+    }
+  }
+
+  static unchangeState() {
+    return this.state;
+  }
+
+  static fsm = {
+    init: Seller.states.NEW,
+    transitions: [
+      {
+        name: 'setAppointments',
+        from: '*',
+        to: Seller.unchangeState,
+      },
+      {
+        name: 'addAppointment',
+        from: [
+          Seller.states.NEW,
+          Seller.states.RECRUITED,
+          Seller.states.DISMISSED,
+          Seller.states.VACATIONER,
+        ],
+        to: Seller.addAppointmentStateCondition,
+      },
+      {
+        name: 'deleteAppointment',
+        from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
+        to: Seller.deleteAppointmentStateCondition,
+      },
+      {
+        name: 'updateAppointment',
+        from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
+        to: Seller.unchangeState,
+      },
+      {
+        name: 'update',
+        from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
+        to: Seller.unchangeState,
+      },
+      {
+        name: 'vacate',
+        from: Seller.states.RECRUITED,
+        to: Seller.states.VACATIONER,
+      },
+      {
+        name: 'hold',
+        from: Seller.states.VACATIONER,
+        to: Seller.states.RECRUITED,
+      },
+      {
+        name: 'dismiss',
+        from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
+        to: Seller.states.DISMISSED,
+      },
+      {
+        name: 'deleteDismiss',
+        from: Seller.states.DISMISSED,
+        to: Seller.states.RECRUITED,
+      },
+      {
+        name: 'delete',
+        from: Seller.states.DISMISSED,
+        to: Seller.states.DELETED,
+      },
+      {
+        name: 'restore',
+        from: Seller.states.DELETED,
+        to: Seller.states.DISMISSED,
+      },
+    ],
+
+    methods: {
+      // onActive() {
+      //   this.appointmentOperationResult = { done: true };
+      // },
+
+      // update({ name })
+      onBeforeUpdate(lifecycle, { name }) {
+        if (name === this.name) {
+          throw makeError({ name: [errors.nothingToUpdate] });
+        }
+      },
+
+      onUpdate(lifecycle, { name }) {
+        this.name = name;
+      },
+
+      // setAppointments({ appointments })
+      onSetAppointments(lifecycle, appointmentEntries) {
+        return this._appointments.setRecords({ records: appointmentEntries });
+      },
+
+      onAddAppointment(lifecycle, value, day = new Day()) {
+        return this._appointments.addRecord(value, day);
+      },
+
+      onDeleteAppointment(lifecycle, value, day = new Day()) {
+        return this._appointments.deleteRecord(value, day);
+      },
+
+      onUpdateAppointment(lifecycle, value, day, newValue, newDay) {
+        return this._appointments.updateRecord(value, day, newValue, newDay);
+      },
+    },
+  };
+
   constructor({
     sellerId = new SellerId(),
     lastName,
@@ -38,31 +182,35 @@ export class Seller extends BaseEntity {
   }
 
   get appointments() {
-    return this._appointments.appointments;
+    return this._appointments.records;
   }
 
   get postId() {
-    return this._appointments.postId;
+    return this._appointments.recordValue;
   }
 
   get postIds() {
-    return this._appointments.postIds;
+    return this._appointments.recordValues;
   }
 
   get recruitDay() {
-    return this._appointments.recruitDay;
+    return this._appointments.startDay;
   }
 
   get isRecruited() {
-    return this._appointments.isRecruited;
+    return this._appointments.isStarted;
   }
 
   get quitDay() {
-    return this._appointments.quitDay;
+    return this._appointments.closedDay;
   }
 
-  get isQuited() {
-    return this._appointments.isQuited;
+  get isDismissed() {
+    return this._appointments.isClosed;
+  }
+
+  get isVacated() {
+    return this.is(this.constructor.states.VACATIONER);
   }
 
   get seniority() {
@@ -88,67 +236,15 @@ export class Seller extends BaseEntity {
   }
 
   getAppointmentsAt(day = new Day()) {
-    return this._appointments.getAppointmentsAt(day);
-  }
-
-  addAppointment(postId, day) {
-    const appointment = new Appointment({ postId, day });
-    const { done, error } = this._appointments.addAppointment(appointment);
-
-    if (!done) {
-      throw error;
-    }
-  }
-
-  deleteAppointment(postId, day) {
-    const appointment = new Appointment({ postId, day });
-    const { done, error } = this._appointments.deleteAppointment(appointment);
-
-    if (!done) {
-      throw error;
-    }
-  }
-
-  editAppointment(postId, day, newPostId, newDay) {
-    const appointment = new Appointment({ postId, day });
-    const newAppointment = new Appointment({ postId: newPostId, day: newDay });
-    const { done, error } = this._appointments.editAppointment(appointment);
-
-    if (!done) {
-      throw error;
-    }
-  }
-
-  takeQuit(day = new Day()) {
-    const { done, error } = this._appointments.takeQuitAt(day);
-
-    if (!done) {
-      throw error;
-    }
-  }
-
-  setAppointments(appointments) {
-    const { done, error } = this._appointments.setAppointments(
-      appointments.map(
-        ({ postId, day }) =>
-          new Appointment({
-            postId,
-            day,
-          })
-      )
-    );
-
-    if (!done) {
-      throw error;
-    }
+    return this._appointments.getRecordsAt(day);
   }
 
   getPostIdAt(day = new Day()) {
-    return this._appointments.getPostIdAt(day);
+    return this._appointments.getRecordValueAt(day);
   }
 
   getPostIdsAt(day = new Day()) {
-    return this._appointments.getPostIdsAt(day);
+    return this._appointments.getRecordValuesAt(day);
   }
 
   getRecruitDayAt(day = new Day()) {
@@ -159,12 +255,12 @@ export class Seller extends BaseEntity {
     return this._appointments.isRecruitedAt(day);
   }
 
-  getQuitDayAt(day = new Day()) {
-    return this._appointments.getQuitDayAt(day);
+  getDismissDayAt(day = new Day()) {
+    return this._appointments.getDismissDayAt(day);
   }
 
-  isQuitedAt(day = new Day()) {
-    return this._appointments.isQuitedAt(day);
+  isDismissedAt(day = new Day()) {
+    return this._appointments.isDismissedAt(day);
   }
 
   getSeniorityAt(day = new Day()) {
@@ -188,7 +284,7 @@ export class Seller extends BaseEntity {
       recruitDay: this.recruitDay,
       isRecruited: this.isRecruited,
       quitDay: this.quitDay,
-      isQuited: this.isQuited,
+      isDismissed: this.isDismissed,
       seniority: this.seniority,
       appointments: this.appointments,
     };

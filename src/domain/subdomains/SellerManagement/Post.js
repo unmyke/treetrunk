@@ -1,20 +1,44 @@
+import { BaseEntity } from '../../_lib';
+import { makeError, errors } from '../../errors';
 import { PostId, Day } from '../../commonTypes';
 import { PieceRates } from './PieceRates';
-import { makeError, errors } from '../../errors';
-import { BaseEntity } from '../../_lib';
 
 export class Post extends BaseEntity {
+  static states = {
+    ACTIVE: 'active',
+    INACTIVE: 'inactive',
+  };
+
   static fsm = {
     init: 'active',
     transitions: [
-      { name: 'inactivate', from: 'active', to: 'inactive' },
-      { name: 'activate', from: 'inactive', to: 'active' },
-      { name: 'update', from: 'active', to: 'active' },
-      { name: 'setPieceRates', from: 'active', to: 'active' },
-      { name: 'addPieceRate', from: 'active', to: 'active' },
-      { name: 'deletePieceRate', from: 'active', to: 'active' },
-      { name: 'updatePieceRate', from: 'active', to: 'active' },
-      { name: 'setState', from: ['active', 'inactive'], to: (state) => state },
+      {
+        name: 'inactivate',
+        from: Post.states.ACTIVE,
+        to: Post.states.INACTIVE,
+      },
+      { name: 'activate', from: Post.states.INACTIVE, to: Post.states.ACTIVE },
+      { name: 'update', from: Post.states.ACTIVE, to: Post.states.ACTIVE },
+      {
+        name: 'setPieceRates',
+        from: Post.states.ACTIVE,
+        to: Post.states.ACTIVE,
+      },
+      {
+        name: 'addPieceRate',
+        from: Post.states.ACTIVE,
+        to: Post.states.ACTIVE,
+      },
+      {
+        name: 'deletePieceRate',
+        from: Post.states.ACTIVE,
+        to: Post.states.ACTIVE,
+      },
+      {
+        name: 'updatePieceRate',
+        from: Post.states.ACTIVE,
+        to: Post.states.ACTIVE,
+      },
     ],
 
     methods: {
@@ -34,19 +58,19 @@ export class Post extends BaseEntity {
       },
 
       onSetPieceRates(lifecycle, pieceRateEntries) {
-        return this._pieceRates.setPieceRates(pieceRateEntries);
+        return this._pieceRates.setRecords(pieceRateEntries);
       },
 
       onAddPieceRate(lifecycle, value, day = new Day()) {
-        return this._pieceRates.addPieceRate(value, day);
+        return this._pieceRates.addRecord(value, day);
       },
 
       onDeletePieceRate(lifecycle, value, day = new Day()) {
-        return this._pieceRates.deletePieceRate(value, day);
+        return this._pieceRates.deleteRecord(value, day);
       },
 
       onUpdatePieceRate(lifecycle, value, day, newValue, newDay) {
-        return this._pieceRates.updatePieceRate(value, day, newValue, newDay);
+        return this._pieceRates.updateRecord(value, day, newValue, newDay);
       },
     },
   };
@@ -60,29 +84,29 @@ export class Post extends BaseEntity {
   }
 
   get pieceRates() {
-    return this._pieceRates.pieceRates;
+    return this._pieceRates.records;
   }
 
   get pieceRate() {
-    return this._pieceRates.pieceRateValue;
+    return this._pieceRates.recordValue;
   }
 
   get hasPieceRates() {
-    return this._pieceRates.hasPieceRates;
+    return this._pieceRates.hasRecords;
   }
 
   getPieceRateAt(day = new Day()) {
-    return this._pieceRates.getPieceRateValueAt(day);
+    return this._pieceRates.getRecordValueAt(day);
   }
 
   hasPieceRatesAt(day = new Day()) {
-    return this._pieceRates.hasPieceRatesAt(day);
+    return this._pieceRates.hasRecordsAt(day);
   }
 
   getInstanceAt(day = new Day()) {
     const post = new Post(this);
 
-    const pieceRates = this._pieceRates.getPieceRatesAt(day);
+    const pieceRates = this._pieceRates.getRecordsAt(day);
     post.setPieceRates(pieceRates);
 
     return post;

@@ -26,19 +26,20 @@ const record2 = new MockRecord({ value: 2, day: day2 });
 const closeRecord = new MockRecord({ value: closeValue, day: day4 });
 const record3 = new MockRecord({ value: 3, day: day6 });
 
+const records = [record1, record2, closeRecord, record3];
+
 const recordWithSameDay = new MockRecord({ value: 4, day: record3.day });
 const recordWithSameValue = new MockRecord({ value: record3.value, day: day7 });
 
+const nonExistentRecord = new MockRecord({
+  value: 5,
+  day: day5,
+});
 const pastRecord = new MockRecord({ value: 5, day: day3 });
 const forgottenRecord = new MockRecord({ value: 5, day: day5 });
 const newRecord = new MockRecord({ value: 5, day: day7 });
 
 const closedRecords = [record1, record2, closeRecord];
-const records = [record1, record2, closeRecord, record3];
-const nonExistentRecord = new MockRecord({
-  value: 5,
-  day: day4,
-});
 
 let diary;
 let result;
@@ -52,7 +53,8 @@ describe('Domain :: lib :: Diary', () => {
     context('when diary is empty', () => {
       context('when initialized', () => {
         test('should records be empty', () => {
-          expect(diary.records).toHaveLength(0);
+          expect(diary.hasRecords).toBe(false);
+          expect(diary.records).toEqual([]);
           expect(diary.hasRecords).toBe(false);
         });
 
@@ -109,7 +111,7 @@ describe('Domain :: lib :: Diary', () => {
         test('should return unsuccessful result', () => {
           expect(result).toEqual({
             done: false,
-            error: { record: [errors.notFound] },
+            error: { record: [errors.diaryNotStarted] },
           });
         });
 
@@ -134,7 +136,7 @@ describe('Domain :: lib :: Diary', () => {
             done: false,
             error: {
               newRecord: [],
-              record: [errors.notFound],
+              record: [errors.diaryNotStarted],
             },
           });
         });
@@ -165,7 +167,7 @@ describe('Domain :: lib :: Diary', () => {
           expect(diary.records).toHaveLength(1);
         });
 
-        test('should set added record value', () => {
+        test('should set record value equal last element', () => {
           expect(diary.recordValue).toBe(records[3].value);
         });
 
@@ -235,7 +237,7 @@ describe('Domain :: lib :: Diary', () => {
           test('should return unsuccessful result', () => {
             expect(result).toEqual({
               done: false,
-              error: { record: [errors.alreadyDefined] },
+              error: { record: [errors.similarityNotAllowed] },
             });
           });
 
@@ -281,7 +283,7 @@ describe('Domain :: lib :: Diary', () => {
           test('should return successful result', () => {
             expect(result).toEqual({
               done: true,
-              error: { record: [] },
+              error: null,
             });
           });
 
@@ -312,7 +314,7 @@ describe('Domain :: lib :: Diary', () => {
           test('should return successful result', () => {
             expect(result).toEqual({
               done: true,
-              error: { record: [] },
+              error: null,
             });
           });
 
@@ -337,13 +339,136 @@ describe('Domain :: lib :: Diary', () => {
       });
 
       describe('#delete', () => {
-        context('when passed non-existent record', () => {});
-        context('when passed existing record', () => {});
-        context('when passed record of closed diary', () => {});
-        context('when diary has been closed', () => {});
+        context('when passed non-existent record', () => {
+          beforeEach(() => {
+            result = diary.deleteRecord({ record: nonExistentRecord });
+          });
+
+          test('should return unsuccessful result', () => {
+            expect(result).toEqual({
+              done: false,
+              error: {
+                record: [errors.notFound],
+              },
+            });
+          });
+
+          test('should leave records unchanged', () => {
+            expect(diary.hasRecords).toBe(false);
+            expect(diary.records).toEqual([record3]);
+            expect(diary.records).toHaveLength(0);
+          });
+
+          test('should return to idle state', () => {
+            expect(diary.state).toBe('idle');
+          });
+        });
+
+        context('when passed existing record', () => {
+          beforeEach(() => {
+            diary.set({ newRecords: [forgottenRecord, newRecord] });
+          });
+
+          context('when initialized', () => {
+            test('should match given conditions', () => {
+              expect(diary.getRecordValueAt(forgottenRecord.day)).toEqual(
+                diary.getRecordValueAt(newRecord.day)
+              );
+            });
+          });
+
+          context('when next and previous record values are similar', () => {
+            beforeEach(() => {
+              result = diary.deleteRecord({ record: record3 });
+            });
+
+            test('should return unsuccessful result', () => {
+              expect(result).toEqual({
+                done: false,
+                error: { record: [errors.similarityNotAllowed] },
+              });
+            });
+
+            test('should leave records unchanged', () => {
+              expect(diary.hasRecords).toBe(true);
+              expect(diary.records).toEqual([
+                forgottenRecord,
+                record3,
+                newRecord,
+              ]);
+              expect(diary.records).toHaveLength(3);
+            });
+
+            test('should return to idle state', () => {
+              expect(diary.state).toBe('idle');
+            });
+          });
+
+          context('when next and previous record values are different', () => {
+            beforeEach(() => {
+              result = diary.deleteRecord({ record: newRecord });
+            });
+
+            test('should return successful result', () => {
+              expect(result).toEqual({
+                done: true,
+                error: null,
+              });
+            });
+
+            test('should change records', () => {
+              expect(diary.hasRecords).toBe(true);
+              expect(diary.records).toEqual([forgottenRecord, record3]);
+              expect(diary.records).toHaveLength(2);
+            });
+
+            test('should change record value', () => {
+              expect(diary.recordValue).toBe(record3.value);
+            });
+
+            test('should leave start day unchanged', () => {
+              expect(diary.startDay).toBe(forgottenRecord.day);
+            });
+
+            test('should return to idle state', () => {
+              expect(diary.state).toBe('idle');
+            });
+          });
+        });
+
+        context('when passed record of closed diary', () => {
+          beforeEach(() => {
+            result = diary.deleteRecord({ record: record2 });
+          });
+
+          test('should return unsuccessful result', () => {
+            expect(result).toEqual({
+              done: false,
+              error: {
+                record: [errors.diaryAlreadyClosed],
+              },
+            });
+          });
+
+          test('should leave records unchanged', () => {
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([record3]);
+            expect(diary.records).toHaveLength(1);
+          });
+
+          test('should return to idle state', () => {
+            expect(diary.state).toBe('idle');
+          });
+        });
       });
 
-      describe('#update', () => {});
+      describe('#update', () => {
+        context('when passed ', () => {});
+
+        context('when passed existing record', () => {});
+
+        context('when passed record of closed diary', () => {});
+      });
 
       describe('#set', () => {});
     });

@@ -5,17 +5,18 @@ export const makeError = (details) => {
 };
 
 export const errors = {
-  notFound: 'NOT_FOUND',
-  alreadyExists: 'ALREADY_ADDED',
-  alreadyDefined: 'ALREADY_DEFINED',
-  nothingToUpdate: 'ALREADY_EXISTS',
+  nothingToUpdate: 'NOTHING_TO_ UPDATE',
+
+  notFound: 'RECORD_NOT_FOUND',
+  alreadyExists: 'RECORD_ALREADY_EXISTS',
+  differenceOnly: 'DIFFERENCE_ONLY_PERMITTED',
+  similarityNotAllowed: 'SIMILARITY_NOT_ALLOWED',
+  diaryAlreadyClosed: 'DIARY_ALREADY_CLOSED',
+  diaryNotStarted: 'DIARY_NOT_STARTED',
+
   transitionNotAllowed: 'TRANSITION_NOT_ALLOWED',
   archiveReadOnly: 'ARCHIVE_READ_ONLY',
-  surroundingValuesAreEquals: 'SURROUNDING_VALUES_ARE_EQUAL',
-  equalsToSurroundingValue: 'EQUALS_TO_SURROUNDING_VALUE',
   backdatingNotPermitted: 'BACKDATING_NOT_PERMITTED',
-  diaryAlreadyClosed: 'DIARY_ALREADY_CLOSED',
-  diaryNotStarted: 'NOT_STARTED',
   closeRecordReadOnly: 'CLOSE_RECORD_READ_ONLY',
 
   // exapmles

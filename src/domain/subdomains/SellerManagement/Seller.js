@@ -2,6 +2,7 @@ import { BaseEntity } from '../../_lib';
 import { makeError, errors } from '../../errors';
 import { SellerId, PersonName, Day } from '../../commonTypes';
 import { Appointments } from './Appointments';
+import { visualize } from 'javascript-state-machine/lib/visualize';
 
 const sellerState = {
   vacationer: 'vacationer',
@@ -78,7 +79,12 @@ export class Seller extends BaseEntity {
       },
       {
         name: 'update',
-        from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
+        from: [
+          Seller.states.NEW,
+          Seller.states.RECRUITED,
+          Seller.states.DISMISSED,
+          Seller.states.VACATIONER,
+        ],
         to: Seller.unchangeState,
       },
       {
@@ -118,17 +124,6 @@ export class Seller extends BaseEntity {
       //   this.appointmentOperationResult = { done: true };
       // },
 
-      // update({ name })
-      onBeforeUpdate(lifecycle, { name }) {
-        if (name === this.name) {
-          throw makeError({ name: [errors.nothingToUpdate] });
-        }
-      },
-
-      onUpdate(lifecycle, { name }) {
-        this.name = name;
-      },
-
       // setAppointments({ appointments })
       onSetAppointments(lifecycle, appointmentEntries) {
         return this._appointments.setRecords({ records: appointmentEntries });
@@ -144,6 +139,17 @@ export class Seller extends BaseEntity {
 
       onUpdateAppointment(lifecycle, value, day, newValue, newDay) {
         return this._appointments.updateRecord(value, day, newValue, newDay);
+      },
+
+      // update({ name })
+      onBeforeUpdate(lifecycle, { name }) {
+        if (name === this.name) {
+          throw makeError({ name: [errors.nothingToUpdate] });
+        }
+      },
+
+      onUpdate(lifecycle, { name }) {
+        this.name = name;
       },
     },
   };
@@ -163,6 +169,7 @@ export class Seller extends BaseEntity {
     });
     this.phone = phone;
     this._appointments = new Appointments();
+    visualize(Seller);
   }
 
   get fullName() {

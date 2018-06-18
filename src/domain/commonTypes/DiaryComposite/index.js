@@ -116,17 +116,20 @@ export class DiaryComposite {
     const { done, error } = this._diary[operation](args);
 
     if (!done) {
-      const details = {};
-
       const argNames = Object.keys(args);
 
-      argNames.forEach((argName) => {
-        if (error[argName] !== undefined && error[argName].length !== 0) {
-          details[this.mapper[argName]] = error[argName];
-        }
-      });
+      throw makeError(
+        argNames.reduce((details, argName) => {
+          if (error[argName] !== undefined && error[argName].length !== 0) {
+            return {
+              ...details,
+              [this.mapper[argName]]: error[argName],
+            };
+          }
 
-      throw makeError(details);
+          return details;
+        }, {})
+      );
     }
 
     return done;

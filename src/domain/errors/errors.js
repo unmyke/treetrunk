@@ -9,7 +9,6 @@ export const errors = {
 
   notFound: 'RECORD_NOT_FOUND',
   alreadyExists: 'RECORD_ALREADY_EXISTS',
-  differenceOnly: 'DIFFERENCE_ONLY_PERMITTED',
   similarityNotAllowed: 'SIMILARITY_NOT_ALLOWED',
   diaryAlreadyClosed: 'DIARY_ALREADY_CLOSED',
   diaryNotStarted: 'DIARY_NOT_STARTED',
@@ -17,7 +16,7 @@ export const errors = {
   transitionNotAllowed: 'TRANSITION_NOT_ALLOWED',
   archiveReadOnly: 'ARCHIVE_READ_ONLY',
   backdatingNotPermitted: 'BACKDATING_NOT_PERMITTED',
-  closeRecordReadOnly: 'CLOSE_RECORD_READ_ONLY',
+  closeRecordAccessDenied: 'CLOSE_RECORD_ACCESS_DENIED',
 
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),

@@ -119,7 +119,7 @@ describe('Domain :: lib :: Diary', () => {
         test('should return unsuccessful result', () => {
           expect(result).toEqual({
             done: false,
-            error: { record: [errors.diaryNotStarted] },
+            error: { mockRecord: [errors.diaryNotStarted] },
           });
         });
 
@@ -143,8 +143,8 @@ describe('Domain :: lib :: Diary', () => {
           expect(result).toEqual({
             done: false,
             error: {
-              newRecord: [],
-              record: [errors.diaryNotStarted],
+              newMockRecord: [],
+              mockRecord: [errors.diaryNotStarted],
             },
           });
         });
@@ -222,7 +222,7 @@ describe('Domain :: lib :: Diary', () => {
           test('should return unsuccessful result', () => {
             expect(result).toEqual({
               done: false,
-              error: { record: [errors.alreadyExists] },
+              error: { mockRecord: [errors.alreadyExists] },
             });
           });
 
@@ -245,7 +245,7 @@ describe('Domain :: lib :: Diary', () => {
           test('should return unsuccessful result', () => {
             expect(result).toEqual({
               done: false,
-              error: { record: [errors.similarityNotAllowed] },
+              error: { mockRecord: [errors.similarityNotAllowed] },
             });
           });
 
@@ -268,7 +268,7 @@ describe('Domain :: lib :: Diary', () => {
           test('should return unsuccessful result', () => {
             expect(result).toEqual({
               done: false,
-              error: { record: [errors.diaryAlreadyClosed] },
+              error: { mockRecord: [errors.diaryAlreadyClosed] },
             });
           });
 
@@ -356,7 +356,7 @@ describe('Domain :: lib :: Diary', () => {
             expect(result).toEqual({
               done: false,
               error: {
-                record: [errors.notFound],
+                mockRecord: [errors.notFound],
               },
             });
           });
@@ -393,7 +393,7 @@ describe('Domain :: lib :: Diary', () => {
             test('should return unsuccessful result', () => {
               expect(result).toEqual({
                 done: false,
-                error: { record: [errors.similarityNotAllowed] },
+                error: { mockRecord: [errors.similarityNotAllowed] },
               });
             });
 
@@ -453,7 +453,7 @@ describe('Domain :: lib :: Diary', () => {
             expect(result).toEqual({
               done: false,
               error: {
-                record: [errors.diaryAlreadyClosed],
+                mockRecord: [errors.diaryAlreadyClosed],
               },
             });
           });
@@ -483,8 +483,8 @@ describe('Domain :: lib :: Diary', () => {
             expect(result).toEqual({
               done: false,
               error: {
-                newRecord: [],
-                record: [errors.notFound],
+                newMockRecord: [],
+                mockRecord: [errors.notFound],
               },
             });
           });
@@ -525,8 +525,8 @@ describe('Domain :: lib :: Diary', () => {
               expect(result).toEqual({
                 done: false,
                 error: {
-                  newRecord: [],
-                  record: [errors.nothingToUpdate],
+                  newMockRecord: [],
+                  mockRecord: [errors.nothingToUpdate],
                 },
               });
             });
@@ -557,8 +557,8 @@ describe('Domain :: lib :: Diary', () => {
               expect(result).toEqual({
                 done: false,
                 error: {
-                  newRecord: [],
-                  record: [errors.alreadyExists],
+                  newMockRecord: [],
+                  mockRecord: [errors.alreadyExists],
                 },
               });
             });
@@ -590,8 +590,8 @@ describe('Domain :: lib :: Diary', () => {
                 expect(result).toEqual({
                   done: false,
                   error: {
-                    newRecord: [],
-                    record: [errors.similarityNotAllowed],
+                    newMockRecord: [],
+                    mockRecord: [errors.similarityNotAllowed],
                   },
                 });
               });
@@ -661,8 +661,8 @@ describe('Domain :: lib :: Diary', () => {
                 expect(result).toEqual({
                   done: false,
                   error: {
-                    newRecord: [],
-                    record: [errors.similarityNotAllowed],
+                    newMockRecord: [],
+                    mockRecord: [errors.similarityNotAllowed],
                   },
                 });
               });
@@ -736,8 +736,8 @@ describe('Domain :: lib :: Diary', () => {
             expect(result).toEqual({
               done: false,
               error: {
-                newRecord: [],
-                record: [errors.diaryAlreadyClosed],
+                newMockRecord: [],
+                mockRecord: [errors.diaryAlreadyClosed],
               },
             });
           });
@@ -768,7 +768,7 @@ describe('Domain :: lib :: Diary', () => {
         expect(result).toEqual({
           done: false,
           error: {
-            record: [errors.closeRecordAccessDenied],
+            mockRecord: [errors.closeRecordAccessDenied],
           },
         });
       });
@@ -793,7 +793,7 @@ describe('Domain :: lib :: Diary', () => {
         expect(result).toEqual({
           done: false,
           error: {
-            record: [errors.closeRecordAccessDenied],
+            mockRecord: [errors.closeRecordAccessDenied],
           },
         });
       });
@@ -822,8 +822,8 @@ describe('Domain :: lib :: Diary', () => {
           expect(result).toEqual({
             done: false,
             error: {
-              newRecord: [],
-              record: [errors.closeRecordAccessDenied],
+              newMockRecord: [],
+              mockRecord: [errors.closeRecordAccessDenied],
             },
           });
         });
@@ -851,8 +851,8 @@ describe('Domain :: lib :: Diary', () => {
           expect(result).toEqual({
             done: false,
             error: {
-              newRecord: [errors.closeRecordAccessDenied],
-              record: [],
+              newMockRecord: [errors.closeRecordAccessDenied],
+              mockRecord: [],
             },
           });
         });

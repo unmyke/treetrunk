@@ -479,7 +479,7 @@ export class Diary extends BaseClass {
   _getSetErrors({ newRecords }, options = {}) {
     const newRecordsType = `new{this.RecordClass.name}s`;
 
-    const error = { [newRecordsType]: null };
+    const error = { [newRecordsType]: [] };
 
     return error;
   }
@@ -562,27 +562,27 @@ export class Diary extends BaseClass {
       error[recordType].push(nothingToUpdateError);
     } else {
       if (this._isDayBetweenSurroundingRecords(record, newRecord)) {
-        error[recordType].push(
-          ...this._getDeleteErrors(record, {
-            ignoreRules: [this._getEqualsToSurroundingValueError],
-          }).record
-        );
-        error[newRecordType].push(
-          ...this._getAddErrors(newRecord, {
-            excludeRecords: [record],
-            excludeRules: [this._getSurroundingValuesEqualityError],
-          }).record
-        );
+        const deleteErrors = this._getDeleteErrors(record, {
+          ignoreRules: [this._getEqualsToSurroundingValueError],
+        });
+        error[recordType].push(...deleteErrors[recordType]);
+
+        const addErrors = this._getAddErrors(newRecord, {
+          excludeRecords: [record],
+          excludeRules: [this._getSurroundingValuesEqualityError],
+        });
+        error[newRecordType].push(...addErrors[recordType]);
       } else {
-        error[recordType].push(...this._getDeleteErrors({ record }).record);
-        error[newRecordType].push(
-          ...this._getAddErrors(
-            { record: newRecord },
-            {
-              excludeRecords: [record],
-            }
-          ).record
+        const deleteErrors = this._getDeleteErrors({ record });
+        error[recordType].push(...deleteErrors[recordType]);
+
+        const addErrors = this._getAddErrors(
+          { record: newRecord },
+          {
+            excludeRecords: [record],
+          }
         );
+        error[newRecordType].push(...addErrors[recordType]);
       }
     }
 
@@ -675,17 +675,17 @@ export class Diary extends BaseClass {
     return null;
   }
 
-  _getBeforeOrEqualPreviousCloseDayError(record) {
-    const prevInerruptDayAt = this._getPrevCloseDayAt();
+  // _getBeforeOrEqualPreviousCloseDayError(record) {
+  //   const prevInerruptDayAt = this._getPrevCloseDayAt();
 
-    if (prevInerruptDayAt !== undefined && record.day <= prevInerruptDayAt) {
-      return `${
-        record.constructor.name
-      } cannot be before or equals previous end day`;
-    }
+  //   if (prevInerruptDayAt !== undefined && record.day <= prevInerruptDayAt) {
+  //     return `${
+  //       record.constructor.name
+  //     } cannot be before or equals previous end day`;
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
   _getNothingToUpdateError(record, newRecord, options = {}) {
     if (record.equals(newRecord)) {

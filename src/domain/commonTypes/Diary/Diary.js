@@ -477,7 +477,7 @@ export class Diary extends BaseClass {
 
   //    validation error generators
   _getSetErrors({ newRecords }, options = {}) {
-    const newRecordsType = `new{this.RecordClass.name}s`;
+    const newRecordsType = `new${this.RecordClass.name}s`;
 
     const error = { [newRecordsType]: [] };
 

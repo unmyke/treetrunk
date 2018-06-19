@@ -5,7 +5,7 @@ export const makeError = (details) => {
 };
 
 export const errors = {
-  nothingToUpdate: 'NOTHING_TO_ UPDATE',
+  nothingToUpdate: 'NOTHING_TO_UPDATE',
 
   notFound: 'RECORD_NOT_FOUND',
   alreadyExists: 'RECORD_ALREADY_EXISTS',

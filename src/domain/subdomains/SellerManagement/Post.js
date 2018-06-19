@@ -1,7 +1,7 @@
 import { BaseEntity } from '../../_lib';
 import { makeError, errors } from '../../errors';
-import { PostId, Day } from '../../commonTypes';
-import { PieceRates } from './PieceRates';
+import { PostId, Day, Diary } from '../../commonTypes';
+import { PieceRate } from './PieceRate';
 
 export class Post extends BaseEntity {
   static states = {
@@ -57,20 +57,31 @@ export class Post extends BaseEntity {
         this.name = name;
       },
 
-      onSetPieceRates(lifecycle, pieceRateEntries) {
-        return this._pieceRates.setRecords(pieceRateEntries);
+      onBeforeSetPieceRates(lifecycle, pieceRates) {
+        const newRecords = pieceRates.map(
+          ({ value, day }) => new PieceRate({ value, day })
+        );
+
+        return this._pieceRates.setRecords({ newRecords });
       },
 
-      onAddPieceRate(lifecycle, value, day = new Day()) {
-        return this._pieceRates.addRecord(value, day);
+      onBeforeAddPieceRate(lifecycle, value, day = new Day()) {
+        const record = new PieceRate({ value, day });
+
+        return this._pieceRates.addRecord({ record });
       },
 
-      onDeletePieceRate(lifecycle, value, day = new Day()) {
-        return this._pieceRates.deleteRecord(value, day);
+      onBeforeDeletePieceRate(lifecycle, value, day = new Day()) {
+        const record = new PieceRate({ value, day });
+
+        return this._pieceRates.deleteRecord({ record });
       },
 
-      onUpdatePieceRate(lifecycle, value, day, newValue, newDay) {
-        return this._pieceRates.updateRecord(value, day, newValue, newDay);
+      onBeforeUpdatePieceRate(lifecycle, value, day, newValue, newDay) {
+        const record = new PieceRate({ value, day });
+        const newRecord = new PieceRate({ value: newValue, day: newDay });
+
+        return this._pieceRates.updateRecord({ record, newRecord });
       },
     },
   };
@@ -78,7 +89,7 @@ export class Post extends BaseEntity {
   constructor({ postId = new PostId(), name, state = 'active' }) {
     super(postId);
     this.name = name;
-    this._pieceRates = new PieceRates();
+    this._pieceRates = new Diary({ RecordClass: PieceRate });
 
     this.setState(state);
   }

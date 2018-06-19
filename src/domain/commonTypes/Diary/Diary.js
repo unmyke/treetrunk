@@ -448,6 +448,10 @@ export class Diary extends BaseClass {
   }
 
   //    validation setters
+  _validateSetOperation({ newRecords }, options = {}) {
+    this.operation.error = this._getSetErrors({ newRecords }, options);
+  }
+
   _validateAddOperation({ record }, options = {}) {
     this.operation.error = this._getAddErrors({ record }, options);
   }
@@ -463,10 +467,6 @@ export class Diary extends BaseClass {
     );
   }
 
-  _validateSetOperation({ records }, options = {}) {
-    this.operation.error = {};
-  }
-
   _validateAddCloseOperation({ records }, options = {}) {
     this.operation.error = this._getAddCloseErrors({ day }, options);
   }
@@ -476,18 +476,28 @@ export class Diary extends BaseClass {
   }
 
   //    validation error generators
+  _getSetErrors({ newRecords }, options = {}) {
+    const newRecordsType = `new{this.RecordClass.name}s`;
+
+    const error = { [newRecordsType]: null };
+
+    return error;
+  }
+
   _getAddErrors({ record }, options = {}) {
-    const error = { record: [] };
+    const recordType = lowerFirst(this.RecordClass.name);
+
+    const error = { [recordType]: [] };
 
     const outOfActiveDiaryError = this._getOutOfActiveDiaryError(record);
 
     if (outOfActiveDiaryError !== null) {
-      error.record.push(outOfActiveDiaryError);
+      error[recordType].push(outOfActiveDiaryError);
     } else {
       const alreadyExistsError = this._getAlreadyExistsError(record, options);
 
       if (alreadyExistsError !== null) {
-        error.record.push(alreadyExistsError);
+        error[recordType].push(alreadyExistsError);
       } else {
         const equalsToSurroundingValueError = this._getEqualsToSurroundingValueError(
           record,
@@ -501,7 +511,7 @@ export class Diary extends BaseClass {
             options.ignoreRules.contains(this._getEqualsToSurroundingValueError)
           )
         ) {
-          error.record.push(equalsToSurroundingValueError);
+          error[recordType].push(equalsToSurroundingValueError);
         }
       }
     }
@@ -510,12 +520,14 @@ export class Diary extends BaseClass {
   }
 
   _getDeleteErrors({ record }, options = {}) {
-    const error = { record: [] };
+    const recordType = lowerFirst(this.RecordClass.name);
+
+    const error = { [recordType]: [] };
 
     const notFoundError = this._getNotFoundError(record, options);
 
     if (notFoundError !== null) {
-      error.record.push(notFoundError);
+      error[recordType].push(notFoundError);
     } else {
       const surroundingValuesEqualityError = this._getSurroundingValuesEqualityError(
         record,
@@ -528,7 +540,7 @@ export class Diary extends BaseClass {
           options.ignoreRules.contains(this._getEqualsToSurroundingValueError)
         )
       ) {
-        error.record.push(surroundingValuesEqualityError);
+        error[recordType].push(surroundingValuesEqualityError);
       }
     }
 
@@ -536,7 +548,10 @@ export class Diary extends BaseClass {
   }
 
   _getUpdateErrors({ record, newRecord }, options = {}) {
-    const error = { record: [], newRecord: [] };
+    const recordType = lowerFirst(this.RecordClass.name);
+    const newRecordType = `new${this.RecordClass.name}`;
+
+    const error = { [recordType]: [], [newRecordType]: [] };
 
     const nothingToUpdateError = this._getNothingToUpdateError(
       record,
@@ -544,23 +559,23 @@ export class Diary extends BaseClass {
     );
 
     if (nothingToUpdateError !== null) {
-      error.record.push(nothingToUpdateError);
+      error[recordType].push(nothingToUpdateError);
     } else {
       if (this._isDayBetweenSurroundingRecords(record, newRecord)) {
-        error.record.push(
+        error[recordType].push(
           ...this._getDeleteErrors(record, {
             ignoreRules: [this._getEqualsToSurroundingValueError],
           }).record
         );
-        error.newRecord.push(
+        error[newRecordType].push(
           ...this._getAddErrors(newRecord, {
             excludeRecords: [record],
             excludeRules: [this._getSurroundingValuesEqualityError],
           }).record
         );
       } else {
-        error.record.push(...this._getDeleteErrors({ record }).record);
-        error.newRecord.push(
+        error[recordType].push(...this._getDeleteErrors({ record }).record);
+        error[newRecordType].push(
           ...this._getAddErrors(
             { record: newRecord },
             {
@@ -578,13 +593,13 @@ export class Diary extends BaseClass {
     const error = { record: [] };
 
     if (this.isClosed) {
-      error.record.push(errors.alreadyDefined);
+      error[recordType].push(errors.alreadyDefined);
     } else {
       const lastRecordDay = this.recordDay;
 
       if (day <= lastRecordDay) {
         // define error
-        error.record.push(errors.backdatingNotPermitted);
+        error[recordType].push(errors.backdatingNotPermitted);
       }
     }
 
@@ -595,12 +610,12 @@ export class Diary extends BaseClass {
     const error = { record: [] };
 
     if (!this.isClosed) {
-      error.record.push(errors.dairyAlreadyClosed);
+      error[recordType].push(errors.dairyAlreadyClosed);
     } else {
       const records = this.records;
 
       if (records.length === 0) {
-        error.record.push(errors.dairyNotStarted);
+        error[recordType].push(errors.dairyNotStarted);
       }
     }
 

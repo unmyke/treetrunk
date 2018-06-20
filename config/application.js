@@ -5,7 +5,7 @@ function define(Class, id) {
 module.exports = {
   seeds: [
     {
-      name: 'quitPostId',
+      name: 'dismissPostId',
       ModelName: 'Post',
       values: { name: 'уволен(а)' },
       callback: define,

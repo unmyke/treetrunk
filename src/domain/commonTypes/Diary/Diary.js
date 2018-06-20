@@ -112,7 +112,7 @@ export class Diary extends BaseClass {
   }
 
   get isClosed() {
-    return this.isClosedAt(day);
+    return this.isClosedAt();
   }
 
   getRecordsAt(day = new Day(), options = {}) {

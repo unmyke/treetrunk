@@ -1,13 +1,7 @@
 import { BaseEntity } from '../../_lib';
 import { makeError, errors } from '../../errors';
-import { SellerId, PersonName, Day } from '../../commonTypes';
-import { Appointments } from './Appointments';
-import { visualize } from 'javascript-state-machine/lib/visualize';
-
-const sellerState = {
-  vacationer: 'vacationer',
-  new: '',
-};
+import { SellerId, PostId, PersonName, Day, Diary } from '../../commonTypes';
+import { Appointment } from './Appointment';
 
 export class Seller extends BaseEntity {
   // Seller states
@@ -22,7 +16,7 @@ export class Seller extends BaseEntity {
 
   // state-transition functions
 
-  static addAppointmentStateCondition() {
+  static addAppointmentTransitionCondition() {
     switch (true) {
       case this.is(this.constructor.states.RECRUITED) ||
         this.is(this.constructor.states.NEW) ||
@@ -33,7 +27,7 @@ export class Seller extends BaseEntity {
     }
   }
 
-  static deleteAppointmentStateCondition() {
+  static deleteAppointmentTransitionCondition() {
     if (this.isDismissed) {
       return this.constructor.states.DISMISSED;
     } else {
@@ -65,12 +59,12 @@ export class Seller extends BaseEntity {
           Seller.states.DISMISSED,
           Seller.states.VACATIONER,
         ],
-        to: Seller.addAppointmentStateCondition,
+        to: Seller.addAppointmentTransitionCondition,
       },
       {
         name: 'deleteAppointment',
         from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
-        to: Seller.deleteAppointmentStateCondition,
+        to: Seller.deleteAppointmentTransitionCondition,
       },
       {
         name: 'updateAppointment',
@@ -120,25 +114,38 @@ export class Seller extends BaseEntity {
     ],
 
     methods: {
-      // onActive() {
-      //   this.appointmentOperationResult = { done: true };
-      // },
-
-      // setAppointments({ appointments })
-      onSetAppointments(lifecycle, appointmentEntries) {
-        return this._appointments.setRecords({ records: appointmentEntries });
+      onBeforeSetAppointments(lifecycle, appointments) {
+        const newRecords = appointments.map(
+          ({ postId, day }) => new Appointment({ postId, day })
+        );
+        return this._appointments.setRecords({ newRecords });
       },
 
-      onAddAppointment(lifecycle, value, day = new Day()) {
-        return this._appointments.addRecord(value, day);
+      onBeforeAddAppointment(lifecycle, postId, day = new Day()) {
+        const record = new Appointment({ postId, day });
+
+        return this._appointments.addRecord({ record });
       },
 
-      onDeleteAppointment(lifecycle, value, day = new Day()) {
-        return this._appointments.deleteRecord(value, day);
+      onBeforeDeleteAppointment(lifecycle, postId, day = new Day()) {
+        const record = new Appointment({ postId, day });
+
+        return this._appointments.deleteRecord({ record });
       },
 
-      onUpdateAppointment(lifecycle, value, day, newValue, newDay) {
-        return this._appointments.updateRecord(value, day, newValue, newDay);
+      onBeforeUpdateAppointment(lifecycle, postId, day, newPostId, newDay) {
+        const record = new Appointment({ postId, day });
+        const newRecord = new Appointment({ postId: newPostId, day: newDay });
+
+        return this._appointments.updateRecord({ record, newRecord });
+      },
+
+      onBeforeDismiss(lifecycle, day) {
+        return this._appointments.dismiss({ day });
+      },
+
+      onDeleteDismiss() {
+        return this._appointments.deleteDismiss();
       },
 
       // update({ name })
@@ -168,8 +175,13 @@ export class Seller extends BaseEntity {
       middleName,
     });
     this.phone = phone;
-    this._appointments = new Appointments();
-    visualize(Seller);
+
+    this._appointments = new Diary({
+      closeValue: PostId.dismissPostId,
+      RecordClass: Appointment,
+    });
+
+    this.vacations;
   }
 
   get fullName() {
@@ -208,8 +220,8 @@ export class Seller extends BaseEntity {
     return this._appointments.isStarted;
   }
 
-  get quitDay() {
-    return this._appointments.closedDay;
+  get dismissDay() {
+    return this._appointments.closeDay;
   }
 
   get isDismissed() {
@@ -255,19 +267,19 @@ export class Seller extends BaseEntity {
   }
 
   getRecruitDayAt(day = new Day()) {
-    return this._appointments.getRecruitDayAt(day);
+    return this._appointments.getStartDayAt(day);
   }
 
   isRecruitedAt(day = new Day()) {
-    return this._appointments.isRecruitedAt(day);
+    return this._appointments.isStartedAt(day);
   }
 
   getDismissDayAt(day = new Day()) {
-    return this._appointments.getDismissDayAt(day);
+    return this._appointments.getCloseDayAt(day);
   }
 
   isDismissedAt(day = new Day()) {
-    return this._appointments.isDismissedAt(day);
+    return this._appointments.isClosedAt(day);
   }
 
   getSeniorityAt(day = new Day()) {
@@ -289,8 +301,8 @@ export class Seller extends BaseEntity {
       postId: this.postId,
       postIds: this.postIds,
       recruitDay: this.recruitDay,
-      isRecruited: this.isRecruited,
-      quitDay: this.quitDay,
+      isRecruited: this.isClosed,
+      dismissDay: this.dismissDay,
       isDismissed: this.isDismissed,
       seniority: this.seniority,
       appointments: this.appointments,

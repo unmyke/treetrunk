@@ -1,0 +1,36 @@
+'when seller have no appointments'
+2017.01.01       now
+    |
+    |             |
+    |             ▶︎
+    |             |
+undefined  undefined
+
+'when seller have appointments and not dismissed'
+2017.01.01    2017.02.01      2017.03.01      2017.04.01        now
+    |             |               |               |               |
+    |             ◎———————————————————————————————○———————————————▶︎
+    |             |               |               |               |
+undefined     undefined       undefined       undefined       undefined
+
+
+'when seller have dismissed'
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01         now
+    |             |               |               |               |               |               |
+    |             ◎———————————————————————————————○———————————————————————————————●———————————————▶︎
+    |             |               |               |               |               |               |
+undefined     undefined       undefined       undefined       undefined       2017.06.01      2017.06.01
+
+'when seller have dismissed and recruited again'
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01      2017.07.01      2017.08.01         now
+    |             |               |               |               |               |               |               |               |
+    |             ◎———————————————————————————————○———————————————————————————————●———————————————————————————————◎———————————————▶︎
+    |             |               |               |               |               |               |               |               |
+undefined     undefined       undefined       undefined       undefined       2017.06.01      2017.06.01      undefined       undefined
+
+'when seller have dismissed, recruited again and dismiss again'
+2017.01.01    2017.02.01      2017.03.01      2017.04.01      2017.05.01      2017.06.01      2017.07.01      2017.08.01      2017.09.01      2017.10.01          now
+    |             |               |               |               |               |               |               |               |               |                |
+    |             ◎———————————————————————————————○———————————————————————————————●———————————————————————————————◎———————————————————————————————●————————————————▶︎
+    |             |               |               |               |               |               |               |               |               |                |
+undefined     undefined       undefined       undefined       undefined       2017.06.01      2017.06.01      undefined       undefined       2017.10.01       2017.10.01

@@ -1,13 +1,25 @@
 import validate from 'validate.js';
-import { upperFirst, lowerFirst, snakeCase } from 'lodash';
 import { Day, DayRange } from 'src/domain/commonTypes';
 import isValidDate from 'date-fns/is_valid';
+
+const jsonAPIErrorformatter = (errors) => {
+  return errors.map(({ attribute, error }) => {
+    return {
+      source: {
+        pointer: `/data/attributes/${attribute}`,
+      },
+      message: 'Invalid Attribute',
+      detail: error,
+    };
+  });
+};
 
 export const makeValidator = (constraints, errors) => {
   const validator = (entity, options = { exception: false }) => {
     const errors = validate(
       entity,
-      constraints || entity.constructor.constraints
+      constraints || entity.constructor.constraints,
+      { format: 'jsonAPIError' }
     );
 
     if (errors && options.exception) {
@@ -116,6 +128,8 @@ export const makeValidator = (constraints, errors) => {
     }
     return null;
   };
+
+  validate.formatters.jsonAPIError = jsonAPIErrorformatter;
 
   return validator;
 };

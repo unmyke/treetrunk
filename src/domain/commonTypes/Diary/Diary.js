@@ -6,23 +6,45 @@ import { BaseClass, BaseValue } from '../../_lib';
 import { Day } from '../Day';
 
 export class Diary extends BaseClass {
+  // states
+  static states = {
+    NEW: 'new',
+    STARTED: 'started',
+    CLOSED: 'closed',
+  };
+
   // FSM
   static fsm = {
-    init: 'idle',
+    // init: 'idle',
+
+    // transitions: [
+    //   { name: 'operate', from: 'idle', to: 'validation' },
+    //   {
+    //     name: 'process',
+    //     from: 'validation',
+    //     to: 'result',
+    //   },
+    //   { name: 'reset', from: 'result', to: 'idle' },
+    // ],
+
+    init: 'new',
 
     transitions: [
-      { name: 'operate', from: 'idle', to: 'validation' },
       {
-        name: 'process',
-        from: 'validation',
-        to: Diary.getPostValidationState,
+        name: 'addRecord',
+        from: [Diary.states.NEW, Diary.states.STARTED, Diary.states.CLOSED],
+        to: Diary.states.STARTED,
       },
-      { name: 'reset', from: ['result', 'error'], to: 'idle' },
+      {
+        name: 'deleteRecord',
+        from: Diary.states.STARTED,
+        to: Diary.deleteRecordTrasitionCondition,
+      },
     ],
 
     methods: {
-      onValidation(lifecycle, operation) {
-        this.operation = { ...operation, error: {} };
+      onBeforeAddRecord(lifecycle, operation) {
+        this.operation = operation;
 
         this._validation(operation.args);
       },
@@ -31,36 +53,22 @@ export class Diary extends BaseClass {
         const primitiveOperationName = `_${this.operation.name}`;
 
         this[primitiveOperationName](this.operation.args);
-        return {
-          done: true,
-          error: null,
-        };
-      },
-
-      onError() {
-        return {
-          done: false,
-          error: this.operation.error,
-        };
       },
     },
   };
 
-  // state-transition functions
-  static getPostValidationState() {
-    const argNames = Object.keys(this.operation.error);
+  //
+  static deleteRecordTrasitionCondition() {
+    switch (true) {
+      case this._records.length === 0:
+        return 'new';
 
-    const errorsExists = argNames.reduce(
-      (errorExists, argName) =>
-        errorExists || this.operation.error[argName].length !== 0,
-      false
-    );
+      case this.records.length === 0:
+        return 'closed';
 
-    if (!errorsExists) {
-      return 'result';
+      default:
+        return 'stared';
     }
-
-    return 'error';
   }
 
   constructor({ closeValue, RecordClass }) {
@@ -78,7 +86,6 @@ export class Diary extends BaseClass {
   // getters
 
   //   public metods
-
   get records() {
     return this.getRecordsAt();
   }
@@ -170,7 +177,6 @@ export class Diary extends BaseClass {
   }
 
   //   private metods
-
   _hasRecordOn(day = new Day(), options = {}) {
     const persistedRecord = this._getRecordOn(day, options);
     return !!persistedRecord;
@@ -372,7 +378,7 @@ export class Diary extends BaseClass {
 
   //  private methods
 
-  //    oparations
+  //    operations
   setRecords({ newRecords } = { newRecords: [] }) {
     return this._emit({ name: 'set', args: { newRecords } });
   }
@@ -395,6 +401,10 @@ export class Diary extends BaseClass {
 
   deleteCloseRecord() {
     return this._emit({ name: 'deleteClose' });
+  }
+
+  updateCloseRecord() {
+    return this._emit({ name: 'updateClose', args: { day } });
   }
 
   //    operation runner
@@ -710,8 +720,6 @@ export class Diary extends BaseClass {
     const prevRecordForNewRecord = this._getPrevRecord(newRecord, {
       excludeRecords: [record],
     });
-    // console.log(prevRecordForRecord);
-    // console.log(prevRecordForNewRecord);
 
     return (
       prevRecordForRecord !== undefined &&

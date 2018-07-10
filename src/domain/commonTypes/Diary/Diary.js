@@ -1,9 +1,10 @@
-import { lowerFirst, lowerCase, upperFirst, upperCase } from 'lodash';
-import { errors } from '../../errors';
-
 import { applyFSM, getDayComparator } from '../../_lib/BaseMethods';
 import { BaseClass, BaseValue } from '../../_lib';
 import { Day } from '../Day';
+import {
+  AddOperationRuleSet,
+  DeleteOperationRuleSet,
+} from './OperationRuleSets';
 
 export class Diary extends BaseClass {
   // states
@@ -15,18 +16,6 @@ export class Diary extends BaseClass {
 
   // FSM
   static fsm = {
-    // init: 'idle',
-
-    // transitions: [
-    //   { name: 'operate', from: 'idle', to: 'validation' },
-    //   {
-    //     name: 'process',
-    //     from: 'validation',
-    //     to: 'result',
-    //   },
-    //   { name: 'reset', from: 'result', to: 'idle' },
-    // ],
-
     init: 'new',
 
     transitions: [
@@ -40,19 +29,45 @@ export class Diary extends BaseClass {
         from: Diary.states.STARTED,
         to: Diary.deleteRecordTrasitionCondition,
       },
+      {
+        name: 'updateRecord',
+        from: Diary.states.STARTED,
+        to: Diary.states.STARTED,
+      },
+      {
+        name: 'addCloseRecord',
+        from: Diary.states.STARTED,
+        to: Diary.states.CLOSED,
+      },
+      {
+        name: 'deleteCloseRecord',
+        from: Diary.states.CLOSED,
+        to: Diary.states.STARTED,
+      },
+      {
+        name: 'updateCloseRecord',
+        from: Diary.states.CLOSED,
+        to: Diary.states.CLOSED,
+      },
     ],
 
     methods: {
-      onBeforeAddRecord(lifecycle, operation) {
-        this.operation = operation;
-
-        this._validation(operation.args);
+      // AddRecord
+      onBeforeAddRecord({ record }) {
+        const addOperation = new AddOperationRuleSet({ operatee: this });
+        addOperation.check({ record });
+      },
+      onAddRecord({ record }) {
+        this._add({ record });
       },
 
-      onResult() {
-        const primitiveOperationName = `_${this.operation.name}`;
-
-        this[primitiveOperationName](this.operation.args);
+      // deleteRecord
+      onBeforeDeleteRecord({ record }) {
+        const deleteOperation = new DeleteOperationRuleSet({ operatee: this });
+        deleteOperation.check({ record });
+      },
+      onDeleteRecord({ record }) {
+        this._delete({ record });
       },
     },
   };

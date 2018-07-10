@@ -1,5 +1,3 @@
-export const makeError = (message) => () => new Error(message);
-
 export const errors = {
   // Diary
   recordAlreadyExists: makeError('RECORD_ALREADY_EXISTS'),

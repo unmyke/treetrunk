@@ -1,10 +1,8 @@
+import { upperFirst } from 'lodash';
 import { applyFSM, getDayComparator } from '../../_lib/BaseMethods';
 import { BaseClass, BaseValue } from '../../_lib';
 import { Day } from '../Day';
-import {
-  AddOperationRuleSet,
-  DeleteOperationRuleSet,
-} from './OperationRuleSets';
+import * as OperationRuleSets from './OperationRuleSets';
 
 export class Diary extends BaseClass {
   // states
@@ -19,6 +17,11 @@ export class Diary extends BaseClass {
     init: 'new',
 
     transitions: [
+      {
+        name: 'setRecords',
+        from: Diary.states.NEW,
+        to: Diary.states.NEW,
+      },
       {
         name: 'addRecord',
         from: [Diary.states.NEW, Diary.states.STARTED, Diary.states.CLOSED],
@@ -52,22 +55,16 @@ export class Diary extends BaseClass {
     ],
 
     methods: {
-      // AddRecord
-      onBeforeAddRecord({ record }) {
-        const addOperation = new AddOperationRuleSet({ operatee: this });
-        addOperation.check({ record });
-      },
-      onAddRecord({ record }) {
-        this._add({ record });
+      // before operations
+      onBeforeTransition({ transition }, args) {
+        const OperationRuleSet = OperationRuleSets[upperFirst(transition)];
+        const operationRuleSet = new OperationRuleSet({ operatee: this });
+
+        operationRuleSet.check(args);
       },
 
-      // deleteRecord
-      onBeforeDeleteRecord({ record }) {
-        const deleteOperation = new DeleteOperationRuleSet({ operatee: this });
-        deleteOperation.check({ record });
-      },
-      onDeleteRecord({ record }) {
-        this._delete({ record });
+      onTransition({ transition }, args) {
+        this[`_${transition}`](args);
       },
     },
   };
@@ -192,12 +189,12 @@ export class Diary extends BaseClass {
   }
 
   //   private metods
-  _hasRecordOn(day = new Day(), options = {}) {
+  hasRecordOn(day = new Day(), options = {}) {
     const persistedRecord = this._getRecordOn(day, options);
     return !!persistedRecord;
   }
 
-  _hasRecord(record, options = {}) {
+  hasRecord(record, options = {}) {
     if (record === undefined) {
       return;
     }
@@ -212,29 +209,29 @@ export class Diary extends BaseClass {
     return recordsAt[recordsAt.length - 1];
   }
 
-  _getPrevRecord(record, options = {}) {
+  getPrevRecord(record, options = {}) {
     if (record === undefined) {
       return;
     }
 
-    return this._getPrevRecordAt(record.day, options);
+    return this.getPrevRecordAt(record.day, options);
   }
 
-  _getNextRecord(record, options = {}) {
+  getNextRecord(record, options = {}) {
     if (record === undefined) {
       return;
     }
 
-    return this._getNextRecordAt(record.day, options);
+    return this.getNextRecordAt(record.day, options);
   }
 
-  _getPrevRecordAt(day = new Day(), options = {}) {
+  getPrevRecordAt(day = new Day(), options = {}) {
     const recordsBeforeDay = this._getRecordsBeforeDay(day, options);
 
     return recordsBeforeDay[recordsBeforeDay.length - 1];
   }
 
-  _getNextRecordAt(day = new Day(), options = {}) {
+  getNextRecordAt(day = new Day(), options = {}) {
     const recordsAfterDay = this._getRecordsAfterDay(day, options);
 
     return recordsAfterDay[0];
@@ -343,7 +340,7 @@ export class Diary extends BaseClass {
       return false;
     }
 
-    return this._compareRecordValues(record.value, this.closeValue);
+    return this.compareRecordValues(record.value, this.closeValue);
   }
 
   _isStartRecord(record) {
@@ -360,7 +357,7 @@ export class Diary extends BaseClass {
   }
 
   //  utils
-  _compareRecordValues(record1, record2) {
+  compareRecordValues(record1, record2) {
     return (
       record1 !== undefined &&
       record2 !== undefined &&
@@ -393,64 +390,27 @@ export class Diary extends BaseClass {
 
   //  private methods
 
-  //    operations
-  setRecords({ newRecords } = { newRecords: [] }) {
-    return this._emit({ name: 'set', args: { newRecords } });
-  }
-
-  addRecord({ record }) {
-    return this._emit({ name: 'add', args: { record } });
-  }
-
-  deleteRecord({ record }) {
-    return this._emit({ name: 'delete', args: { record } });
-  }
-
-  updateRecord({ record, newRecord }) {
-    return this._emit({ name: 'update', args: { record, newRecord } });
-  }
-
-  addCloseRecord(day) {
-    return this._emit({ name: 'addClose', args: { day } });
-  }
-
-  deleteCloseRecord() {
-    return this._emit({ name: 'deleteClose' });
-  }
-
-  updateCloseRecord() {
-    return this._emit({ name: 'updateClose', args: { day } });
-  }
-
-  //    operation runner
-  _emit(operation) {
-    this.operate(operation);
-    const result = this.process();
-    this.reset();
-    return result;
-  }
-
   //    primitive oparations
-  _set({ newRecords }) {
+  _setRecords({ newRecords }) {
     this._records = [...newRecords];
   }
 
-  _add({ record }) {
+  _addRecord({ record }) {
     this._records = [...this._records, record];
   }
 
-  _delete({ record }) {
+  _deleteRecord({ record }) {
     this._records = this._records.filter(
       (currentRecord) => !record.equals(currentRecord)
     );
   }
 
-  _update({ record, newRecord }) {
-    this._delete({ record });
-    this._add({ record: newRecord });
+  _updateRecord({ record, newRecord }) {
+    this._deleteRecord({ record });
+    this._addRecord({ record: newRecord });
   }
 
-  _addClose({ day }) {
+  _addCloseRecord({ day }) {
     const closeRecord = new this.RecordClass({
       value: this.closeValue,
       day,
@@ -459,12 +419,12 @@ export class Diary extends BaseClass {
     this._add({ record: closeRecord });
   }
 
-  _deleteClose() {
+  _deleteCloseRecord() {
     this._records = this._records.slice(0, -1);
   }
 
-  _updateClose({ day }) {
-    this._deleteClose();
-    this._addClose({ day });
+  _updateCloseRecord({ day }) {
+    this._deleteCloseRecord();
+    this._addCloseRecord({ day });
   }
 }

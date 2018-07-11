@@ -1,5 +1,5 @@
-import { diaryClosedRule } from './diaryClosedRule';
-import { recordAlreadyExistsRule } from './recordAlreadyExistsRule';
-import { recordDuplicateRule } from './recordDuplicateRule';
+import { diaryClosedRule as diaryClosed } from './diaryClosedRule';
+import { recordAlreadyExistsRule as recordAlreadyExists } from './recordAlreadyExistsRule';
+import { recordDuplicateRule as recordDuplicate } from './recordDuplicateRule';
 
-export { diaryClosedRule, recordAlreadyExistsRule, recordDuplicateRule };
+export { diaryClosed, recordAlreadyExists, recordDuplicate };

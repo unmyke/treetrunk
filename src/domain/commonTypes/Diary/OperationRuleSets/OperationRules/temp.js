@@ -130,7 +130,7 @@ class validation {
 
         const addErrors = this._getAddErrors(newRecord, {
           excludeRecords: [record],
-          excludeRules: [this._getSurroundingValuesEqualityError],
+          ignoreRules: [this._getSurroundingValuesEqualityError],
         });
         error[newRecordType].push(...addErrors[recordType]);
       } else {
@@ -193,7 +193,7 @@ class validation {
   }
 
   _getAlreadyExistsError(record, options = {}) {
-    if (this._hasRecordOn(record.day, options)) {
+    if (this.hasRecordOn(record.day, options)) {
       return errors.alreadyExists;
     }
 
@@ -201,7 +201,7 @@ class validation {
   }
 
   _getNotFoundError(record, options = {}) {
-    if (!this._hasRecord(record, (options = {}))) {
+    if (!this.hasRecord(record, options)) {
       return errors.notFound;
     }
 
@@ -209,8 +209,8 @@ class validation {
   }
 
   _getEqualsToSurroundingValueError(record, options = {}) {
-    const prevRecord = this._getPrevRecordAt(record.day, options);
-    const nextRecord = this._getNextRecordAt(record.day, options);
+    const prevRecord = this.getPrevRecordAt(record.day, options);
+    const nextRecord = this.getNextRecordAt(record.day, options);
 
     if (
       (prevRecord !== undefined && record.value === prevRecord.value) ||
@@ -222,13 +222,13 @@ class validation {
   }
 
   _getSurroundingValuesEqualityError(record, options = {}) {
-    const prevRecord = this._getPrevRecord(record, options);
-    const nextRecord = this._getNextRecord(record, options);
+    const prevRecord = this.getPrevRecord(record, options);
+    const nextRecord = this.getNextRecord(record, options);
 
     if (
       prevRecord !== undefined &&
       nextRecord !== undefined &&
-      this._compareRecordValues(prevRecord, nextRecord)
+      this.compareRecordValues(prevRecord, nextRecord)
     ) {
       return errors.surroundingValuesAreEquals;
     }
@@ -267,8 +267,8 @@ class validation {
   }
 
   _isDayBetweenSurroundingRecords(record, newRecord) {
-    const prevRecordForRecord = this._getPrevRecord(record);
-    const prevRecordForNewRecord = this._getPrevRecord(newRecord, {
+    const prevRecordForRecord = this.getPrevRecord(record);
+    const prevRecordForNewRecord = this.getPrevRecord(newRecord, {
       excludeRecords: [record],
     });
 

@@ -1,6 +1,6 @@
-export function recordDuplicateRule({ value, day }, options = {}) {
-  const prevRecord = this.operatee._getPrevRecordAt(day, options);
-  const nextRecord = this.operatee._getNextRecordAt(day, options);
+export function recordDuplicateRule({ record: { value, day } }, options = {}) {
+  const prevRecord = this.operatee.getPrevRecordAt(day, options);
+  const nextRecord = this.operatee.getNextRecordAt(day, options);
 
   if (
     (prevRecord !== undefined && value === prevRecord.value) ||

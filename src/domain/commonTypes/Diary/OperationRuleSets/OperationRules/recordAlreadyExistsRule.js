@@ -1,5 +1,5 @@
-export function recordAlreadyExistsRule({ day }, options = {}) {
-  if (this.operatee._hasRecordOn(day, options)) {
+export function recordAlreadyExistsRule({ record: { day } }, options = {}) {
+  if (this.operatee.hasRecordOn(day, options)) {
     throw this.errors.recordAlreadyExists();
   }
 }

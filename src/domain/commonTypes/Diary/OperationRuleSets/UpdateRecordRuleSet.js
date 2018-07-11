@@ -19,7 +19,10 @@ export class UpdateRecordRuleSet extends BaseOperationRuleSet {
     newRecordRuleWrapper(recordAlreadyExists),
     {
       predicate: isInLimitedScope,
-      false: [recordHasEqualNeightbors, newRecordRuleWrapper(recordDuplicate)],
+      onFalse: [
+        recordHasEqualNeightbors,
+        newRecordRuleWrapper(recordDuplicate),
+      ],
     },
   ];
 }

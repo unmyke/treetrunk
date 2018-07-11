@@ -20,35 +20,29 @@ const day6 = new Day({ value: new Date('2017.06.20') });
 const day7 = new Day({ value: new Date('2017.07.20') });
 const day8 = new Day({ value: new Date('2017.08.20') });
 const day9 = new Day({ value: new Date('2017.09.20') });
-
+//started diary records  without
+const record1 = new MockRecord({ value: 8, day: day5 });
+const record2 = new MockRecord({ value: 6, day: day6 });
+const record3 = new MockRecord({ value: 8, day: day8 });
+const records = [record1, record2, record3];
 const closeValue = new MockRecord({ value: 'close' });
-
-const record1 = new MockRecord({ value: 1, day: day1 });
-const record2 = new MockRecord({ value: 2, day: day2 });
-const closeRecord = new MockRecord({ value: closeValue, day: day4 });
-const record3 = new MockRecord({ value: 3, day: day7 });
-
-const records = [record1, record2, closeRecord, record3];
-// add
-const recordWithSameDay1 = new MockRecord({ value: 4, day: record3.day });
-const recordWithSameValue = new MockRecord({ value: record3.value, day: day7 });
-
-const nonExistentRecord = new MockRecord({
-  value: 5,
-  day: day5,
+const closeRecord = new MockRecord({ value: closeValue, day: day3 });
+const pastRecord1 = new MockRecord({ value: 1, day: day1 });
+const allRecords = [pastRecord1, closeRecord, record1, record2, record3];
+// add & update
+const newRecordWithSameDay1 = new MockRecord({ value: 2, day: record2.day });
+const newRecordWithSameValue = new MockRecord({
+  value: record2.value,
+  day: day7,
 });
-const pastRecord = new MockRecord({ value: 5, day: day3 });
-
-const forgottenRecord = new MockRecord({ value: 5, day: day6 });
-const newRecord = new MockRecord({ value: 5, day: day9 });
-
-//update
-const recordWithSameDay2 = new MockRecord({ value: 9, day: newRecord.day });
-
-const plannedRecord1 = new MockRecord({ value: newRecord.value, day: day8 });
-const plannedRecord2 = new MockRecord({ value: record3.value, day: day8 });
-const plannedRecord3 = new MockRecord({ value: 8, day: day8 });
-
+//add
+const newPastRecord2 = new MockRecord({ value: 2, day: day2 });
+const newFirstRecord = new MockRecord({ value: 4, day: day4 });
+const newMidRecord = new MockRecord({ value: 7, day: day7 });
+const newLastRecord = new MockRecord({ value: 9, day: day9 });
+//delete
+const nonExistentRecord = new MockRecord({ value: 5, day: day5 });
+const nonExistentPastRecord = new MockRecord({ value: 5, day: day2 });
 let diary;
 let result;
 
@@ -127,6 +121,7 @@ describe('Domain :: lib :: Diary', () => {
 
       test('should leave diary not started', () => {
         expect(diary.isStarted).toBe(false);
+        expect(diary.state).toBe('new');
       });
 
       test('should leave records unchanged', () => {
@@ -149,7 +144,7 @@ describe('Domain :: lib :: Diary', () => {
 
     describe('#updateRecord', () => {
       beforeEach(() => {
-        result = diary.updateRecord({ record: record1, newRecord: record2 });
+        result = diary.updateRecord({ record: record1, newRecord: record1 });
       });
 
       test('should return unsuccessful result', () => {
@@ -257,7 +252,7 @@ describe('Domain :: lib :: Diary', () => {
       context('when diary is closed', () => {
         beforeEach(() => {
           diary.setRecords({
-            newRecords: [record1, record2, closeRecord],
+            newRecords: [record1, record1, closeRecord],
           });
           result = diary.addCloseRecord(day5);
         });
@@ -340,7 +335,7 @@ describe('Domain :: lib :: Diary', () => {
       describe('when diary is closed', () => {
         beforeEach(() => {
           diary.setRecords({
-            newRecords: [record1, record2, closeRecord],
+            newRecords: [record1, record1, closeRecord],
           });
           result = diary.deleteRecord();
         });
@@ -356,11 +351,11 @@ describe('Domain :: lib :: Diary', () => {
 
         test('should restore records', () => {
           expect(diary.hasRecords).toBe(true);
-          expect(diary.records).toEqual([record1, record2]);
+          expect(diary.records).toEqual([record1, record1]);
         });
 
         test('should restore record value', () => {
-          expect(diary.recordValue).toBe(record2.value);
+          expect(diary.recordValue).toBe(record1.value);
         });
 
         test('should restore start day', () => {
@@ -414,7 +409,7 @@ describe('Domain :: lib :: Diary', () => {
       context('when diary is closed', () => {
         beforeEach(() => {
           diary.setRecords({
-            newRecords: [record1, record2, closeRecord],
+            newRecords: [record1, record1, closeRecord],
           });
         });
 
@@ -495,22 +490,22 @@ describe('Domain :: lib :: Diary', () => {
     });
 
     context('when initialized', () => {
-      test('should have diary not closed', () => {
+      test('should not be closed', () => {
         expect(diary.isStarted).toBe(true);
-        expect(diary.isClosed).toBe(false);
+        expect(diary.state).toBe('started');
       });
 
-      test('should have records filled', () => {
+      test('should have records', () => {
         expect(diary.hasRecords).toBe(true);
-        expect(diary.records).toEqual([record3]);
+        expect(diary.records).toEqual([record2, record3]);
       });
 
-      test('should have record value not undefined', () => {
+      test('should have record value', () => {
         expect(diary.recordValue).toBe(record3.value);
       });
 
       test('should have start day', () => {
-        expect(diary.startDay).toBe(record3.day);
+        expect(diary.startDay).toBe(record2.day);
       });
 
       test('should have close day undefined', () => {
@@ -537,8 +532,7 @@ describe('Domain :: lib :: Diary', () => {
 
         test('should leave records unchanged', () => {
           expect(diary.hasRecords).toBe(true);
-          expect(diary.records).toEqual([record3]);
-          expect(diary.records).toHaveLength(1);
+          expect(diary.records).toEqual([record2, record3]);
         });
 
         test('should leave record value unchanged', () => {
@@ -546,7 +540,7 @@ describe('Domain :: lib :: Diary', () => {
         });
 
         test('should leave start day unchanged', () => {
-          expect(diary.startDay).toBe(record3.day);
+          expect(diary.startDay).toBe(record2.day);
         });
 
         test('should leave close day unchanged', () => {
@@ -570,12 +564,17 @@ describe('Domain :: lib :: Diary', () => {
           expect(diary.isStarted).toBe(true);
         });
 
+        test('should leave records unchanged', () => {
+          expect(diary.hasRecords).toBe(true);
+          expect(diary.records).toEqual([record2, record3]);
+        });
+
         test('should leave record value unchanged', () => {
           expect(diary.recordValue).toBe(record3.value);
         });
 
         test('should leave start day unchanged', () => {
-          expect(diary.startDay).toBe(record3.day);
+          expect(diary.startDay).toBe(record2.day);
         });
 
         test('should leave close day unchanged', () => {
@@ -601,51 +600,15 @@ describe('Domain :: lib :: Diary', () => {
 
         test('should leave records unchanged', () => {
           expect(diary.hasRecords).toBe(true);
-          expect(diary.records).toEqual([record3]);
-          expect(diary.records).toHaveLength(1);
-        });
-
-        test('should leave record value unchanged', () => {
-          expect(diary.recordValue).toBeUndefined(records[3].value);
-        });
-
-        test('should leave start day unchanged', () => {
-          expect(diary.startDay).toBeUndefined(records[0].day);
-        });
-
-        test('should leave close day unchanged', () => {
-          expect(diary._closeDay).toBeUndefined();
-        });
-      });
-
-      context('when passed record sooner than last record', () => {
-        beforeEach(() => {
-          result = diary.addRecord({ record: forgottenRecord });
-        });
-
-        test('should return successful result', () => {
-          expect(result).toEqual({
-            done: true,
-            error: null,
-          });
-        });
-
-        test('should leave diary started', () => {
-          expect(diary.isStarted).toBe(true);
-        });
-
-        test('should change records', () => {
-          expect(diary.hasRecords).toBe(true);
-          expect(diary.records).toEqual([forgottenRecord, record3]);
-          expect(diary.records).toHaveLength(2);
+          expect(diary.records).toEqual([record2, record3]);
         });
 
         test('should leave record value unchanged', () => {
           expect(diary.recordValue).toBe(record3.value);
         });
 
-        test('should change start day as needed', () => {
-          expect(diary.startDay).toBe(forgottenRecord.day);
+        test('should leave start day unchanged', () => {
+          expect(diary.startDay).toBe(record2.day);
         });
 
         test('should leave close day unchanged', () => {
@@ -653,38 +616,100 @@ describe('Domain :: lib :: Diary', () => {
         });
       });
 
-      context('when passed record later than last record', () => {
-        beforeEach(() => {
-          result = diary.addRecord({ record: newRecord });
-        });
+      context('when passed new record', () => {
+        context('sooner than first record', () => {
+          beforeEach(() => {
+            result = diary.addRecord({ record: forgottenRecord });
+          });
 
-        test('should return successful result', () => {
-          expect(result).toEqual({
-            done: true,
-            error: null,
+          test('should return successful result', () => {
+            expect(result).toEqual({ done: true, error: null });
+          });
+
+          test('should leave diary started', () => {
+            expect(diary.isStarted).toBe(true);
+          });
+
+          test('should change records', () => {
+            expect(diary.hasRecords).toBe(true);
+            expect(diary.records).toEqual([forgottenRecord, record2, record3]);
+          });
+
+          test('should leave record value unchanged', () => {
+            expect(diary.recordValue).toBe(record3.value);
+          });
+
+          test('should change start day', () => {
+            expect(diary.startDay).toBe(forgottenRecord.day);
+          });
+
+          test('should leave close day unchanged', () => {
+            expect(diary._closeDay).toBeUndefined();
           });
         });
 
-        test('should leave diary started', () => {
-          expect(diary.isStarted).toBe(true);
-        });
+        context('later than first record', () => {
+          context('sooner than last record', () => {
+            beforeEach(() => {
+              result = diary.addRecord({ record: newRecord });
+            });
 
-        test('should change records', () => {
-          expect(diary.hasRecords).toBe(true);
-          expect(diary.records).toEqual([record3, newRecord]);
-          expect(diary.records).toHaveLength(2);
-        });
+            test('should return successful result', () => {
+              expect(result).toEqual({ done: true, error: null });
+            });
 
-        test('should change record value', () => {
-          expect(diary.recordValue).toBe(newRecord.value);
-        });
+            test('should leave diary started', () => {
+              expect(diary.isStarted).toBe(true);
+            });
 
-        test('should leave start day unchanged', () => {
-          expect(diary.startDay).toBe(record3.day);
-        });
+            test('should change records', () => {
+              expect(diary.hasRecords).toBe(true);
+              expect(diary.records).toEqual([record2, newRecord, record3]);
+            });
 
-        test('should leave close day unchanged', () => {
-          expect(diary._closeDay).toBe(record3.day);
+            test('should leave record value unchanged', () => {
+              expect(diary.recordValue).toBe(record3.value);
+            });
+
+            test('should leave start day unchanged', () => {
+              expect(diary.startDay).toBe(record2.day);
+            });
+
+            test('should leave close day unchanged', () => {
+              expect(diary._closeDay).toBeUndefined();
+            });
+          });
+
+          context('later than last record', () => {
+            beforeEach(() => {
+              result = diary.addRecord({ record: lastRecord });
+            });
+
+            test('should return successful result', () => {
+              expect(result).toEqual({ done: true, error: null });
+            });
+
+            test('should leave diary started', () => {
+              expect(diary.isStarted).toBe(true);
+            });
+
+            test('should change records', () => {
+              expect(diary.hasRecords).toBe(true);
+              expect(diary.records).toEqual([record2, record3, lastRecord]);
+            });
+
+            test('should change record value', () => {
+              expect(diary.recordValue).toBe(lastRecord.value);
+            });
+
+            test('should leave start day unchanged', () => {
+              expect(diary.startDay).toBe(record2.day);
+            });
+
+            test('should leave close day unchanged', () => {
+              expect(diary._closeDay).toBeUndefined();
+            });
+          });
         });
       });
     });
@@ -710,11 +735,11 @@ describe('Domain :: lib :: Diary', () => {
 
         test('should leave records unchanged', () => {
           expect(diary.hasRecords).toBe(false);
-          expect(diary.records).toEqual([record3]);
+          expect(diary.records).toEqual([record2]);
         });
 
         test('should leave start day unchanged', () => {
-          expect(diary.startDay).toBeUndefined(record3.day);
+          expect(diary.startDay).toBeUndefined(record2.day);
         });
 
         test('should leave close day unchanged', () => {
@@ -739,7 +764,7 @@ describe('Domain :: lib :: Diary', () => {
 
         context('when next and previous record values are similar', () => {
           beforeEach(() => {
-            result = diary.deleteRecord({ record: record3 });
+            result = diary.deleteRecord({ record: record2 });
           });
 
           test('should return unsuccessful result', () => {
@@ -759,7 +784,7 @@ describe('Domain :: lib :: Diary', () => {
             expect(diary.hasRecords).toBe(true);
             expect(diary.records).toEqual([
               forgottenRecord,
-              record3,
+              record2,
               newRecord,
             ]);
           });
@@ -792,11 +817,11 @@ describe('Domain :: lib :: Diary', () => {
 
           test('should change records', () => {
             expect(diary.hasRecords).toBe(true);
-            expect(diary.records).toEqual([forgottenRecord, record3]);
+            expect(diary.records).toEqual([forgottenRecord, record2]);
           });
 
           test('should change record value as needed', () => {
-            expect(diary.recordValue).toBe(record3.value);
+            expect(diary.recordValue).toBe(record2.value);
           });
 
           test('should leave start day unchanged as needed', () => {
@@ -807,7 +832,7 @@ describe('Domain :: lib :: Diary', () => {
 
       context('when passed record of closed diary', () => {
         beforeEach(() => {
-          result = diary.deleteRecord({ record: record2 });
+          result = diary.deleteRecord({ record: record1 });
         });
 
         test('should return unsuccessful result', () => {
@@ -825,15 +850,15 @@ describe('Domain :: lib :: Diary', () => {
 
         test('should leave records unchanged', () => {
           expect(diary.hasRecords).toBe(true);
-          expect(diary.records).toEqual([record3]);
+          expect(diary.records).toEqual([record2]);
         });
 
         test('should leave record value unchanged', () => {
-          expect(diary.recordValue).toBe(record3.value);
+          expect(diary.recordValue).toBe(record2.value);
         });
 
         test('should leave start day unchanged', () => {
-          expect(diary.startDay).toBe(record3.day);
+          expect(diary.startDay).toBe(record2.day);
         });
 
         test('should leave close day unchanged', () => {
@@ -867,15 +892,15 @@ describe('Domain :: lib :: Diary', () => {
 
         test('should leave records unchanged', () => {
           expect(diary.hasRecords).toBe(false);
-          expect(diary.records).toEqual([record3]);
+          expect(diary.records).toEqual([record2]);
         });
 
         test('should leave record value unchanged', () => {
-          expect(diary.recordValue).toBe(record3.value);
+          expect(diary.recordValue).toBe(record2.value);
         });
 
         test('should leave start day unchanged', () => {
-          expect(diary.startDay).toBe(record3.day);
+          expect(diary.startDay).toBe(record2.day);
         });
 
         test('should leave close day unchanged', () => {
@@ -901,7 +926,7 @@ describe('Domain :: lib :: Diary', () => {
         context('when diary already have record at updated day', () => {
           beforeEach(() => {
             result = diary.updateRecord({
-              record: record3,
+              record: record2,
               newRecord: recordWithSameDay2,
             });
           });
@@ -924,17 +949,17 @@ describe('Domain :: lib :: Diary', () => {
             expect(diary.hasRecords).toBe(true);
             expect(diary.records).toEqual([
               forgottenRecord,
-              record3,
+              record2,
               newRecord,
             ]);
           });
 
           test('should leave record value unchanged', () => {
-            expect(diary.recordValue).toBe(record3.value);
+            expect(diary.recordValue).toBe(record2.value);
           });
 
           test('should leave start day unchanged', () => {
-            expect(diary.startDay).toBe(record3.day);
+            expect(diary.startDay).toBe(record2.day);
           });
 
           test('should leave close day unchanged', () => {
@@ -946,7 +971,7 @@ describe('Domain :: lib :: Diary', () => {
           context('when new value is similar', () => {
             beforeEach(() => {
               result = diary.updateRecord({
-                record: record3,
+                record: record2,
                 newRecord: plannedRecord1,
               });
             });
@@ -969,17 +994,17 @@ describe('Domain :: lib :: Diary', () => {
               expect(diary.hasRecords).toBe(true);
               expect(diary.records).toEqual([
                 forgottenRecord,
-                record3,
+                record2,
                 newRecord,
               ]);
             });
 
             test('should leave record value unchanged', () => {
-              expect(diary.recordValue).toBe(record3.value);
+              expect(diary.recordValue).toBe(record2.value);
             });
 
             test('should leave start day unchanged', () => {
-              expect(diary.startDay).toBe(record3.day);
+              expect(diary.startDay).toBe(record2.day);
             });
 
             test('should leave close day unchanged', () => {
@@ -990,7 +1015,7 @@ describe('Domain :: lib :: Diary', () => {
           context('when new value leave unchanged or different', () => {
             beforeEach(() => {
               result = diary.updateRecord({
-                record: record3,
+                record: record2,
                 newRecord: plannedRecord2,
               });
             });
@@ -1044,7 +1069,7 @@ describe('Domain :: lib :: Diary', () => {
               expect(diary.hasRecords).toBe(true);
               expect(diary.records).toEqual([
                 forgottenRecord,
-                record3,
+                record2,
                 newRecord,
               ]);
               expect(diary.records).toHaveLength(3);
@@ -1070,7 +1095,7 @@ describe('Domain :: lib :: Diary', () => {
             test('should change records', () => {
               expect(diary.hasRecords).toBe(true);
               expect(diary.records).toEqual([
-                record3,
+                record2,
                 plannedRecord3,
                 newRecord,
               ]);
@@ -1078,7 +1103,7 @@ describe('Domain :: lib :: Diary', () => {
             });
 
             test('should change start day', () => {
-              expect(diary.startDay).toBe(record3.day);
+              expect(diary.startDay).toBe(record2.day);
             });
 
             test('should change record value of updated record', () => {
@@ -1097,7 +1122,7 @@ describe('Domain :: lib :: Diary', () => {
       context('when change record of closed diary', () => {
         beforeEach(() => {
           result = diary.updateRecord({
-            record: record2,
+            record: record1,
             newRecord: newRecord,
           });
         });
@@ -1114,7 +1139,7 @@ describe('Domain :: lib :: Diary', () => {
 
         test('should leave records unchanged', () => {
           expect(diary.hasRecords).toBe(true);
-          expect(diary.records).toEqual([record3]);
+          expect(diary.records).toEqual([record2]);
           expect(diary.records).toHaveLength(0);
         });
       });
@@ -1175,15 +1200,15 @@ describe('Domain :: lib :: Diary', () => {
 
         test('should leave records unchanged', () => {
           expect(diary.hasRecords).toBe(true);
-          expect(diary.records).toEqual([record3]);
+          expect(diary.records).toEqual([record2]);
         });
 
         test('should leave record value unchanged', () => {
-          expect(diary.recordValue).toBe(record3.value);
+          expect(diary.recordValue).toBe(record2.value);
         });
 
         test('should leave start day unchanged', () => {
-          expect(diary.startDay).toBe(record3.day);
+          expect(diary.startDay).toBe(record2.day);
         });
 
         test('should leave close day unchanged', () => {
@@ -1212,15 +1237,15 @@ describe('Domain :: lib :: Diary', () => {
 
       test('should leave records unchanged', () => {
         expect(diary.hasRecords).toBe(true);
-        expect(diary.records).toEqual([record3]);
+        expect(diary.records).toEqual([record2]);
       });
 
       test('should leave record value unchanged', () => {
-        expect(diary.recordValue).toBe(record3.value);
+        expect(diary.recordValue).toBe(record2.value);
       });
 
       test('should leave start day unchanged', () => {
-        expect(diary.startDay).toBe(record3.day);
+        expect(diary.startDay).toBe(record2.day);
       });
 
       test('should leave close day unchanged', () => {
@@ -1248,15 +1273,15 @@ describe('Domain :: lib :: Diary', () => {
 
       test('should leave records unchanged', () => {
         expect(diary.hasRecords).toBe(true);
-        expect(diary.records).toEqual([record3]);
+        expect(diary.records).toEqual([record2]);
       });
 
       test('should leave record value unchanged', () => {
-        expect(diary.recordValue).toBe(record3.value);
+        expect(diary.recordValue).toBe(record2.value);
       });
 
       test('should leave start day unchanged', () => {
-        expect(diary.startDay).toBe(record3.day);
+        expect(diary.startDay).toBe(record2.day);
       });
 
       test('should leave close day unchanged', () => {

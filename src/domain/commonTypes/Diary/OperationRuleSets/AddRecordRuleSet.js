@@ -1,10 +1,14 @@
 import { BaseOperationRuleSet } from './BaseOperationRuleSet';
 import {
-  diaryClosed,
-  recordAlreadyExists,
-  recordDuplicate,
+  mustNotBeClosedAtRecordDay,
+  recordMustNotExists,
+  recordMustNotDuplicate,
 } from './OperationRules';
 
 export class AddRecordRuleSet extends BaseOperationRuleSet {
-  static ruleSet = [diaryClosed, recordAlreadyExists, recordDuplicate];
+  static ruleSet = [
+    mustNotBeClosedAtRecordDay,
+    recordMustNotExists,
+    recordMustNotDuplicate,
+  ];
 }

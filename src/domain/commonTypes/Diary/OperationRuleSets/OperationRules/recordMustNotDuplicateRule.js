@@ -1,4 +1,7 @@
-export function recordDuplicateRule({ record: { value, day } }, options = {}) {
+export function recordMustNotDuplicateRule(
+  { record: { value, day } },
+  options = {}
+) {
   const prevRecord = this.operatee.getPrevRecordAt(day, options);
   const nextRecord = this.operatee.getNextRecordAt(day, options);
 

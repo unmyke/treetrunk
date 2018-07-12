@@ -1,10 +1,14 @@
 import { BaseOperationRuleSet } from './BaseOperationRuleSet';
 import {
-  diaryClosed,
-  recordNotFound,
-  recordHasEqualNeightbors,
+  mustNotBeClosedAtRecordDay,
+  recordMustExists,
+  recordMustNotHasEqualNeightbors,
 } from './OperationRules';
 
 export class DeleteRecordRuleSet extends BaseOperationRuleSet {
-  static ruleSet = [diaryClosed, recordNotFound, recordHasEqualNeightbors];
+  static ruleSet = [
+    mustNotBeClosedAtRecordDay,
+    recordMustExists,
+    recordMustNotHasEqualNeightbors,
+  ];
 }

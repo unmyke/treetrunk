@@ -1,5 +1,13 @@
-import { diaryClosedRule as diaryClosed } from './diaryClosedRule';
-import { recordAlreadyExistsRule as recordAlreadyExists } from './recordAlreadyExistsRule';
-import { recordDuplicateRule as recordDuplicate } from './recordDuplicateRule';
+import { diaryMustBeNotClosedRule as diaryMustBeNotClosed } from './diaryMustBeNotClosedRule';
+import { recordMustExistsRule as recordMustExists } from './recordMustExistsRule';
+import { recordMustNotDuplicateRule as recordMustNotDuplicate } from './recordMustNotDuplicateRule';
+import { recordMustNotExistsRule as recordMustNotExists } from './recordMustNotExistsRule';
+import { recordMustNotHasEqualNeightborsRule as recordMustNotHasEqualNeightbors } from './recordMustNotHasEqualNeightborsRule';
 
-export { diaryClosed, recordAlreadyExists, recordDuplicate };
+export {
+  diaryMustBeNotClosed,
+  recordMustExists,
+  recordMustNotDuplicate,
+  recordMustNotExists,
+  recordMustNotHasEqualNeightbors,
+};

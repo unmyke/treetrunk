@@ -1,4 +1,4 @@
-export function recordHasEqualNeightborsRule({ record }, options = {}) {
+export function recordMustNotHasEqualNeightborsRule({ record }, options = {}) {
   const prevRecord = this.operatee.getPrevRecord(record, options);
   const nextRecord = this.operatee.getNextRecord(record, options);
 

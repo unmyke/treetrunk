@@ -1,4 +1,4 @@
-export function recordNotFoundRule({ record }, options) {
+export function recordMustExistsRule({ record }, options) {
   if (!this.operatee.hasRecord(record, options)) {
     throw this.errors.recordNotFound();
   }

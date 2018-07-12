@@ -1,28 +1,28 @@
 import { BaseOperationRuleSet } from './BaseOperationRuleSet';
-import { newRecordRuleWrapper } from './_lib';
+import { newRecordRuleWrapper, makeCondition } from './_lib';
 
 import {
-  diaryClosed,
-  recordNotFound,
-  recordAlreadyExists,
-  recordHasEqualNeightbors,
-  recordDuplicate,
+  diaryMustBeNotClosed,
+  recordMustExists,
+  recordMustNotExists,
+  recordMustNotHasEqualNeightbors,
+  recordMustNotDuplicate,
 } from './OperationRules';
 
 import { isInLimitedScope } from './OperationPredicates';
 
 export class UpdateRecordRuleSet extends BaseOperationRuleSet {
   static ruleSet = [
-    diaryClosed,
-    recordNotFound,
-    newRecordRuleWrapper(diaryClosed),
-    newRecordRuleWrapper(recordAlreadyExists),
-    {
+    diaryMustBeNotClosed,
+    recordMustExists,
+    makeCondition({
       predicate: isInLimitedScope,
       onFalse: [
-        recordHasEqualNeightbors,
-        newRecordRuleWrapper(recordDuplicate),
+        recordMustNotHasEqualNeightbors,
+        newRecordRuleWrapper(recordMustNotExists),
       ],
-    },
+    }),
+    newRecordRuleWrapper(diaryMustBeNotClosed),
+    newRecordRuleWrapper(recordMustNotDuplicate),
   ];
 }

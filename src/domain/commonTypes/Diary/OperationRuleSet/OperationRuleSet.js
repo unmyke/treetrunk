@@ -1,9 +1,6 @@
-import { errors } from '../../../errors';
-
-export class BaseOperationRuleSet {
+export class OperationRuleSet {
   constructor({ operatee }) {
     this.operatee = operatee;
-    this.errors = errors;
   }
 
   check(args) {

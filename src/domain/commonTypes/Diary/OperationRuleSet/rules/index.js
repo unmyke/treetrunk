@@ -1,19 +1,19 @@
-import { setRuleSetItemsType } from '../_lib';
+import { DiaryMustBeNotClosedRule as DiaryMustBeNotClosed } from './DiaryMustBeNotClosedRule';
+import { RecordMustExistsRule as RecordMustExists } from './RecordMustExistsRule';
+import { RecordMustNotDuplicateRule as RecordMustNotDuplicate } from './RecordMustNotDuplicateRule';
+import { RecordMustNotExistsRule as RecordMustNotExists } from './RecordMustNotExistsRule';
+import { RecordMustNotHasEqualNeightborsRule as RecordMustNotHasEqualNeightbors } from './RecordMustNotHasEqualNeightborsRule';
 
-import { diaryMustBeNotClosedRule as diaryMustBeNotClosed } from './diaryMustBeNotClosedRule';
-import { recordMustExistsRule as recordMustExists } from './recordMustExistsRule';
-import { recordMustNotDuplicateRule as recordMustNotDuplicate } from './recordMustNotDuplicateRule';
-import { recordMustNotExistsRule as recordMustNotExists } from './recordMustNotExistsRule';
-import { recordMustNotHasEqualNeightborsRule as recordMustNotHasEqualNeightbors } from './recordMustNotHasEqualNeightborsRule';
+const diaryMustBeNotClosed = new DiaryMustBeNotClosed();
+const recordMustExists = new RecordMustExists();
+const recordMustNotDuplicate = new RecordMustNotDuplicate();
+const recordMustNotExists = new RecordMustNotExists();
+const recordMustNotHasEqualNeightbors = new RecordMustNotHasEqualNeightbors();
 
-const rules = setRuleSetItemsType(
-  {
-    diaryMustBeNotClosed,
-    recordMustExists,
-    recordMustNotDuplicate,
-    recordMustNotExists,
-    recordMustNotHasEqualNeightbors,
-  },
-  'rule'
-);
-export { rules };
+export {
+  diaryMustBeNotClosed,
+  recordMustExists,
+  recordMustNotDuplicate,
+  recordMustNotExists,
+  recordMustNotHasEqualNeightbors,
+};

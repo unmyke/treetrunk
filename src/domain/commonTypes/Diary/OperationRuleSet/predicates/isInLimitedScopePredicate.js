@@ -1,6 +1,6 @@
-export function isInLimitedScopePredicate({ record, newRecord }) {
-  const prevRecordForRecord = this.operatee.getPrevRecord(record);
-  const prevRecordForNewRecord = this.operatee.getPrevRecord(newRecord, {
+export function isInLimitedScopePredicate(operatee, { record, newRecord }) {
+  const prevRecordForRecord = operatee.getPrevRecord(record);
+  const prevRecordForNewRecord = operatee.getPrevRecord(newRecord, {
     excludeRecords: [record],
   });
 

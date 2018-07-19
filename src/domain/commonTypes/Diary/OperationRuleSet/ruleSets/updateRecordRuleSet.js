@@ -1,4 +1,4 @@
-import { newRecordRuleWrapper, makeCondition } from '../_lib';
+import { newRecordRuleWrapper, makeCondition } from './_lib';
 
 import {
   diaryMustBeNotClosed,
@@ -6,9 +6,9 @@ import {
   recordMustNotExists,
   recordMustNotHasEqualNeightbors,
   recordMustNotDuplicate,
-} from './rules';
+} from '../rules';
 
-import { isInLimitedScope } from './predicates';
+import { isInLimitedScope } from '../predicates';
 
 export const updateRecordRuleSet = [
   diaryMustBeNotClosed,

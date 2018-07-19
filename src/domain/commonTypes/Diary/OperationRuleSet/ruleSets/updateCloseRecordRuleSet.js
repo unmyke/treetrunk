@@ -1,3 +1,3 @@
-import {} from './Rules';
+import {} from '../rules';
 
 export const updateCloseRecordRuleSet = [];

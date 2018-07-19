@@ -2,7 +2,7 @@ import {
   mustNotBeClosedAtRecordDay,
   recordMustNotExists,
   recordMustNotDuplicate,
-} from './Rules';
+} from '../rules';
 
 export const addRecordRuleSet = [
   mustNotBeClosedAtRecordDay,

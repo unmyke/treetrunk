@@ -1,6 +1,9 @@
+import { ruleSets } from './ruleSets';
+
 export class OperationRuleSet {
-  constructor({ operatee }) {
+  constructor({ operatee, operationName }) {
     this.operatee = operatee;
+    this.ruleSet = ruleSets[operationName];
   }
 
   check(args) {

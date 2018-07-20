@@ -6,7 +6,7 @@ import { OperationRule } from '../OperationRule';
 //   }
 // }
 
-export class DiaryMustNotBeClosedAtRecordDay extends OperationRule {
+export class DiaryMustBeNotClosedRule extends OperationRule {
   execute(
     operatee,
     {

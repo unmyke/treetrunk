@@ -1,16 +1,41 @@
-import { upperFirst } from 'lodash';
 import { applyFSM, getDayComparator } from '../../_lib/BaseMethods';
 import { BaseClass, BaseValue } from '../../_lib';
 import { Day } from '../Day';
-import * as OperationRuleSet from './OperationRuleSet';
+import { OperationRuleSet } from './OperationRuleSet';
 
 export class Diary extends BaseClass {
   // states
-  static states = {
-    NEW: 'new',
-    STARTED: 'started',
-    CLOSED: 'closed',
-  };
+  static get states() {
+    return {
+      NEW: 'new',
+      STARTED: 'started',
+      CLOSED: 'closed',
+    };
+  }
+
+  static get operations() {
+    return {
+      SET_RECORDS: 'setRecords',
+      ADD_RECORD: 'addRecord',
+      DELETE_RECORD: 'deleteRecord',
+      UPDATE_RECORD: 'updateRecord',
+      ADD_CLOSE_RECORD: 'addCloseRecord',
+      DELETE_CLOSE_RECORD: 'deleteCloseRecord',
+      UPDATE_CLOSE_RECORD: 'updateCloseRecord',
+    };
+  }
+
+  static get operationsToCheck() {
+    return [
+      this.operations.SET_RECORDS,
+      this.operations.ADD_RECORD,
+      this.operations.DELETE_RECORD,
+      this.operations.UPDATE_RECORD,
+      this.operations.ADD_CLOSE_RECORD,
+      this.operations.DELETE_CLOSE_RECORD,
+      this.operations.UPDATE_CLOSE_RECORD,
+    ];
+  }
 
   // FSM
   static fsm = {
@@ -18,55 +43,58 @@ export class Diary extends BaseClass {
 
     transitions: [
       {
-        name: 'setRecords',
+        name: Diary.operations.SET_RECORDS,
         from: Diary.states.NEW,
         to: Diary.states.NEW,
       },
       {
-        name: 'addRecord',
+        name: Diary.operations.ADD_RECORD,
         from: [Diary.states.NEW, Diary.states.STARTED, Diary.states.CLOSED],
         to: Diary.states.STARTED,
       },
       {
-        name: 'deleteRecord',
+        name: Diary.operations.DELETE_RECORD,
         from: Diary.states.STARTED,
         to: Diary.deleteRecordTrasitionCondition,
       },
       {
-        name: 'updateRecord',
+        name: Diary.operations.UPDATE_RECORD,
         from: Diary.states.STARTED,
         to: Diary.states.STARTED,
       },
       {
-        name: 'addCloseRecord',
+        name: Diary.operations.ADD_CLOSE_RECORD,
         from: Diary.states.STARTED,
         to: Diary.states.CLOSED,
       },
       {
-        name: 'deleteCloseRecord',
+        name: Diary.operations.DELETE_CLOSE_RECORD,
         from: Diary.states.CLOSED,
         to: Diary.states.STARTED,
       },
       {
-        name: 'updateCloseRecord',
+        name: Diary.operations.UPDATE_CLOSE_RECORD,
         from: Diary.states.CLOSED,
         to: Diary.states.CLOSED,
       },
     ],
 
     methods: {
-      // before operations
       onBeforeTransition({ transition }, args) {
-        const operationRuleSet = new OperationRuleSet({
-          operatee: this,
-          operationName: transition,
-        });
+        if (this.constructor.operationsToCheck.includes(transition)) {
+          const operationRuleSet = new OperationRuleSet({
+            operatee: this,
+            operationName: transition,
+          });
 
-        operationRuleSet.check(args);
+          operationRuleSet.check(args);
+        }
       },
 
       onTransition({ transition }, args) {
-        this[`_${transition}`](args);
+        if (this.constructor.operationsToCheck.includes(transition)) {
+          this[`_${transition}`](args);
+        }
       },
     },
   };
@@ -320,9 +348,6 @@ export class Diary extends BaseClass {
 
   _getRecordOn(day = new Day(), options = {}) {
     return this._records.find((record) => {
-      // console.log(record);
-      // console.log(options);
-
       return (
         record.day.equals(day) &&
         !(
@@ -393,6 +418,8 @@ export class Diary extends BaseClass {
   //  private methods
 
   //    primitive oparations
+  _init() {}
+
   _setRecords({ newRecords }) {
     this._records = [...newRecords];
   }

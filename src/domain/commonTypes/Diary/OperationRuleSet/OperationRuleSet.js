@@ -1,4 +1,4 @@
-import { ruleSets } from './ruleSets';
+import * as ruleSets from './ruleSets';
 
 export class OperationRuleSet {
   constructor({ operatee, operationName }) {

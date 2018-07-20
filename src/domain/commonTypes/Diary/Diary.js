@@ -2,7 +2,7 @@ import { upperFirst } from 'lodash';
 import { applyFSM, getDayComparator } from '../../_lib/BaseMethods';
 import { BaseClass, BaseValue } from '../../_lib';
 import { Day } from '../Day';
-import * as OperationRuleSets from './OperationRuleSets';
+import * as OperationRuleSet from './OperationRuleSet';
 
 export class Diary extends BaseClass {
   // states
@@ -57,8 +57,10 @@ export class Diary extends BaseClass {
     methods: {
       // before operations
       onBeforeTransition({ transition }, args) {
-        const OperationRuleSet = OperationRuleSets[upperFirst(transition)];
-        const operationRuleSet = new OperationRuleSet({ operatee: this });
+        const operationRuleSet = new OperationRuleSet({
+          operatee: this,
+          operationName: transition,
+        });
 
         operationRuleSet.check(args);
       },

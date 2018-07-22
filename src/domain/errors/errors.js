@@ -36,6 +36,9 @@ export const errors = {
   newPieceRateAlreadyExists: makeError('NEW_PIECE_RATE_ALREADY_EXISTS'),
   newPieceRateDuplicate: makeError('NEW_PIECE_RATE_DUPLICATE'),
 
+  // FSM
+  transitionNotAllowed: makeError('TRANSITION_NOT_ALLOWED'),
+
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),
   // articleNotBanned: makeError('ARTICLE_NOT_BANNED'),

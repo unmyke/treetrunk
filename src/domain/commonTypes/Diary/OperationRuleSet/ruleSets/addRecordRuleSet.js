@@ -1,11 +1,11 @@
 import {
-  mustNotBeClosedAtRecordDay,
+  diaryMustBeNotClosed,
   recordMustNotExists,
   recordMustNotDuplicate,
 } from '../rules';
 
 export const addRecordRuleSet = [
-  mustNotBeClosedAtRecordDay,
+  diaryMustBeNotClosed,
   recordMustNotExists,
   recordMustNotDuplicate,
 ];

@@ -27,6 +27,18 @@ export class Diary extends BaseClass {
 
   static get operationsToCheck() {
     return [
+      // this.operations.SET_RECORDS,
+      this.operations.ADD_RECORD,
+      this.operations.DELETE_RECORD,
+      this.operations.UPDATE_RECORD,
+      this.operations.ADD_CLOSE_RECORD,
+      this.operations.DELETE_CLOSE_RECORD,
+      this.operations.UPDATE_CLOSE_RECORD,
+    ];
+  }
+
+  static get operationsToExecute() {
+    return [
       this.operations.SET_RECORDS,
       this.operations.ADD_RECORD,
       this.operations.DELETE_RECORD,
@@ -45,7 +57,7 @@ export class Diary extends BaseClass {
       {
         name: Diary.operations.SET_RECORDS,
         from: Diary.states.NEW,
-        to: Diary.states.NEW,
+        to: Diary.getRawState,
       },
       {
         name: Diary.operations.ADD_RECORD,
@@ -55,7 +67,7 @@ export class Diary extends BaseClass {
       {
         name: Diary.operations.DELETE_RECORD,
         from: Diary.states.STARTED,
-        to: Diary.deleteRecordTrasitionCondition,
+        to: Diary.getRawState,
       },
       {
         name: Diary.operations.UPDATE_RECORD,
@@ -77,6 +89,14 @@ export class Diary extends BaseClass {
         from: Diary.states.CLOSED,
         to: Diary.states.CLOSED,
       },
+      {
+        name: '_setState',
+        from: Diary.states.NEW,
+        to: (state) => {
+          console.log(`inside _setState: ${this.state}`);
+          return state;
+        },
+      },
     ],
 
     methods: {
@@ -92,7 +112,7 @@ export class Diary extends BaseClass {
       },
 
       onTransition({ transition }, args) {
-        if (this.constructor.operationsToCheck.includes(transition)) {
+        if (this.constructor.operationsToExecute.includes(transition)) {
           this[`_${transition}`](args);
         }
       },
@@ -100,16 +120,19 @@ export class Diary extends BaseClass {
   };
 
   //
-  static deleteRecordTrasitionCondition() {
+  static getRawState() {
     switch (true) {
       case this._records.length === 0:
-        return 'new';
+        // console.log(`next state: ${Diary.states.NEW}`);
+        return Diary.states.NEW;
 
       case this.records.length === 0:
-        return 'closed';
+        // console.log(`next state: ${Diary.states.CLOSED}`);
+        return Diary.states.CLOSED;
 
       default:
-        return 'stared';
+        // console.log(`next state: ${Diary.states.STARTED}`);
+        return Diary.states.STARTED;
     }
   }
 
@@ -216,6 +239,10 @@ export class Diary extends BaseClass {
 
   isClosedAt(day = new Day()) {
     return !!this.getCloseDayAt(day);
+  }
+
+  isDiaryClosedAt(day = new Day()) {
+    return !!this._getNextCloseDayAt(day);
   }
 
   //   private metods
@@ -418,8 +445,6 @@ export class Diary extends BaseClass {
   //  private methods
 
   //    primitive oparations
-  _init() {}
-
   _setRecords({ newRecords }) {
     this._records = [...newRecords];
   }
@@ -455,5 +480,9 @@ export class Diary extends BaseClass {
   _updateCloseRecord({ day }) {
     this._deleteCloseRecord();
     this._addCloseRecord({ day });
+  }
+
+  _getRawState() {
+    return Diary.getRawState.call(this);
   }
 }

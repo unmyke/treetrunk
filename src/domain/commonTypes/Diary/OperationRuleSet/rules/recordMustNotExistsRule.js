@@ -8,8 +8,8 @@ import { OperationRule } from '../OperationRule';
 
 export class RecordMustNotExistsRule extends OperationRule {
   execute(
+    operatee,
     {
-      operatee,
       record: { day },
     },
     options = {}

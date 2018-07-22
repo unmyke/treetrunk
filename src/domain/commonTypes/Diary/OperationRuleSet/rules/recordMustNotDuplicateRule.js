@@ -17,8 +17,8 @@ import { OperationRule } from '../OperationRule';
 
 export class RecordMustNotDuplicateRule extends OperationRule {
   execute(
+    operatee,
     {
-      operatee,
       record: { value, day },
     },
     options = {}

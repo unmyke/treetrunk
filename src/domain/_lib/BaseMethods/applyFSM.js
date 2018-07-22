@@ -1,5 +1,5 @@
 import StateMachine from 'javascript-state-machine';
-import { makeError, errors } from '../../errors';
+import { errors } from '../../errors';
 
 export const applyFSM = (EntityClass) => {
   StateMachine.factory(EntityClass, {
@@ -17,7 +17,7 @@ export const applyFSM = (EntityClass) => {
     data: EntityClass.fsm.data,
     methods: {
       onInvalidTransition(transition, from, to) {
-        throw makeError({ state: [errors.transitionNotAllowed] });
+        throw errors.transitionNotAllowed();
       },
       ...EntityClass.fsm.methods,
     },

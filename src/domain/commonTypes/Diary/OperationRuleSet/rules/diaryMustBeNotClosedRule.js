@@ -13,7 +13,7 @@ export class DiaryMustBeNotClosedRule extends OperationRule {
       record: { day },
     }
   ) {
-    if (operatee.isClosedAt(day)) {
+    if (operatee.isDiaryClosedAt(day)) {
       throw this.errors.diaryClosed();
     }
   }

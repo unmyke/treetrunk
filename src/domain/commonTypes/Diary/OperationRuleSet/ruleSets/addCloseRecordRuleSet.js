@@ -1,3 +1,6 @@
-import {} from '../rules';
+import { diaryMustBeStarted, diaryMustHasNotRecordsLater } from '../rules';
 
-export const AddCloseRecordRuleSet = [];
+export const addCloseRecordRuleSet = [
+  diaryMustBeStarted,
+  diaryMustHasNotRecordsLater,
+];

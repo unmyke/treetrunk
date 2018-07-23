@@ -1,3 +1,6 @@
-import {} from '../rules';
+import { diaryMustBeClosed, diaryMustHasNotRecordsLater } from '../rules';
 
-export const updateCloseRecordRuleSet = [];
+export const updateCloseRecordRuleSet = [
+  diaryMustBeClosed,
+  diaryMustHasNotRecordsLater,
+];

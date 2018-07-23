@@ -1,11 +1,3 @@
-import {
-  diaryClosed,
-  recordNotFound,
-  recordHasEqualNeightbors,
-} from '../rules';
+import { diaryMustBeClosed } from '../rules';
 
-export const deleteCloseRecordRuleSet = [
-  diaryClosed,
-  recordNotFound,
-  recordHasEqualNeightbors,
-];
+export const deleteCloseRecordRuleSet = [diaryMustBeClosed];

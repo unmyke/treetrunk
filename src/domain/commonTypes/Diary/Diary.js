@@ -54,34 +54,64 @@ export class Diary extends BaseClass {
 
     init: states.INITIALIZED,
     transitions: [
+      // {
+      //   name: transitions.ADD_RECORD,
+      //   from: [states.NEW, states.STARTED, states.CLOSED],
+      //   to: states.STARTED,
+      // },
+      // {
+      //   name: transitions.DELETE_RECORD,
+      //   from: states.STARTED,
+      //   to: Diary.getRawState,
+      // },
+      // {
+      //   name: transitions.UPDATE_RECORD,
+      //   from: states.STARTED,
+      //   to: states.STARTED,
+      // },
+      // {
+      //   name: transitions.ADD_CLOSE_RECORD,
+      //   from: states.STARTED,
+      //   to: states.CLOSED,
+      // },
+      // {
+      //   name: transitions.DELETE_CLOSE_RECORD,
+      //   from: states.CLOSED,
+      //   to: states.STARTED,
+      // },
+      // {
+      //   name: transitions.UPDATE_CLOSE_RECORD,
+      //   from: states.CLOSED,
+      //   to: states.CLOSED,
+      // },
       {
         name: transitions.ADD_RECORD,
-        from: [states.NEW, states.STARTED, states.CLOSED],
+        from: '*',
         to: states.STARTED,
       },
       {
         name: transitions.DELETE_RECORD,
-        from: states.STARTED,
+        from: '*',
         to: Diary.getRawState,
       },
       {
         name: transitions.UPDATE_RECORD,
-        from: states.STARTED,
+        from: '*',
         to: states.STARTED,
       },
       {
         name: transitions.ADD_CLOSE_RECORD,
-        from: states.STARTED,
+        from: '*',
         to: states.CLOSED,
       },
       {
         name: transitions.DELETE_CLOSE_RECORD,
-        from: states.CLOSED,
+        from: '*',
         to: states.STARTED,
       },
       {
         name: transitions.UPDATE_CLOSE_RECORD,
-        from: states.CLOSED,
+        from: '*',
         to: states.CLOSED,
       },
     ],
@@ -309,22 +339,26 @@ export class Diary extends BaseClass {
     const prevCloseDay = this._getPrevCloseDayAt(day);
     const nextCloseDay = this._getNextCloseDayAt(day);
 
-    return this._records.sort(getDayComparator('asc')).filter((record) => {
-      return (
-        !this._isCloseDay(day) &&
-        (prevCloseDay === undefined || record.day > prevCloseDay) &&
-        (nextCloseDay === undefined || record.day < nextCloseDay) &&
-        (options.excludeRecords === undefined ||
-          !this._isExcludedRecord(record, options.excludeRecords))
-      );
-    });
+    const recordsContainsDay = this._records
+      .sort(getDayComparator('asc'))
+      .filter((record) => {
+        return (
+          !this._isCloseDay(day) &&
+          (prevCloseDay === undefined || record.day > prevCloseDay) &&
+          (nextCloseDay === undefined || record.day < nextCloseDay) &&
+          (options.excludeRecords === undefined ||
+            !this._isExcludedRecord(record, options.excludeRecords))
+        );
+      });
+
+    return recordsContainsDay;
   }
 
   _isExcludedRecord(record, recordsToExclude) {
     return (
       recordsToExclude.find((recordToExclude) =>
         recordToExclude.equals(record)
-      ) !== -1
+      ) !== undefined
     );
   }
 

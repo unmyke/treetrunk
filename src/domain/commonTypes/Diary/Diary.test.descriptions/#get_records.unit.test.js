@@ -24,11 +24,11 @@ PostId.quitPostId = closeValue;
 
 describe('Domain :: entities :: Diary :: #diary', () => {
   let diary;
-  beforeEach(() => {
-    diary = new Diary({ RecordClass: Appointment, closeValue });
-  });
 
   context('when diary have no diary', () => {
+    beforeEach(() => {
+      diary = new Diary({ RecordClass: Appointment, closeValue });
+    });
     test('should return empty array', () => {
       expect(diary.records).toEqual([]);
     });
@@ -36,8 +36,10 @@ describe('Domain :: entities :: Diary :: #diary', () => {
 
   context('when diary have diary and not closed', () => {
     beforeEach(() => {
-      diary.setRecords({
-        newRecords: [
+      diary = new Diary({
+        RecordClass: Appointment,
+        closeValue,
+        records: [
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
         ],
@@ -53,8 +55,10 @@ describe('Domain :: entities :: Diary :: #diary', () => {
 
   context('when diary have closed', () => {
     beforeEach(() => {
-      diary.setRecords({
-        newRecords: [
+      diary = new Diary({
+        RecordClass: Appointment,
+        closeValue,
+        records: [
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
           new Appointment({ postId: closeValue, day: day6 }),
@@ -68,8 +72,10 @@ describe('Domain :: entities :: Diary :: #diary', () => {
 
   context('when diary have closed and started again', () => {
     beforeEach(() => {
-      diary.setRecords({
-        newRecords: [
+      diary = new Diary({
+        RecordClass: Appointment,
+        closeValue,
+        records: [
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
           new Appointment({ postId: closeValue, day: day6 }),
@@ -86,8 +92,10 @@ describe('Domain :: entities :: Diary :: #diary', () => {
 
   context('when diary have closed, started again and close again', () => {
     beforeEach(() => {
-      diary.setRecords({
-        newRecords: [
+      diary = new Diary({
+        RecordClass: Appointment,
+        closeValue,
+        records: [
           new Appointment({ postId: value1, day: day2 }),
           new Appointment({ postId: value2, day: day4 }),
           new Appointment({ postId: closeValue, day: day6 }),

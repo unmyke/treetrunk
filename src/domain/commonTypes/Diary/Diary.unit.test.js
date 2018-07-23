@@ -53,16 +53,12 @@ const nonExistentRecord = new MockRecord({
 const newPastRecord = new MockRecord({ value: newValue, day: day2 });
 const nonExistentPastRecord = new MockRecord({
   value: newValue,
-  day: day4,
+  day: day2,
 });
 
 let diary;
 
 describe('Domain :: commonTypes :: Diary', () => {
-  // beforeEach(() => {
-  //   diary = new Diary({ closeValue, RecordClass: MockRecord });
-  // });
-
   context('when diary is new', () => {
     beforeEach(() => {
       diary = new Diary({ closeValue, RecordClass: MockRecord, records: [] });
@@ -85,7 +81,7 @@ describe('Domain :: commonTypes :: Diary', () => {
             diary.deleteRecord({ record: nonExistentRecord });
           } catch (e) {
             expect(e.message).toBe('RECORD_NOT_FOUND');
-            expect(diary._records).toEqual();
+            expect(diary._records).toHaveLength(0);
           }
         });
       });
@@ -101,7 +97,7 @@ describe('Domain :: commonTypes :: Diary', () => {
             });
           } catch (e) {
             expect(e.message).toBe('RECORD_NOT_FOUND');
-            expect(diary._records).toEqual();
+            expect(diary._records).toHaveLength(0);
           }
         });
       });
@@ -114,7 +110,7 @@ describe('Domain :: commonTypes :: Diary', () => {
             diary.addCloseRecord({ day: day1 });
           } catch (e) {
             expect(e.message).toBe('DIARY_NOT_STARTED');
-            expect(diary._records).toEqual();
+            expect(diary._records).toHaveLength(0);
           }
         });
       });
@@ -126,7 +122,7 @@ describe('Domain :: commonTypes :: Diary', () => {
           diary.deleteCloseRecord();
         } catch (e) {
           expect(e.message).toBe('DIARY_NOT_CLOSED');
-          expect(diary._records).toEqual();
+          expect(diary._records).toHaveLength(0);
         }
       });
     });
@@ -138,7 +134,7 @@ describe('Domain :: commonTypes :: Diary', () => {
             diary.updateCloseRecord({ day: day1 });
           } catch (e) {
             expect(e.message).toBe('DIARY_NOT_CLOSED');
-            expect(diary._records).toEqual();
+            expect(diary._records).toHaveLength(0);
           }
         });
       });
@@ -279,7 +275,6 @@ describe('Domain :: commonTypes :: Diary', () => {
           expect(diary._records).toEqual([
             pastRecord1,
             closeRecord,
-            record1,
             record2,
             record3,
           ]);
@@ -330,11 +325,11 @@ describe('Domain :: commonTypes :: Diary', () => {
 
       context('when passed record with equal value', () => {
         test('should throw exception and leave records unchanged', () => {
+          diary.updateRecord({
+            record: record3,
+            newRecord: newRecordWithSameValue,
+          });
           try {
-            diary.updateRecord({
-              record: record3,
-              newRecord: newRecordWithSameValue,
-            });
           } catch (e) {
             expect(e.message).toBe('RECORD_DUPLICATE');
             expect(diary._records).toEqual([
@@ -380,7 +375,7 @@ describe('Domain :: commonTypes :: Diary', () => {
               pastRecord1,
               closeRecord,
               record1,
-              record2,
+              newRecord,
               record3,
             ]);
           });
@@ -608,7 +603,6 @@ describe('Domain :: commonTypes :: Diary', () => {
 
       context('when passed day is later than latest record day', () => {
         test('should update close day', () => {
-          console.log(diary.state);
           diary.updateCloseRecord({ day: day9 });
           expect(diary._records).toEqual([pastRecord1, closeRecord]);
         });

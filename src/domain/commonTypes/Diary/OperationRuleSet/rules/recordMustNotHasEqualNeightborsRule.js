@@ -23,7 +23,7 @@ export class RecordMustNotHasEqualNeightborsRule extends OperationRule {
       nextRecord !== undefined &&
       operatee.compareRecordValues(prevRecord, nextRecord)
     ) {
-      throw errors.recordHasEqualNeightbors();
+      throw this.errors.recordHasEqualNeightbors();
     }
   }
 }

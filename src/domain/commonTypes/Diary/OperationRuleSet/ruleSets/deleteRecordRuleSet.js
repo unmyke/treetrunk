@@ -1,11 +1,11 @@
 import {
-  mustNotBeClosedAtRecordDay,
+  diaryMustBeNotClosed,
   recordMustExists,
   recordMustNotHasEqualNeightbors,
 } from '../rules';
 
 export const deleteRecordRuleSet = [
-  mustNotBeClosedAtRecordDay,
+  diaryMustBeNotClosed,
   recordMustExists,
   recordMustNotHasEqualNeightbors,
 ];

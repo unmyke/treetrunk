@@ -1,107 +1,112 @@
 import { applyFSM, getDayComparator } from '../../_lib/BaseMethods';
+import { errors } from '../../errors';
 import { BaseClass, BaseValue } from '../../_lib';
 import { Day } from '../Day';
 import { OperationRuleSet } from './OperationRuleSet';
 
+const states = {
+  INITIALIZED: 'initialized',
+  NEW: 'new',
+  STARTED: 'started',
+  CLOSED: 'closed',
+};
+
+const transitions = {
+  SET_STATE: '_setState',
+  ADD_RECORD: 'addRecord',
+  DELETE_RECORD: 'deleteRecord',
+  UPDATE_RECORD: 'updateRecord',
+  ADD_CLOSE_RECORD: 'addCloseRecord',
+  DELETE_CLOSE_RECORD: 'deleteCloseRecord',
+  UPDATE_CLOSE_RECORD: 'updateCloseRecord',
+};
+
 export class Diary extends BaseClass {
-  // states
-  static get states() {
-    return {
-      NEW: 'new',
-      STARTED: 'started',
-      CLOSED: 'closed',
-    };
-  }
-
-  static get operations() {
-    return {
-      SET_RECORDS: 'setRecords',
-      ADD_RECORD: 'addRecord',
-      DELETE_RECORD: 'deleteRecord',
-      UPDATE_RECORD: 'updateRecord',
-      ADD_CLOSE_RECORD: 'addCloseRecord',
-      DELETE_CLOSE_RECORD: 'deleteCloseRecord',
-      UPDATE_CLOSE_RECORD: 'updateCloseRecord',
-    };
-  }
-
-  static get operationsToCheck() {
-    return [
-      // this.operations.SET_RECORDS,
-      this.operations.ADD_RECORD,
-      this.operations.DELETE_RECORD,
-      this.operations.UPDATE_RECORD,
-      this.operations.ADD_CLOSE_RECORD,
-      this.operations.DELETE_CLOSE_RECORD,
-      this.operations.UPDATE_CLOSE_RECORD,
-    ];
-  }
-
-  static get operationsToExecute() {
-    return [
-      this.operations.SET_RECORDS,
-      this.operations.ADD_RECORD,
-      this.operations.DELETE_RECORD,
-      this.operations.UPDATE_RECORD,
-      this.operations.ADD_CLOSE_RECORD,
-      this.operations.DELETE_CLOSE_RECORD,
-      this.operations.UPDATE_CLOSE_RECORD,
-    ];
-  }
-
   // FSM
-  static fsm = {
-    init: 'new',
 
+  static get transitionsToCheck() {
+    return [
+      transitions.ADD_RECORD,
+      transitions.DELETE_RECORD,
+      transitions.UPDATE_RECORD,
+      transitions.ADD_CLOSE_RECORD,
+      transitions.DELETE_CLOSE_RECORD,
+      transitions.UPDATE_CLOSE_RECORD,
+    ];
+  }
+
+  static fsm = {
+    getRawState: function(diary) {
+      switch (true) {
+        case diary._records.length === 0:
+          // console.log(`next state: ${states.NEW}`);
+          return states.NEW;
+
+        case diary.records.length === 0:
+          // console.log(`next state: ${states.CLOSED}`);
+          return states.CLOSED;
+
+        default:
+          // console.log(`next state: ${states.STARTED}`);
+          return states.STARTED;
+      }
+    },
+
+    init: states.INITIALIZED,
     transitions: [
       {
-        name: Diary.operations.SET_RECORDS,
-        from: Diary.states.NEW,
+        name: transitions.ADD_RECORD,
+        from: [states.NEW, states.STARTED, states.CLOSED],
+        to: states.STARTED,
+      },
+      {
+        name: transitions.DELETE_RECORD,
+        from: states.STARTED,
         to: Diary.getRawState,
       },
       {
-        name: Diary.operations.ADD_RECORD,
-        from: [Diary.states.NEW, Diary.states.STARTED, Diary.states.CLOSED],
-        to: Diary.states.STARTED,
+        name: transitions.UPDATE_RECORD,
+        from: states.STARTED,
+        to: states.STARTED,
       },
       {
-        name: Diary.operations.DELETE_RECORD,
-        from: Diary.states.STARTED,
-        to: Diary.getRawState,
+        name: transitions.ADD_CLOSE_RECORD,
+        from: states.STARTED,
+        to: states.CLOSED,
       },
       {
-        name: Diary.operations.UPDATE_RECORD,
-        from: Diary.states.STARTED,
-        to: Diary.states.STARTED,
+        name: transitions.DELETE_CLOSE_RECORD,
+        from: states.CLOSED,
+        to: states.STARTED,
       },
       {
-        name: Diary.operations.ADD_CLOSE_RECORD,
-        from: Diary.states.STARTED,
-        to: Diary.states.CLOSED,
-      },
-      {
-        name: Diary.operations.DELETE_CLOSE_RECORD,
-        from: Diary.states.CLOSED,
-        to: Diary.states.STARTED,
-      },
-      {
-        name: Diary.operations.UPDATE_CLOSE_RECORD,
-        from: Diary.states.CLOSED,
-        to: Diary.states.CLOSED,
-      },
-      {
-        name: '_setState',
-        from: Diary.states.NEW,
-        to: (state) => {
-          console.log(`inside _setState: ${this.state}`);
-          return state;
-        },
+        name: transitions.UPDATE_CLOSE_RECORD,
+        from: states.CLOSED,
+        to: states.CLOSED,
       },
     ],
 
     methods: {
+      onInvalidTransition(transition, from, to) {
+        switch (transition) {
+          case transitions.DELETE_RECORD:
+            switch (from) {
+              case states.NEW:
+                throw errors.recordNotFound();
+                break;
+              case states.CLOSED:
+                throw errors.diaryClosed();
+                break;
+            }
+            break;
+
+          default:
+            break;
+        }
+      },
+
       onBeforeTransition({ transition }, args) {
-        if (this.constructor.operationsToCheck.includes(transition)) {
+        if (this.constructor.transitionsToCheck.includes(transition)) {
           const operationRuleSet = new OperationRuleSet({
             operatee: this,
             operationName: transition,
@@ -112,40 +117,22 @@ export class Diary extends BaseClass {
       },
 
       onTransition({ transition }, args) {
-        if (this.constructor.operationsToExecute.includes(transition)) {
+        if (this.constructor.transitionsToCheck.includes(transition)) {
           this[`_${transition}`](args);
         }
       },
     },
   };
 
-  //
-  static getRawState() {
-    switch (true) {
-      case this._records.length === 0:
-        // console.log(`next state: ${Diary.states.NEW}`);
-        return Diary.states.NEW;
-
-      case this.records.length === 0:
-        // console.log(`next state: ${Diary.states.CLOSED}`);
-        return Diary.states.CLOSED;
-
-      default:
-        // console.log(`next state: ${Diary.states.STARTED}`);
-        return Diary.states.STARTED;
-    }
-  }
-
-  constructor({ closeValue, RecordClass }) {
+  constructor({ closeValue, RecordClass, records = [] }) {
     super();
 
     this.closeValue = closeValue;
     this.RecordClass = RecordClass;
 
-    this._records = [];
+    this._records = records;
 
-    applyFSM(this.constructor);
-    this._fsm();
+    this._runFSM();
   }
 
   // getters
@@ -333,6 +320,14 @@ export class Diary extends BaseClass {
     });
   }
 
+  _isExcludedRecord(record, recordsToExclude) {
+    return (
+      recordsToExclude.find((recordToExclude) =>
+        recordToExclude.equals(record)
+      ) !== -1
+    );
+  }
+
   _isCloseDay(day = new Day()) {
     const record = this._getRecordOn(day);
 
@@ -470,7 +465,7 @@ export class Diary extends BaseClass {
       day,
     });
 
-    this._add({ record: closeRecord });
+    this._addRecord({ record: closeRecord });
   }
 
   _deleteCloseRecord() {
@@ -481,8 +476,6 @@ export class Diary extends BaseClass {
     this._deleteCloseRecord();
     this._addCloseRecord({ day });
   }
-
-  _getRawState() {
-    return Diary.getRawState.call(this);
-  }
 }
+
+applyFSM(Diary);

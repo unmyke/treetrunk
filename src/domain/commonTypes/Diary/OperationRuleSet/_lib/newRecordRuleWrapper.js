@@ -1,8 +1,13 @@
-export const newRecordRuleWrapper = (rule) => ({ record, newRecord }) => {
-  rule(
-    { record: newRecord },
-    {
-      excludeRecords: [record],
-    }
-  );
+export const newRecordRuleWrapper = (rule) => {
+  return {
+    execute: function(operatee, { record, newRecord }) {
+      rule.execute(
+        operatee,
+        { record: newRecord },
+        {
+          excludeRecords: [record],
+        }
+      );
+    },
+  };
 };

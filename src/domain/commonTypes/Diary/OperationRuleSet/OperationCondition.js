@@ -12,8 +12,10 @@ export class OperationCondition extends BaseOperationRuleSetItem {
   execute(operatee, args) {
     const predicateResult = this.predicate(operatee, args);
 
-    this[`on${upperFirst(predicateResult)}`].forEach((ruleSetItem) => {
-      ruleSetItem.execute(operatee, args);
-    });
+    if (this[`on${upperFirst(predicateResult)}`]) {
+      this[`on${upperFirst(predicateResult)}`].forEach((ruleSetItem) => {
+        ruleSetItem.execute(operatee, args);
+      });
+    }
   }
 }

@@ -1,21 +1,30 @@
+import { errors } from '../../../../errors';
 import { OperationRule } from '../OperationRule';
 
-// export function recordMustNotExistsRule({ record: { day } }, options = {}) {
-//   if (this.operatee.hasRecordOn(day, options)) {
-//     throw this.errors.recordAlreadyExists();
-//   }
-// }
-
 export class RecordMustNotExistsRule extends OperationRule {
+  constructor({
+    error = errors.recordAlreadyExists,
+    recordArgName = 'record',
+    excludeRecordArgName,
+  } = {}) {
+    super({ error });
+    this.recordArgName = recordArgName;
+    this.excludeRecordArgName = excludeRecordArgName;
+  }
+
   execute(
     operatee,
     {
-      record: { day },
-    },
-    options = {}
+      [this.recordArgName]: { day },
+      [this.excludeRecordArgName]: excludeRecord,
+    }
   ) {
-    if (operatee.hasRecordOn(day, options)) {
-      throw this.errors.recordAlreadyExists();
+    const excludeRecordsOption = {
+      excludeRecords: [excludeRecord],
+    };
+
+    if (operatee.hasRecordOn(day, excludeRecordsOption)) {
+      throw this.error();
     }
   }
 }

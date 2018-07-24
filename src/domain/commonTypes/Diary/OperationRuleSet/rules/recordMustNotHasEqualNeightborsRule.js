@@ -1,29 +1,34 @@
+import { errors } from '../../../../errors';
 import { OperationRule } from '../OperationRule';
 
-// export function recordMustNotHasEqualNeightborsRule({ record }, options = {}) {
-//   const prevRecord = this.operatee.getPrevRecord(record, options);
-//   const nextRecord = this.operatee.getNextRecord(record, options);
-
-//   if (
-//     prevRecord !== undefined &&
-//     nextRecord !== undefined &&
-//     this.operatee.compareRecordValues(prevRecord, nextRecord)
-//   ) {
-//     throw errors.recordHasEqualNeightbors();
-//   }
-// }
-
 export class RecordMustNotHasEqualNeightborsRule extends OperationRule {
-  execute(operatee, { record }, options = {}) {
-    const prevRecord = operatee.getPrevRecord(record, options);
-    const nextRecord = operatee.getNextRecord(record, options);
+  constructor({
+    error = errors.recordHasEqualNeightbors,
+    recordArgName = 'record',
+    excludeRecordArgName,
+  } = {}) {
+    super({ error });
+    this.recordArgName = recordArgName;
+    this.excludeRecordArgName = excludeRecordArgName;
+  }
+
+  execute(
+    operatee,
+    { [this.recordArgName]: record, [this.excludeRecordArgName]: excludeRecord }
+  ) {
+    const excludeRecordsOption = {
+      excludeRecords: [excludeRecord],
+    };
+
+    const prevRecord = operatee.getPrevRecord(record, excludeRecordsOption);
+    const nextRecord = operatee.getNextRecord(record, excludeRecordsOption);
 
     if (
       prevRecord !== undefined &&
       nextRecord !== undefined &&
       operatee.compareRecordValues(prevRecord, nextRecord)
     ) {
-      throw this.errors.recordHasEqualNeightbors();
+      throw this.error();
     }
   }
 }

@@ -1,15 +1,13 @@
+import { errors } from '../../../../errors';
 import { OperationRule } from '../OperationRule';
 
-// export function diaryMustNotBeStartedAtRecordDay({ record: { day } }) {
-//   if (this.operatee.isStartedAt(day)) {
-//     throw this.errors.diaryStarted();
-//   }
-// }
-
 export class DiaryMustBeStartedRule extends OperationRule {
+  constructor({ error = errors.diaryNotStarted } = {}) {
+    super({ error });
+  }
   execute(operatee) {
     if (!operatee.isStarted) {
-      throw this.errors.diaryNotStarted();
+      throw this.error();
     }
   }
 }

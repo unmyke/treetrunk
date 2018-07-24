@@ -1,20 +1,20 @@
+import { errors } from '../../../../errors';
 import { OperationRule } from '../OperationRule';
 
-// export function diaryMustNotBeClosedAtRecordDay({ record: { day } }) {
-//   if (this.operatee.isClosedAt(day)) {
-//     throw this.errors.diaryClosed();
-//   }
-// }
-
 export class DiaryMustBeNotClosedRule extends OperationRule {
+  constructor({ error = errors.diaryClosed, recordArgName = 'record' } = {}) {
+    super({ error });
+    this.recordArgName = recordArgName;
+  }
+
   execute(
     operatee,
     {
-      record: { day },
+      [this.recordArgName]: { day },
     }
   ) {
     if (operatee.isDiaryClosedAt(day)) {
-      throw this.errors.diaryClosed();
+      throw this.error();
     }
   }
 }

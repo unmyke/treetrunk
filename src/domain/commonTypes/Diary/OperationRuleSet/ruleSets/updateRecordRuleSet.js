@@ -1,13 +1,31 @@
 import { errors } from '../../../../errors';
-import { newRecordRuleWrapper } from '../_lib';
 
 import {
-  diaryMustBeNotClosed,
-  recordMustExists,
-  recordMustNotExists,
-  recordMustNotHasEqualNeightbors,
-  recordMustNotDuplicate,
-} from '../rules';
+  DiaryMustBeNotClosed,
+  RecordMustExists,
+  RecordMustNotExists,
+  RecordMustNotHasEqualNeightbors,
+  RecordMustNotDuplicate,
+} from '../Rules';
+
+const diaryMustBeNotClosed = new DiaryMustBeNotClosed();
+const diaryMustBeNotClosedForNewRecord = new DiaryMustBeNotClosed({
+  recordArgName: 'newRecord',
+});
+
+const recordMustExists = new RecordMustExists();
+const recordMustNotExists = new RecordMustNotExists({
+  recordArgName: 'newRecord',
+  excludeRecordArgName: 'record',
+});
+const recordMustNotHasEqualNeightbors = new RecordMustNotHasEqualNeightbors({
+  error: errors.isInLimitedScope,
+});
+
+const recordMustNotDuplicate = new RecordMustNotDuplicate({
+  recordArgName: 'newRecord',
+  excludeRecordArgName: 'record',
+});
 
 import { isInLimitedScope } from '../predicates';
 import { OperationCondition } from '../OperationCondition';
@@ -17,11 +35,8 @@ export const updateRecordRuleSet = [
   recordMustExists,
   new OperationCondition({
     predicate: isInLimitedScope,
-    onFalse: [
-      recordMustNotHasEqualNeightbors,
-      newRecordRuleWrapper(recordMustNotExists),
-    ],
+    onFalse: [recordMustNotHasEqualNeightbors, recordMustNotExists],
   }),
-  newRecordRuleWrapper(diaryMustBeNotClosed),
-  newRecordRuleWrapper(recordMustNotDuplicate),
+  diaryMustBeNotClosedForNewRecord,
+  recordMustNotDuplicate,
 ];

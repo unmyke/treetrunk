@@ -1,3 +1,3 @@
-import {} from '../rules';
+import {} from '../Rules';
 
 export const setRecordsRuleSet = [];

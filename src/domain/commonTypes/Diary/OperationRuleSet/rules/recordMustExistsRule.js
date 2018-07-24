@@ -1,15 +1,18 @@
+import { errors } from '../../../../errors';
 import { OperationRule } from '../OperationRule';
 
-// export function recordMustExistsRule({ record }, options) {
-//   if (!this.operatee.hasRecord(record, options)) {
-//     throw this.errors.recordNotFound();
-//   }
-// }
-
 export class RecordMustExistsRule extends OperationRule {
-  execute(operatee, { record }, options) {
-    if (!operatee.hasRecord(record, options)) {
-      throw this.errors.recordNotFound();
+  constructor({
+    error = errors.recordNotFound,
+    recordArgName = 'record',
+  } = {}) {
+    super({ error });
+    this.recordArgName = recordArgName;
+  }
+
+  execute(operatee, { [this.recordArgName]: record }) {
+    if (!operatee.hasRecord(record, this._options)) {
+      throw this.error();
     }
   }
 }

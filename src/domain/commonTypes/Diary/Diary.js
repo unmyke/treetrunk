@@ -357,7 +357,7 @@ export class Diary extends BaseClass {
   _isExcludedRecord(record, recordsToExclude) {
     return (
       recordsToExclude.find((recordToExclude) =>
-        recordToExclude.equals(record)
+        record.equals(recordToExclude)
       ) !== undefined
     );
   }

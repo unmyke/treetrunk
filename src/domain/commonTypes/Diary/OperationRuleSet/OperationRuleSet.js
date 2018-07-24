@@ -7,8 +7,10 @@ export class OperationRuleSet {
   }
 
   check(args) {
-    this.ruleSet.forEach((ruleSetItem) => {
-      ruleSetItem.execute(this.operatee, args);
-    });
+    if (this.ruleSet !== undefined) {
+      this.ruleSet.forEach((ruleSetItem) => {
+        ruleSetItem.execute(this.operatee, args);
+      });
+    }
   }
 }

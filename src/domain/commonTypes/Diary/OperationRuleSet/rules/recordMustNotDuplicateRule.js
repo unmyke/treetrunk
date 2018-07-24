@@ -10,17 +10,16 @@ export class RecordMustNotDuplicateRule extends OperationRule {
     this.recordArgName = recordArgName;
   }
 
-  execute(operatee, args) {
-    const {
+  execute(
+    operatee,
+    {
       [this.recordArgName]: { value, day },
-    } = args;
-
-    const excludeRecordsOption = {};
-    if (this._options.excludeRecordArgName) {
-      excludeRecordsOption.excludeRecords = [
-        args[this._options.excludeRecordArgName],
-      ];
+      [this.excludeRecordArgName]: excludeRecord,
     }
+  ) {
+    const excludeRecordsOption = {
+      excludeRecords: [excludeRecord],
+    };
 
     const prevRecord = operatee.getPrevRecordAt(day, excludeRecordsOption);
     const nextRecord = operatee.getNextRecordAt(day, excludeRecordsOption);

@@ -1,4 +1,3 @@
-// import { initRuleSet as init } from './initRuleSet';
 import { setRecordsRuleSet as setRecords } from './setRecordsRuleSet';
 import { addRecordRuleSet as addRecord } from './addRecordRuleSet';
 import { deleteRecordRuleSet as deleteRecord } from './deleteRecordRuleSet';
@@ -8,7 +7,6 @@ import { deleteCloseRecordRuleSet as deleteCloseRecord } from './deleteCloseReco
 import { updateCloseRecordRuleSet as updateCloseRecord } from './updateCloseRecordRuleSet';
 
 export {
-  // init,
   addRecord,
   deleteRecord,
   setRecords,

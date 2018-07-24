@@ -5,14 +5,12 @@ import { Day } from '../Day';
 import { OperationRuleSet } from './OperationRuleSet';
 
 const states = {
-  INITIALIZED: 'initialized',
   NEW: 'new',
   STARTED: 'started',
   CLOSED: 'closed',
 };
 
 const transitions = {
-  SET_STATE: '_setState',
   ADD_RECORD: 'addRecord',
   DELETE_RECORD: 'deleteRecord',
   UPDATE_RECORD: 'updateRecord',
@@ -23,17 +21,6 @@ const transitions = {
 
 export class Diary extends BaseClass {
   // FSM
-
-  static get transitionsToCheck() {
-    return [
-      transitions.ADD_RECORD,
-      transitions.DELETE_RECORD,
-      transitions.UPDATE_RECORD,
-      transitions.ADD_CLOSE_RECORD,
-      transitions.DELETE_CLOSE_RECORD,
-      transitions.UPDATE_CLOSE_RECORD,
-    ];
-  }
 
   static fsm = {
     getRawState: function(diary) {
@@ -54,66 +41,66 @@ export class Diary extends BaseClass {
 
     init: states.INITIALIZED,
     transitions: [
-      // {
-      //   name: transitions.ADD_RECORD,
-      //   from: [states.NEW, states.STARTED, states.CLOSED],
-      //   to: states.STARTED,
-      // },
-      // {
-      //   name: transitions.DELETE_RECORD,
-      //   from: states.STARTED,
-      //   to: Diary.getRawState,
-      // },
-      // {
-      //   name: transitions.UPDATE_RECORD,
-      //   from: states.STARTED,
-      //   to: states.STARTED,
-      // },
-      // {
-      //   name: transitions.ADD_CLOSE_RECORD,
-      //   from: states.STARTED,
-      //   to: states.CLOSED,
-      // },
-      // {
-      //   name: transitions.DELETE_CLOSE_RECORD,
-      //   from: states.CLOSED,
-      //   to: states.STARTED,
-      // },
-      // {
-      //   name: transitions.UPDATE_CLOSE_RECORD,
-      //   from: states.CLOSED,
-      //   to: states.CLOSED,
-      // },
       {
         name: transitions.ADD_RECORD,
-        from: '*',
+        from: [states.NEW, states.STARTED, states.CLOSED],
         to: states.STARTED,
       },
       {
         name: transitions.DELETE_RECORD,
-        from: '*',
+        from: states.STARTED,
         to: Diary.getRawState,
       },
       {
         name: transitions.UPDATE_RECORD,
-        from: '*',
+        from: states.STARTED,
         to: states.STARTED,
       },
       {
         name: transitions.ADD_CLOSE_RECORD,
-        from: '*',
+        from: states.STARTED,
         to: states.CLOSED,
       },
       {
         name: transitions.DELETE_CLOSE_RECORD,
-        from: '*',
+        from: states.CLOSED,
         to: states.STARTED,
       },
       {
         name: transitions.UPDATE_CLOSE_RECORD,
-        from: '*',
+        from: states.CLOSED,
         to: states.CLOSED,
       },
+      // {
+      //   name: transitions.ADD_RECORD,
+      //   from: '*',
+      //   to: states.STARTED,
+      // },
+      // {
+      //   name: transitions.DELETE_RECORD,
+      //   from: '*',
+      //   to: Diary.getRawState,
+      // },
+      // {
+      //   name: transitions.UPDATE_RECORD,
+      //   from: '*',
+      //   to: states.STARTED,
+      // },
+      // {
+      //   name: transitions.ADD_CLOSE_RECORD,
+      //   from: '*',
+      //   to: states.CLOSED,
+      // },
+      // {
+      //   name: transitions.DELETE_CLOSE_RECORD,
+      //   from: '*',
+      //   to: states.STARTED,
+      // },
+      // {
+      //   name: transitions.UPDATE_CLOSE_RECORD,
+      //   from: '*',
+      //   to: states.CLOSED,
+      // },
     ],
 
     methods: {
@@ -136,7 +123,7 @@ export class Diary extends BaseClass {
       },
 
       onBeforeTransition({ transition }, args) {
-        if (this.constructor.transitionsToCheck.includes(transition)) {
+        if (Object.values(transitions).includes(transition)) {
           const operationRuleSet = new OperationRuleSet({
             operatee: this,
             operationName: transition,
@@ -147,7 +134,7 @@ export class Diary extends BaseClass {
       },
 
       onTransition({ transition }, args) {
-        if (this.constructor.transitionsToCheck.includes(transition)) {
+        if (Object.values(transitions).includes(transition)) {
           this[`_${transition}`](args);
         }
       },
@@ -474,10 +461,6 @@ export class Diary extends BaseClass {
   //  private methods
 
   //    primitive oparations
-  _setRecords({ newRecords }) {
-    this._records = [...newRecords];
-  }
-
   _addRecord({ record }) {
     this._records = [...this._records, record];
   }

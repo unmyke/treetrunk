@@ -14,7 +14,7 @@ const diaryMustBeNotClosedForNewRecord = new DiaryMustBeNotClosed({
 });
 
 const recordMustExists = new RecordMustExists();
-const recordMustNotExists = new RecordMustNotExists({
+const newRecordMustNotExists = new RecordMustNotExists({
   recordArgName: 'newRecord',
   excludeRecordArgName: 'record',
 });
@@ -22,7 +22,7 @@ const recordMustNotHasEqualNeightbors = new RecordMustNotHasEqualNeightbors({
   error: errors.isInLimitedScope,
 });
 
-const recordMustNotDuplicate = new RecordMustNotDuplicate({
+const newRecordMustNotDuplicate = new RecordMustNotDuplicate({
   recordArgName: 'newRecord',
   excludeRecordArgName: 'record',
 });
@@ -35,8 +35,8 @@ export const updateRecordRuleSet = [
   recordMustExists,
   new OperationCondition({
     predicate: isInLimitedScope,
-    onFalse: [recordMustNotHasEqualNeightbors, recordMustNotExists],
+    onFalse: [recordMustNotHasEqualNeightbors, newRecordMustNotExists],
   }),
   diaryMustBeNotClosedForNewRecord,
-  recordMustNotDuplicate,
+  newRecordMustNotDuplicate,
 ];

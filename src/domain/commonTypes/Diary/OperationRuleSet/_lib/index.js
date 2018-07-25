@@ -1,3 +1,3 @@
-import { newRecordRuleWrapper } from './newRecordRuleWrapper';
+import { makeExcludeRecordOption } from './makeExcludeRecordOption';
 
-export { newRecordRuleWrapper };
+export { makeExcludeRecordOption };

@@ -1,5 +1,6 @@
 import { errors } from '../../../../errors';
 import { OperationRule } from '../OperationRule';
+import { makeExcludeRecordOption } from '../_lib';
 
 export class RecordMustNotHasEqualNeightborsRule extends OperationRule {
   constructor({
@@ -17,7 +18,7 @@ export class RecordMustNotHasEqualNeightborsRule extends OperationRule {
     { [this.recordArgName]: record, [this.excludeRecordArgName]: excludeRecord }
   ) {
     const excludeRecordsOption = {
-      excludeRecords: [excludeRecord],
+      excludeRecords: makeExcludeRecordOption(excludeRecord),
     };
 
     const prevRecord = operatee.getPrevRecord(record, excludeRecordsOption);
@@ -26,7 +27,7 @@ export class RecordMustNotHasEqualNeightborsRule extends OperationRule {
     if (
       prevRecord !== undefined &&
       nextRecord !== undefined &&
-      operatee.compareRecordValues(prevRecord, nextRecord)
+      operatee.compareRecordValues(prevRecord.value, nextRecord.value)
     ) {
       throw this.error();
     }

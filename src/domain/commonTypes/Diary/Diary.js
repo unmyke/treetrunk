@@ -48,12 +48,12 @@ export class Diary extends BaseClass {
       },
       {
         name: transitions.DELETE_RECORD,
-        from: states.STARTED,
+        from: [states.STARTED, states.CLOSED],
         to: Diary.getRawState,
       },
       {
         name: transitions.UPDATE_RECORD,
-        from: states.STARTED,
+        from: [states.STARTED, states.CLOSED],
         to: states.STARTED,
       },
       {
@@ -71,36 +71,6 @@ export class Diary extends BaseClass {
         from: states.CLOSED,
         to: states.CLOSED,
       },
-      // {
-      //   name: transitions.ADD_RECORD,
-      //   from: '*',
-      //   to: states.STARTED,
-      // },
-      // {
-      //   name: transitions.DELETE_RECORD,
-      //   from: '*',
-      //   to: Diary.getRawState,
-      // },
-      // {
-      //   name: transitions.UPDATE_RECORD,
-      //   from: '*',
-      //   to: states.STARTED,
-      // },
-      // {
-      //   name: transitions.ADD_CLOSE_RECORD,
-      //   from: '*',
-      //   to: states.CLOSED,
-      // },
-      // {
-      //   name: transitions.DELETE_CLOSE_RECORD,
-      //   from: '*',
-      //   to: states.STARTED,
-      // },
-      // {
-      //   name: transitions.UPDATE_CLOSE_RECORD,
-      //   from: '*',
-      //   to: states.CLOSED,
-      // },
     ],
 
     methods: {
@@ -110,10 +80,39 @@ export class Diary extends BaseClass {
             switch (from) {
               case states.NEW:
                 throw errors.recordNotFound();
-                break;
+            }
+            break;
+
+          case transitions.UPDATE_RECORD:
+            switch (from) {
+              case states.NEW:
+                throw errors.recordNotFound();
               case states.CLOSED:
                 throw errors.diaryClosed();
-                break;
+            }
+            break;
+
+          case transitions.ADD_CLOSE_RECORD:
+            switch (from) {
+              case states.NEW:
+              case states.CLOSED:
+                throw errors.diaryNotStarted();
+            }
+            break;
+
+          case transitions.DELETE_CLOSE_RECORD:
+            switch (from) {
+              case states.NEW:
+              case states.STARTED:
+                throw errors.diaryNotClosed();
+            }
+            break;
+
+          case transitions.UPDATE_CLOSE_RECORD:
+            switch (from) {
+              case states.NEW:
+              case states.STARTED:
+                throw errors.diaryNotClosed();
             }
             break;
 
@@ -310,11 +309,11 @@ export class Diary extends BaseClass {
     );
   }
 
-  _hasRecordsBeforeDay(day = new Day(), options = {}) {
+  hasRecordsBeforeDay(day = new Day(), options = {}) {
     return this._getRecordsBeforeDay(day, options).length !== 0;
   }
 
-  _hasRecordsAfterDay(day = new Day(), options = {}) {
+  hasRecordsAfterDay(day = new Day(), options = {}) {
     return this._getRecordsAfterDay(day, options).length !== 0;
   }
 
@@ -391,6 +390,15 @@ export class Diary extends BaseClass {
 
   _getRecordOn(day = new Day(), options = {}) {
     return this._records.find((record) => {
+      console.log(record.day.equals(day));
+      console.log(options.excludeRecords !== undefined);
+      // console.log(options.excludeRecords.length !== 0);
+      // console.log(
+      //   options.excludeRecords.reduce(
+      //     (isEqual, excludeRecord) => isEqual || record.equal(excludeRecord),
+      //     false
+      //   )
+      // );
       return (
         record.day.equals(day) &&
         !(
@@ -427,11 +435,11 @@ export class Diary extends BaseClass {
   }
 
   //  utils
-  compareRecordValues(record1, record2) {
+  compareRecordValues(value1, value2) {
     return (
-      record1 !== undefined &&
-      record2 !== undefined &&
-      this._compareValues(record1.value, record2.value)
+      value1 !== undefined &&
+      value2 !== undefined &&
+      this._compareValues(value1, value2)
     );
   }
 

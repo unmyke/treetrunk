@@ -1,5 +1,6 @@
 import { errors } from '../../../../errors';
 import { OperationRule } from '../OperationRule';
+import { makeExcludeRecordOption } from '../_lib';
 
 export class RecordMustNotDuplicateRule extends OperationRule {
   constructor({
@@ -18,7 +19,7 @@ export class RecordMustNotDuplicateRule extends OperationRule {
     }
   ) {
     const excludeRecordsOption = {
-      excludeRecords: [excludeRecord],
+      excludeRecords: makeExcludeRecordOption(excludeRecord),
     };
 
     const prevRecord = operatee.getPrevRecordAt(day, excludeRecordsOption);

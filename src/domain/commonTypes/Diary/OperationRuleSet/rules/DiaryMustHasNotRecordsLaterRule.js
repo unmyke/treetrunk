@@ -7,7 +7,7 @@ export class DiaryMustHasNotRecordsLaterRule extends OperationRule {
   }
 
   execute(operatee, { day }) {
-    if (operatee.recordDay > day) {
+    if (operatee.hasRecordsAfterDay(day.prev())) {
       throw this.error();
     }
   }

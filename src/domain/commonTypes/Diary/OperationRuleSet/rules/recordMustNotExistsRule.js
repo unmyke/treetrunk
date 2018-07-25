@@ -1,5 +1,6 @@
 import { errors } from '../../../../errors';
 import { OperationRule } from '../OperationRule';
+import { makeExcludeRecordOption } from '../_lib';
 
 export class RecordMustNotExistsRule extends OperationRule {
   constructor({
@@ -20,9 +21,14 @@ export class RecordMustNotExistsRule extends OperationRule {
     }
   ) {
     const excludeRecordsOption = {
-      excludeRecords: [excludeRecord],
+      excludeRecords: makeExcludeRecordOption(excludeRecord),
     };
 
+    if (this.excludeRecordArgName) {
+      // console.log(`day: ${day.toString()}`);
+      // console.log(excludeRecordsOption.excludeRecords[0].day.toString());
+      // console.log(operatee.hasRecordOn(day, excludeRecordsOption));
+    }
     if (operatee.hasRecordOn(day, excludeRecordsOption)) {
       throw this.error();
     }

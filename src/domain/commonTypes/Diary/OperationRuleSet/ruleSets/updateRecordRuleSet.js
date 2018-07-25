@@ -8,6 +8,9 @@ import {
   RecordMustNotDuplicate,
 } from '../Rules';
 
+import { isInLimitedScope } from '../predicates';
+import { OperationCondition } from '../OperationCondition';
+
 const diaryMustBeNotClosed = new DiaryMustBeNotClosed();
 const diaryMustBeNotClosedForNewRecord = new DiaryMustBeNotClosed({
   recordArgName: 'newRecord',
@@ -19,16 +22,13 @@ const newRecordMustNotExists = new RecordMustNotExists({
   excludeRecordArgName: 'record',
 });
 const recordMustNotHasEqualNeightbors = new RecordMustNotHasEqualNeightbors({
-  error: errors.isInLimitedScope,
+  error: errors.recordHasLimitedScope,
 });
 
 const newRecordMustNotDuplicate = new RecordMustNotDuplicate({
   recordArgName: 'newRecord',
   excludeRecordArgName: 'record',
 });
-
-import { isInLimitedScope } from '../predicates';
-import { OperationCondition } from '../OperationCondition';
 
 export const updateRecordRuleSet = [
   diaryMustBeNotClosed,

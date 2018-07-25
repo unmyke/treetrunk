@@ -25,9 +25,6 @@ export class RecordMustNotExistsRule extends OperationRule {
     };
 
     if (this.excludeRecordArgName) {
-      // console.log(`day: ${day.toString()}`);
-      // console.log(excludeRecordsOption.excludeRecords[0].day.toString());
-      // console.log(operatee.hasRecordOn(day, excludeRecordsOption));
     }
     if (operatee.hasRecordOn(day, excludeRecordsOption)) {
       throw this.error();

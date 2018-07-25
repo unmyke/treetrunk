@@ -26,15 +26,12 @@ export class Diary extends BaseClass {
     getRawState: function(diary) {
       switch (true) {
         case diary._records.length === 0:
-          // console.log(`next state: ${states.NEW}`);
           return states.NEW;
 
         case diary.records.length === 0:
-          // console.log(`next state: ${states.CLOSED}`);
           return states.CLOSED;
 
         default:
-          // console.log(`next state: ${states.STARTED}`);
           return states.STARTED;
       }
     },
@@ -74,7 +71,7 @@ export class Diary extends BaseClass {
     ],
 
     methods: {
-      onInvalidTransition(transition, from, to) {
+      onInvalidTransition(transition, from) {
         switch (transition) {
           case transitions.DELETE_RECORD:
             switch (from) {
@@ -248,9 +245,9 @@ export class Diary extends BaseClass {
     return !!this._getNextCloseDayAt(day);
   }
 
-  //   private metods
   hasRecordOn(day = new Day(), options = {}) {
     const persistedRecord = this._getRecordOn(day, options);
+
     return !!persistedRecord;
   }
 
@@ -261,12 +258,6 @@ export class Diary extends BaseClass {
 
     const persistedRecord = this._getRecordOn(record.day, options);
     return persistedRecord !== undefined && record.equals(persistedRecord);
-  }
-
-  _getRecordAt(day = new Day(), options = {}) {
-    const recordsAt = this.getRecordsAt(day, options);
-
-    return recordsAt[recordsAt.length - 1];
   }
 
   getPrevRecord(record, options = {}) {
@@ -297,6 +288,22 @@ export class Diary extends BaseClass {
     return recordsAfterDay[0];
   }
 
+  hasRecordsBeforeDay(day = new Day(), options = {}) {
+    return this._getRecordsBeforeDay(day, options).length !== 0;
+  }
+
+  hasRecordsAfterDay(day = new Day(), options = {}) {
+    return this._getRecordsAfterDay(day, options).length !== 0;
+  }
+
+  //   private metods
+
+  _getRecordAt(day = new Day(), options = {}) {
+    const recordsAt = this.getRecordsAt(day, options);
+
+    return recordsAt[recordsAt.length - 1];
+  }
+
   _getRecordsBeforeDay(day = new Day(), options = {}) {
     return this._getRecordsContainsDay(day.prev(), options).filter(
       ({ day: currentDay }) => currentDay < day
@@ -307,14 +314,6 @@ export class Diary extends BaseClass {
     return this._getRecordsContainsDay(day.next(), options).filter(
       ({ day: currentDay }) => currentDay > day
     );
-  }
-
-  hasRecordsBeforeDay(day = new Day(), options = {}) {
-    return this._getRecordsBeforeDay(day, options).length !== 0;
-  }
-
-  hasRecordsAfterDay(day = new Day(), options = {}) {
-    return this._getRecordsAfterDay(day, options).length !== 0;
   }
 
   _getRecordsContainsDay(day = new Day(), options = {}) {
@@ -390,25 +389,10 @@ export class Diary extends BaseClass {
 
   _getRecordOn(day = new Day(), options = {}) {
     return this._records.find((record) => {
-      console.log(record.day.equals(day));
-      console.log(options.excludeRecords !== undefined);
-      // console.log(options.excludeRecords.length !== 0);
-      // console.log(
-      //   options.excludeRecords.reduce(
-      //     (isEqual, excludeRecord) => isEqual || record.equal(excludeRecord),
-      //     false
-      //   )
-      // );
       return (
         record.day.equals(day) &&
-        !(
-          options.excludeRecords !== undefined &&
-          options.excludeRecords.length !== 0 &&
-          options.excludeRecords.reduce(
-            (isEqual, excludeRecord) => isEqual || record.equal(excludeRecord),
-            true
-          )
-        )
+        (options.excludeRecords === undefined ||
+          !this._isExcludedRecord(record, options.excludeRecords))
       );
     });
   }

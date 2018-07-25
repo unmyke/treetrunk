@@ -10,67 +10,43 @@ class MockRecord extends BaseValue {
   }
 }
 
+const states = {
+  NEW: 'new',
+  STARTED: 'started',
+  CLOSED: 'closed',
+};
+
 const day1 = new Day({ value: new Date('2017.01.01 00:00:00.000+08:00') });
 const day2 = new Day({ value: new Date('2017.02.01 00:00:00.000+08:00') });
 const day3 = new Day({ value: new Date('2017.03.01 00:00:00.000+08:00') });
 const day4 = new Day({ value: new Date('2017.04.01 00:00:00.000+08:00') });
-const day5 = new Day({ value: new Date('2017.05.01 00:00:00.000+08:00') });
-const day6 = new Day({ value: new Date('2017.06.01 00:00:00.000+08:00') });
-const day7 = new Day({ value: new Date('2017.07.01 00:00:00.000+08:00') });
-const day8 = new Day({ value: new Date('2017.08.01 00:00:00.000+08:00') });
-const day9 = new Day({ value: new Date('2017.09.01 00:00:00.000+08:00') });
-const day = new Day();
 
-const closeValue = 'CloseValue';
-const pastValue1 = 'pastValue1';
+const closeValue = 'closeValue';
 const value1 = 'value1';
 const value2 = 'value2';
-const newValue = 'newValue';
+const value3 = 'value3';
 
-const pastRecord1 = new MockRecord({ value: pastValue1, day: day1 });
-const closeRecord = new MockRecord({ value: closeValue, day: day3 });
-const record1 = new MockRecord({ value: value1, day: day5 });
-const record2 = new MockRecord({ value: value2, day: day7 });
-const record3 = new MockRecord({ value: value1, day: day9 });
-const newRecord = new MockRecord({ value: newValue, day: day8 });
-const newRecordFromScope = new MockRecord({
-  value: newValue,
-  day: day8,
-});
-const newRecordWithSameDay = new MockRecord({
-  value: newValue,
-  day: day5,
-});
-const newRecordWithSameValue = new MockRecord({
-  value: value1,
-  day: day6,
-});
-// const forgottenRecord = new MockRecord({ value: forgottenValue, day: day });
-const nonExistentRecord = new MockRecord({
-  value: newValue,
-  day: day6,
-});
-const newPastRecord = new MockRecord({ value: newValue, day: day2 });
-const nonExistentPastRecord = new MockRecord({
-  value: newValue,
-  day: day2,
-});
+const record1 = new MockRecord({ value: value1, day: day1 });
+const record2 = new MockRecord({ value: value2, day: day3 });
+const record3 = new MockRecord({ value: value3, day: day4 });
+
+const closeRecord1 = new MockRecord({ value: closeValue, day: day2 });
+const closeRecord2 = new MockRecord({ value: closeValue, day: day4 });
 
 let diary;
 
-describe('Domain :: commonTypes :: Diary', () => {
-  context('when diary is new', () => {
+describe('Domain :: commonTypes :: Diary :: # FSM transitions', () => {
+  context('when diary state is new', () => {
     beforeEach(() => {
       diary = new Diary({ closeValue, RecordClass: MockRecord, records: [] });
+      expect(diary.state).toBe(states.NEW);
     });
 
     describe('#addRecord', () => {
-      context('when passed record', () => {
-        test('should change records', () => {
-          diary.addRecord({ record: record1 });
+      test('should transit to started state', () => {
+        diary.addRecord({ record: record1 });
 
-          expect(diary.records).toEqual([record1]);
-        });
+        expect(diary.state).toBe(states.STARTED);
       });
     });
 
@@ -78,7 +54,7 @@ describe('Domain :: commonTypes :: Diary', () => {
       context('when passed any record', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
-            diary.deleteRecord({ record: nonExistentRecord });
+            diary.deleteRecord({ record: newRecord });
           }).toThrowError('RECORD_NOT_FOUND');
 
           expect(diary._records).toHaveLength(0);
@@ -91,7 +67,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateRecord({
-              record: nonExistentRecord,
+              record: record1,
               newRecord: newRecord,
             });
           }).toThrowError('RECORD_NOT_FOUND');
@@ -213,7 +189,7 @@ describe('Domain :: commonTypes :: Diary', () => {
       context('when passed non-existent record', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
-            diary.deleteRecord({ record: nonExistentRecord });
+            diary.deleteRecord({ record: newRecord });
           }).toThrowError('RECORD_NOT_FOUND');
 
           expect(diary._records).toEqual([
@@ -245,7 +221,7 @@ describe('Domain :: commonTypes :: Diary', () => {
       context('when passed record with day sooner than close day', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
-            diary.deleteRecord({ record: nonExistentPastRecord });
+            diary.deleteRecord({ record: newPastRecord });
           }).toThrowError('DIARY_CLOSED');
 
           expect(diary._records).toEqual([
@@ -276,7 +252,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateRecord({
-              record: nonExistentRecord,
+              record: newRecord,
               newRecord: newRecord,
             });
           }).toThrowError('RECORD_NOT_FOUND');
@@ -293,17 +269,13 @@ describe('Domain :: commonTypes :: Diary', () => {
 
       context('when passed record with existing day', () => {
         test('should throw exception and leave records unchanged', () => {
-          // expect(() => {
-          //   diary.updateRecord({
-          //     record: record3,
-          //     newRecord: newRecordWithSameDay,
-          //   });
-          // }).toThrowError('RECORD_ALREADY_EXISTS');
+          expect(() => {
+            diary.updateRecord({
+              record: record3,
+              newRecord: newRecordWithSameDay,
+            });
+          }).toThrowError('RECORD_ALREADY_EXISTS');
 
-          diary.updateRecord({
-            record: record3,
-            newRecord: newRecordWithSameDay,
-          });
           expect(diary._records).toEqual([
             pastRecord1,
             closeRecord,
@@ -363,14 +335,14 @@ describe('Domain :: commonTypes :: Diary', () => {
               record: record2,
               newRecord: newRecordFromScope,
             });
+            expect(diary._records).toEqual([
+              pastRecord1,
+              closeRecord,
+              record1,
+              record3,
+              newRecordFromScope,
+            ]);
           });
-          expect(diary._records).toEqual([
-            pastRecord1,
-            closeRecord,
-            record1,
-            record3,
-            newRecordFromScope,
-          ]);
         }
       );
 
@@ -395,14 +367,14 @@ describe('Domain :: commonTypes :: Diary', () => {
         () => {
           test('should change passed record', () => {
             diary.updateRecord({ record: record1, newRecord: newRecord });
+            expect(diary._records).toEqual([
+              pastRecord1,
+              closeRecord,
+              record2,
+              record3,
+              newRecord,
+            ]);
           });
-          expect(diary._records).toEqual([
-            pastRecord1,
-            closeRecord,
-            record2,
-            record3,
-            newRecord,
-          ]);
         }
       );
     });
@@ -506,7 +478,7 @@ describe('Domain :: commonTypes :: Diary', () => {
       context('when passed non-existent record', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
-            diary.deleteRecord({ record: nonExistentRecord });
+            diary.deleteRecord({ record: newRecord });
           }).toThrowError('RECORD_NOT_FOUND');
 
           expect(diary._records).toEqual([pastRecord1, closeRecord]);
@@ -516,7 +488,7 @@ describe('Domain :: commonTypes :: Diary', () => {
       context('when passed record with day sooner than close day ', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
-            diary.deleteRecord({ record: nonExistentPastRecord });
+            diary.deleteRecord({ record: newPastRecord });
           }).toThrowError('DIARY_CLOSED');
 
           expect(diary._records).toEqual([pastRecord1, closeRecord]);
@@ -529,7 +501,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateRecord({
-              record: nonExistentRecord,
+              record: newRecord,
               newRecord: newRecord,
             });
           }).toThrowError('RECORD_NOT_FOUND');
@@ -542,7 +514,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateRecord({
-              record: nonExistentPastRecord,
+              record: newPastRecord,
               newRecord: newRecord,
             });
           }).toThrowError('DIARY_CLOSED');

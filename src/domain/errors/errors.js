@@ -1,4 +1,4 @@
-export const makeError = (message) => () => new Error(message);
+const makeError = (message) => () => new Error(message);
 
 export const errors = {
   // Diary
@@ -35,6 +35,9 @@ export const errors = {
   pieceRateHasLimitedScope: makeError('PIECE_RATE_HAS_LIMITED_SCOPE'),
   newPieceRateAlreadyExists: makeError('NEW_PIECE_RATE_ALREADY_EXISTS'),
   newPieceRateDuplicate: makeError('NEW_PIECE_RATE_DUPLICATE'),
+
+  // FSM
+  transitionNotAllowed: makeError('TRANSITION_NOT_ALLOWED'),
 
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),

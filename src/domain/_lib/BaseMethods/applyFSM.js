@@ -1,25 +1,35 @@
 import StateMachine from 'javascript-state-machine';
-import { makeError, errors } from '../../errors';
+import { errors } from '../../errors';
+
+const INIT_STATE = 'initialized';
+const SET_STATE_TRANSITION = 'setState';
 
 export const applyFSM = (EntityClass) => {
+  const { transitions, data, methods, getRawState } = EntityClass.fsm;
+
+  EntityClass.prototype._runFSM = function() {
+    this._fsm();
+    this[SET_STATE_TRANSITION](getRawState(this));
+  };
+
   StateMachine.factory(EntityClass, {
-    init: EntityClass.fsm.init,
+    init: INIT_STATE,
     transitions: [
       {
-        name: 'setState',
-        from: '*',
-        to: function(s) {
-          return s;
+        name: SET_STATE_TRANSITION,
+        from: INIT_STATE,
+        to: function(state) {
+          return state;
         },
       },
-      ...EntityClass.fsm.transitions,
+      ...transitions,
     ],
-    data: EntityClass.fsm.data,
+    data: data,
     methods: {
       onInvalidTransition(transition, from, to) {
-        throw makeError({ state: [errors.transitionNotAllowed] });
+        throw errors.transitionNotAllowed();
       },
-      ...EntityClass.fsm.methods,
+      ...methods,
     },
   });
 };

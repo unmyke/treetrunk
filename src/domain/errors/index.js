@@ -1,3 +1,3 @@
-import { makeError, errors } from './errors';
+import { errors } from './errors';
 
-export { makeError, errors };
+export { errors };

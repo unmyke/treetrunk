@@ -19,6 +19,21 @@ const transitions = {
   UPDATE_CLOSE_RECORD: 'updateCloseRecord',
 };
 
+const stateTransitionFunctions = {
+  deleteRecord: function() {
+    switch (true) {
+      case this._records.length === 1:
+        return states.NEW;
+
+      case this.records.length === 1:
+        return states.CLOSED;
+
+      default:
+        return states.STARTED;
+    }
+  },
+};
+
 export class Diary extends BaseClass {
   // FSM
 
@@ -36,7 +51,6 @@ export class Diary extends BaseClass {
       }
     },
 
-    init: states.INITIALIZED,
     transitions: [
       {
         name: transitions.ADD_RECORD,
@@ -45,12 +59,12 @@ export class Diary extends BaseClass {
       },
       {
         name: transitions.DELETE_RECORD,
-        from: [states.STARTED, states.CLOSED],
-        to: Diary.getRawState,
+        from: states.STARTED,
+        to: stateTransitionFunctions.deleteRecord,
       },
       {
         name: transitions.UPDATE_RECORD,
-        from: [states.STARTED, states.CLOSED],
+        from: states.STARTED,
         to: states.STARTED,
       },
       {
@@ -74,47 +88,22 @@ export class Diary extends BaseClass {
       onInvalidTransition(transition, from) {
         switch (transition) {
           case transitions.DELETE_RECORD:
-            switch (from) {
-              case states.NEW:
-                throw errors.recordNotFound();
-            }
-            break;
+            throw errors.diaryNotStarted();
 
           case transitions.UPDATE_RECORD:
-            switch (from) {
-              case states.NEW:
-                throw errors.recordNotFound();
-              case states.CLOSED:
-                throw errors.diaryClosed();
-            }
-            break;
+            throw errors.diaryNotStarted();
 
           case transitions.ADD_CLOSE_RECORD:
-            switch (from) {
-              case states.NEW:
-              case states.CLOSED:
-                throw errors.diaryNotStarted();
-            }
-            break;
+            throw errors.diaryNotStarted();
 
           case transitions.DELETE_CLOSE_RECORD:
-            switch (from) {
-              case states.NEW:
-              case states.STARTED:
-                throw errors.diaryNotClosed();
-            }
-            break;
+            throw errors.diaryNotClosed();
 
           case transitions.UPDATE_CLOSE_RECORD:
-            switch (from) {
-              case states.NEW:
-              case states.STARTED:
-                throw errors.diaryNotClosed();
-            }
-            break;
+            throw errors.diaryNotClosed();
 
           default:
-            break;
+            throw errors.transitionNotAllowed();
         }
       },
 

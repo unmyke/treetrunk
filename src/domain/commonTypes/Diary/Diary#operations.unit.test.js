@@ -3,6 +3,8 @@ import { Diary } from './Diary';
 import { Day } from '../Day';
 
 class MockRecord extends BaseValue {
+  static valuePropName = 'value';
+
   constructor({ value, day }) {
     super();
     this.value = value;
@@ -70,7 +72,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.deleteRecord({ record: newRecord });
-          }).toThrowError('RECORD_NOT_FOUND');
+          }).toThrowError('DIARY_NOT_STARTED');
 
           expect(diary._records).toHaveLength(0);
         });
@@ -85,7 +87,7 @@ describe('Domain :: commonTypes :: Diary', () => {
               record: record1,
               newRecord: newRecord,
             });
-          }).toThrowError('RECORD_NOT_FOUND');
+          }).toThrowError('DIARY_NOT_STARTED');
 
           expect(diary._records).toHaveLength(0);
         });
@@ -494,7 +496,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.deleteRecord({ record: newRecord });
-          }).toThrowError('RECORD_NOT_FOUND');
+          }).toThrowError('DIARY_NOT_STARTED');
 
           expect(diary._records).toEqual([pastRecord1, closeRecord]);
         });
@@ -504,7 +506,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.deleteRecord({ record: newPastRecord });
-          }).toThrowError('DIARY_CLOSED');
+          }).toThrowError('DIARY_NOT_STARTED');
 
           expect(diary._records).toEqual([pastRecord1, closeRecord]);
         });
@@ -519,7 +521,7 @@ describe('Domain :: commonTypes :: Diary', () => {
               record: newRecord,
               newRecord: newRecord,
             });
-          }).toThrowError('RECORD_NOT_FOUND');
+          }).toThrowError('DIARY_NOT_STARTED');
 
           expect(diary._records).toEqual([pastRecord1, closeRecord]);
         });
@@ -532,7 +534,7 @@ describe('Domain :: commonTypes :: Diary', () => {
               record: newPastRecord,
               newRecord: newRecord,
             });
-          }).toThrowError('DIARY_CLOSED');
+          }).toThrowError('DIARY_NOT_STARTED');
 
           expect(diary._records).toEqual([pastRecord1, closeRecord]);
         });

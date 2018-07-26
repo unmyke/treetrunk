@@ -1,6 +1,5 @@
-import { DiaryMustBeClosed, DiaryMustHasNotRecordsLater } from '../Rules';
+import { DiaryMustHasNotRecordsLater } from '../Rules';
 
-const diaryMustBeClosed = new DiaryMustBeClosed();
 const diaryMustHasNotRecordsLaterWithoutCloseRecord = new DiaryMustHasNotRecordsLater(
   {
     excludeCloseRecord: true,
@@ -8,6 +7,5 @@ const diaryMustHasNotRecordsLaterWithoutCloseRecord = new DiaryMustHasNotRecords
 );
 
 export const updateCloseRecordRuleSet = [
-  diaryMustBeClosed,
   diaryMustHasNotRecordsLaterWithoutCloseRecord,
 ];

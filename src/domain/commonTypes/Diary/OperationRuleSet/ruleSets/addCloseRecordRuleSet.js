@@ -1,9 +1,5 @@
-import { DiaryMustBeStarted, DiaryMustHasNotRecordsLater } from '../Rules';
+import { DiaryMustHasNotRecordsLater } from '../Rules';
 
-const diaryMustBeStarted = new DiaryMustBeStarted();
 const diaryMustHasNotRecordsLater = new DiaryMustHasNotRecordsLater();
 
-export const addCloseRecordRuleSet = [
-  diaryMustBeStarted,
-  diaryMustHasNotRecordsLater,
-];
+export const addCloseRecordRuleSet = [diaryMustHasNotRecordsLater];

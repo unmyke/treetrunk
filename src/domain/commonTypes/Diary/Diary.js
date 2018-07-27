@@ -14,9 +14,9 @@ const transitions = {
   ADD_RECORD: 'addRecord',
   DELETE_RECORD: 'deleteRecord',
   UPDATE_RECORD: 'updateRecord',
-  ADD_CLOSE_RECORD: 'addCloseDay',
-  DELETE_CLOSE_RECORD: 'deleteCloseDay',
-  UPDATE_CLOSE_RECORD: 'updateCloseDay',
+  ADD_CLOSE_DAY: 'addCloseDay',
+  DELETE_CLOSE_DAY: 'deleteCloseDay',
+  UPDATE_CLOSE_DAY: 'updateCloseDay',
 };
 
 const stateTransitionFunctions = {
@@ -34,7 +34,49 @@ const stateTransitionFunctions = {
   },
 };
 
+const calculateState = (_records, _closeDays) => {
+  const recordDays = _records.map(({ day }) => day.valueof()).sort();
+  const closeDays = _closeDays.map((day) => day.valueof()).sort();
+
+  const allDays = [...recordDays, ...closeDays];
+
+  if (new Set(allDays).size === allDays.length) {
+    switch (true) {
+      case recordDays.length === 0 && closeDays.length === 0:
+        return states.NEW;
+
+      case recordDays.length !== 0 && closeDays.length !== 0:
+        switch (true) {
+          case value:
+            break;
+
+          default:
+            break;
+        }
+
+      default:
+        break;
+    }
+  } else {
+    throw errors.inconsistentState();
+  }
+};
+
 export class Diary extends BaseClass {
+  // factory
+  restore({ closeValue, RecordClass, records = [], closeDays = [] }) {
+    const diary = new Diary({ closeValue, RecordClass });
+
+    const state = calculateState(records, closeDays);
+
+    diary._records = records;
+    diary._closeDays = closeDays;
+
+    diary.setState(state);
+
+    return diary;
+  }
+
   // FSM
 
   static fsm = {
@@ -50,6 +92,8 @@ export class Diary extends BaseClass {
           return states.STARTED;
       }
     },
+
+    init: states.NEW,
 
     transitions: [
       {
@@ -68,17 +112,17 @@ export class Diary extends BaseClass {
         to: states.STARTED,
       },
       {
-        name: transitions.ADD_CLOSE_RECORD,
+        name: transitions.ADD_CLOSE_DAY,
         from: states.STARTED,
         to: states.CLOSED,
       },
       {
-        name: transitions.DELETE_CLOSE_RECORD,
+        name: transitions.DELETE_CLOSE_DAY,
         from: states.CLOSED,
         to: states.STARTED,
       },
       {
-        name: transitions.UPDATE_CLOSE_RECORD,
+        name: transitions.UPDATE_CLOSE_DAY,
         from: states.CLOSED,
         to: states.CLOSED,
       },
@@ -93,13 +137,13 @@ export class Diary extends BaseClass {
           case transitions.UPDATE_RECORD:
             throw errors.diaryNotStarted();
 
-          case transitions.ADD_CLOSE_RECORD:
+          case transitions.ADD_CLOSE_DAY:
             throw errors.diaryNotStarted();
 
-          case transitions.DELETE_CLOSE_RECORD:
+          case transitions.DELETE_CLOSE_DAY:
             throw errors.diaryNotClosed();
 
-          case transitions.UPDATE_CLOSE_RECORD:
+          case transitions.UPDATE_CLOSE_DAY:
             throw errors.diaryNotClosed();
 
           default:
@@ -123,17 +167,37 @@ export class Diary extends BaseClass {
           this[`_${transition}`](args);
         }
       },
+
+      onAddRecord(
+        { from, to },
+        {
+          record: { day },
+        }
+      ) {
+        switch (true) {
+          case from !== states.STARTED:
+            this.startDay = day;
+            break;
+
+          default:
+            break;
+        }
+      },
+
+      onAddCloseDay({ from, to }, { day }) {
+        this.c;
+      },
     },
   };
 
-  constructor({ closeValue, RecordClass, records = [], closeDays = [] }) {
+  constructor({ closeValue, RecordClass }) {
     super();
 
     this.closeValue = closeValue;
     this.RecordClass = RecordClass;
 
-    this._records = records;
-    this._closeDays = closeDays;
+    this._records = [];
+    this._closeDays = [];
 
     this._runFSM();
   }
@@ -142,7 +206,7 @@ export class Diary extends BaseClass {
 
   //   public metods
   get records() {
-    return this.getRecordsAt();
+    return this._getRecordsAt();
   }
 
   get allRecords() {
@@ -155,249 +219,46 @@ export class Diary extends BaseClass {
             day,
           })
       ),
-    ].sort(getDayComparator('asc'));
+    ].sort(getDayComparator('asc', (item) => item.day));
   }
 
-  get hasRecords() {
-    return this.hasRecordsAt();
+  //   public metods
+
+  _getRecordsAt(day = new Day()) {
+    const closeDay = this._getCloseDayBefore(day);
+
+    return;
   }
 
-  get recordValue() {
-    return this.getRecordValueAt();
+  _getCloseDayAt(day = new Day()) {
+    const [firstCloseDay, ...restCloseDays] = this._getCloseDaysAt(day);
+
+    return closeDays.reduce();
   }
 
-  get recordDay() {
-    return this.getRecordDayAt();
-  }
-
-  get recordValues() {
-    return this.getRecordValuesAt();
-  }
-
-  get startDay() {
-    return this.getStartDayAt();
-  }
-
-  get isStarted() {
-    return this.is(states.STARTED);
-  }
-
-  get closeDay() {
-    return this.getCloseDayAt();
-  }
-
-  get isClosed() {
-    return this.is(states.CLOSED);
-  }
-
-  getRecordsAt(day = new Day(), options = {}) {
-    return this._getRecordsContainsDay(day, options).filter(
-      ({ day: currentDay }) => currentDay <= day
+  _getCloseDayAfter(day = new Day()) {
+    const closeDaysAfter = this._getCloseDays.filter(
+      (currentCloseDay) => currentCloseDay > day
     );
+    return closeDaysAfter[0];
   }
 
-  hasRecordsAt(day = new Day()) {
-    return this.getRecordsAt(day).length !== 0;
-  }
-
-  getRecordValueAt(day = new Day()) {
-    const record = this._getRecordAt(day);
-
-    return record !== undefined ? record.value : undefined;
-  }
-
-  getRecordValuesAt(day = new Day(), options = {}) {
-    return this.getRecordsAt(day, options).map(({ value }) => value);
-  }
-
-  getRecordDayAt(day = new Day()) {
-    const record = this._getRecordAt(day);
-
-    return record !== undefined ? record.day : undefined;
-  }
-
-  getStartDayAt(day = new Day(), options = {}) {
-    const records = this.getRecordsAt(day, options);
-
-    if (records.length === 0) {
-      return;
-    }
-
-    return records[0].day;
-  }
-
-  isStartedAt(day = new Day()) {
-    return !!this.getStartDayAt(day);
-  }
-
-  getCloseDayAt(day = new Day()) {
-    if (this._isCloseDay(day)) {
-      return day;
-    }
-
-    return this._getRecordAt(day) === undefined
-      ? this._getPrevCloseDayAt(day)
-      : undefined;
-  }
-
-  isClosedAt(day = new Day()) {
-    return !!this.getCloseDayAt(day);
-  }
-
-  isDiaryClosedAt(day = new Day()) {
-    return !!this._getNextCloseDayAt(day);
-  }
-
-  hasRecordOn(day = new Day(), options = {}) {
-    const persistedRecord = this._getRecordOn(day, options);
-
-    return !!persistedRecord;
-  }
-
-  getPrevRecordAt(day = new Day(), options = {}) {
-    const recordsBeforeDay = this._getRecordsBeforeDay(day, options);
-
-    return recordsBeforeDay[recordsBeforeDay.length - 1];
-  }
-
-  getNextRecordAt(day = new Day(), options = {}) {
-    const recordsAfterDay = this._getRecordsAfterDay(day, options);
-
-    return recordsAfterDay[0];
-  }
-
-  hasRecordsBeforeDay(day = new Day(), options = {}) {
-    return this._getRecordsBeforeDay(day, options).length !== 0;
-  }
-
-  hasRecordsAfterDay(day = new Day(), options = {}) {
-    return this._getRecordsAfterDay(day, options).length !== 0;
-  }
-
-  //   private metods
-
-  _getRecordAt(day = new Day(), options = {}) {
-    const recordsAt = this.getRecordsAt(day, options);
-
-    return recordsAt[recordsAt.length - 1];
-  }
-
-  _getRecordsBeforeDay(day = new Day(), options = {}) {
-    return this._getRecordsContainsDay(day.prev(), options).filter(
-      ({ day: currentDay }) => currentDay < day
+  _getCloseDayBefore(day = new Day()) {
+    const closeDaysBefore = this._getCloseDays.filter(
+      (currentCloseDay) => currentCloseDay < day
     );
-  }
-
-  _getRecordsAfterDay(day = new Day(), options = {}) {
-    return this._getRecordsContainsDay(day.next(), options).filter(
-      ({ day: currentDay }) => currentDay > day
-    );
-  }
-
-  _getRecordsContainsDay(day = new Day(), options = {}) {
-    if (this._records.length === 0) {
-      return [];
-    }
-
-    const prevCloseDay = this._getPrevCloseDayAt(day);
-    const nextCloseDay = this._getNextCloseDayAt(day);
-
-    const recordsContainsDay = this._records
-      .sort(getDayComparator('asc'))
-      .filter((record) => {
-        return (
-          !this._isCloseDay(day) &&
-          (prevCloseDay === undefined || record.day > prevCloseDay) &&
-          (nextCloseDay === undefined || record.day < nextCloseDay) &&
-          (options.excludeRecords === undefined ||
-            !this._isExcludedRecord(record, options.excludeRecords))
-        );
-      });
-
-    return recordsContainsDay;
-  }
-
-  _isExcludedRecord(record, recordsToExclude) {
-    return (
-      recordsToExclude.find((recordToExclude) =>
-        record.equals(recordToExclude)
-      ) !== undefined
-    );
+    return closeDaysBefore[closeDaysBefore.length - 1];
   }
 
   _isCloseDay(day = new Day()) {
-    const record = this._getRecordOn(day);
-
-    if (this._isCloseDay(record)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  _getPrevCloseDayAt(day = new Day()) {
-    const closeRecords = this._getCloseDays();
-
-    return closeRecords
-      .sort(getDayComparator('asc'))
-      .reduce((closeDay, { day: currentCloseDay }) => {
-        return currentCloseDay < day ? currentCloseDay : closeDay;
-      }, undefined);
-  }
-
-  _getNextCloseDayAt(day = new Day()) {
-    const closeRecords = this._getCloseDays();
-
-    return closeRecords
-      .sort(getDayComparator('desc'))
-      .reduce((closeDay, { day: currentCloseDay }) => {
-        return currentCloseDay > day ? currentCloseDay : closeDay;
-      }, undefined);
+    return (
+      this._closeDays.find((currentCloseDay) => currentCloseDay.equals(day)) !==
+      undefined
+    );
   }
 
   _getCloseDays() {
-    if (this.closeValue === undefined) {
-      return [];
-    }
-
-    return this._records.filter(({ value }) =>
-      this._compareValues(value, this.closeValue)
-    );
-  }
-
-  _getRecordOn(day = new Day(), options = {}) {
-    return this._records.find((record) => {
-      return (
-        record.day.equals(day) &&
-        (options.excludeRecords === undefined ||
-          !this._isExcludedRecord(record, options.excludeRecords))
-      );
-    });
-  }
-
-  _isCloseDay(day) {
-    if (day === undefined) {
-      return false;
-    }
-
-    return this._closeDays.includes(day);
-  }
-
-  //  utils
-  compareRecordValues(value1, value2) {
-    return (
-      value1 !== undefined &&
-      value2 !== undefined &&
-      this._compareValues(value1, value2)
-    );
-  }
-
-  _compareValues(value1, value2) {
-    if (value1 instanceof BaseValue) {
-      return value1.equals(value2);
-    }
-
-    return value1 === value2;
+    return this._closeDays.sort(getDayComparator('asc'));
   }
 
   // operations

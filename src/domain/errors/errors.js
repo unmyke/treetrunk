@@ -39,6 +39,9 @@ export const errors = {
   // FSM
   transitionNotAllowed: makeError('TRANSITION_NOT_ALLOWED'),
 
+  // factory
+  inconsistentState: makeError('INCONSISTENT_STATE'),
+
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),
   // articleNotBanned: makeError('ARTICLE_NOT_BANNED'),

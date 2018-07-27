@@ -14,9 +14,9 @@ const transitions = {
   ADD_RECORD: 'addRecord',
   DELETE_RECORD: 'deleteRecord',
   UPDATE_RECORD: 'updateRecord',
-  ADD_CLOSE_RECORD: 'addCloseRecord',
-  DELETE_CLOSE_RECORD: 'deleteCloseRecord',
-  UPDATE_CLOSE_RECORD: 'updateCloseRecord',
+  ADD_CLOSE_RECORD: 'addCloseDay',
+  DELETE_CLOSE_RECORD: 'deleteCloseDay',
+  UPDATE_CLOSE_RECORD: 'updateCloseDay',
 };
 
 const stateTransitionFunctions = {
@@ -126,13 +126,14 @@ export class Diary extends BaseClass {
     },
   };
 
-  constructor({ closeValue, RecordClass, records = [] }) {
+  constructor({ closeValue, RecordClass, records = [], closeDays = [] }) {
     super();
 
     this.closeValue = closeValue;
     this.RecordClass = RecordClass;
 
     this._records = records;
+    this._closeDays = closeDays;
 
     this._runFSM();
   }
@@ -142,6 +143,19 @@ export class Diary extends BaseClass {
   //   public metods
   get records() {
     return this.getRecordsAt();
+  }
+
+  get allRecords() {
+    return [
+      ...this._records,
+      ...this._closeDays.map(
+        (day) =>
+          new this.RecordClass({
+            [RecordClass.valuePropName]: this.closeValue,
+            day,
+          })
+      ),
+    ].sort(getDayComparator('asc'));
   }
 
   get hasRecords() {
@@ -314,7 +328,7 @@ export class Diary extends BaseClass {
   _isCloseDay(day = new Day()) {
     const record = this._getRecordOn(day);
 
-    if (this._isCloseRecord(record)) {
+    if (this._isCloseDay(record)) {
       return true;
     }
 
@@ -322,7 +336,7 @@ export class Diary extends BaseClass {
   }
 
   _getPrevCloseDayAt(day = new Day()) {
-    const closeRecords = this._getCloseRecords();
+    const closeRecords = this._getCloseDays();
 
     return closeRecords
       .sort(getDayComparator('asc'))
@@ -332,7 +346,7 @@ export class Diary extends BaseClass {
   }
 
   _getNextCloseDayAt(day = new Day()) {
-    const closeRecords = this._getCloseRecords();
+    const closeRecords = this._getCloseDays();
 
     return closeRecords
       .sort(getDayComparator('desc'))
@@ -341,7 +355,7 @@ export class Diary extends BaseClass {
       }, undefined);
   }
 
-  _getCloseRecords() {
+  _getCloseDays() {
     if (this.closeValue === undefined) {
       return [];
     }
@@ -361,25 +375,12 @@ export class Diary extends BaseClass {
     });
   }
 
-  _isCloseRecord(record) {
-    if (record === undefined) {
+  _isCloseDay(day) {
+    if (day === undefined) {
       return false;
     }
 
-    return this.compareRecordValues(record.value, this.closeValue);
-  }
-
-  _isStartRecord(record) {
-    if (record === undefined) {
-      return false;
-    }
-
-    const startRecord = this.getStartDayAt(record.day);
-    if (startRecord === undefined) {
-      return false;
-    }
-
-    return startRecord.equals(record);
+    return this._closeDays.includes(day);
   }
 
   //  utils
@@ -421,33 +422,32 @@ export class Diary extends BaseClass {
     this._records = [...this._records, record];
   }
 
-  _deleteRecord({ record }) {
+  _deleteRecord({ day }) {
     this._records = this._records.filter(
-      (currentRecord) => !record.equals(currentRecord)
+      ({ day: currentDay }) => !currentDay.equals(day)
     );
   }
 
-  _updateRecord({ record, newRecord }) {
-    this._deleteRecord({ record });
+  _updateRecord({ day, newRecord }) {
+    this._deleteRecord({ day });
     this._addRecord({ record: newRecord });
   }
 
-  _addCloseRecord({ day }) {
-    const closeRecord = new this.RecordClass({
-      value: this.closeValue,
-      day,
-    });
-
-    this._addRecord({ record: closeRecord });
+  _addCloseDay({ day }) {
+    this._closeDays = [..._closeDays, day];
   }
 
-  _deleteCloseRecord() {
-    this._records = this._records.slice(0, -1);
+  _deleteCloseDay() {
+    const lastCloseDay = Math.max(this._closeDays);
+
+    this._closeDays = this._closeDays.filter(
+      (day) => !day.equals(lastCloseDay)
+    );
   }
 
-  _updateCloseRecord({ day }) {
-    this._deleteCloseRecord();
-    this._addCloseRecord({ day });
+  _updateCloseDay({ day }) {
+    this._deleteCloseDay();
+    this._addCloseDay({ day });
   }
 }
 

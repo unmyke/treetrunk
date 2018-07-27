@@ -21,8 +21,14 @@ export class RecordMustNotHasEqualNeightborsRule extends OperationRule {
       excludeRecords: makeExcludeRecordOption(excludeRecord),
     };
 
-    const prevRecord = operatee.getPrevRecord(record, excludeRecordsOption);
-    const nextRecord = operatee.getNextRecord(record, excludeRecordsOption);
+    const prevRecord = operatee.getPrevRecordAt(
+      record.day,
+      excludeRecordsOption
+    );
+    const nextRecord = operatee.getNextRecordAt(
+      record.day,
+      excludeRecordsOption
+    );
 
     if (
       prevRecord !== undefined &&

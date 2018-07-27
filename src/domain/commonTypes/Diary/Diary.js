@@ -165,7 +165,7 @@ export class Diary extends BaseClass {
   }
 
   get isStarted() {
-    return this.isStartedAt();
+    return this.is(states.STARTED);
   }
 
   get closeDay() {
@@ -173,7 +173,7 @@ export class Diary extends BaseClass {
   }
 
   get isClosed() {
-    return this.isClosedAt();
+    return this.is(states.CLOSED);
   }
 
   getRecordsAt(day = new Day(), options = {}) {
@@ -238,31 +238,6 @@ export class Diary extends BaseClass {
     const persistedRecord = this._getRecordOn(day, options);
 
     return !!persistedRecord;
-  }
-
-  hasRecord(record, options = {}) {
-    if (record === undefined) {
-      return;
-    }
-
-    const persistedRecord = this._getRecordOn(record.day, options);
-    return persistedRecord !== undefined && record.equals(persistedRecord);
-  }
-
-  getPrevRecord(record, options = {}) {
-    if (record === undefined) {
-      return;
-    }
-
-    return this.getPrevRecordAt(record.day, options);
-  }
-
-  getNextRecord(record, options = {}) {
-    if (record === undefined) {
-      return;
-    }
-
-    return this.getNextRecordAt(record.day, options);
   }
 
   getPrevRecordAt(day = new Day(), options = {}) {

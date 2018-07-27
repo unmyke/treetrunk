@@ -10,8 +10,13 @@ export class RecordMustExistsRule extends OperationRule {
     this.recordArgName = recordArgName;
   }
 
-  execute(operatee, { [this.recordArgName]: record }) {
-    if (!operatee.hasRecord(record, this._options)) {
+  execute(
+    operatee,
+    {
+      [this.recordArgName]: { day },
+    }
+  ) {
+    if (!operatee.hasRecordOn(day, this._options)) {
       throw this.error();
     }
   }

@@ -24,7 +24,6 @@ const day4 = new Day({ value: new Date('2017.04.01 00:00:00.000+08:00') });
 const day5 = new Day({ value: new Date('2017.05.01 00:00:00.000+08:00') });
 const day = new Day({ value: new Date('2017.05.01 00:00:00.000+08:00') });
 
-const closeValue = 'closeValue';
 const value1 = 'value1';
 const value2 = 'value2';
 const value3 = 'value3';
@@ -37,61 +36,58 @@ const record3 = new MockRecord({ value: value3, day: day4 });
 const record4 = new MockRecord({ value: value4, day: day5 });
 const newRecord = new MockRecord({ value: newValue, day: day });
 
-const closeRecord1 = new MockRecord({ value: closeValue, day: day2 });
-const closeRecord2 = new MockRecord({ value: closeValue, day: day4 });
-
 let diary;
 
 describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
   context('when diary is new', () => {
     beforeEach(() => {
-      diary = new Diary({ RecordClass: MockRecord, closeValue, records: [] });
+      diary = Diary.restore(MockRecord);
       expect(diary.state).toBe(states.NEW);
     });
 
     describe('#addRecord', () => {
       test('should transit to started state', () => {
-        diary.addRecord({ record: record4 });
+        diary.addRecord(record4);
         expect(diary.state).toBe(states.STARTED);
       });
     });
 
-    describe('#deleteRecord', () => {
+    describe('#deleteRecordAt', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
-          diary.deleteRecord({ record: record1 });
+          diary.deleteRecordAt(record1.day);
         }).toThrowError('DIARY_NOT_STARTED');
       });
     });
 
-    describe('#updateRecord', () => {
+    describe('#updateRecordTo', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
-          diary.updateRecord({ record: record1, newRecord: newRecord });
+          diary.updateRecordTo(record1.day, newRecord);
         }).toThrowError('DIARY_NOT_STARTED');
       });
     });
 
-    describe('#addCloseRecord', () => {
+    describe('#addCloseAt', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
-          diary.addCloseRecord({ day: day4 });
+          diary.addCloseAt(day4);
         }).toThrowError('DIARY_NOT_STARTED');
       });
     });
 
-    describe('#deleteCloseRecord', () => {
+    describe('#deleteClose', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
-          diary.deleteCloseRecord();
+          diary.deleteClose();
         }).toThrowError('DIARY_NOT_CLOSED');
       });
     });
 
-    describe('#updateCloseRecord', () => {
+    describe('#updateCloseTo', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
-          diary.updateCloseRecord({ day: day4 });
+          diary.updateCloseTo(day4);
         }).toThrowError('DIARY_NOT_CLOSED');
       });
     });
@@ -101,54 +97,50 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
     context('when diary was not сlosed', () => {
       context('when diary have one record', () => {
         beforeEach(() => {
-          diary = new Diary({
-            RecordClass: MockRecord,
-            closeValue,
-            records: [record1],
-          });
+          diary = Diary.restore(MockRecord, [record1]);
           expect(diary.state).toBe(states.STARTED);
         });
 
         describe('#addRecord', () => {
           test('should leave state unchanged', () => {
-            diary.addRecord({ record: record4 });
+            diary.addRecord(record4);
             states.STARTED;
           });
         });
 
-        describe('#deleteRecord', () => {
+        describe('#deleteRecordAt', () => {
           test('should transit to new state', () => {
-            diary.deleteRecord({ record: record1 });
+            diary.deleteRecordAt(record1.day);
             expect(diary.state).toBe(states.NEW);
           });
         });
 
-        describe('#updateRecord', () => {
+        describe('#updateRecordTo', () => {
           test('should leave state unchanged', () => {
-            diary.updateRecord({ record: record1, newRecord: newRecord });
+            diary.updateRecordTo(record1.day, newRecord);
             states.STARTED;
           });
         });
 
-        describe('#addCloseRecord', () => {
+        describe('#addCloseAt', () => {
           test('should transit to closed state', () => {
-            diary.addCloseRecord({ day: day4 });
+            diary.addCloseAt(day4);
             expect(diary.state).toBe(states.CLOSED);
           });
         });
 
-        describe('#deleteCloseRecord', () => {
+        describe('#deleteClose', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
-              diary.deleteCloseRecord();
+              diary.deleteClose();
             }).toThrowError('DIARY_NOT_CLOSED');
           });
         });
 
-        describe('#updateCloseRecord', () => {
+        describe('#updateCloseTo', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
-              diary.updateCloseRecord({ day: day4 });
+              diary.updateCloseTo(day4);
             }).toThrowError('DIARY_NOT_CLOSED');
           });
         });
@@ -156,54 +148,50 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
 
       context('when diary have more than one record', () => {
         beforeEach(() => {
-          diary = new Diary({
-            RecordClass: MockRecord,
-            closeValue,
-            records: [record1, record2],
-          });
+          diary = Diary.restore(MockRecord, [record1, record2]);
           expect(diary.state).toBe(states.STARTED);
         });
 
         describe('#addRecord', () => {
           test('should leave state unchanged', () => {
-            diary.addRecord({ record: record4 });
+            diary.addRecord(record4);
             states.STARTED;
           });
         });
 
-        describe('#deleteRecord', () => {
+        describe('#deleteRecordAt', () => {
           test('should leave state unchanged', () => {
-            diary.deleteRecord({ record: record2 });
+            diary.deleteRecordAt(record2.day);
             states.STARTED;
           });
         });
 
-        describe('#updateRecord', () => {
+        describe('#updateRecordTo', () => {
           test('should leave state unchanged', () => {
-            diary.updateRecord({ record: record2, newRecord: newRecord });
+            diary.updateRecordTo(record2.day, newRecord);
             states.STARTED;
           });
         });
 
-        describe('#addCloseRecord', () => {
+        describe('#addCloseAt', () => {
           test('should transit to closed state', () => {
-            diary.addCloseRecord({ day: day4 });
+            diary.addCloseAt(day4);
             expect(diary.state).toBe(states.CLOSED);
           });
         });
 
-        describe('#deleteCloseRecord', () => {
+        describe('#deleteClose', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
-              diary.deleteCloseRecord();
+              diary.deleteClose();
             }).toThrowError('DIARY_NOT_CLOSED');
           });
         });
 
-        describe('#updateCloseRecord', () => {
+        describe('#updateCloseTo', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
-              diary.updateCloseRecord({ day: day4 });
+              diary.updateCloseTo(day4);
             }).toThrowError('DIARY_NOT_CLOSED');
           });
         });
@@ -213,54 +201,50 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
     context('when diary was сlosed', () => {
       context('when diary have one record', () => {
         beforeEach(() => {
-          diary = new Diary({
-            RecordClass: MockRecord,
-            closeValue,
-            records: [record1, closeRecord1, record2],
-          });
+          diary = Diary.restore(MockRecord, [record1, record2], [day2]);
           expect(diary.state).toBe(states.STARTED);
         });
 
         describe('#addRecord', () => {
           test('should leave state unchanged', () => {
-            diary.addRecord({ record: record4 });
+            diary.addRecord(record4);
             states.STARTED;
           });
         });
 
-        describe('#deleteRecord', () => {
+        describe('#deleteRecordAt', () => {
           test('should transit to closed state', () => {
-            diary.deleteRecord({ record: record2 });
+            diary.deleteRecordAt(record2.day);
             expect(diary.state).toBe(states.CLOSED);
           });
         });
 
-        describe('#updateRecord', () => {
+        describe('#updateRecordTo', () => {
           test('should leave state unchanged', () => {
-            diary.updateRecord({ record: record2, newRecord: newRecord });
+            diary.updateRecordTo(record2.day, newRecord);
             states.STARTED;
           });
         });
 
-        describe('#addCloseRecord', () => {
+        describe('#addCloseAt', () => {
           test('should transit to closed state', () => {
-            diary.addCloseRecord({ day: day4 });
+            diary.addCloseAt(day4);
             expect(diary.state).toBe(states.CLOSED);
           });
         });
 
-        describe('#deleteCloseRecord', () => {
+        describe('#deleteClose', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
-              diary.deleteCloseRecord();
+              diary.deleteClose();
             }).toThrowError('DIARY_NOT_CLOSED');
           });
         });
 
-        describe('#updateCloseRecord', () => {
+        describe('#updateCloseTo', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
-              diary.updateCloseRecord({ day: day4 });
+              diary.updateCloseTo(day4);
             }).toThrowError('DIARY_NOT_CLOSED');
           });
         });
@@ -268,54 +252,54 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
 
       context('when diary have more than one record', () => {
         beforeEach(() => {
-          diary = new Diary({
-            RecordClass: MockRecord,
-            closeValue,
-            records: [record1, closeRecord1, record2, record3],
-          });
+          diary = Diary.restore(
+            MockRecord,
+            [record1, record2, record3],
+            [day2]
+          );
           expect(diary.state).toBe(states.STARTED);
         });
 
         describe('#addRecord', () => {
           test('should leave state unchanged', () => {
-            diary.addRecord({ record: record4 });
+            diary.addRecord(record4);
             states.STARTED;
           });
         });
 
-        describe('#deleteRecord', () => {
+        describe('#deleteRecordAt', () => {
           test('should leave state unchanged', () => {
-            diary.deleteRecord({ record: record3 });
+            diary.deleteRecordAt(record3.day);
             states.STARTED;
           });
         });
 
-        describe('#updateRecord', () => {
+        describe('#updateRecordTo', () => {
           test('should leave state unchanged', () => {
-            diary.updateRecord({ record: record3, newRecord: newRecord });
+            diary.updateRecordTo(record3.day, newRecord);
             states.STARTED;
           });
         });
 
-        describe('#addCloseRecord', () => {
+        describe('#addCloseAt', () => {
           test('should transit to closed state', () => {
-            diary.addCloseRecord({ day: day5 });
+            diary.addCloseAt(day5);
             expect(diary.state).toBe(states.CLOSED);
           });
         });
 
-        describe('#deleteCloseRecord', () => {
+        describe('#deleteClose', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
-              diary.deleteCloseRecord();
+              diary.deleteClose();
             }).toThrowError('DIARY_NOT_CLOSED');
           });
         });
 
-        describe('#updateCloseRecord', () => {
+        describe('#updateCloseTo', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
-              diary.updateCloseRecord({ day: day4 });
+              diary.updateCloseTo(day4);
             }).toThrowError('DIARY_NOT_CLOSED');
           });
         });
@@ -326,55 +310,51 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
   context('when diary is closed', () => {
     context('when diary closed once', () => {
       beforeEach(() => {
-        diary = new Diary({
-          RecordClass: MockRecord,
-          closeValue,
-          records: [record1, closeRecord1],
-        });
+        diary = Diary.restore(MockRecord, [record1], [day2]);
         expect(diary.state).toBe(states.CLOSED);
       });
 
       describe('#addRecord', () => {
         test('should transit to started state', () => {
-          diary.addRecord({ record: record4 });
+          diary.addRecord(record4);
           expect(diary.state).toBe(states.STARTED);
         });
       });
 
-      describe('#deleteRecord', () => {
+      describe('#deleteRecordAt', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
-            diary.deleteRecord({ record: record1 });
+            diary.deleteRecordAt(record1.day);
           }).toThrowError('DIARY_NOT_STARTED');
         });
       });
 
-      describe('#updateRecord', () => {
+      describe('#updateRecordTo', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
-            diary.updateRecord({ record: record1, newRecord: newRecord });
+            diary.updateRecordTo(record1.day, newRecord);
           }).toThrowError('DIARY_NOT_STARTED');
         });
       });
 
-      describe('#addCloseRecord', () => {
+      describe('#addCloseAt', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
-            diary.addCloseRecord({ day: day4 });
+            diary.addCloseAt(day4);
           }).toThrowError('DIARY_NOT_STARTED');
         });
       });
 
-      describe('#deleteCloseRecord', () => {
+      describe('#deleteClose', () => {
         test('should transit to started state', () => {
-          diary.deleteCloseRecord();
+          diary.deleteClose();
           expect(diary.state).toBe(states.STARTED);
         });
       });
 
-      describe('#updateCloseRecord', () => {
+      describe('#updateCloseTo', () => {
         test('should leave state unchanged', () => {
-          diary.updateCloseRecord({ day: day4 });
+          diary.updateCloseTo(day4);
           states.CLOSED;
         });
       });
@@ -382,55 +362,51 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
 
     context('when diary closed more than once', () => {
       beforeEach(() => {
-        diary = new Diary({
-          RecordClass: MockRecord,
-          closeValue,
-          records: [record1, closeRecord1, record2, closeRecord2],
-        });
+        diary = Diary.restore(MockRecord, [record1, record2], [day2, day4]);
         expect(diary.state).toBe(states.CLOSED);
       });
 
       describe('#addRecord', () => {
         test('should transit to started state', () => {
-          diary.addRecord({ record: record4 });
+          diary.addRecord(record4);
           expect(diary.state).toBe(states.STARTED);
         });
       });
 
-      describe('#deleteRecord', () => {
+      describe('#deleteRecordAt', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
-            diary.deleteRecord({ record: record2 });
+            diary.deleteRecordAt(record2.day);
           }).toThrowError('DIARY_NOT_STARTED');
         });
       });
 
-      describe('#updateRecord', () => {
+      describe('#updateRecordTo', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
-            diary.updateRecord({ record: record1, newRecord: newRecord });
+            diary.updateRecordTo(record1.day, newRecord);
           }).toThrowError('DIARY_NOT_STARTED');
         });
       });
 
-      describe('#addCloseRecord', () => {
+      describe('#addCloseAt', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
-            diary.addCloseRecord({ day: day4 });
+            diary.addCloseAt(day4);
           }).toThrowError('DIARY_NOT_STARTED');
         });
       });
 
-      describe('#deleteCloseRecord', () => {
+      describe('#deleteClose', () => {
         test('should transit to started state', () => {
-          diary.deleteCloseRecord();
+          diary.deleteClose();
           expect(diary.state).toBe(states.STARTED);
         });
       });
 
-      describe('#updateCloseRecord', () => {
+      describe('#updateCloseTo', () => {
         test('should leave state unchanged', () => {
-          diary.updateCloseRecord({ day: day4 });
+          diary.updateCloseTo(day4);
           states.CLOSED;
         });
       });

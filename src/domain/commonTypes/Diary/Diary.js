@@ -1,8 +1,12 @@
-import { applyFSM, getDayComparator } from '../../_lib/BaseMethods';
+import {
+  applyFSM,
+  getDayComparator,
+  isEqualValues,
+} from '../../_lib/BaseMethods';
 import { errors } from '../../errors';
-import { BaseClass, BaseValue } from '../../_lib';
+import { BaseClass } from '../../_lib';
 import { Day } from '../Day';
-import { OperationRuleSet } from './OperationRuleSet';
+import { Neighbors } from './Neighbors';
 
 const states = {
   NEW: 'new',
@@ -32,14 +36,6 @@ const stateTransitionFunctions = {
         return states.STARTED;
     }
   },
-};
-
-const isEqualValues = (value1, value2) => {
-  if (value1 instanceof BaseValue) {
-    return value1.equals(value2);
-  }
-
-  return value1 === value2;
 };
 
 const calculateState = (RecordClass, records, closeDays) => {
@@ -229,7 +225,7 @@ export class Diary extends BaseClass {
           throw errors.recordAlreadyExists();
         }
 
-        if (this._hasDublicateAt(record)) {
+        if (this._hasDublicateWith(record)) {
           throw errors.recordDuplicate();
         }
       },
@@ -409,8 +405,11 @@ export class Diary extends BaseClass {
     );
   }
 
-  _hasDublicateAt({ [this.RecordClass.valuePropName]: value, day }) {
+  _hasDublicateWith({ [this.RecordClass.valuePropName]: value, day }) {
     const neighbors = this._getNeighborsRecordAt(day);
+    console.log(neighbors);
+    console.log(value);
+    console.log(neighbors.isEqualTo(value));
 
     return neighbors.isEqualTo(value);
   }
@@ -419,37 +418,8 @@ export class Diary extends BaseClass {
     return this._getRecordOn(day) !== undefined;
   }
 
-  _getNeighborsRecordAt(day = new Day(), { excludeDay } = {}) {
-    const initNeighbors = {
-      prev: undefined,
-      next: undefined,
-
-      isExist: function() {
-        return this.prev !== undefined && this.next !== undefined;
-      },
-
-      isEqual: function() {
-        return isEqualValues(this.prev.value, this.next.value);
-      },
-
-      isEqualTo: function(value) {
-        return (
-          isEqualValues(value, this.prev.value) ||
-          isEqualValues(value, this.next.value)
-        );
-      },
-    };
-
-    return this.records.reduce((neighbors, currentRecord) => {
-      const newNeighbors = { ...neighbors };
-
-      if (excludeDay === undefined || currentRecord.day.equals(excludeDay)) {
-        if (currentRecord.day < day) newNeighbors.prev = currentRecord;
-        if (currentRecord.day > day) newNeighbors.next = currentRecord;
-      }
-
-      return newNeighbors;
-    }, initNeighbors);
+  _getNeighborsRecordAt(day = new Day(), options = {}) {
+    return Neighbors.create(day, this.records, options);
   }
 
   _getRecordOn(day = new Day()) {

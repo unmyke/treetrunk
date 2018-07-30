@@ -142,7 +142,6 @@ describe('Domain :: commonTypes :: Diary', () => {
 
           expect(diary._records).toEqual([
             pastRecord1,
-            closeRecord,
             record1,
             record2,
             record3,
@@ -385,9 +384,8 @@ describe('Domain :: commonTypes :: Diary', () => {
             record1,
             record2,
             record3,
-            new MockRecord({ mockValue: closeValue, day }),
           ]);
-          expect(diary._closeDays).toEqual([day3]);
+          expect(diary._closeDays).toEqual([day3, day]);
         });
       });
 
@@ -553,10 +551,8 @@ describe('Domain :: commonTypes :: Diary', () => {
       context('when passed day is later than latest record day', () => {
         test('should update close day', () => {
           diary.updateCloseTo(day9);
-          expect(diary._records).toEqual([
-            pastRecord1,
-            new MockRecord({ mockValue: closeValue, day: day9 }),
-          ]);
+          expect(diary._records).toEqual([pastRecord1]);
+          expect(diary._closeDays).toEqual([day9]);
         });
       });
     });

@@ -152,7 +152,7 @@ describe('Domain :: commonTypes :: Store', () => {
     });
 
     context('when update first record to be last', () => {
-      test('should upate store and re-set prev/next', () => {
+      test('should update store and re-set prev/next', () => {
         store.update(day2, value8, day8);
         record8 = store.get(day8);
 
@@ -172,12 +172,75 @@ describe('Domain :: commonTypes :: Store', () => {
       });
     });
 
-    context('when delete middle record from store', () => {
-      test('should set isStored-prop of middle record to false and re-set prev/next', () => {});
+    context('when update last record to be first', () => {
+      test('should update store and re-set prev/next', () => {
+        store.update(day7, value1, day1);
+        record1 = store.get(day1);
+
+        expect(record7.isStored).toBeFalsy();
+        expect(record7.prev).toBeUndefined();
+        expect(record7.next).toBeUndefined();
+        expect(record5.isLast).toBeFalsy();
+
+        expect(record1.isStored).toBeTruthy();
+        expect(record1.prev).toBeUndefined();
+        expect(record1.next).toBe(record2);
+
+        expect(record5.prev).toBe(record4);
+        expect(record5.next).toBeUndefined();
+        expect(record5.isLast).toBeTruthy();
+
+        expect(record2.prev).toBe(record1);
+        expect(record2.next).toBe(record4);
+      });
     });
 
-    context('when delete last record from store', () => {
-      test('should set isStored-prop of last record to false and re-set prev/next', () => {});
+    context('when update second record to be pre-last', () => {
+      test('should update store and re-set prev/next', () => {
+        store.update(day4, value6, day6);
+        record6 = store.get(day6);
+
+        expect(record4.isStored).toBeFalsy();
+        expect(record4.prev).toBeUndefined();
+        expect(record4.next).toBeUndefined();
+
+        expect(record6.isStored).toBeTruthy();
+        expect(record6.prev).toBe(record5);
+        expect(record6.next).toBe(record7);
+
+        expect(record2.prev).toBeUndefined();
+        expect(record2.next).toBe(record5);
+
+        expect(record5.prev).toBe(record2);
+        expect(record5.next).toBe(record6);
+
+        expect(record7.prev).toBe(record6);
+        expect(record7.next).toBeUndefined();
+      });
+    });
+
+    context('when update pre-laste record to second', () => {
+      test('should update store and re-set prev/next', () => {
+        store.update(day5, value3, day3);
+        record3 = store.get(day3);
+
+        expect(record5.isStored).toBeFalsy();
+        expect(record5.prev).toBeUndefined();
+        expect(record5.next).toBeUndefined();
+
+        expect(record3.isStored).toBeTruthy();
+        expect(record3.prev).toBe(record2);
+        expect(record3.next).toBe(record4);
+
+        expect(record4.prev).toBe(record3);
+        expect(record4.next).toBe(record7);
+
+        expect(record2.prev).toBeUndefined();
+        expect(record2.next).toBe(record3);
+
+        expect(record7.prev).toBe(record4);
+        expect(record7.next).toBeUndefined();
+      });
     });
   });
 });

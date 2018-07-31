@@ -6,66 +6,86 @@ export class Store {
     this._data = new Map();
   }
 
-  getRecord(day) {
+  set(records) {
+    records.forEach(({ value, day }) => {
+      this.add(value, day);
+    });
+  }
+
+  get(day) {
     return this._data.get(day.valueOf());
   }
 
-  addRecord(value, day = new Day()) {
+  add(value, day = new Day()) {
     const key = day.valueOf();
 
-    const record = new Record({ value, day });
+    const newRecord = new Record({ value, day });
 
-    const { next, prev } = this._getNeighbors(day);
+    const { next, prev } = this.getNeighbors(day);
     if (prev !== undefined) {
-      record.prev = prev;
-      prev.next = record;
+      newRecord.setPrev(prev);
+      prev.setNext(newRecord);
     }
 
     if (next !== undefined) {
-      record.next = next;
-      next.prev = record;
+      newRecord.setNext(next);
+      next.setPrev(newRecord);
     }
 
-    record.isStored = true;
+    newRecord.store();
 
-    this._data.sets(key, record);
+    this._data.set(key, newRecord);
+
+    return newRecord;
   }
 
-  deleteRecord(day = new Day()) {
+  delete(day = new Day()) {
     const key = day.valueOf();
 
     const recordToDelete = this._data.get(key);
 
     if (recordToDelete !== undefined) {
-      recordToDelete.prev.next = recordToDelete.next;
-      recordToDelete.next.prev = recordToDelete.prev;
+      if (recordToDelete.prev !== undefined)
+        recordToDelete.prev.setNext(recordToDelete.next);
+      if (recordToDelete.next !== undefined)
+        recordToDelete.next.setPrev(recordToDelete.prev);
     }
+    recordToDelete.unStore();
 
     this._data.delete(key);
+
+    return recordToDelete;
+  }
+
+  update(day, newValue, newDay) {
+    this.delete(day);
+    this.add(newValue, newDay);
   }
 
   get all() {
-    return this._data;
+    return this._data.values().map(({ value, day }) => ({ value, day }));
   }
 
-  _getNeighbors(day) {
+  getNeighbors(day, { excludeDay } = {}) {
     const key = day.valueOf();
 
     const neighbors = {};
 
     for (let currentKey of this._data.keys()) {
-      if (key - currentKey > 0) {
+      if (excludeDay === undefined || excludeDay.valueOf() === currentKey) {
+        const diff = key - currentKey;
+        const lastPrevDiff =
+          key - (neighbors.prev !== undefined ? neighbors.prev.key : 0);
+        const lastNextDiff =
+          (neighbors.next !== undefined ? neighbors.next.key : 0) - key;
+
+        if (diff > 0 && diff < lastPrevDiff)
+          neighbors.prev = this.get(currentKey);
+        if (diff < 0 && diff > lastNextDiff)
+          neighbors.next = this.get(currentKey);
       }
     }
-    const prev = this._data
-      .keys()
-      .filter((key) => day.valueOf() > key)
-      .sort((a, b) => b - a)[0];
-    const next = this._data
-      .keys()
-      .filter((key) => key > day.valueOf())
-      .sort()[0];
 
-    return { prev, next };
+    return neighbors;
   }
 }

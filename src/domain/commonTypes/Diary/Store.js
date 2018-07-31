@@ -1,42 +1,38 @@
 import { Day } from '../Day';
 import { Record } from './Record';
+import { errors } from '../../errors';
 
 export class Store {
   constructor() {
     this._data = new Map();
   }
 
-  set(records) {
-    records.forEach(({ value, day }) => {
-      this.add(value, day);
-    });
-  }
-
   get(day) {
     return this._data.get(day.valueOf());
+  }
+
+  set(records) {
+    return records.map(({ value, day }) => this.add(value, day));
   }
 
   add(value, day = new Day()) {
     const key = day.valueOf();
 
-    const newRecord = new Record({ value, day });
+    if (!this._data.has(key)) {
+      const newRecord = new Record({ value, day });
 
-    const { next, prev } = this.getNeighbors(day);
-    if (prev !== undefined) {
-      newRecord.setPrev(prev);
-      prev.setNext(newRecord);
+      record.setNeighbors();
+
+      newRecord.storeWithNeighbors(this.getNeighbors(day));
+
+      this._data.set(key, newRecord);
+
+      // console.log('################ add ################');
+      // console.log(newRecord);
+      return newRecord;
     }
 
-    if (next !== undefined) {
-      newRecord.setNext(next);
-      next.setPrev(newRecord);
-    }
-
-    newRecord.store();
-
-    this._data.set(key, newRecord);
-
-    return newRecord;
+    throw errors.recordAlreadyExists();
   }
 
   delete(day = new Day()) {
@@ -49,12 +45,15 @@ export class Store {
         recordToDelete.prev.setNext(recordToDelete.next);
       if (recordToDelete.next !== undefined)
         recordToDelete.next.setPrev(recordToDelete.prev);
+
+      recordToDelete.unStore();
+
+      this._data.delete(key);
+
+      return recordToDelete;
     }
-    recordToDelete.unStore();
 
-    this._data.delete(key);
-
-    return recordToDelete;
+    return errors.recordNotFound();
   }
 
   update(day, newValue, newDay) {

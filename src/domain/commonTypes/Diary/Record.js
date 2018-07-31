@@ -49,6 +49,20 @@ export class Record extends BaseValue {
     return this._value === this.constructor.CLOSE_VALUE;
   }
 
+  setNeighbors({ prev, next }) {
+    if (prev !== undefined) {
+      this._setPrev(prev);
+      prev._setNext(this);
+    }
+
+    if (next !== undefined) {
+      this._setNext(next);
+      next._setPrev(this);
+    }
+
+    this.store();
+  }
+
   setPrev(prev) {
     this._prev = prev;
   }
@@ -62,8 +76,8 @@ export class Record extends BaseValue {
   }
 
   unStore() {
-    this.setNext();
-    this.setPrev();
+    this._setNext();
+    this._setPrev();
     this._isStored = false;
   }
 }

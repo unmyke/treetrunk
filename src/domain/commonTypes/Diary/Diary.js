@@ -6,7 +6,8 @@ import {
 import { errors } from '../../errors';
 import { BaseClass } from '../../_lib';
 import { Day } from '../Day';
-import { Neighbors } from './Neighbors';
+import { Store } from './Store';
+import { Archive } from './Archive';
 
 const states = {
   NEW: 'new',
@@ -216,16 +217,16 @@ export class Diary extends BaseClass {
       },
 
       // operaton validations
-      onBeforeAddRecord(lifecycle, record) {
-        if (this._getLastCloseDay() > record.day) {
+      onBeforeAddRecord(lifecycle, value, day) {
+        if (this._getLastCloseDay() > day) {
           throw errors.diaryClosed();
         }
 
-        if (this._hasRecordsOn(record.day)) {
+        if (this._hasRecordsOn(day)) {
           throw errors.recordAlreadyExists();
         }
 
-        if (this._hasDublicateWith(record)) {
+        if (this._hasDublicateWith(value, day)) {
           throw errors.recordDuplicate();
         }
       },
@@ -279,85 +280,67 @@ export class Diary extends BaseClass {
         }
       },
 
-      onBeforeAddCloseAt({ from, to }, day) {
+      onBeforeAddCloseAt(lifecycle, day) {
         if (this._getLastCloseDay() > day) {
           throw errors.diaryClosed();
         }
       },
 
-      onBeforeAddCloseAt({ from, to }, day) {
+      onBeforeAddCloseAt(lifecycle, day) {
         if (this._getLastCloseDay() > day) {
           throw errors.diaryClosed();
         }
       },
 
-      onBeforeUpdateCloseTo({ from, to }, day) {
+      onBeforeUpdateCloseTo(lifecycle, day) {
         if (this._hasRecordsAtOrAfter(day)) {
           throw errors.diaryHasRecordsLater();
         }
       },
 
       // operatons
-      onAddRecord({ from }, record) {
-        this._records = [...this._records, record];
+      onAddRecord({ from }, value, day) {
+        this._records.add(value, day);
 
         if (from !== states.STARTED) {
-          this.startDay = record.day;
+          this.startDay = day;
         }
       },
 
       onDeleteRecordAt({ to }, day) {
-        this._records = this._records.filter(
-          ({ day: currentDay }) => !currentDay.equals(day)
-        );
+        this._records.delete(day);
 
         if (to !== states.STARTED) {
           this.startDay = undefined;
         }
       },
 
-      onUpdateRecordTo({ from, to }, day, newRecord) {
-        this._records = [
-          ...this._records.filter(
-            ({ day: currentDay }) => !currentDay.equals(day)
-          ),
-          newRecord,
-        ];
+      onUpdateRecordTo(lifecycle, day, newValue, newDay) {
+        this._records.update(day, newValue, newDay);
       },
 
-      onAddCloseAt({ from, to }, day) {
-        this._closeDays = [...this._closeDays, day];
+      onAddCloseAt(lifecycle, day) {
+        this._archive.add(day, this._records);
 
-        this.startDay = undefined;
+        this._records = new Store();
       },
 
-      onDeleteClose({ from, to }) {
-        const lastCloseDay = this._getLastCloseDay();
-
-        this._closeDays = this._closeDays.filter(
-          (day) => !day.equals(lastCloseDay)
-        );
+      onDeleteClose(lifecycle) {
+        this._records = this._archive.restoreLast();
       },
 
-      onUpdateCloseTo({ from, to }, day) {
-        const lastCloseDay = this._getLastCloseDay();
-
-        this._closeDays = [
-          ...this._closeDays.filter((day) => !day.equals(lastCloseDay)),
-          day,
-        ];
+      onUpdateCloseTo(lifecycle, day) {
+        const last = this._archive.restoreLast();
+        this._archive.add(day, last);
       },
     },
   };
 
-  constructor({ RecordClass }) {
+  constructor() {
     super();
 
-    this.RecordClass = RecordClass;
-
-    this._records = [];
-    this._closeDays = [];
-    this.startDay = undefined;
+    this._records = new Store();
+    this._archive = new Archive();
 
     this._fsm();
   }

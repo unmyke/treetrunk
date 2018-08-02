@@ -1,12 +1,6 @@
 import { BaseValue } from '../../_lib';
 
 export class Record extends BaseValue {
-  static CLOSE_VALUE = null;
-
-  static getCloseValue(day = new Day()) {
-    return new Record({ value: CLOSE_VALUE, day });
-  }
-
   constructor({ value, day }) {
     super();
     this._value = value;
@@ -45,14 +39,19 @@ export class Record extends BaseValue {
     return this.isStored && this.next === undefined;
   }
 
-  get isClose() {
-    return this._value === this.constructor.CLOSE_VALUE;
+  get isFirst() {
+    return this.isStored && this.prev === undefined;
+  }
+
+  setPrev(prev) {
+    this._prev = prev;
+  }
+
+  setNext(next) {
+    this._next = next;
   }
 
   store({ prev, next }) {
-    console.log('########## neighbors ##########');
-    console.log(prev);
-    console.log(next);
     if (prev !== undefined) {
       this.setPrev(prev);
       prev.setNext(this);
@@ -64,14 +63,6 @@ export class Record extends BaseValue {
     }
 
     this._isStored = true;
-  }
-
-  setPrev(prev) {
-    this._prev = prev;
-  }
-
-  setNext(next) {
-    this._next = next;
   }
 
   unStore() {

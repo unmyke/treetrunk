@@ -1,6 +1,7 @@
 import { Day } from '../Day';
 import { Record } from './Record';
 import { errors } from '../../errors';
+import { getDayComparator } from '../../_lib/BaseMethods';
 
 export class Store {
   constructor() {
@@ -9,6 +10,25 @@ export class Store {
 
   get(day) {
     return this._data.get(day.valueOf());
+  }
+
+  getLastDay() {
+    const lastKey = Math.max(...this._data.keys());
+
+    return Day.createByInt(lastKey);
+  }
+
+  getFirstDay() {
+    const firstKey = Math.min(...this._data.keys());
+
+    return Day.createByInt(firstKey);
+  }
+
+  get all() {
+    return this._data
+      .values()
+      .map(({ value, day }) => ({ value, day }))
+      .sort(getDayComparator('asc', ({ day }) => day));
   }
 
   set(records) {
@@ -50,10 +70,6 @@ export class Store {
     this.add(newValue, newDay);
   }
 
-  get all() {
-    return this._data.values().map(({ value, day }) => ({ value, day }));
-  }
-
   getNeighbors(day, { excludeDay } = {}) {
     const key = day.valueOf();
 
@@ -61,18 +77,19 @@ export class Store {
 
     for (let currentKey of this._data.keys()) {
       if (excludeDay === undefined || excludeDay.valueOf() === currentKey) {
-        const diff = key - currentKey;
+        const diff = currentKey - key;
 
         if (diff < 0) {
           const lastPrevDiff =
-            key - (neighbors.prev !== undefined ? neighbors.prev.key : 0);
+            (neighbors.prev !== undefined ? neighbors.prev.key : 0) - key;
 
           if (diff > lastPrevDiff) neighbors.prev = this.get(currentKey);
         }
 
         if (diff > 0) {
           const lastNextDiff =
-            key - (neighbors.next !== undefined ? neighbors.next.key : 0);
+            (neighbors.next !== undefined ? neighbors.next.key : Infinity) -
+            key;
 
           if (diff < lastNextDiff) neighbors.next = this.get(currentKey);
         }

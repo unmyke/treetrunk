@@ -8,27 +8,25 @@ export class Store {
     this._data = new Map();
   }
 
-  get(day) {
-    return this._data.get(day.valueOf());
+  get first() {
+    return this._data.get(this._getFirstKey);
   }
 
-  getLastDay() {
-    const lastKey = Math.max(...this._data.keys());
-
-    return Day.createByInt(lastKey);
-  }
-
-  getFirstDay() {
-    const firstKey = Math.min(...this._data.keys());
-
-    return Day.createByInt(firstKey);
+  get last() {
+    return this._data.get(this._getLastKey);
   }
 
   get all() {
-    return this._data
-      .values()
-      .map(({ value, day }) => ({ value, day }))
-      .sort(getDayComparator('asc', ({ day }) => day));
+    return [...this._data.entries()]
+      .sort(([keyA], [keyB]) => keyA - keyB)
+      .map(([key, { value, day }]) => ({ value, day }));
+    // return [...this._data.values()]
+    //   .map(({ value, day }) => ({ value, day }))
+    //   .sort(getDayComparator('asc', ({ day }) => day));
+  }
+
+  get(day) {
+    return this._data.get(day.valueOf());
   }
 
   set(records) {
@@ -38,16 +36,16 @@ export class Store {
   add(value, day = new Day()) {
     const key = day.valueOf();
 
-    if (!this._data.has(key)) {
-      const newRecord = new Record({ value, day });
-
-      newRecord.store(this.getNeighbors(day));
-      this._data.set(key, newRecord);
-
-      return newRecord;
+    if (this._data.has(key)) {
+      throw errors.recordAlreadyExists();
     }
 
-    throw errors.recordAlreadyExists();
+    const newRecord = new Record({ value, day });
+
+    newRecord.store(this.getNeighbors(day));
+    this._data.set(key, newRecord);
+
+    return newRecord;
   }
 
   delete(day = new Day()) {
@@ -55,14 +53,14 @@ export class Store {
 
     const recordToDelete = this._data.get(key);
 
-    if (recordToDelete !== undefined) {
-      recordToDelete.unStore();
-      this._data.delete(key);
-
-      return recordToDelete;
+    if (recordToDelete === undefined) {
+      throw errors.recordNotFound();
     }
 
-    throw errors.recordNotFound();
+    recordToDelete.unStore();
+    this._data.delete(key);
+
+    return recordToDelete;
   }
 
   update(day, newValue, newDay) {
@@ -97,5 +95,17 @@ export class Store {
     }
 
     return neighbors;
+  }
+
+  _getFirstKey() {
+    const min = Math.min(...this._data.keys());
+
+    return min !== Infinity ? min : undefined;
+  }
+
+  _getLastKey() {
+    const max = Math.max(...this._data.keys());
+
+    return max !== -Infinity ? max : undefined;
   }
 }

@@ -21,15 +21,15 @@ const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 const closeValue = new PostId();
 PostId.quitPostId = closeValue;
 
-describe('Domain :: entities :: Diary :: #diary', () => {
+describe('Domain :: entities :: Diary :: #_getLastCloseDay', () => {
   let diary;
 
   context('when diary have no diary', () => {
     beforeEach(() => {
       diary = Diary.restore([], closeValue);
     });
-    test('should return empty array', () => {
-      expect(diary.records).toEqual([]);
+    test('should return undefined', () => {
+      expect(diary._getLastCloseDay()).toBeUndefined();
     });
   });
 
@@ -40,11 +40,8 @@ describe('Domain :: entities :: Diary :: #diary', () => {
         closeValue
       );
     });
-    test('should return array with all diary at moment', () => {
-      expect(diary.records).toEqual([
-        { value: value1, day: day2 },
-        { value: value2, day: day4 },
-      ]);
+    test('should return undefined', () => {
+      expect(diary._getLastCloseDay()).toBeUndefined();
     });
   });
 
@@ -59,8 +56,8 @@ describe('Domain :: entities :: Diary :: #diary', () => {
         closeValue
       );
     });
-    test('should return empty array', () => {
-      expect(diary.records).toEqual([]);
+    test('should return close day', () => {
+      expect(diary._getLastCloseDay()).toBe(day6);
     });
   });
 
@@ -76,8 +73,8 @@ describe('Domain :: entities :: Diary :: #diary', () => {
         closeValue
       );
     });
-    test('should return array with all diary of second start at moment', () => {
-      expect(diary.records).toEqual([{ value: value2, day: day8 }]);
+    test('should return undefined', () => {
+      expect(diary._getLastCloseDay()).toBe(day6);
     });
   });
 
@@ -94,8 +91,8 @@ describe('Domain :: entities :: Diary :: #diary', () => {
         closeValue
       );
     });
-    test('should return empty array', () => {
-      expect(diary.records).toEqual([]);
+    test('should return second close day', () => {
+      expect(diary._getLastCloseDay()).toBe(day10);
     });
   });
 });

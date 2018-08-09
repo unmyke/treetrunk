@@ -79,7 +79,11 @@ export class Day extends BaseValue {
 
   constructor({ value } = { value: new Date() }) {
     super();
-    this.value = convertDate(value);
+    this._value = convertDate(value);
+  }
+
+  get value() {
+    return this._value;
   }
 
   contains(date) {

@@ -4,14 +4,14 @@ import { errors } from '../../errors';
 const SET_STATE_TRANSITION = 'setState';
 
 export const applyFSM = (EntityClass) => {
-  const { transitions, data, methods } = EntityClass.fsm;
+  const { init, transitions, data, methods } = EntityClass.fsm;
 
   StateMachine.factory(EntityClass, {
-    init: EntityClass.init,
+    init: init,
     transitions: [
       {
         name: SET_STATE_TRANSITION,
-        from: EntityClass.init,
+        from: init,
         to: function(state) {
           return state;
         },

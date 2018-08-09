@@ -1,16 +1,6 @@
-import { BaseValue } from '../../_lib';
 import { Diary } from './Diary';
 import { Day } from '../Day';
 import { errors } from '../../errors';
-
-class MockRecord extends BaseValue {
-  static valuePropName = 'mockValue';
-  constructor({ mockValue, day }) {
-    super();
-    this.mockValue = mockValue;
-    this.day = day;
-  }
-}
 
 const states = {
   NEW: 'new',
@@ -29,12 +19,11 @@ const value1 = 'value1';
 const value2 = 'value2';
 const value3 = 'value3';
 const value4 = 'value4';
-const emptyValue = undefined;
+const closeValue = 'closeValue';
 
 let diary;
 let diaryInstanceAt;
 let records;
-let closeDays;
 
 describe('Domain :: commonTypes :: Diary :: #static', () => {
   afterEach(() => {
@@ -44,53 +33,45 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
   describe('#restore', () => {
     describe('positive', () => {
       context('#1', () => {
-        beforeEach(() => {
-          records = [];
-          closeDays = [];
-        });
-
         test('should return new diary', () => {
-          diary = Diary.restore(MockRecord, records, closeDays);
+          diary = Diary.restore([], closeValue);
 
           expect(diary.state).toBe(states.NEW);
           expect(diary.records).toHaveLength(0);
-          expect(diary.record).toBeUndefined();
+          expect(diary.recordValue).toBeUndefined();
           expect(diary.closeDay).toBeUndefined();
         });
       });
 
       context('#2', () => {
         beforeEach(() => {
-          records = [new MockRecord({ mockValue: value1, day: day1 })];
-          closeDays = [];
+          records = [{ value: value1, day: day1 }];
         });
 
         test('should return started diary', () => {
-          diary = Diary.restore(MockRecord, records, closeDays);
+          diary = Diary.restore(records, closeValue);
 
           expect(diary.state).toBe(states.STARTED);
-          expect(diary.records).toEqual([
-            new MockRecord({ mockValue: value1, day: day1 }),
-          ]);
-          expect(diary.record).toEqual(
-            new MockRecord({ mockValue: value1, day: day1 })
-          );
+          expect(diary.records).toEqual([{ value: value1, day: day1 }]);
+          expect(diary.recordValue).toEqual(value1);
           expect(diary.closeDay).toBeUndefined();
         });
       });
 
       context('#3', () => {
         beforeEach(() => {
-          records = [new MockRecord({ mockValue: value1, day: day1 })];
-          closeDays = [day2];
+          records = [
+            { value: value1, day: day1 },
+            { value: closeValue, day: day2 },
+          ];
         });
 
         test('should return closed diary', () => {
-          diary = Diary.restore(MockRecord, records, closeDays);
+          diary = Diary.restore(records, closeValue);
 
           expect(diary.state).toBe(states.CLOSED);
           expect(diary.records).toHaveLength(0);
-          expect(diary.record).toBeUndefined();
+          expect(diary.recordValue).toBeUndefined();
           expect(diary.closeDay).toEqual(day2);
         });
       });
@@ -98,18 +79,18 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#4', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day2 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day2 },
+            { value: closeValue, day: day3 },
           ];
-          closeDays = [day3];
         });
 
         test('should return closed diary', () => {
-          diary = Diary.restore(MockRecord, records, closeDays);
+          diary = Diary.restore(records, closeValue);
 
           expect(diary.state).toBe(states.CLOSED);
           expect(diary.records).toHaveLength(0);
-          expect(diary.record).toBeUndefined();
+          expect(diary.recordValue).toBeUndefined();
           expect(diary.closeDay).toEqual(day3);
         });
       });
@@ -117,22 +98,18 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#5', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day3 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day3 },
+            { value: closeValue, day: day2 },
           ];
-          closeDays = [day2];
         });
 
         test('should return started diary', () => {
-          diary = Diary.restore(MockRecord, records, closeDays);
+          diary = Diary.restore(records, closeValue);
 
           expect(diary.state).toBe(states.STARTED);
-          expect(diary.records).toEqual([
-            new MockRecord({ mockValue: value2, day: day3 }),
-          ]);
-          expect(diary.record).toEqual(
-            new MockRecord({ mockValue: value2, day: day3 })
-          );
+          expect(diary.records).toEqual([{ value: value2, day: day3 }]);
+          expect(diary.recordValue).toEqual(value2);
           expect(diary.closeDay).toBeUndefined();
         });
       });
@@ -140,24 +117,22 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#6', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day3 }),
-            new MockRecord({ mockValue: value3, day: day4 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day3 },
+            { value: value3, day: day4 },
+            { value: closeValue, day: day2 },
           ];
-          closeDays = [day2];
         });
 
         test('should return started diary', () => {
-          diary = Diary.restore(MockRecord, records, closeDays);
+          diary = Diary.restore(records, closeValue);
 
           expect(diary.state).toBe(states.STARTED);
           expect(diary.records).toEqual([
-            new MockRecord({ mockValue: value2, day: day3 }),
-            new MockRecord({ mockValue: value3, day: day4 }),
+            { value: value2, day: day3 },
+            { value: value3, day: day4 },
           ]);
-          expect(diary.record).toEqual(
-            new MockRecord({ mockValue: value3, day: day4 })
-          );
+          expect(diary.recordValue).toEqual(value3);
           expect(diary.closeDay).toBeUndefined();
         });
       });
@@ -165,19 +140,20 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#7', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day3 }),
-            new MockRecord({ mockValue: value3, day: day4 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day3 },
+            { value: value3, day: day4 },
+            { value: closeValue, day: day2 },
+            { value: closeValue, day: day5 },
           ];
-          closeDays = [day2, day5];
         });
 
         test('should return started diary', () => {
-          diary = Diary.restore(MockRecord, records, closeDays);
+          diary = Diary.restore(records, closeValue);
 
           expect(diary.state).toBe(states.CLOSED);
           expect(diary.records).toHaveLength(0);
-          expect(diary.record).toBeUndefined();
+          expect(diary.recordValue).toBeUndefined();
           expect(diary.closeDay).toEqual(day5);
         });
       });
@@ -185,23 +161,20 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#8', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day3 }),
-            new MockRecord({ mockValue: value3, day: day5 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day3 },
+            { value: value3, day: day5 },
+            { value: closeValue, day: day2 },
+            { value: closeValue, day: day4 },
           ];
-          closeDays = [day2, day4];
         });
 
         test('should return started diary', () => {
-          diary = Diary.restore(MockRecord, records, closeDays);
+          diary = Diary.restore(records, closeValue);
 
           expect(diary.state).toBe(states.STARTED);
-          expect(diary.records).toEqual([
-            new MockRecord({ mockValue: value3, day: day5 }),
-          ]);
-          expect(diary.record).toEqual(
-            new MockRecord({ mockValue: value3, day: day5 })
-          );
+          expect(diary.records).toEqual([{ value: value3, day: day5 }]);
+          expect(diary.recordValue).toEqual(value3);
           expect(diary.closeDay).toBeUndefined();
         });
       });
@@ -210,13 +183,12 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
     describe('negative', () => {
       context('#1', () => {
         beforeEach(() => {
-          records = [];
-          closeDays = [day1];
+          records = [, { value: closeValue, day: day1 }];
         });
 
         test('should throw exeption', () => {
           expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
+            diary = Diary.restore(records, closeValue);
           }).toThrowError(errors.inconsistentState());
         });
       });
@@ -224,43 +196,47 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#2', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day2 }),
-            new MockRecord({ mockValue: value2, day: day3 }),
+            { value: value1, day: day2 },
+            { value: value2, day: day3 },
+            { value: closeValue, day: day1 },
           ];
-          closeDays = [day1];
         });
 
         test('should throw exeption', () => {
           expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
+            diary = Diary.restore(records, closeValue);
           }).toThrowError(errors.inconsistentState());
         });
       });
 
       context('#3', () => {
         beforeEach(() => {
-          records = [new MockRecord({ mockValue: value1, day: day1 })];
-          closeDays = [day2, day3];
+          records = [
+            { value: value1, day: day1 },
+            { value: closeValue, day: day2 },
+            { value: closeValue, day: day3 },
+          ];
         });
 
         test('should throw exeption', () => {
           expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
+            diary = Diary.restore(records, closeValue);
           }).toThrowError(errors.inconsistentState());
         });
       });
       context('#4', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day4 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day4 },
+            { value: closeValue, day: day2 },
+            { value: closeValue, day: day3 },
           ];
-          closeDays = [day2, day3];
         });
 
         test('should throw exeption', () => {
           expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
+            diary = Diary.restore(records, closeValue);
           }).toThrowError(errors.inconsistentState());
         });
       });
@@ -268,16 +244,16 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#5', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day3 }),
-            new MockRecord({ mockValue: value2, day: day4 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day3 },
+            { value: value2, day: day4 },
+            { value: closeValue, day: day2 },
           ];
-          closeDays = [day2];
         });
 
         test('should throw exeption', () => {
           expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
+            diary = Diary.restore(records, closeValue);
           }).toThrowError(errors.inconsistentState());
         });
       });
@@ -285,16 +261,17 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#6', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day3 }),
-            new MockRecord({ mockValue: value2, day: day4 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day3 },
+            { value: value2, day: day4 },
+            { value: closeValue, day: day2 },
+            { value: closeValue, day: day5 },
           ];
-          closeDays = [day2, day5];
         });
 
         test('should throw exeption', () => {
           expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
+            diary = Diary.restore(records, closeValue);
           }).toThrowError(errors.inconsistentState());
         });
       });
@@ -302,15 +279,15 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#7', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day2 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day2 },
+            { value: closeValue, day: day2 },
           ];
-          closeDays = [day2];
         });
 
         test('should throw exeption', () => {
           expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
+            diary = Diary.restore(records, closeValue);
           }).toThrowError(errors.inconsistentState());
         });
       });
@@ -318,31 +295,15 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       context('#8', () => {
         beforeEach(() => {
           records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: emptyValue, day: day2 }),
+            { value: value1, day: day1 },
+            { value: value2, day: day1 },
+            { value: closeValue, day: day2 },
           ];
-          closeDays = [day3];
         });
 
         test('should throw exeption', () => {
           expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
-
-      context('#9', () => {
-        beforeEach(() => {
-          records = [
-            new MockRecord({ mockValue: value1, day: day1 }),
-            new MockRecord({ mockValue: value2, day: day1 }),
-          ];
-          closeDays = [day2];
-        });
-
-        test('should throw exeption', () => {
-          expect(() => {
-            diary = Diary.restore(MockRecord, records, closeDays);
+            diary = Diary.restore(records, closeValue);
           }).toThrowError(errors.inconsistentState());
         });
       });
@@ -352,14 +313,15 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
   describe('#instanceAt', () => {
     beforeEach(() => {
       diary = Diary.restore(
-        MockRecord,
         [
-          new MockRecord({ mockValue: value1, day: day1 }),
-          new MockRecord({ mockValue: value2, day: day3 }),
-          new MockRecord({ mockValue: value3, day: day4 }),
-          new MockRecord({ mockValue: value4, day: day6 }),
+          { value: value1, day: day1 },
+          { value: value2, day: day3 },
+          { value: value3, day: day4 },
+          { value: value4, day: day6 },
+          { value: closeValue, day: day2 },
+          { value: closeValue, day: day5 },
         ],
-        [day2, day5]
+        closeValue
       );
     });
 
@@ -372,7 +334,7 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
 
       expect(diaryInstanceAt.state).toBe(states.NEW);
       expect(diaryInstanceAt.records).toHaveLength(0);
-      expect(diaryInstanceAt.record).toBeUndefined();
+      expect(diaryInstanceAt.recordValue).toBeUndefined();
       expect(diaryInstanceAt.closeDay).toBeUndefined();
     });
 
@@ -380,12 +342,8 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       diaryInstanceAt = Diary.instanceAt(diary, day1);
 
       expect(diaryInstanceAt.state).toBe(states.STARTED);
-      expect(diaryInstanceAt.records).toEqual([
-        new MockRecord({ mockValue: value1, day: day1 }),
-      ]);
-      expect(diaryInstanceAt.record).toEqual(
-        new MockRecord({ mockValue: value1, day: day1 })
-      );
+      expect(diaryInstanceAt.records).toEqual([{ value: value1, day: day1 }]);
+      expect(diaryInstanceAt.recordValue).toEqual(value1);
       expect(diaryInstanceAt.closeDay).toBeUndefined();
     });
 
@@ -393,12 +351,8 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       diaryInstanceAt = Diary.instanceAt(diary, day2.prev());
 
       expect(diaryInstanceAt.state).toBe(states.STARTED);
-      expect(diaryInstanceAt.records).toEqual([
-        new MockRecord({ mockValue: value1, day: day1 }),
-      ]);
-      expect(diaryInstanceAt.record).toEqual(
-        new MockRecord({ mockValue: value1, day: day1 })
-      );
+      expect(diaryInstanceAt.records).toEqual([{ value: value1, day: day1 }]);
+      expect(diaryInstanceAt.recordValue).toEqual(value1);
       expect(diaryInstanceAt.closeDay).toBeUndefined();
     });
 
@@ -407,7 +361,7 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
 
       expect(diaryInstanceAt.state).toBe(states.CLOSED);
       expect(diaryInstanceAt.records).toHaveLength(0);
-      expect(diaryInstanceAt.record).toBeUndefined();
+      expect(diaryInstanceAt.recordValue).toBeUndefined();
       expect(diaryInstanceAt.closeDay).toEqual(day2);
     });
 
@@ -416,7 +370,7 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
 
       expect(diaryInstanceAt.state).toBe(states.CLOSED);
       expect(diaryInstanceAt.records).toHaveLength(0);
-      expect(diaryInstanceAt.record).toBeUndefined();
+      expect(diaryInstanceAt.recordValue).toBeUndefined();
       expect(diaryInstanceAt.closeDay).toEqual(day2);
     });
 
@@ -424,12 +378,8 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       diaryInstanceAt = Diary.instanceAt(diary, day3);
 
       expect(diaryInstanceAt.state).toBe(states.STARTED);
-      expect(diaryInstanceAt.records).toEqual([
-        new MockRecord({ mockValue: value2, day: day3 }),
-      ]);
-      expect(diaryInstanceAt.record).toEqual(
-        new MockRecord({ mockValue: value2, day: day3 })
-      );
+      expect(diaryInstanceAt.records).toEqual([{ value: value2, day: day3 }]);
+      expect(diaryInstanceAt.recordValue).toEqual(value2);
       expect(diaryInstanceAt.closeDay).toBeUndefined();
     });
 
@@ -437,12 +387,8 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       diaryInstanceAt = Diary.instanceAt(diary, day4.prev());
 
       expect(diaryInstanceAt.state).toBe(states.STARTED);
-      expect(diaryInstanceAt.records).toEqual([
-        new MockRecord({ mockValue: value2, day: day3 }),
-      ]);
-      expect(diaryInstanceAt.record).toEqual(
-        new MockRecord({ mockValue: value2, day: day3 })
-      );
+      expect(diaryInstanceAt.records).toEqual([{ value: value2, day: day3 }]);
+      expect(diaryInstanceAt.recordValue).toEqual(value2);
       expect(diaryInstanceAt.closeDay).toBeUndefined();
     });
 
@@ -451,12 +397,10 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
 
       expect(diaryInstanceAt.state).toBe(states.STARTED);
       expect(diaryInstanceAt.records).toEqual([
-        new MockRecord({ mockValue: value2, day: day3 }),
-        new MockRecord({ mockValue: value3, day: day4 }),
+        { value: value2, day: day3 },
+        { value: value3, day: day4 },
       ]);
-      expect(diaryInstanceAt.record).toEqual(
-        new MockRecord({ mockValue: value3, day: day4 })
-      );
+      expect(diaryInstanceAt.recordValue).toEqual(value3);
       expect(diaryInstanceAt.closeDay).toBeUndefined();
     });
 
@@ -465,12 +409,10 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
 
       expect(diaryInstanceAt.state).toBe(states.STARTED);
       expect(diaryInstanceAt.records).toEqual([
-        new MockRecord({ mockValue: value2, day: day3 }),
-        new MockRecord({ mockValue: value3, day: day4 }),
+        { value: value2, day: day3 },
+        { value: value3, day: day4 },
       ]);
-      expect(diaryInstanceAt.record).toEqual(
-        new MockRecord({ mockValue: value3, day: day4 })
-      );
+      expect(diaryInstanceAt.recordValue).toEqual(value3);
       expect(diaryInstanceAt.closeDay).toBeUndefined();
     });
 
@@ -479,7 +421,7 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
 
       expect(diaryInstanceAt.state).toBe(states.CLOSED);
       expect(diaryInstanceAt.records).toHaveLength(0);
-      expect(diaryInstanceAt.record).toBeUndefined();
+      expect(diaryInstanceAt.recordValue).toBeUndefined();
       expect(diaryInstanceAt.closeDay).toEqual(day5);
     });
 
@@ -488,7 +430,7 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
 
       expect(diaryInstanceAt.state).toBe(states.CLOSED);
       expect(diaryInstanceAt.records).toHaveLength(0);
-      expect(diaryInstanceAt.record).toBeUndefined();
+      expect(diaryInstanceAt.recordValue).toBeUndefined();
       expect(diaryInstanceAt.closeDay).toEqual(day5);
     });
 
@@ -496,12 +438,8 @@ describe('Domain :: commonTypes :: Diary :: #static', () => {
       diaryInstanceAt = Diary.instanceAt(diary, day6);
 
       expect(diaryInstanceAt.state).toBe(states.STARTED);
-      expect(diaryInstanceAt.records).toEqual([
-        new MockRecord({ mockValue: value4, day: day6 }),
-      ]);
-      expect(diaryInstanceAt.record).toEqual(
-        new MockRecord({ mockValue: value4, day: day6 })
-      );
+      expect(diaryInstanceAt.records).toEqual([{ value: value4, day: day6 }]);
+      expect(diaryInstanceAt.recordValue).toEqual(value4);
       expect(diaryInstanceAt.closeDay).toBeUndefined();
     });
   });

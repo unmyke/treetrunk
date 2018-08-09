@@ -1,4 +1,5 @@
 import { BaseValue } from '../../_lib';
+import { isEqualValues } from '../../_lib/BaseMethods';
 
 export class Record extends BaseValue {
   constructor({ value, day }) {
@@ -73,5 +74,13 @@ export class Record extends BaseValue {
     this.setPrev();
 
     this._isStored = false;
+  }
+
+  hasEqualNieghbours() {
+    return (
+      this.prev !== undefined &&
+      this.next !== undefined &&
+      isEqualValues(this.prev.value, this.next.value)
+    );
   }
 }

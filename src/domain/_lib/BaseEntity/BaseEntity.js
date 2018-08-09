@@ -3,7 +3,6 @@ import { lowerFirst } from 'lodash';
 import { applyFSM } from '../BaseMethods';
 import { BaseId } from '../BaseId';
 import { BaseClass } from '../BaseClass';
-import { errors } from '../../errors';
 
 export class BaseEntity extends BaseClass {
   constructor(id = new BaseId()) {
@@ -12,6 +11,5 @@ export class BaseEntity extends BaseClass {
 
     applyFSM(this.constructor);
     this._fsm();
-    this.errors = errors;
   }
 }

@@ -1,23 +1,17 @@
 import StateMachine from 'javascript-state-machine';
 import { errors } from '../../errors';
 
-const INIT_STATE = 'initialized';
 const SET_STATE_TRANSITION = 'setState';
 
 export const applyFSM = (EntityClass) => {
-  const { transitions, data, methods, getRawState } = EntityClass.fsm;
-
-  EntityClass.prototype._runFSM = function() {
-    this._fsm();
-    this[SET_STATE_TRANSITION](getRawState(this));
-  };
+  const { init, transitions, data, methods } = EntityClass.fsm;
 
   StateMachine.factory(EntityClass, {
-    init: INIT_STATE,
+    init: init,
     transitions: [
       {
         name: SET_STATE_TRANSITION,
-        from: INIT_STATE,
+        from: init,
         to: function(state) {
           return state;
         },
@@ -26,7 +20,7 @@ export const applyFSM = (EntityClass) => {
     ],
     data: data,
     methods: {
-      onInvalidTransition(transition, from, to) {
+      onInvalidTransition() {
         throw errors.transitionNotAllowed();
       },
       ...methods,

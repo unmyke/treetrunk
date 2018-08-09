@@ -54,8 +54,8 @@ export class DayRange extends BaseValue {
 
   constructor({ start, end } = {}) {
     super();
-    this.start = start;
-    this.end = end;
+    this._start = start;
+    this._end = end;
   }
 
   [Symbol.iterator] = function*() {
@@ -68,6 +68,14 @@ export class DayRange extends BaseValue {
       curDay = curDay.addDays(1);
     } while (curDay < this.end);
   };
+
+  get start() {
+    return this._start;
+  }
+
+  get end() {
+    return this._end;
+  }
 
   get length() {
     // if (!this.isValid()) {

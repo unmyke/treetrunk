@@ -5,7 +5,7 @@ export const errors = {
   recordAlreadyExists: makeError('RECORD_ALREADY_EXISTS'),
   recordDuplicate: makeError('RECORD_DUPLICATE'),
   recordNotFound: makeError('RECORD_NOT_FOUND'),
-  recordHasEqualNeightbors: makeError('RECORD_HAS_EQUAL_NEIGHTBORS'),
+  recordHasEqualNeighbours: makeError('RECORD_HAS_EQUAL_NEIGHBOURS'),
   recordHasLimitedScope: makeError('RECORD_HAS_LIMITED_SCOPE'),
   newRecordAlreadyExists: makeError('NEW_RECORD_ALREADY_EXISTS'),
   newRecordDuplicate: makeError('NEW_RECORD_DUPLICATE'),
@@ -18,7 +18,7 @@ export const errors = {
   appointmentAlreadyExists: makeError('APPOINTMENT_ALREADY_EXISTS'),
   appointmentDuplicate: makeError('APPOINTMENT_DUPLICATE'),
   appointmentNotFound: makeError('APPOINTMENT_NOT_FOUND'),
-  appointmentHasEqualNeightbors: makeError('APPOINTMENT_HAS_EQUAL_NEIGHTBORS'),
+  appointmentHasEqualNeighbours: makeError('APPOINTMENT_HAS_EQUAL_NEIGHBOURS'),
   appointmentHasLimitedScope: makeError('APPOINTMENT_HAS_LIMITED_SCOPE'),
   newAppointmentAlreadyExists: makeError('NEW_APPOINTMENT_ALREADY_EXISTS'),
   newAppointmentDuplicate: makeError('NEW_APPOINTMENT_DUPLICATE'),
@@ -31,13 +31,16 @@ export const errors = {
   pieceRateAlreadyExists: makeError('PIECE_RATE_ALREADY_EXISTS'),
   pieceRateDuplicate: makeError('PIECE_RATE_DUPLICATE'),
   pieceRateNotFound: makeError('PIECE_RATE_NOT_FOUND'),
-  pieceRateHasEqualNeightbors: makeError('PIECE_RATE_HAS_EQUAL_NEIGHTBORS'),
+  pieceRateHasEqualNeighbours: makeError('PIECE_RATE_HAS_EQUAL_NEIGHBOURS'),
   pieceRateHasLimitedScope: makeError('PIECE_RATE_HAS_LIMITED_SCOPE'),
   newPieceRateAlreadyExists: makeError('NEW_PIECE_RATE_ALREADY_EXISTS'),
   newPieceRateDuplicate: makeError('NEW_PIECE_RATE_DUPLICATE'),
 
   // FSM
   transitionNotAllowed: makeError('TRANSITION_NOT_ALLOWED'),
+
+  // factory
+  inconsistentState: makeError('INCONSISTENT_STATE'),
 
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),

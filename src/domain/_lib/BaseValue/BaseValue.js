@@ -1,11 +1,5 @@
 import { BaseClass } from '../BaseClass';
-
-const valueEquality = (value1, value2) => {
-  if (value1 instanceof BaseValue) {
-    return value1.equals(value2);
-  }
-  return value1.valueOf() === value2.valueOf();
-};
+import { isEqualValues } from '../BaseMethods';
 
 export class BaseValue extends BaseClass {
   equals(value) {
@@ -24,7 +18,7 @@ export class BaseValue extends BaseClass {
       return (
         isEqual &&
         propertyName === valuePropNames[index] &&
-        valueEquality(this[propertyName], value[propertyName])
+        isEqualValues(this[propertyName], value[propertyName])
       );
     }, true);
   }

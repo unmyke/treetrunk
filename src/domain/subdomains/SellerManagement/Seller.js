@@ -3,36 +3,59 @@ import { makeError, errors } from '../../errors';
 import { SellerId, PostId, PersonName, Day, Diary } from '../../commonTypes';
 import { Appointment } from './Appointment';
 
-export class Seller extends BaseEntity {
-  // Seller states
+const states = {
+  NEW: 'new',
+  RECRUITED: 'recruited',
+  VACATIONER: 'vacationer',
+  DISMISSED: 'dismissed',
+  DELETED: 'deleted',
+};
 
-  static states = {
-    NEW: 'new',
-    RECRUITED: 'recruited',
-    VACATIONER: 'vacationer',
-    DISMISSED: 'dismissed',
-    DELETED: 'deleted',
-  };
+export class Seller extends BaseEntity {
+  // Factories
+
+  static restore({
+    sellerId,
+    firstName,
+    middleName,
+    lastName,
+    phone,
+    appointments,
+  }) {
+    const seller = new Seller({
+      sellerId,
+      firstName,
+      middleName,
+      lastName,
+      phone,
+    });
+
+    seller.setRecords(
+      appointments.map(({ postId, day }) => ({ value: postId, day }))
+    );
+
+    return seller;
+  }
 
   // state-transition functions
 
   static addAppointmentTransitionCondition() {
     switch (true) {
-      case this.is(this.constructor.states.RECRUITED) ||
-        this.is(this.constructor.states.NEW) ||
-        this.is(this.constructor.states.DISMISSED):
-        return this.constructor.states.RECRUITED;
-      case this.is(this.constructor.states.VACATIONER):
+      case this.is(states.RECRUITED) ||
+        this.is(states.NEW) ||
+        this.is(states.DISMISSED):
+        return states.RECRUITED;
+      case this.is(states.VACATIONER):
         return this.state;
     }
   }
 
   static deleteAppointmentTransitionCondition() {
     if (this.isDismissed) {
-      return this.constructor.states.DISMISSED;
+      return states.DISMISSED;
     } else {
       if (this.hasAppointments === flase) {
-        return this.constructor.states.NEW;
+        return states.NEW;
       } else {
         return this.state;
       }
@@ -44,72 +67,72 @@ export class Seller extends BaseEntity {
   }
 
   static fsm = {
-    init: Seller.states.NEW,
+    init: states.INITIALIZED,
     transitions: [
       {
         name: 'setAppointments',
-        from: '*',
+        from: states.INITIALIZED,
         to: Seller.unchangeState,
       },
       {
         name: 'addAppointment',
         from: [
-          Seller.states.NEW,
-          Seller.states.RECRUITED,
-          Seller.states.DISMISSED,
-          Seller.states.VACATIONER,
+          states.NEW,
+          states.RECRUITED,
+          states.DISMISSED,
+          states.VACATIONER,
         ],
         to: Seller.addAppointmentTransitionCondition,
       },
       {
         name: 'deleteAppointment',
-        from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
+        from: [states.RECRUITED, states.VACATIONER],
         to: Seller.deleteAppointmentTransitionCondition,
       },
       {
         name: 'updateAppointment',
-        from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
+        from: [states.RECRUITED, states.VACATIONER],
         to: Seller.unchangeState,
       },
       {
         name: 'update',
         from: [
-          Seller.states.NEW,
-          Seller.states.RECRUITED,
-          Seller.states.DISMISSED,
-          Seller.states.VACATIONER,
+          states.NEW,
+          states.RECRUITED,
+          states.DISMISSED,
+          states.VACATIONER,
         ],
         to: Seller.unchangeState,
       },
       {
         name: 'vacate',
-        from: Seller.states.RECRUITED,
-        to: Seller.states.VACATIONER,
+        from: states.RECRUITED,
+        to: states.VACATIONER,
       },
       {
         name: 'hold',
-        from: Seller.states.VACATIONER,
-        to: Seller.states.RECRUITED,
+        from: states.VACATIONER,
+        to: states.RECRUITED,
       },
       {
         name: 'dismiss',
-        from: [Seller.states.RECRUITED, Seller.states.VACATIONER],
-        to: Seller.states.DISMISSED,
+        from: [states.RECRUITED, states.VACATIONER],
+        to: states.DISMISSED,
       },
       {
         name: 'deleteDismiss',
-        from: Seller.states.DISMISSED,
-        to: Seller.states.RECRUITED,
+        from: states.DISMISSED,
+        to: states.RECRUITED,
       },
       {
         name: 'delete',
-        from: Seller.states.DISMISSED,
-        to: Seller.states.DELETED,
+        from: states.DISMISSED,
+        to: states.DELETED,
       },
       {
         name: 'restore',
-        from: Seller.states.DELETED,
-        to: Seller.states.DISMISSED,
+        from: states.DELETED,
+        to: states.DISMISSED,
       },
     ],
 
@@ -169,7 +192,7 @@ export class Seller extends BaseEntity {
     phone,
   }) {
     super(sellerId);
-    this.personName = new PersonName({
+    this._personName = new PersonName({
       lastName,
       firstName,
       middleName,
@@ -181,23 +204,23 @@ export class Seller extends BaseEntity {
       RecordClass: Appointment,
     });
 
-    this.vacations;
+    // this.vacations;
   }
 
   get fullName() {
-    return this.personName.fullName;
+    return this._personName.fullName;
   }
 
   get lastName() {
-    return this.personName.lastName;
+    return this._personName.lastName;
   }
 
   get firstName() {
-    return this.personName.firstName;
+    return this._personName.firstName;
   }
 
   get middleName() {
-    return this.personName.middleName;
+    return this._personName.middleName;
   }
 
   get appointments() {
@@ -225,12 +248,12 @@ export class Seller extends BaseEntity {
   }
 
   get isDismissed() {
-    return this._appointments.isClosed;
+    return this.is(states.DISMISSED);
   }
 
-  get isVacated() {
-    return this.is(this.constructor.states.VACATIONER);
-  }
+  // get isVacated() {
+  //   return this.is(states.VACATIONER);
+  // }
 
   get seniority() {
     return this.getSeniorityAt();
@@ -238,17 +261,17 @@ export class Seller extends BaseEntity {
 
   update({ lastName, firstName, middleName, phone }) {
     const newPersonName = new PersonName({
-      ...this.personName,
+      ...this._personName,
       lastName,
       firstName,
       middleName,
     });
 
-    if (this.personName.equals(newPersonName) && this.phone === phone) {
+    if (this._personName.equals(newPersonName) && this.phone === phone) {
       throw this.errors.sellerNothingToUpdate();
     }
 
-    this.personName = newPersonName;
+    this._personName = newPersonName;
     if (phone) {
       this.phone = phone;
     }

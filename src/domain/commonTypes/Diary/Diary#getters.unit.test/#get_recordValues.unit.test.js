@@ -2,7 +2,6 @@ import { PostId } from '../../PostId';
 import { Day } from '../../Day';
 
 import { Diary } from '../Diary';
-import { Appointment } from '../../../subdomains/SellerManagement/Appointment';
 
 const value1 = new PostId();
 const value2 = new PostId();
@@ -27,7 +26,7 @@ describe('Domain :: entities :: Diary :: #recordValues', () => {
 
   context('when diary have no diary', () => {
     beforeEach(() => {
-      diary = new Diary({ RecordClass: Appointment, closeValue });
+      diary = Diary.restore([], closeValue);
     });
     test('should return empty array', () => {
       expect(diary.recordValues).toEqual([]);
@@ -36,14 +35,10 @@ describe('Domain :: entities :: Diary :: #recordValues', () => {
 
   context('when diary have diary and not closed', () => {
     beforeEach(() => {
-      diary = new Diary({
-        RecordClass: Appointment,
-        closeValue,
-        records: [
-          new Appointment({ postId: value1, day: day2 }),
-          new Appointment({ postId: value2, day: day4 }),
-        ],
-      });
+      diary = Diary.restore(
+        [{ value: value1, day: day2 }, { value: value2, day: day4 }],
+        closeValue
+      );
     });
     test('should return array with all values between first appointment and passed day', () => {
       expect(diary.recordValues).toEqual([value1, value2]);
@@ -52,15 +47,14 @@ describe('Domain :: entities :: Diary :: #recordValues', () => {
 
   context('when diary have closed', () => {
     beforeEach(() => {
-      diary = new Diary({
-        RecordClass: Appointment,
-        closeValue,
-        records: [
-          new Appointment({ postId: value1, day: day2 }),
-          new Appointment({ postId: value2, day: day4 }),
-          new Appointment({ postId: closeValue, day: day6 }),
+      diary = Diary.restore(
+        [
+          { value: value1, day: day2 },
+          { value: value2, day: day4 },
+          { value: closeValue, day: day6 },
         ],
-      });
+        closeValue
+      );
     });
     test('should return empty array', () => {
       expect(diary.recordValues).toEqual([]);
@@ -69,16 +63,15 @@ describe('Domain :: entities :: Diary :: #recordValues', () => {
 
   context('when diary have closed and started again', () => {
     beforeEach(() => {
-      diary = new Diary({
-        RecordClass: Appointment,
-        closeValue,
-        records: [
-          new Appointment({ postId: value1, day: day2 }),
-          new Appointment({ postId: value2, day: day4 }),
-          new Appointment({ postId: closeValue, day: day6 }),
-          new Appointment({ postId: value2, day: day8 }),
+      diary = Diary.restore(
+        [
+          { value: value1, day: day2 },
+          { value: value2, day: day4 },
+          { value: closeValue, day: day6 },
+          { value: value2, day: day8 },
         ],
-      });
+        closeValue
+      );
     });
     test('should return array with all values between first appointment and today', () => {
       expect(diary.recordValues).toEqual([value2]);
@@ -87,17 +80,16 @@ describe('Domain :: entities :: Diary :: #recordValues', () => {
 
   context('when diary have closed, started again and close again', () => {
     beforeEach(() => {
-      diary = new Diary({
-        RecordClass: Appointment,
-        closeValue,
-        records: [
-          new Appointment({ postId: value1, day: day2 }),
-          new Appointment({ postId: value2, day: day4 }),
-          new Appointment({ postId: closeValue, day: day6 }),
-          new Appointment({ postId: value2, day: day8 }),
-          new Appointment({ postId: closeValue, day: day10 }),
+      diary = Diary.restore(
+        [
+          { value: value1, day: day2 },
+          { value: value2, day: day4 },
+          { value: closeValue, day: day6 },
+          { value: value2, day: day8 },
+          { value: closeValue, day: day10 },
         ],
-      });
+        closeValue
+      );
     });
     test('should return empty array', () => {
       expect(diary.recordValues).toEqual([]);

@@ -4,7 +4,11 @@ import { BaseValue } from '../BaseValue';
 export class BaseId extends BaseValue {
   constructor({ value } = { value: uuidv4() }) {
     super();
-    this.value = value;
+    this._value = value;
+  }
+
+  get value() {
+    return this._value;
   }
 
   valueOf() {

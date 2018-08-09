@@ -1,40 +1,52 @@
-import { container } from 'src/container';
-import { request } from 'src/infra/support/test/request';
 import uuidv4 from 'uuid/v4';
 
+import { container } from 'src/container';
+import { request } from 'src/infra/support/test/request';
+
 const {
-  domain: {
-    entities: { Post },
-    commonTypes: { Day },
+  subdomains: {
+    SellerManagement: {
+      entities: { Post },
+    },
   },
-  repositories: { Post: postRepo },
+  commonTypes: { Day },
+  repositories: {
+    SellerManagement: { Post: postRepo },
+  },
 } = container;
 
-const pieceRateDate1 = new Date('2018.01.21');
-const pieceRateDate2 = new Date('2018.02.21');
-const pieceRateDay1 = new Day({ value: pieceRateDate1 });
-const pieceRateDay2 = new Day({ value: pieceRateDate2 });
+const dateDTO1 = '2018-01-21T00:00:00.000+08:00';
+const dateDTO2 = '2018-02-21T00:00:00.000+08:00';
+const pieceRatesDTO = [
+  { value: 1, date: dateDTO1 },
+  { value: 2, date: dateDTO2 },
+];
 
-const postProps = { name: 'Флорист' };
-const post = new Post(postProps);
+const date1 = new Date(dateDTO1);
+const date2 = new Date(dateDTO2);
 
-post.addPieceRate(1, pieceRateDay1);
-post.addPieceRate(2, pieceRateDay2);
+const postProps = { name: 'Флорист', state: 'active' };
+const day1 = new Day({ value: date1 });
+const day2 = new Day({ value: date2 });
+const pieceRates = [{ value: 1, day: day1 }, { value: 2, day: day2 }];
 
-const postDTO = {
-  postId: post.postId.toString(),
-  name: 'Флорист',
-  currentPieceRate: 2,
-  pieceRates: [
-    { value: 1, date: '21.01.2018' },
-    { value: 2, date: '21.02.2018' },
-  ],
-};
-
+let post;
+let postDTO;
 let postToUpdate;
 
-describe('API :: POST /api/posts', () => {
+describe('API :: PUT /api/posts/:id', () => {
   beforeEach(async () => {
+    post = new Post(postProps);
+    post.setPieceRates(pieceRates);
+
+    postDTO = {
+      postId: post.postId.toString(),
+      name: 'Флорист',
+      state: 'active',
+      pieceRate: 2,
+      pieceRates: pieceRatesDTO,
+    };
+
     postToUpdate = await postRepo.add(post);
   });
 
@@ -55,7 +67,7 @@ describe('API :: POST /api/posts', () => {
     });
 
     context('when name is empty', () => {
-      it('does update and returns 400 with the validation error', async () => {
+      test('should not update and returns 400 with the validation error', async () => {
         const { statusCode, body } = await request()
           .put(`/api/posts/${postToUpdate.postId}`)
           .send({
@@ -64,40 +76,81 @@ describe('API :: POST /api/posts', () => {
 
         expect(statusCode).toBe(400);
         expect(body.type).toBe('ValidationError');
-        expect(body.details).toHaveLength(1);
-        expect(body.details[0]).toBe('"name" is not allowed to be empty');
+        expect(body.details).toEqual({
+          name: ["Name can't be blank"],
+        });
       });
     });
 
     context('when send no props', () => {
-      it('does update and returns 400 with the validation error', async () => {
+      test('should not update and returns 400 with the validation error', async () => {
         const { statusCode, body } = await request()
           .put(`/api/posts/${postToUpdate.postId}`)
-          .send({
-            name: '',
-          });
+          .send();
 
         expect(statusCode).toBe(400);
         expect(body.type).toBe('ValidationError');
-        expect(body.details).toHaveLength(1);
-        expect(body.details[0]).toBe("Name can't be blank");
+        expect(body.details).toEqual({
+          name: ["Name can't be blank"],
+        });
       });
     });
   });
 
   context('when post does not exist', () => {
-    it('returns the not found message and status 404', async () => {
+    test('should not update and returns 400 with the not found message', async () => {
       const fakePostId = uuidv4();
 
-      const { body } = await request()
+      const { statusCode, body } = await request()
         .put(`/api/posts/${fakePostId}`)
         .send({
           name: 'Страший флорист',
-        })
-        .expect(404);
+        });
 
+      expect(statusCode).toBe(404);
       expect(body.type).toBe('NotFoundError');
-      expect(body.details[0]).toBe("Post can't be found.");
+      expect(body.details).toEqual({
+        postId: [`Post with postId: "${fakePostId}" not found`],
+      });
+    });
+  });
+
+  context('when post with updated name already exists', () => {
+    test('should not update and returns 409 with the already exists message', async () => {
+      const name = 'Старший флорист';
+      const duplicatePostProps = { name };
+      const duplicatePost = new Post(duplicatePostProps);
+      duplicatePost.addPieceRate(3, day1);
+      duplicatePost.addPieceRate(4, day2);
+      await postRepo.add(duplicatePost);
+
+      const { statusCode, body } = await request()
+        .put(`/api/posts/${postToUpdate.postId}`)
+        .send({
+          name,
+        });
+
+      expect(statusCode).toBe(409);
+      expect(body.type).toBe('AlreadyExists');
+      expect(body.details).toEqual({
+        name: ['Post with name: "Старший флорист" already exists'],
+      });
+    });
+  });
+
+  context('when post nothing to update', () => {
+    test('should not update and returns 400 with the nothing to update message', async () => {
+      const { statusCode, body } = await request()
+        .put(`/api/posts/${postToUpdate.postId}`)
+        .send({
+          name: 'Флорист',
+        });
+
+      expect(statusCode).toBe(400);
+      expect(body.type).toBe('NothingToUpdate');
+      expect(body.details).toEqual({
+        post: ['Post already has name "Флорист"'],
+      });
     });
   });
 });

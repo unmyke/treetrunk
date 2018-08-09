@@ -2,7 +2,7 @@ import { isValidDate, convertDate } from '.';
 
 const validDate = new Date(2018, 0, 1, 12, 3, 4, 4);
 const undefinedDate = undefined;
-const invalidDate = new Date('Invalid Date');
+const invalidDate = new Date('Invalid date');
 const notDate = '';
 
 const expectedValidDate = new Date(2018, 0, 1, 0, 0, 0, 0);

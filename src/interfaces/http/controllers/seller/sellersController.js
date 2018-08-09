@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { injectService } from '../../utils/bottle-express';
+import { inject } from '../../utils/bottle-express';
 import Status from 'http-status';
 
 const SellersController = {
@@ -8,39 +8,61 @@ const SellersController = {
 
     // router.use(inject('serializers.seller'));
 
-    router.get('/', injectService('Seller', 'getSellers'), this.index);
-    router.get('/:sellerId', injectService('Seller', 'getSeller'), this.show);
-    router.post('/', injectService('Seller', 'createSeller'), this.create);
+    router.get(
+      '/',
+      inject('SellerManagement', 'Seller', 'getAllSellers'),
+      this.index
+    );
+    router.get(
+      '/:sellerId',
+      inject('SellerManagement', 'Seller', 'getSeller'),
+      this.show
+    );
+    router.post(
+      '/',
+      inject('SellerManagement', 'Seller', 'createSeller'),
+      this.create
+    );
     router.put(
       '/:sellerId',
-      injectService('Seller', 'updateSeller'),
+      inject('SellerManagement', 'Seller', 'updateSeller'),
       this.update
     );
     router.delete(
       '/:sellerId',
-      injectService('Seller', 'deleteSeller'),
+      inject('SellerManagement', 'Seller', 'deleteSeller'),
       this.delete
     );
     router.post(
       '/:sellerId/appointments',
-      injectService('Seller', 'createSellerAppointment'),
+      inject('SellerManagement', 'Seller', 'createSellerAppointment'),
       this.createAppointment
+    );
+    router.put(
+      '/:sellerId/appointments',
+      inject('SellerManagement', 'Seller', 'updateSellerAppointment'),
+      this.updateAppointment
+    );
+    router.delete(
+      '/:sellerId/appointments',
+      inject('SellerManagement', 'Seller', 'deleteSellerAppointment'),
+      this.deleteAppointment
     );
 
     return router;
   },
 
   index(req, res, next) {
-    const { getSellers } = req;
-    const { SUCCESS, ERROR } = getSellers.outputs;
+    const { getAllSellers } = req;
+    const { SUCCESS, ERROR } = getAllSellers.outputs;
 
-    getSellers
+    getAllSellers
       .on(SUCCESS, (sellers) => {
         res.status(Status.OK).json(sellers);
       })
       .on(ERROR, next);
 
-    getSellers.execute();
+    getAllSellers.execute(req.query);
   },
 
   show(req, res, next) {
@@ -65,7 +87,12 @@ const SellersController = {
 
   create(req, res, next) {
     const { createSeller } = req;
-    const { SUCCESS, ERROR, VALIDATION_ERROR } = createSeller.outputs;
+    const {
+      SUCCESS,
+      VALIDATION_ERROR,
+      ALREADY_EXISTS,
+      ERROR,
+    } = createSeller.outputs;
 
     createSeller
       .on(SUCCESS, (seller) => {
@@ -74,6 +101,12 @@ const SellersController = {
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({
           type: 'ValidationError',
+          details: error.details,
+        });
+      })
+      .on(ALREADY_EXISTS, (error) => {
+        res.status(Status.CONFLICT).json({
+          type: 'AlreadyExists',
           details: error.details,
         });
       })
@@ -86,9 +119,11 @@ const SellersController = {
     const { updateSeller } = req;
     const {
       SUCCESS,
-      ERROR,
       VALIDATION_ERROR,
       NOT_FOUND,
+      ALREADY_EXISTS,
+      NOTHING_TO_UPDATE,
+      ERROR,
     } = updateSeller.outputs;
 
     updateSeller
@@ -107,14 +142,26 @@ const SellersController = {
           details: error.details,
         });
       })
+      .on(ALREADY_EXISTS, (error) => {
+        res.status(Status.CONFLICT).json({
+          type: 'AlreadyExists',
+          details: error.details,
+        });
+      })
+      .on(NOTHING_TO_UPDATE, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'NothingToUpdate',
+          details: error.details,
+        });
+      })
       .on(ERROR, next);
 
-    updateSeller.execute(req.params.sellerId, req.body);
+    updateSeller.execute({ sellerIdValue: req.params.sellerId, ...req.body });
   },
 
   delete(req, res, next) {
     const { deleteSeller } = req;
-    const { SUCCESS, ERROR, NOT_FOUND } = deleteSeller.outputs;
+    const { SUCCESS, NOT_FOUND, NOT_ALLOWED, ERROR } = deleteSeller.outputs;
 
     deleteSeller
       .on(SUCCESS, () => {
@@ -126,17 +173,26 @@ const SellersController = {
           details: error.details,
         });
       })
+      .on(NOT_ALLOWED, (error) => {
+        res.status(Status.CONFLICT).json({
+          type: 'NotAllowedError',
+          details: error.details,
+        });
+      })
       .on(ERROR, next);
 
-    deleteSeller.execute(req.params.sellerId);
+    deleteSeller.execute({ sellerIdValue: req.params.sellerId });
   },
 
   createAppointment(req, res, next) {
     const { createSellerAppointment } = req;
     const {
       SUCCESS,
-      ERROR,
       VALIDATION_ERROR,
+      NOT_FOUND,
+      ALREADY_EXISTS,
+      NOTHING_TO_UPDATE,
+      ERROR,
     } = createSellerAppointment.outputs;
 
     createSellerAppointment
@@ -149,9 +205,103 @@ const SellersController = {
           details: error.details,
         });
       })
+      .on(NOT_FOUND, (error) => {
+        res.status(Status.NOT_FOUND).json({
+          type: 'NotFoundError',
+          details: error.details,
+        });
+      })
+      .on(ALREADY_EXISTS, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'AlreadyExists',
+          details: error.details,
+        });
+      })
+      .on(NOTHING_TO_UPDATE, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'NothingToUpdate',
+          details: error.details,
+        });
+      })
       .on(ERROR, next);
 
-    createSellerAppointment.execute(req.params.sellerId, req.body);
+    createSellerAppointment.execute({
+      sellerIdValue: req.params.sellerId,
+      ...req.body,
+    });
+  },
+
+  updateAppointment(req, res, next) {
+    const { updateSellerAppointment } = req;
+    const {
+      SUCCESS,
+      VALIDATION_ERROR,
+      NOTHING_TO_UPDATE,
+      NOT_FOUND,
+      ERROR,
+    } = updateSellerAppointment.outputs;
+
+    updateSellerAppointment
+      .on(SUCCESS, (seller) => {
+        res.status(Status.ACCEPTED).json(seller);
+      })
+      .on(VALIDATION_ERROR, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'ValidationError',
+          details: error.details,
+        });
+      })
+      .on(NOTHING_TO_UPDATE, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'NothingToUpdate',
+          details: error.details,
+        });
+      })
+      .on(NOT_FOUND, (error) => {
+        res.status(Status.NOT_FOUND).json({
+          type: 'NotFoundError',
+          details: error.details,
+        });
+      })
+      .on(ERROR, next);
+
+    updateSellerAppointment.execute({
+      sellerIdValue: req.params.sellerId,
+      ...req.body,
+    });
+  },
+
+  deleteAppointment(req, res, next) {
+    const { deleteSellerAppointment } = req;
+    const {
+      SUCCESS,
+      VALIDATION_ERROR,
+      NOT_FOUND,
+      ERROR,
+    } = deleteSellerAppointment.outputs;
+
+    deleteSellerAppointment
+      .on(SUCCESS, (seller) => {
+        res.status(Status.ACCEPTED).json(seller);
+      })
+      .on(VALIDATION_ERROR, (error) => {
+        res.status(Status.BAD_REQUEST).json({
+          type: 'ValidationError',
+          details: error.details,
+        });
+      })
+      .on(NOT_FOUND, (error) => {
+        res.status(Status.NOT_FOUND).json({
+          type: 'NotFoundError',
+          details: error.details,
+        });
+      })
+      .on(ERROR, next);
+
+    deleteSellerAppointment.execute({
+      sellerIdValue: req.params.sellerId,
+      ...req.body,
+    });
   },
 };
 

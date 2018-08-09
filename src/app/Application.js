@@ -3,9 +3,7 @@ export class Application {
     server,
     database,
     logger,
-    services: {
-      Initializer: { initializeApplication },
-    },
+    initializeApplication,
     config: { app: appConfig },
   }) {
     this.server = server;

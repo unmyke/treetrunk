@@ -4,7 +4,11 @@ import { cleanDatabase } from 'src/infra/support/test/cleanDatabase';
 
 import { container } from 'src/container';
 const {
-  entities: { Seller, Post },
+  subdomains: {
+    SellerManagement: {
+      entities: { Seller, Post },
+    },
+  },
   commonTypes: { Day },
   // mappers: { Seller: sellerMapper },
   models: { Seller: SellerModel, Post: PostModel },

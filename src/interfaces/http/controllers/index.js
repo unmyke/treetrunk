@@ -1,4 +1,5 @@
-import { Post } from './Post';
 import { Seller } from './Seller';
+import { Post } from './Post';
+import { SeniorityType } from './SeniorityType';
 
-export { Post, Seller };
+export { Seller, Post, SeniorityType };

@@ -1,12 +1,14 @@
 import Bottle from 'bottlejs';
+import { lowerFirst } from 'lodash';
 
 import { config } from 'config';
+import { InitializeApplication } from './app/Initializer';
 import { Application } from './app/Application';
+import * as services from './app';
 
-import { entities, commonTypes, services as domainServices } from './domain';
+import { subdomains, commonTypes, errors } from './domain';
 
 import * as repositories from './infra/repositories';
-import * as services from './app';
 import { makeValidator } from './infra/support/makeValidator';
 
 import { Server } from './interfaces/http/Server';
@@ -22,64 +24,122 @@ import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
 import { db } from './infra/database/models';
 const { database, models } = db;
-// import * as mappers from './infra/mappers';
+import {
+  commonTypes as commonTypesMappers,
+  subdomains as subdomainsMappers,
+} from './infra/mappers';
 
 import { containerMiddleware } from './interfaces/http/utils/bottle-express';
-import { lowercaseFirstLetter } from './infra/support/changeCaseFirstLetter';
 
 const bottle = new Bottle();
 
 bottle.constant('config', config);
+bottle.factory('initializeApplication', (container) => () =>
+  new InitializeApplication(container)
+);
 bottle.factory('app', (container) => new Application(container));
-bottle.factory('domain.entities', () => entities);
-bottle.factory('domain.commonTypes', () => commonTypes);
-bottle.factory('domain.services', (container) => {
-  return Object.keys(domainServices).reduce((acc, domainServiceName) => {
-    const domainService = new domainServices[domainServiceName](container);
-    return { ...acc, [domainServiceName]: domainService };
+
+bottle.factory('subdomains', () => subdomains);
+bottle.factory('commonTypes', () => commonTypes);
+bottle.constant('errors', errors);
+
+bottle.factory('mappers.commonTypes', () => {
+  return Object.keys(commonTypesMappers).reduce((acc, СommonTypeName) => {
+    const mapper = new commonTypesMappers[СommonTypeName]({
+      commonTypes,
+    });
+
+    return { ...acc, [СommonTypeName]: mapper };
+  }, {});
+});
+bottle.factory('mappers.subdomains', () => {
+  return Object.keys(subdomainsMappers).reduce((acc, SubdomainName) => {
+    const subdomainMappers = Object.keys(
+      subdomainsMappers[SubdomainName]
+    ).reduce((acc, EntityName) => {
+      const Entity = subdomains[SubdomainName].entities[EntityName];
+
+      const mapper = new subdomainsMappers[SubdomainName][EntityName]({
+        commonTypes,
+        Entity,
+      });
+      return { ...acc, [EntityName]: mapper };
+    }, {});
+
+    return { ...acc, [SubdomainName]: subdomainMappers };
   }, {});
 });
 
-bottle.factory('repositories', (container) => {
-  const result = Object.keys(repositories).reduce((acc, repositoryName) => {
-    const repository = new repositories[repositoryName](container);
-    return { ...acc, [repositoryName]: repository };
-  }, {});
-  return result;
-});
-
-bottle.factory('services', (container) => {
-  const result = Object.keys(services).reduce((acc, entityName) => {
-    const Operations = services[entityName];
-    const operations = Object.keys(Operations).reduce((acc, operationName) => {
+bottle.factory(
+  'repositories',
+  ({
+    commonTypes,
+    errors,
+    mappers: { commonTypes: commonTypesMappers, subdomains: subdomainsMappers },
+  }) => {
+    return Object.keys(repositories).reduce((acc, SubdomainName) => {
       return {
         ...acc,
-        [lowercaseFirstLetter(operationName)]: () =>
-          new Operations[operationName](container),
+        [SubdomainName]: Object.keys(repositories[SubdomainName]).reduce(
+          (acc, EntityName) => {
+            const entityMapper = subdomainsMappers[SubdomainName][EntityName];
+            const repository = new repositories[SubdomainName][EntityName]({
+              commonTypes,
+              errors,
+              commonTypesMappers,
+              entityMapper,
+            });
+            return { ...acc, [EntityName]: repository };
+          },
+          {}
+        ),
       };
     }, {});
-    return { ...acc, [entityName]: operations };
-  }, {});
-  return result;
-});
+  }
+);
 
-// Object.keys(services).forEach((entityName) => {
-//   const Operations = services[entityName];
-//   const serializer = serializers[entityName];
-//   Object.keys(Operations).forEach((operationName) => {
-//     const Operation = Operations[operationName];
-//     bottle.factory(`services.${entityName}.${lowercaseFirstLetter(operationName)}`, (container) => {
-//       const { repositories, entities } = container;
-//       console.log(container);
-//       console.log(repositories);
-//       console.log(entities);
+bottle.factory(
+  'services',
+  ({ makeValidator, subdomains, commonTypes, errors, repositories }) => {
+    const subdomainsServices = Object.keys(services).reduce(
+      (acc, SubdomainName) => {
+        const subdomainRepositories = repositories[SubdomainName];
+        const entities = subdomains[SubdomainName].entities;
+        const domainServices = subdomains[SubdomainName].services;
+        const subdomainServices = Object.keys(services[SubdomainName]).reduce(
+          (acc, EntityName) => {
+            const Operations = services[SubdomainName][EntityName];
 
-//       return { instance: () => new Operation({ repositories, entities, serializer }), }
-//     });
-//   });
-// });
-
-// bottle.constant('serializers', serializers);
+            const operations = Object.keys(Operations).reduce(
+              (acc, operationName) => {
+                return {
+                  ...acc,
+                  [lowerFirst(operationName)]: () =>
+                    new Operations[operationName]({
+                      validate: makeValidator(
+                        Operations[operationName].constraints
+                      ),
+                      commonTypes,
+                      errors,
+                      repositories: subdomainRepositories,
+                      entities,
+                      domainServices,
+                    }),
+                };
+              },
+              {}
+            );
+            return { ...acc, [EntityName]: operations };
+          },
+          {}
+        );
+        return { ...acc, [SubdomainName]: subdomainServices };
+      },
+      {}
+    );
+    return subdomainsServices;
+  }
+);
 
 bottle.constant('makeValidator', makeValidator);
 
@@ -89,6 +149,7 @@ bottle.factory('router', (container) => router(container));
 bottle.factory('containerMiddleware', (container) =>
   containerMiddleware(container)
 );
+// bottle.constant('serializers', serializers);
 
 bottle.factory('loggerMiddleware', (container) => loggerMiddleware(container));
 bottle.constant(
@@ -99,13 +160,5 @@ bottle.constant('swaggerMiddleware', swaggerMiddleware);
 
 bottle.constant('database', database);
 bottle.constant('models', models);
-// bottle.factory('mappers', ({ entities }) => {
-//   const result = Object.keys(mappers).reduce((acc, mapperName) => {
-//     const Entity = entities[mapperName];
-//     const mapper = new mappers[mapperName](Entity);
-//     return { ...acc, [mapperName]: mapper };
-//   }, {});
-//   return result;
-// });
 
 export const container = bottle.container;

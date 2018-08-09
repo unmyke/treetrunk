@@ -37,6 +37,7 @@ export const router = ({
 
   apiRouter.use('/sellers', controller('Seller'));
   apiRouter.use('/posts', controller('Post'));
+  apiRouter.use('/seniority_types', controller('SeniorityType'));
 
   router.use('/api', apiRouter);
 

@@ -61,6 +61,10 @@ export class Day extends BaseValue {
     return this._dayFactory(date, endOfYearFNS);
   }
 
+  static createByInt(int) {
+    return new Day({ value: new Date(int) });
+  }
+
   static _dayFactory(date = new Date(), dateGetter, dateGetterProps) {
     return new Day({ value: dateGetter(date, dateGetterProps) });
   }
@@ -75,7 +79,11 @@ export class Day extends BaseValue {
 
   constructor({ value } = { value: new Date() }) {
     super();
-    this.value = convertDate(value);
+    this._value = convertDate(value);
+  }
+
+  get value() {
+    return this._value;
   }
 
   contains(date) {

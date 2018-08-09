@@ -1,10 +1,11 @@
-export const getDayComparator = (orderBy = 'asc') => {
+export const getDayComparator = (
+  orderBy = 'asc',
+  dayExtructor = (day) => day
+) => {
   return (a, b) => {
-    switch (orderBy) {
-      case 'desc':
-        return a.day < b.day;
-      default:
-        return a.day > b.day;
-    }
+    const dayA = dayExtructor(a);
+    const dayB = dayExtructor(b);
+
+    return orderBy === 'asc' ? dayA - dayB : dayB - dayA;
   };
 };

@@ -1,14 +1,86 @@
 import { BaseEntity } from '../../_lib';
-import { makeError, errors } from '../../errors';
+import { errors } from '../../errors';
 import { SellerId, PostId, PersonName, Day, Diary } from '../../commonTypes';
-import { Appointment } from './Appointment';
+
+// Hadnle errors throw inside Diary class
+
+const diaryOperationRunner = (operation) => {
+  try {
+    return operation();
+  } catch (error) {
+    throw dispatchDiaryError(error);
+  }
+};
+
+const dispatchDiaryError = (originalError) => {
+  const error = diaryErrorMessages[originalError.message];
+  error.originalError = originalError;
+
+  return error;
+};
+
+const diaryErrorMessages = {
+  RECORD_ALREADY_EXISTS: errors.appointmentAlreadyExists(),
+  RECORD_DUPLICATE: errors.appointmentDuplicate(),
+  RECORD_NOT_FOUND: errors.appointmentNotFound(),
+  RECORD_HAS_EQUAL_NEIGHBOURS: errors.appointmentHasEqualNeighbours(),
+  RECORD_HAS_LIMITED_SCOPE: errors.appointmentHasLimitedScope(),
+  NEW_RECORD_ALREADY_EXISTS: errors.newAppointmentAlreadyExists(),
+  NEW_RECORD_DUPLICATE: errors.newAppointmentDuplicate(),
+  DIARY_CLOSED: errors.carrerClosed(),
+  DIARY_NOT_STARTED: errors.sellerNotRecruited(),
+  DIARY_HAS_RECORDS_LATER: errors.sellerHasAppointmentsLater(),
+  DIARY_NOT_CLOSED: errors.sellerNotDismissed(),
+};
+
+// FSM
 
 const states = {
   NEW: 'new',
   RECRUITED: 'recruited',
-  VACATIONER: 'vacationer',
   DISMISSED: 'dismissed',
   DELETED: 'deleted',
+};
+
+const transitions = {
+  ADD_APPOINTMENT: 'addAppointment',
+  DELETE_APPOINTMENT_AT: 'deleteAppointmentAt',
+  UPDATE_APPOINTMENT_TO: 'updateAppointmentTo',
+  DISMISS_AT: 'dismissAt',
+  DELETE_DISMISS: 'deleteDismiss',
+  UPDATE_DISMISS_TO: 'updateDismissTo',
+  DELETE: 'delete',
+};
+
+const stateTransitionFunctions = {
+  [transitions.DELETE_APPOINTMENT_AT]: function() {
+    if (this._appointments.length === 1) {
+      if (this._appointments.archiveLength === 0) {
+        return states.NEW;
+      }
+
+      return states.DISMISSED;
+    }
+
+    return states.RECRUITED;
+  },
+
+  UNCHANGE_STATE: function() {
+    return this.state;
+  },
+};
+
+const calculateState = ({ _appointments }) => {
+  switch (_appointments.state) {
+    case 'new':
+      return states.NEW;
+    case 'started':
+      return states.RECRUITED;
+    case 'closed':
+      return states.DISMISSED;
+    default:
+      throw errors.inconsistentState;
+  }
 };
 
 export class Seller extends BaseEntity {
@@ -30,156 +102,121 @@ export class Seller extends BaseEntity {
       phone,
     });
 
-    seller.setRecords(
-      appointments.map(({ postId, day }) => ({ value: postId, day }))
-    );
+    if (appointments !== undefined) {
+      seller._appointments = Diary.restore(
+        appointments.map(({ postId, day }) => ({ value: postId, day })),
+        PostId.dismissPostId
+      );
+    }
+
+    seller.setState(calculateState(seller));
 
     return seller;
   }
 
-  // state-transition functions
+  static instanceAt(
+    { firstName, middleName, lastName, phone, _appointments },
+    day = new Day()
+  ) {
+    const seller = new Seller({ firstName, middleName, lastName, phone });
 
-  static addAppointmentTransitionCondition() {
-    switch (true) {
-      case this.is(states.RECRUITED) ||
-        this.is(states.NEW) ||
-        this.is(states.DISMISSED):
-        return states.RECRUITED;
-      case this.is(states.VACATIONER):
-        return this.state;
-    }
+    seller._appointments = Diary.instanceAt(_appointments, day);
+    seller.setState(calculateState(seller));
+
+    return seller;
   }
 
-  static deleteAppointmentTransitionCondition() {
-    if (this.isDismissed) {
-      return states.DISMISSED;
-    } else {
-      if (this.hasAppointments === flase) {
-        return states.NEW;
-      } else {
-        return this.state;
-      }
-    }
-  }
-
-  static unchangeState() {
-    return this.state;
-  }
+  // FSM description
 
   static fsm = {
-    init: states.INITIALIZED,
+    init: states.NEW,
     transitions: [
       {
-        name: 'setAppointments',
-        from: states.INITIALIZED,
-        to: Seller.unchangeState,
-      },
-      {
-        name: 'addAppointment',
-        from: [
-          states.NEW,
-          states.RECRUITED,
-          states.DISMISSED,
-          states.VACATIONER,
-        ],
-        to: Seller.addAppointmentTransitionCondition,
-      },
-      {
-        name: 'deleteAppointment',
-        from: [states.RECRUITED, states.VACATIONER],
-        to: Seller.deleteAppointmentTransitionCondition,
-      },
-      {
-        name: 'updateAppointment',
-        from: [states.RECRUITED, states.VACATIONER],
-        to: Seller.unchangeState,
-      },
-      {
-        name: 'update',
-        from: [
-          states.NEW,
-          states.RECRUITED,
-          states.DISMISSED,
-          states.VACATIONER,
-        ],
-        to: Seller.unchangeState,
-      },
-      {
-        name: 'vacate',
-        from: states.RECRUITED,
-        to: states.VACATIONER,
-      },
-      {
-        name: 'hold',
-        from: states.VACATIONER,
+        name: transitions.ADD_APPOINTMENT,
+        from: [states.NEW, states.RECRUITED, states.DISMISSED],
         to: states.RECRUITED,
       },
       {
-        name: 'dismiss',
-        from: [states.RECRUITED, states.VACATIONER],
+        name: transitions.DELETE_APPOINTMENT_AT,
+        from: states.RECRUITED,
+        to: stateTransitionFunctions[transitions.DELETE_APPOINTMENT_AT],
+      },
+      {
+        name: transitions.UPDATE_APPOINTMENT_TO,
+        from: states.RECRUITED,
+        to: states.RECRUITED,
+      },
+      {
+        name: transitions.DISMISS_AT,
+        from: states.RECRUITED,
         to: states.DISMISSED,
       },
       {
-        name: 'deleteDismiss',
+        name: transitions.DELETE_DISMISS,
         from: states.DISMISSED,
         to: states.RECRUITED,
       },
       {
-        name: 'delete',
+        name: transitions.UPDATE_DISMISS_TO,
         from: states.DISMISSED,
-        to: states.DELETED,
-      },
-      {
-        name: 'restore',
-        from: states.DELETED,
         to: states.DISMISSED,
       },
     ],
 
     methods: {
-      onBeforeSetAppointments(lifecycle, appointments) {
-        const newRecords = appointments.map(
-          ({ postId, day }) => new Appointment({ postId, day })
-        );
-        return this._appointments.setRecords({ newRecords });
-      },
+      onInvalidTransition(transition, from) {
+        switch (from) {
+          case states.DELETED:
+            throw errors.sellerDeleted();
+        }
 
-      onBeforeAddAppointment(lifecycle, postId, day = new Day()) {
-        const record = new Appointment({ postId, day });
+        switch (transition) {
+          case transitions.DELETE_APPOINTMENT_AT:
+            throw errors.sellerNotRecruited();
 
-        return this._appointments.addRecord({ record });
-      },
+          case transitions.UPDATE_APPOINTMENT_TO:
+            throw errors.sellerNotRecruited();
 
-      onBeforeDeleteAppointment(lifecycle, postId, day = new Day()) {
-        const record = new Appointment({ postId, day });
+          case transitions.DISMISS_AT:
+            throw errors.sellerNotRecruited();
 
-        return this._appointments.deleteRecord({ record });
-      },
+          case transitions.DELETE_DISMISS:
+            throw errors.sellerNotDismissed();
 
-      onBeforeUpdateAppointment(lifecycle, postId, day, newPostId, newDay) {
-        const record = new Appointment({ postId, day });
-        const newRecord = new Appointment({ postId: newPostId, day: newDay });
+          case transitions.UPDATE_DISMISS_TO:
+            throw errors.sellerNotDismissed();
 
-        return this._appointments.updateRecord({ record, newRecord });
-      },
-
-      onBeforeDismiss(lifecycle, day) {
-        return this._appointments.dismiss({ day });
-      },
-
-      onDeleteDismiss() {
-        return this._appointments.deleteDismiss();
-      },
-
-      // update({ name })
-      onBeforeUpdate(lifecycle, { name }) {
-        if (name === this.name) {
-          throw makeError({ name: [errors.nothingToUpdate] });
+          default:
+            throw errors.transitionNotAllowed();
         }
       },
 
-      onUpdate(lifecycle, { name }) {
-        this.name = name;
+      onAddAppointment(lifecycle, postId, day = new Day()) {
+        return diaryOperationRunner(() => this._appointments.add(postId, day));
+      },
+
+      onDeleteAppointmentAt(lifecycle, day = new Day()) {
+        return diaryOperationRunner(() => this._appointments.deleteAt(day));
+      },
+
+      onUpdateAppointmentTo(lifecycle, day, newPostId, newDay = new Day()) {
+        return diaryOperationRunner(() =>
+          this._appointments.updateTo(day, newPostId, newDay)
+        );
+      },
+
+      onDismissAt(lifecycle, day = new Day()) {
+        return diaryOperationRunner(() => this._appointments.addCloseAt(day));
+      },
+
+      onDeleteDismiss() {
+        return diaryOperationRunner(() => this._appointments.deleteClose());
+      },
+
+      onUpdateDismissTo(lifecycle, day = new Day()) {
+        return diaryOperationRunner(() =>
+          this._appointments.updateCloseTo(day)
+        );
       },
     },
   };
@@ -199,10 +236,7 @@ export class Seller extends BaseEntity {
     });
     this.phone = phone;
 
-    this._appointments = new Diary({
-      closeValue: PostId.dismissPostId,
-      RecordClass: Appointment,
-    });
+    this._appointments = new Diary();
 
     // this.vacations;
   }
@@ -224,7 +258,10 @@ export class Seller extends BaseEntity {
   }
 
   get appointments() {
-    return this._appointments.records;
+    return this._appointments.records.map(({ value, day }) => ({
+      postId: value,
+      day,
+    }));
   }
 
   get postId() {
@@ -239,94 +276,44 @@ export class Seller extends BaseEntity {
     return this._appointments.startDay;
   }
 
-  get isRecruited() {
-    return this._appointments.isStarted;
-  }
-
   get dismissDay() {
     return this._appointments.closeDay;
   }
 
-  get isDismissed() {
-    return this.is(states.DISMISSED);
+  get seniority() {
+    if (!this.is(states.RECRUITED)) {
+      return;
+    }
+
+    return new Day().differenceInMonths(this.recruitDay);
   }
 
-  // get isVacated() {
-  //   return this.is(states.VACATIONER);
-  // }
-
-  get seniority() {
-    return this.getSeniorityAt();
+  get flatAppointments() {
+    return this._appointments.getFlatRecords(PostId.dismissPostId);
   }
 
   update({ lastName, firstName, middleName, phone }) {
-    const newPersonName = new PersonName({
-      ...this._personName,
+    this._personName = new PersonName({
       lastName,
       firstName,
       middleName,
     });
 
-    if (this._personName.equals(newPersonName) && this.phone === phone) {
-      throw this.errors.sellerNothingToUpdate();
-    }
-
-    this._personName = newPersonName;
-    if (phone) {
-      this.phone = phone;
-    }
-  }
-
-  getAppointmentsAt(day = new Day()) {
-    return this._appointments.getRecordsAt(day);
-  }
-
-  getPostIdAt(day = new Day()) {
-    return this._appointments.getRecordValueAt(day);
-  }
-
-  getPostIdsAt(day = new Day()) {
-    return this._appointments.getRecordValuesAt(day);
-  }
-
-  getRecruitDayAt(day = new Day()) {
-    return this._appointments.getStartDayAt(day);
-  }
-
-  isRecruitedAt(day = new Day()) {
-    return this._appointments.isStartedAt(day);
-  }
-
-  getDismissDayAt(day = new Day()) {
-    return this._appointments.getCloseDayAt(day);
-  }
-
-  isDismissedAt(day = new Day()) {
-    return this._appointments.isClosedAt(day);
-  }
-
-  getSeniorityAt(day = new Day()) {
-    if (!this.isRecruitedAt(day)) {
-      return;
-    }
-
-    return day.differenceInMonths(this.getRecruitDayAt(day));
+    this.phone = phone;
   }
 
   toJSON() {
     return {
       sellerId: this.sellerId.toJSON(),
       fullName: this.fullName,
-      lastName: this.lastName,
       firstName: this.firstName,
       middleName: this.middleName,
+      lastName: this.lastName,
       phone: this.phone,
       postId: this.postId,
       postIds: this.postIds,
       recruitDay: this.recruitDay,
-      isRecruited: this.isClosed,
       dismissDay: this.dismissDay,
-      isDismissed: this.isDismissed,
       seniority: this.seniority,
       appointments: this.appointments,
     };

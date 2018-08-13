@@ -1,87 +1,108 @@
 import { BaseEntity } from '../../_lib';
 import { makeError, errors } from '../../errors';
 import { PostId, Day, Diary } from '../../commonTypes';
-import { PieceRate } from './PieceRate';
+
+const diaryErrorMessages = {
+  RECORD_ALREADY_EXISTS: errors.pieceRateAlreadyExists(),
+  RECORD_DUPLICATE: errors.pieceRateDuplicate(),
+  RECORD_NOT_FOUND: errors.pieceRateNotFound(),
+  RECORD_HAS_EQUAL_NEIGHBOURS: errors.pieceRateHasEqualNeighbours(),
+  RECORD_HAS_LIMITED_SCOPE: errors.pieceRateHasLimitedScope(),
+  NEW_RECORD_ALREADY_EXISTS: errors.newPieceRateAlreadyExists(),
+  NEW_RECORD_DUPLICATE: errors.newPieceRateDuplicate(),
+};
+
+const dispatchDiaryError = (originalError) => {
+  const error = errors[diaryErrorMessages[originalError.message]];
+  error.originalError = originalError;
+
+  return error;
+};
+
+const diaryOperationRunner = (operation) => {
+  try {
+    return operation;
+  } catch (error) {
+    throw dispatchDiaryError(error);
+  }
+};
+
+const states = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+};
+
+const transitions = {
+  UPDATE: 'update',
+  ADD_PIECE_RATE: 'addPieceRate',
+  DELETE_PIECE_RATE_AT: 'deletePieceRateAt',
+  UPDATE_PIECE_RATE_TO: 'updatePieceRateTo',
+  ACTIVATE: 'activate',
+  INACTIVATE: 'inactivate',
+};
 
 export class Post extends BaseEntity {
-  static states = {
-    ACTIVE: 'active',
-    INACTIVE: 'inactive',
-  };
+  static restore({ name, pieceRates, state }) {
+    const post = new Post({ name, state });
+    post._pieceRates = Diary.restore(pieceRates);
+    post.setState(state);
+
+    return post;
+  }
+
+  static instanceAt({ name, pieceRates, state }, day = new Day()) {
+    const post = new Post({ name, state });
+    post._pieceRates = Diary.instanceAt(pieceRates, day);
+    post.setState(state);
+
+    return post;
+  }
 
   static fsm = {
     init: 'active',
     transitions: [
+      { name: transitions.UPDATE, from: states.ACTIVE, to: states.ACTIVE },
       {
-        name: 'inactivate',
-        from: Post.states.ACTIVE,
-        to: Post.states.INACTIVE,
-      },
-      { name: 'activate', from: Post.states.INACTIVE, to: Post.states.ACTIVE },
-      { name: 'update', from: Post.states.ACTIVE, to: Post.states.ACTIVE },
-      {
-        name: 'setPieceRates',
-        from: Post.states.ACTIVE,
-        to: Post.states.ACTIVE,
+        name: transitions.ADD_PIECE_RATE,
+        from: states.ACTIVE,
+        to: states.ACTIVE,
       },
       {
-        name: 'addPieceRate',
-        from: Post.states.ACTIVE,
-        to: Post.states.ACTIVE,
+        name: transitions.DELETE_PIECE_RATE_AT,
+        from: states.ACTIVE,
+        to: states.ACTIVE,
       },
       {
-        name: 'deletePieceRate',
-        from: Post.states.ACTIVE,
-        to: Post.states.ACTIVE,
+        name: transitions.UPDATE_PIECE_RATE_TO,
+        from: states.ACTIVE,
+        to: states.ACTIVE,
       },
       {
-        name: 'updatePieceRate',
-        from: Post.states.ACTIVE,
-        to: Post.states.ACTIVE,
+        name: transitions.INACTIVATE,
+        from: states.ACTIVE,
+        to: states.INACTIVE,
       },
+      { name: transitions.ACTIVATE, from: states.INACTIVE, to: states.ACTIVE },
     ],
 
     methods: {
-      onActive() {
-        this.pieceRateOperationResult = { done: true };
-      },
-
       // update({ name })
-      onBeforeUpdate(lifecycle, { name }) {
-        if (name === this.name) {
-          throw makeError({ name: [errors.nothingToUpdate] });
-        }
-      },
-
       onUpdate(lifecycle, { name }) {
         this.name = name;
       },
 
-      onBeforeSetPieceRates(lifecycle, pieceRates) {
-        const newRecords = pieceRates.map(
-          ({ value, day }) => new PieceRate({ value, day })
-        );
-
-        return this._pieceRates.setRecords({ newRecords });
-      },
-
       onBeforeAddPieceRate(lifecycle, value, day = new Day()) {
-        const record = new PieceRate({ value, day });
-
-        return this._pieceRates.addRecord({ record });
+        return diaryOperationRunner(() => this._pieceRates.add({ value, day }));
       },
 
-      onBeforeDeletePieceRate(lifecycle, value, day = new Day()) {
-        const record = new PieceRate({ value, day });
-
-        return this._pieceRates.deleteRecord({ record });
+      onBeforeDeletePieceRate(lifecycle, day = new Day()) {
+        return diaryOperationRunner(() => this._pieceRates.deleteAt(day));
       },
 
-      onBeforeUpdatePieceRate(lifecycle, value, day, newValue, newDay) {
-        const record = new PieceRate({ value, day });
-        const newRecord = new PieceRate({ value: newValue, day: newDay });
-
-        return this._pieceRates.updateRecord({ record, newRecord });
+      onBeforeUpdatePieceRate(lifecycle, day, newValue, newDay) {
+        return diaryOperationRunner(() =>
+          this._pieceRates.updateTo(day, newValue, newDay)
+        );
       },
     },
   };
@@ -89,7 +110,7 @@ export class Post extends BaseEntity {
   constructor({ postId = new PostId(), name, state = 'active' }) {
     super(postId);
     this.name = name;
-    this._pieceRates = new Diary({ RecordClass: PieceRate });
+    this._pieceRates = new Diary();
 
     this.setState(state);
   }
@@ -103,24 +124,7 @@ export class Post extends BaseEntity {
   }
 
   get hasPieceRates() {
-    return this._pieceRates.hasRecords;
-  }
-
-  getPieceRateAt(day = new Day()) {
-    return this._pieceRates.getRecordValueAt(day);
-  }
-
-  hasPieceRatesAt(day = new Day()) {
-    return this._pieceRates.hasRecordsAt(day);
-  }
-
-  getInstanceAt(day = new Day()) {
-    const post = new Post(this);
-
-    const pieceRates = this._pieceRates.getRecordsAt(day);
-    post.setPieceRates(pieceRates);
-
-    return post;
+    return this._pieceRates.length !== 0;
   }
 
   toJSON() {

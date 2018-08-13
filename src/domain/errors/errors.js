@@ -14,7 +14,7 @@ export const errors = {
   diaryHasRecordsLater: makeError('DIARY_HAS_RECORDS_LATER'),
   diaryNotClosed: makeError('DIARY_NOT_CLOSED'),
 
-  // Career
+  // Seller
   appointmentAlreadyExists: makeError('APPOINTMENT_ALREADY_EXISTS'),
   appointmentDuplicate: makeError('APPOINTMENT_DUPLICATE'),
   appointmentNotFound: makeError('APPOINTMENT_NOT_FOUND'),
@@ -25,9 +25,10 @@ export const errors = {
   carrerClosed: makeError('CARRER_CLOSED'),
   sellerNotRecruited: makeError('SELLER_NOT_RECRUITED'),
   sellerHasAppointmentsLater: makeError('SELLER_HAS_APPOINTMENTS_LATER'),
-  sellerNotDissmissed: makeError('SELLER_NOT_DISSMISSED'),
+  sellerNotDismissed: makeError('SELLER_NOT_DISMISSED'),
+  sellerDeleted: makeError('SELLER_DELETED'),
 
-  // PieceRates
+  // Post
   pieceRateAlreadyExists: makeError('PIECE_RATE_ALREADY_EXISTS'),
   pieceRateDuplicate: makeError('PIECE_RATE_DUPLICATE'),
   pieceRateNotFound: makeError('PIECE_RATE_NOT_FOUND'),

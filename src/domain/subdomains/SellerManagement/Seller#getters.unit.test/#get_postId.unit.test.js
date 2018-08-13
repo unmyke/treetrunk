@@ -5,6 +5,7 @@ import { Post } from '../Post';
 const lastName = 'lastName';
 const firstName = 'Firstname';
 const middleName = 'Middlename';
+const personalName = { firstName, middleName, lastName };
 const phone = '55-66-00';
 
 const floristPost = new Post({ name: 'Флорист' });
@@ -31,6 +32,10 @@ describe('Domain :: entities :: Seller :: #postId', () => {
     seller = new Seller({ lastName, firstName, middleName, phone });
   });
 
+  afterEach(() => {
+    seller = null;
+  });
+
   context('when seller have no appointments', () => {
     test('should return undefined', () => {
       expect(seller.postId).toBeUndefined();
@@ -39,10 +44,14 @@ describe('Domain :: entities :: Seller :: #postId', () => {
 
   context('when seller have appointments and not dismissed', () => {
     beforeEach(() => {
-      seller.setAppointments([
-        { postId: floristPost.postId, day: day2 },
-        { postId: seniorFloristPost.postId, day: day4 },
-      ]);
+      seller = Seller.restore({
+        ...personalName,
+        phone,
+        appointments: [
+          { postId: floristPost.postId, day: day2 },
+          { postId: seniorFloristPost.postId, day: day4 },
+        ],
+      });
     });
     test('should return undefined', () => {
       expect(seller.postId).toBe(seniorFloristPost.postId);
@@ -51,11 +60,15 @@ describe('Domain :: entities :: Seller :: #postId', () => {
 
   context('when seller have dismissed', () => {
     beforeEach(() => {
-      seller.setAppointments([
-        { postId: floristPost.postId, day: day2 },
-        { postId: seniorFloristPost.postId, day: day4 },
-        { postId: dismissPostId, day: day6 },
-      ]);
+      seller = Seller.restore({
+        ...personalName,
+        phone,
+        appointments: [
+          { postId: floristPost.postId, day: day2 },
+          { postId: seniorFloristPost.postId, day: day4 },
+          { postId: dismissPostId, day: day6 },
+        ],
+      });
     });
     test('should return undefined', () => {
       expect(seller.postId).toBeUndefined();
@@ -64,12 +77,16 @@ describe('Domain :: entities :: Seller :: #postId', () => {
 
   context('when seller have dismissed and recruited again', () => {
     beforeEach(() => {
-      seller.setAppointments([
-        { postId: floristPost.postId, day: day2 },
-        { postId: seniorFloristPost.postId, day: day4 },
-        { postId: dismissPostId, day: day6 },
-        { postId: seniorFloristPost.postId, day: day8 },
-      ]);
+      seller = Seller.restore({
+        ...personalName,
+        phone,
+        appointments: [
+          { postId: floristPost.postId, day: day2 },
+          { postId: seniorFloristPost.postId, day: day4 },
+          { postId: dismissPostId, day: day6 },
+          { postId: seniorFloristPost.postId, day: day8 },
+        ],
+      });
     });
     test('should return postId of second recruit', () => {
       expect(seller.postId).toBe(seniorFloristPost.postId);
@@ -80,13 +97,17 @@ describe('Domain :: entities :: Seller :: #postId', () => {
     'when seller have dismissed, recruited again and dismiss again',
     () => {
       beforeEach(() => {
-        seller.setAppointments([
-          { postId: floristPost.postId, day: day2 },
-          { postId: seniorFloristPost.postId, day: day4 },
-          { postId: dismissPostId, day: day6 },
-          { postId: seniorFloristPost.postId, day: day8 },
-          { postId: dismissPostId, day: day10 },
-        ]);
+        seller = Seller.restore({
+          ...personalName,
+          phone,
+          appointments: [
+            { postId: floristPost.postId, day: day2 },
+            { postId: seniorFloristPost.postId, day: day4 },
+            { postId: dismissPostId, day: day6 },
+            { postId: seniorFloristPost.postId, day: day8 },
+            { postId: dismissPostId, day: day10 },
+          ],
+        });
       });
       test('should return undefined', () => {
         expect(seller.postId).toBeUndefined();

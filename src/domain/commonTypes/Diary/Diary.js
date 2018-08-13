@@ -1,4 +1,8 @@
-import { applyFSM, getDayComparator } from '../../_lib/BaseMethods';
+import {
+  applyFSM,
+  getDayComparator,
+  isEqualValues,
+} from '../../_lib/BaseMethods';
 import { errors } from '../../errors';
 import { BaseClass } from '../../_lib';
 import { Day } from '../Day';
@@ -20,7 +24,7 @@ const transitions = {
 };
 
 const stateTransitionFunctions = {
-  deleteAt: function() {
+  [transitions.DELETE_AT]: function() {
     if (this._store.size === 1) {
       if (this._archive.size === 0) {
         return states.NEW;
@@ -54,7 +58,7 @@ export class Diary extends BaseClass {
       records
         .sort(getDayComparator('asc', ({ day }) => day))
         .forEach(({ value, day }) => {
-          if (value === closeValue) {
+          if (isEqualValues(value, closeValue)) {
             diary.addCloseAt(day);
           } else {
             diary.add(value, day);
@@ -152,7 +156,7 @@ export class Diary extends BaseClass {
     ],
 
     methods: {
-      onInvalidTransition(transition, from) {
+      onInvalidTransition(transition) {
         switch (transition) {
           case transitions.DELETE_AT:
             throw errors.diaryNotStarted();
@@ -263,6 +267,27 @@ export class Diary extends BaseClass {
 
   get recordValues() {
     return this._store.records.map(({ value }) => value);
+  }
+
+  get length() {
+    return this._store.size;
+  }
+
+  get archiveLength() {
+    return this._archive.size;
+  }
+
+  getFlatRecords(closeValue) {
+    const archives = this._archive.records.reduce(
+      (archives, { value: store, day: closeDay }) => [
+        ...archives,
+        ...store.records,
+        { value: closeValue, day: closeDay },
+      ],
+      []
+    );
+
+    return [...archives, ...this._store.records];
   }
 
   //    operations

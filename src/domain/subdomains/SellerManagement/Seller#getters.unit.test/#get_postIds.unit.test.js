@@ -5,6 +5,7 @@ import { Post } from '../Post';
 const lastName = 'lastName';
 const firstName = 'Firstname';
 const middleName = 'Middlename';
+const personalName = { firstName, middleName, lastName };
 const phone = '55-66-00';
 
 const floristPost = new Post({ name: 'Флорист' });
@@ -25,59 +26,73 @@ const day10 = new Day({ value: new Date('2017.10.01 00:00.000+08:00') });
 const dismissPostId = new PostId();
 PostId.dismissPostId = dismissPostId;
 
-describe('Domain :: entities :: Seller :: #appointments', () => {
+describe('Domain :: entities :: Seller :: #postIds', () => {
   let seller;
   beforeEach(() => {
     seller = new Seller({ lastName, firstName, middleName, phone });
   });
 
+  afterEach(() => {
+    seller = null;
+  });
+
   context('when seller have no appointments', () => {
     test('should return empty array', () => {
-      expect(seller.appointments).toEqual([]);
+      expect(seller.postIds).toEqual([]);
     });
   });
 
   context('when seller have appointments and not dismissed', () => {
     beforeEach(() => {
-      seller.setAppointments([
-        { postId: floristPost.postId, day: day2 },
-        { postId: seniorFloristPost.postId, day: day4 },
-      ]);
+      seller = Seller.restore({
+        ...personalName,
+        phone,
+        appointments: [
+          { postId: floristPost.postId, day: day2 },
+          { postId: seniorFloristPost.postId, day: day4 },
+        ],
+      });
     });
-    test('should return array with all appointments at moment', () => {
-      expect(seller.appointments).toEqual([
-        { value: floristPost.postId, day: day2 },
-        { value: seniorFloristPost.postId, day: day4 },
+    test('should return array with all postIds between first appointment and passed day', () => {
+      expect(seller.postIds).toEqual([
+        floristPost.postId,
+        seniorFloristPost.postId,
       ]);
     });
   });
 
   context('when seller have dismissed', () => {
     beforeEach(() => {
-      seller.setAppointments([
-        { postId: floristPost.postId, day: day2 },
-        { postId: seniorFloristPost.postId, day: day4 },
-        { postId: dismissPostId, day: day6 },
-      ]);
+      seller = Seller.restore({
+        ...personalName,
+        phone,
+        appointments: [
+          { postId: floristPost.postId, day: day2 },
+          { postId: seniorFloristPost.postId, day: day4 },
+          { postId: dismissPostId, day: day6 },
+        ],
+      });
     });
     test('should return empty array', () => {
-      expect(seller.appointments).toEqual([]);
+      expect(seller.postIds).toEqual([]);
     });
   });
 
   context('when seller have dismissed and recruited again', () => {
     beforeEach(() => {
-      seller.setAppointments([
-        { postId: floristPost.postId, day: day2 },
-        { postId: seniorFloristPost.postId, day: day4 },
-        { postId: dismissPostId, day: day6 },
-        { postId: seniorFloristPost.postId, day: day8 },
-      ]);
+      seller = Seller.restore({
+        ...personalName,
+        phone,
+        appointments: [
+          { postId: floristPost.postId, day: day2 },
+          { postId: seniorFloristPost.postId, day: day4 },
+          { postId: dismissPostId, day: day6 },
+          { postId: seniorFloristPost.postId, day: day8 },
+        ],
+      });
     });
-    test('should return array with all appointments of second recruit at moment', () => {
-      expect(seller.appointments).toEqual([
-        { value: seniorFloristPost.postId, day: day8 },
-      ]);
+    test('should return array with all postIds between first appointment and today', () => {
+      expect(seller.postIds).toEqual([seniorFloristPost.postId]);
     });
   });
 
@@ -85,16 +100,20 @@ describe('Domain :: entities :: Seller :: #appointments', () => {
     'when seller have dismissed, recruited again and dismiss again',
     () => {
       beforeEach(() => {
-        seller.setAppointments([
-          { postId: floristPost.postId, day: day2 },
-          { postId: seniorFloristPost.postId, day: day4 },
-          { postId: dismissPostId, day: day6 },
-          { postId: seniorFloristPost.postId, day: day8 },
-          { postId: dismissPostId, day: day10 },
-        ]);
+        seller = Seller.restore({
+          ...personalName,
+          phone,
+          appointments: [
+            { postId: floristPost.postId, day: day2 },
+            { postId: seniorFloristPost.postId, day: day4 },
+            { postId: dismissPostId, day: day6 },
+            { postId: seniorFloristPost.postId, day: day8 },
+            { postId: dismissPostId, day: day10 },
+          ],
+        });
       });
       test('should return empty array', () => {
-        expect(seller.appointments).toEqual([]);
+        expect(seller.postIds).toEqual([]);
       });
     }
   );

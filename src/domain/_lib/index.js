@@ -4,5 +4,14 @@ import { BaseEntity } from './BaseEntity';
 import { BaseId } from './BaseId';
 import { BaseService } from './BaseService';
 import { BaseAdapter } from './BaseAdapter';
+import { BaseRepository } from './BaseRepository';
 
-export { BaseClass, BaseValue, BaseEntity, BaseId, BaseService, BaseAdapter };
+export {
+  BaseClass,
+  BaseValue,
+  BaseEntity,
+  BaseId,
+  BaseService,
+  BaseAdapter,
+  BaseRepository,
+};

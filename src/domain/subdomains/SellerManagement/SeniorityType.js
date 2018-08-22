@@ -1,8 +1,5 @@
-import {} from 'javascript-state-machine';
-
 import { BaseEntity } from '../../_lib';
 import { SeniorityTypeId, Day, Diary } from '../../commonTypes';
-import { Award } from './Award';
 
 export class SeniorityType extends BaseEntity {
   static fsm = {

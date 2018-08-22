@@ -1,5 +1,5 @@
 import { BaseEntity } from '../../_lib';
-import { makeError, errors } from '../../errors';
+import { errors } from '../../errors';
 import { PostId, Day, Diary } from '../../commonTypes';
 
 const diaryErrorMessages = {

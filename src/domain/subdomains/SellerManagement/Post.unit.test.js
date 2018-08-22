@@ -47,7 +47,6 @@ describe('Domain :: entities :: Post', () => {
     context('when post is active', () => {
       test('should set piece rates', () => {
         post.setPieceRates(pieceRates);
-        // console.log(post.pieceRates);
 
         expect(post.pieceRates).toEqual(
           pieceRates.sort((a, b) => a.day > b.day)

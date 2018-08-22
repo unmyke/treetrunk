@@ -2,12 +2,15 @@
 
 module.exports = {
   up: (queryInterface) =>
-    queryInterface.addIndex('sellerAppointments', {
+    queryInterface.addIndex('seller_appointments', {
       unique: true,
-      name: 'uniqueSellerAppointment',
-      fields: ['sellerId', 'postId', 'day'],
+      name: 'unique_seller_appointment',
+      fields: ['seller_id', 'post_id', 'day'],
     }),
 
   down: (queryInterface) =>
-    queryInterface.removeIndex('sellerAppointments', 'uniqueSellerAppointment'),
+    queryInterface.removeIndex(
+      'seller_appointments',
+      'unique_seller_appointment'
+    ),
 };

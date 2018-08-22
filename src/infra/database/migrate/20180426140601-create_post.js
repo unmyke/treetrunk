@@ -4,7 +4,7 @@ module.exports = {
     return queryInterface.createTable(
       'posts',
       {
-        postId: {
+        post_id: {
           allowNull: false,
           primaryKey: true,
           type: Sequelize.UUID,
@@ -13,11 +13,11 @@ module.exports = {
           allowNull: false,
           type: Sequelize.STRING,
         },
-        createdAt: {
+        created_at: {
           allowNull: false,
           type: Sequelize.DATE,
         },
-        updatedAt: {
+        updated_at: {
           allowNull: false,
           type: Sequelize.DATE,
         },

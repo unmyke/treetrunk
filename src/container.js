@@ -1,5 +1,10 @@
 import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
+import {
+  getSubdomainsContainer,
+  getCommonTypesContainer,
+  forEachSubdomain,
+} from './infra/support/containerHelpers';
 
 import { config } from 'config';
 import { InitializeApplication } from './app/Initializer';
@@ -44,59 +49,34 @@ bottle.factory('commonTypes', () => commonTypes);
 bottle.constant('errors', errors);
 
 bottle.factory('mappers.commonTypes', () => {
-  return Object.keys(commonTypesMappers).reduce((acc, СommonTypeName) => {
-    const mapper = new commonTypesMappers[СommonTypeName]({
-      commonTypes,
-    });
-
-    return { ...acc, [СommonTypeName]: mapper };
-  }, {});
+  return getCommonTypesContainer(
+    commonTypesMappers,
+    (Mapper) => new Mapper({ commonTypes })
+  );
 });
+
 bottle.factory('mappers.subdomains', () => {
-  return Object.keys(subdomainsMappers).reduce((acc, SubdomainName) => {
-    const subdomainMappers = Object.keys(
-      subdomainsMappers[SubdomainName]
-    ).reduce((acc, EntityName) => {
-      const Entity = subdomains[SubdomainName].entities[EntityName];
+  return getSubdomainsContainer(
+    subdomainsMappers,
+    (Mapper, SubdomainName, EntityName) => {
+      const Entity = subdomains[SubdomainName][EntityName];
 
-      const mapper = new subdomainsMappers[SubdomainName][EntityName]({
-        commonTypes,
-        Entity,
-      });
-      return { ...acc, [EntityName]: mapper };
-    }, {});
-
-    return { ...acc, [SubdomainName]: subdomainMappers };
-  }, {});
+      return new Mapper({ commonTypes, Entity });
+    }
+  );
 });
 
-bottle.factory(
-  'repositories',
-  ({
-    commonTypes,
-    errors,
-    mappers: { commonTypes: commonTypesMappers, subdomains: subdomainsMappers },
-  }) => {
-    return Object.keys(repositories).reduce((acc, SubdomainName) => {
-      return {
-        ...acc,
-        [SubdomainName]: Object.keys(repositories[SubdomainName]).reduce(
-          (acc, EntityName) => {
-            const entityMapper = subdomainsMappers[SubdomainName][EntityName];
-            const repository = new repositories[SubdomainName][EntityName]({
-              commonTypes,
-              errors,
-              commonTypesMappers,
-              entityMapper,
-            });
-            return { ...acc, [EntityName]: repository };
-          },
-          {}
-        ),
-      };
-    }, {});
-  }
-);
+bottle.factory('repositories', ({ mappers }) => {
+  return getSubdomainsContainer(
+    repositories,
+    (Repository, SubdomainName, EntityName) =>
+      new Repository({
+        Model: models[SubdomainName][EntityName],
+        models,
+        mapper: mappers.subdomains[SubdomainName][EntityName],
+      })
+  );
+});
 
 bottle.factory(
   'services',
@@ -104,8 +84,7 @@ bottle.factory(
     const subdomainsServices = Object.keys(services).reduce(
       (acc, SubdomainName) => {
         const subdomainRepositories = repositories[SubdomainName];
-        const entities = subdomains[SubdomainName].entities;
-        const domainServices = subdomains[SubdomainName].services;
+        const entities = subdomains[SubdomainName];
         const subdomainServices = Object.keys(services[SubdomainName]).reduce(
           (acc, EntityName) => {
             const Operations = services[SubdomainName][EntityName];

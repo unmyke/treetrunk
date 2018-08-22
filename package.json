@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "jest": "yarn test",
-    "test": "NODE_PATH=. NODE_ENV=test jest",
+    "test": "NODE_PATH=. NODE_ENV=test jest --testURL='http://localhost/'",
     "test:all": "yarn run test:unit && yarn run test:features",
     "test:unit": "yarn run jest 'src/.*\\.unit\\.test\\.js'",
     "test:features": "yarn run jest 'src/.*\\.feature\\.test\\.js'",

@@ -4,10 +4,10 @@ module.exports = {
   up: (queryInterface) =>
     queryInterface.addIndex('sellers', {
       unique: true,
-      name: 'uniqueSeller',
-      fields: ['lastname', 'firstName', 'middleName', 'phone'],
+      name: 'unique_seller',
+      fields: ['last_name', 'first_name', 'middle_name', 'phone'],
     }),
 
   down: (queryInterface) =>
-    queryInterface.removeIndex('sellers', 'uniqueSeller'),
+    queryInterface.removeIndex('sellers', 'unique_seller'),
 };

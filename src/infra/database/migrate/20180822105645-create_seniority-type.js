@@ -2,19 +2,16 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable(
-      'post_piece_rates',
+      'seniority_types',
       {
-        post_id: {
+        seniority_type_id: {
           allowNull: false,
+          primaryKey: true,
           type: Sequelize.UUID,
         },
-        value: {
+        name: {
           allowNull: false,
-          type: Sequelize.FLOAT,
-        },
-        day: {
-          allowNull: false,
-          type: Sequelize.DATE,
+          type: Sequelize.STRING,
         },
         created_at: {
           allowNull: false,
@@ -29,6 +26,6 @@ module.exports = {
     );
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('post_piece_rates');
+    return queryInterface.dropTable('seniority_types');
   },
 };

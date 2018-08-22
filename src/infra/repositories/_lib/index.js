@@ -1,3 +1,3 @@
-import { BaseRepository } from './BaseRepository';
+import { SequelizeRepository } from './SequelizeRepository';
 
-export { BaseRepository };
+export { SequelizeRepository };

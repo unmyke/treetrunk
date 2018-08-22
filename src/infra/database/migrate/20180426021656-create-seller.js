@@ -4,20 +4,20 @@ module.exports = {
     return queryInterface.createTable(
       'sellers',
       {
-        sellerId: {
+        seller_id: {
           allowNull: false,
           primaryKey: true,
           type: Sequelize.UUID,
         },
-        lastName: {
+        last_name: {
           allowNull: false,
           type: Sequelize.STRING,
         },
-        firstName: {
+        first_name: {
           allowNull: false,
           type: Sequelize.STRING,
         },
-        middleName: {
+        middle_name: {
           allowNull: false,
           type: Sequelize.STRING,
         },
@@ -25,11 +25,11 @@ module.exports = {
           allowNull: false,
           type: Sequelize.STRING,
         },
-        createdAt: {
+        created_at: {
           allowNull: false,
           type: Sequelize.DATE,
         },
-        updatedAt: {
+        updated_at: {
           allowNull: false,
           type: Sequelize.DATE,
         },

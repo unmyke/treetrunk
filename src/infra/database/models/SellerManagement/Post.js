@@ -3,7 +3,7 @@ export default (sequelize, DataTypes) => {
   let Post = sequelize.define(
     'post',
     {
-      postId: {
+      post_id: {
         primaryKey: true,
         type: DataTypes.UUID,
       },
@@ -13,28 +13,29 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
+      underscored: true,
       indexes: [
         {
           unique: true,
-          name: 'uniquePostId',
-          fields: ['postId'],
-        },
-        {
-          unique: true,
-          name: 'uniquePostName',
+          name: 'unique_post',
           fields: ['name'],
         },
       ],
-      defaultScope: {
-        include: [{ all: true }],
-      },
+      // defaultScope: { include: [{ all: true }] },
     }
   );
-  Post.associate = function(models) {
-    Post.hasMany(models.PostPieceRate, {
-      foreignKey: 'postId',
-      sourceKey: 'postId',
+
+  Post.associate = ({ PostPieceRate, SellerAppointment }) => {
+    Post.hasMany(PostPieceRate, {
+      as: 'piece_rates',
+      foreignKey: 'post_id',
+    });
+
+    Post.hasMany(SellerAppointment, {
+      as: 'seller_appointments',
+      foreignKey: 'post_id',
     });
   };
+
   return Post;
 };

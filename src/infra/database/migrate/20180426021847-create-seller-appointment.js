@@ -2,13 +2,13 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable(
-      'sellerAppointments',
+      'seller_appointments',
       {
-        sellerId: {
+        seller_id: {
           allowNull: false,
           type: Sequelize.UUID,
         },
-        postId: {
+        post_id: {
           allowNull: false,
           type: Sequelize.UUID,
         },
@@ -16,11 +16,11 @@ module.exports = {
           allowNull: false,
           type: Sequelize.DATE,
         },
-        createdAt: {
+        created_at: {
           allowNull: false,
           type: Sequelize.DATE,
         },
-        updatedAt: {
+        updated_at: {
           allowNull: false,
           type: Sequelize.DATE,
         },
@@ -29,6 +29,6 @@ module.exports = {
     );
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('sellerAppointments');
+    return queryInterface.dropTable('seller_appointments');
   },
 };

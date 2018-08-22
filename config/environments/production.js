@@ -1,10 +1,8 @@
 export const envConfig = {
   web: {
-    port: process.env.PORT
+    port: process.env.PORT,
   },
   logging: {
-    appenders: [
-      { type: 'console', layout: { type: 'basic' } }
-    ]
-  }
+    appenders: [{ type: 'console', layout: { type: 'basic' } }],
+  },
 };

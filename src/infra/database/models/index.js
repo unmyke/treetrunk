@@ -1,6 +1,9 @@
 import Sequelize from 'sequelize';
 import { ModelsLoader } from 'src/infra/sequelize';
 import { config } from 'config';
+import { SellerManagement } from './SellerManagement';
+
+const subdomains = { SellerManagement };
 
 const { db: dbConfig } = config;
 let db;
@@ -10,7 +13,7 @@ if (dbConfig) {
 
   db = ModelsLoader.load({
     sequelize,
-    baseFolder: __dirname,
+    subdomains,
   });
 } else {
   /* eslint-disable no-console */

@@ -2,9 +2,9 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable(
-      'post_piece_rates',
+      'seniority_type_awards',
       {
-        post_id: {
+        seniority_type_id: {
           allowNull: false,
           type: Sequelize.UUID,
         },
@@ -29,6 +29,6 @@ module.exports = {
     );
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('post_piece_rates');
+    return queryInterface.dropTable('seniority_type_awards');
   },
 };

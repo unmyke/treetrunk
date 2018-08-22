@@ -13,14 +13,7 @@ export class SellerMapper extends BaseMapper {
     this.dayMapper = new DayMapper({ commonTypes });
   }
 
-  toDatabase({
-    sellerId,
-    firstName,
-    middleName,
-    lastName,
-    phone,
-    _appointments,
-  }) {
+  toDatabase({ sellerId, firstName, middleName, lastName, phone }) {
     return {
       sellerId: this.sellerIdMapper.toDatabase(sellerId),
       firstName,
@@ -29,26 +22,23 @@ export class SellerMapper extends BaseMapper {
       phone,
       appointments: _appointments.map(({ postId, day }) => ({
         postId: this.postIdMapper.toDatabase(postId),
-        date: this.dayMapper.toDatabase(day),
+        day: this.dayMapper.toDatabase(day),
       })),
     };
   }
 
   toEntity({ sellerId, firstName, middleName, lastName, phone, appointments }) {
-    const sellerEntity = new this.Entity({
+    const sellerEntity = this.Entity.restore({
       sellerId: this.sellerIdMapper.toEntity({ value: sellerId }),
       firstName,
       middleName,
       lastName,
       phone,
-    });
-
-    sellerEntity.setAppointments(
-      appointments.map(({ postId, date }) => ({
+      appointments: appointments.map(({ postId, day }) => ({
         postId: this.postIdMapper.toEntity({ value: postId }),
-        day: this.dayMapper.toEntity({ value: date }),
-      }))
-    );
+        day: this.dayMapper.toEntity({ value: day }),
+      })),
+    });
 
     return sellerEntity;
   }

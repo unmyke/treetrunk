@@ -1,3 +1,3 @@
-import { SellerManagement } from './InMemory';
+import { SellerManagement } from './Sequelize';
 
 export { SellerManagement };

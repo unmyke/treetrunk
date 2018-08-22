@@ -2,12 +2,12 @@
 
 module.exports = {
   up: (queryInterface) =>
-    queryInterface.addIndex('postPieceRates', {
+    queryInterface.addIndex('post_piece_rates', {
       unique: true,
-      name: 'uniquePostPiece',
-      fields: ['postId', 'value', 'day'],
+      name: 'unique_post_piece_rate',
+      fields: ['post_id', 'value', 'day'],
     }),
 
   down: (queryInterface) =>
-    queryInterface.removeIndex('postPieceRates', 'uniquePostPiece'),
+    queryInterface.removeIndex('post_piece_rates', 'unique_post_piece_rate'),
 };

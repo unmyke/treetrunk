@@ -11,6 +11,10 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      state: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
     },
     {
       underscored: true,
@@ -21,7 +25,7 @@ export default (sequelize, DataTypes) => {
           fields: ['name'],
         },
       ],
-      // defaultScope: { include: [{ all: true }] },
+      defaultScope: { include: [{ all: true }] },
     }
   );
 
@@ -31,10 +35,10 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'post_id',
     });
 
-    Post.hasMany(SellerAppointment, {
-      as: 'seller_appointments',
-      foreignKey: 'post_id',
-    });
+    // Post.hasMany(SellerAppointment, {
+    //   as: 'seller_appointments',
+    //   foreignKey: 'post_id',
+    // });
   };
 
   return Post;

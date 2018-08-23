@@ -1,8 +1,8 @@
 import { BaseMapper } from '../_lib';
 
 export class DayMapper extends BaseMapper {
-  toDatabase(day) {
-    return day.value;
+  toDatabase({ value }) {
+    return value;
   }
 
   toEntity({ value }) {

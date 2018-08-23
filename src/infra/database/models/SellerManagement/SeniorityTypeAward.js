@@ -29,7 +29,9 @@ export default (sequelize, DataTypes) => {
   );
 
   SeniorityTypeAward.associate = ({ SeniorityType }) => {
-    SeniorityTypeAward.belongsTo(SeniorityType);
+    SeniorityTypeAward.belongsTo(SeniorityType, {
+      foreignKey: 'seniority_type_id',
+    });
   };
 
   return SeniorityTypeAward;

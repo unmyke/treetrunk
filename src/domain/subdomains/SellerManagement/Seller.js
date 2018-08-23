@@ -289,7 +289,12 @@ export class Seller extends BaseEntity {
   }
 
   get flatAppointments() {
-    return this._appointments.getFlatRecords(PostId.dismissPostId);
+    return this._appointments
+      .getFlatRecords(PostId.dismissPostId)
+      .map(({ value, day }) => ({
+        postId: value,
+        day,
+      }));
   }
 
   update({ lastName, firstName, middleName, phone }) {
@@ -300,22 +305,5 @@ export class Seller extends BaseEntity {
     });
 
     this.phone = phone;
-  }
-
-  toJSON() {
-    return {
-      sellerId: this.sellerId.toJSON(),
-      fullName: this.fullName,
-      firstName: this.firstName,
-      middleName: this.middleName,
-      lastName: this.lastName,
-      phone: this.phone,
-      postId: this.postId,
-      postIds: this.postIds,
-      recruitDay: this.recruitDay,
-      dismissDay: this.dismissDay,
-      seniority: this.seniority,
-      appointments: this.appointments,
-    };
   }
 }

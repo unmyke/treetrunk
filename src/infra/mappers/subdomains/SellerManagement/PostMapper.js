@@ -10,29 +10,25 @@ export class PostMapper extends BaseMapper {
 
   toDatabase({ postId, name, state, pieceRates }) {
     return {
-      postId: this.postIdMapper.toDatabase(postId),
+      post_id: this.postIdMapper.toDatabase(postId),
       name,
       state,
-      pieceRates: pieceRates.map(({ value, day }) => ({
+      piece_rates: pieceRates.map(({ value, day }) => ({
         value,
-        date: this.dayMapper.toDatabase(day),
+        day: this.dayMapper.toDatabase(day),
       })),
     };
   }
 
-  toEntity({ postId, name, state, pieceRates }) {
-    const postEntity = new this.Entity({
-      postId: this.postIdMapper.toEntity({ value: postId }),
+  toEntity({ post_id, name, state, piece_rates }) {
+    return this.Entity.restore({
+      postId: this.postIdMapper.toEntity({ value: post_id }),
       name,
       state,
-    });
-
-    postEntity.setPieceRates(
-      pieceRates.map(({ value, date }) => ({
+      pieceRates: piece_rates.map(({ value, day }) => ({
         value,
-        day: this.dayMapper.toEntity({ value: date }),
-      }))
-    );
-    return postEntity;
+        day: this.dayMapper.toEntity({ value: day }),
+      })),
+    });
   }
 }

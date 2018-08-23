@@ -37,6 +37,15 @@ export const errors = {
   newPieceRateAlreadyExists: makeError('NEW_PIECE_RATE_ALREADY_EXISTS'),
   newPieceRateDuplicate: makeError('NEW_PIECE_RATE_DUPLICATE'),
 
+  // SeniorityType
+  awardAlreadyExists: makeError('AWARD_ALREADY_EXISTS'),
+  awardDuplicate: makeError('AWARD_DUPLICATE'),
+  awardNotFound: makeError('AWARD_NOT_FOUND'),
+  awardHasEqualNeighbours: makeError('AWARD_HAS_EQUAL_NEIGHBOURS'),
+  awardHasLimitedScope: makeError('AWARD_HAS_LIMITED_SCOPE'),
+  newAwardAlreadyExists: makeError('NEW_AWARD_ALREADY_EXISTS'),
+  newAwardDuplicate: makeError('NEW_AWARD_DUPLICATE'),
+
   // FSM
   transitionNotAllowed: makeError('TRANSITION_NOT_ALLOWED'),
 

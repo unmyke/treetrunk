@@ -1,14 +1,32 @@
 import uuidv4 from 'uuid/v4';
-import { format } from 'date-fns';
 
 import { SellerMapper } from './SellerMapper';
 import { container } from 'src/container';
 
+const sellerToDTO = ({
+  sellerId,
+  firstName,
+  middleName,
+  lastName,
+  phone,
+  flatAppointments,
+}) => {
+  ({
+    sellerId,
+    firstName,
+    middleName,
+    lastName,
+    phone,
+    flatAppointments: flatAppointments.map(({ postId, day }) => ({
+      postId,
+      day,
+    })),
+  });
+};
+
 const {
   subdomains: {
-    SellerManagement: {
-      entities: { Seller },
-    },
+    SellerManagement: { Seller },
   },
   commonTypes,
 } = container;
@@ -29,21 +47,17 @@ const date1 = new Date('2018.02.01');
 const date2 = new Date('2018.03.01');
 const date3 = new Date('2018.04.01');
 
-const date0Entry = format(date0);
-const date1Entry = format(date1);
-const date2Entry = format(date2);
-const date3Entry = format(date3);
 const entry = {
-  sellerId: sellerIdValue,
-  firstName,
-  middleName,
-  lastName,
+  seller_id: sellerIdValue,
+  first_name: firstName,
+  middle_name: middleName,
+  last_name: lastName,
   phone,
   appointments: [
-    { postId: postIdValue0, date: date0Entry },
-    { postId: postIdValue1, date: date1Entry },
-    { postId: postIdValue2, date: date2Entry },
-    { postId: postIdValue3, date: date3Entry },
+    { post_id: postIdValue0, day: date0 },
+    { post_id: postIdValue1, day: date1 },
+    { post_id: postIdValue2, day: date2 },
+    { post_id: postIdValue3, day: date3 },
   ],
 };
 
@@ -62,14 +76,14 @@ const entityAppointments = [
   { postId: postId2, day: day2 },
   { postId: postId3, day: day3 },
 ];
-const entity = new Seller({
+const entity = Seller.restore({
   sellerId,
   firstName,
   middleName,
   lastName,
   phone,
+  appointments: entityAppointments,
 });
-entity.setAppointments(entityAppointments);
 
 describe('Domain :: infra :: mappers :: SellerMapper', () => {
   let sellerMapper;
@@ -92,7 +106,7 @@ describe('Domain :: infra :: mappers :: SellerMapper', () => {
 
       expect(persistedEntity).toBeInstanceOf(Seller);
       expect(persistedEntity.sellerId).toBeInstanceOf(SellerId);
-      expect(persistedEntity).toEqual(entity);
+      expect(sellerToDTO(persistedEntity)).toEqual(sellerToDTO(entity));
     });
   });
 });

@@ -1,74 +1,113 @@
 import { BaseEntity } from '../../_lib';
+import { errors } from '../../errors';
 import { SeniorityTypeId, Day, Diary } from '../../commonTypes';
 
+const diaryErrorMessages = {
+  RECORD_ALREADY_EXISTS: errors.awardAlreadyExists(),
+  RECORD_DUPLICATE: errors.awardDuplicate(),
+  RECORD_NOT_FOUND: errors.awardNotFound(),
+  RECORD_HAS_EQUAL_NEIGHBOURS: errors.awardHasEqualNeighbours(),
+  RECORD_HAS_LIMITED_SCOPE: errors.awardHasLimitedScope(),
+  NEW_RECORD_ALREADY_EXISTS: errors.newAwardAlreadyExists(),
+  NEW_RECORD_DUPLICATE: errors.newAwardDuplicate(),
+};
+
+const dispatchDiaryError = (originalError) => {
+  const error = errors[diaryErrorMessages[originalError.message]];
+  error.originalError = originalError;
+
+  return error;
+};
+
+const diaryOperationRunner = (operation) => {
+  try {
+    return operation;
+  } catch (error) {
+    throw dispatchDiaryError(error);
+  }
+};
+
+const states = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+};
+
+const transitions = {
+  UPDATE: 'update',
+  ADD_PIECE_RATE: 'addAward',
+  DELETE_PIECE_RATE_AT: 'deleteAwardAt',
+  UPDATE_PIECE_RATE_TO: 'updateAwardTo',
+  ACTIVATE: 'activate',
+  INACTIVATE: 'inactivate',
+};
+
 export class SeniorityType extends BaseEntity {
+  static restore({ seniorityTypeId, name, months, state, awards }) {
+    const seniorityType = new SeniorityType({
+      seniorityTypeId,
+      name,
+      months,
+      state,
+    });
+    seniorityType._awards = Diary.restore(awards);
+    seniorityType.setState(state);
+
+    return seniorityType;
+  }
+
+  static instanceAt({ name, awards, months, state }, day = new Day()) {
+    const seniorityType = new SeniorityType({ name, months, state });
+    seniorityType._awards = Diary.instanceAt(awards, day);
+    seniorityType.setState(state);
+
+    return seniorityType;
+  }
+
   static fsm = {
-    init: 'active',
+    init: states.ACTIVE,
     transitions: [
-      { name: 'inactivate', from: 'active', to: 'inactive' },
-      { name: 'activate', from: 'inactive', to: 'active' },
-      { name: 'update', from: 'active', to: 'active' },
-      { name: 'setAwards', from: 'active', to: 'active' },
-      { name: 'addAward', from: 'active', to: 'active' },
-      { name: 'deleteAward', from: 'active', to: 'active' },
-      { name: 'editAward', from: 'active', to: 'active' },
-      { name: 'setState', from: ['active', 'inactive'], to: (state) => state },
+      { name: transitions.UPDATE, from: states.ACTIVE, to: states.ACTIVE },
+      {
+        name: transitions.ADD_PIECE_RATE,
+        from: states.ACTIVE,
+        to: states.ACTIVE,
+      },
+      {
+        name: transitions.DELETE_PIECE_RATE_AT,
+        from: states.ACTIVE,
+        to: states.ACTIVE,
+      },
+      {
+        name: transitions.UPDATE_PIECE_RATE_TO,
+        from: states.ACTIVE,
+        to: states.ACTIVE,
+      },
+      {
+        name: transitions.INACTIVATE,
+        from: states.ACTIVE,
+        to: states.INACTIVE,
+      },
+      { name: transitions.ACTIVATE, from: states.INACTIVE, to: states.ACTIVE },
     ],
+
     methods: {
-      onActive() {
-        this.awardOperationResult = { done: true };
-      },
-
       // update({ name })
-      onBeforeUpdate(lifecycle, { name }) {
-        const errors = [];
-        if (name === this.name) {
-          // throw this.constructor.errorFactory.createNothingToUpdate(
-          //   this,
-          //   `SeniorityType in ${
-          //     this.state
-          //   } state already has name "${name}" and months "${months}"`
-          // );
-        }
-      },
-
       onUpdate(lifecycle, { name }) {
         this.name = name;
-        this.months = months;
       },
 
-      // setAwards([{ value, day }])
-      onSetAwards(lifecycle, awardEntries) {
-        const awards = awardEntries.map(
-          ({ value, day }) => new Award({ value, day })
+      onBeforeAddAward(lifecycle, value, day = new Day()) {
+        return diaryOperationRunner(() => this._awards.add({ value, day }));
+      },
+
+      onBeforeDeleteAward(lifecycle, day = new Day()) {
+        return diaryOperationRunner(() => this._awards.deleteAt(day));
+      },
+
+      onBeforeUpdateAward(lifecycle, day, newValue, newDay) {
+        return diaryOperationRunner(() =>
+          this._awards.updateTo(day, newValue, newDay)
         );
-
-        return this._emitAwardOperation('setItems', awards);
-      },
-
-      // addAward(value, day)
-      onAddAward(lifecycle, value, day = new Day()) {
-        const award = new Award({ value, day });
-
-        return this._emitAwardOperation('addItem', award);
-      },
-
-      // deleteAward(value, day)
-      onDeleteAward(lifecycle, value, day = new Day()) {
-        const award = new Award({ value, day });
-
-        return this._emitAwardOperation('deleteItem', award);
-      },
-
-      // editAward(value, day, newValue, newDay)
-      onEditAward(lifecycle, value, day, newValue, newDay) {
-        const award = new Award({ value, day });
-        const newAward = new Award({
-          value: newValue,
-          day: newDay,
-        });
-
-        return this._emitAwardOperation('editItem', award, newAward);
       },
     },
   };
@@ -77,7 +116,7 @@ export class SeniorityType extends BaseEntity {
     seniorityTypeId = new SeniorityTypeId(),
     name,
     months,
-    state = 'active',
+    state = states.ACTIVE,
   }) {
     super(seniorityTypeId);
     this.name = name;
@@ -88,52 +127,14 @@ export class SeniorityType extends BaseEntity {
   }
 
   get awards() {
-    return this._awards.items;
+    return this._awards.records;
   }
 
   get award() {
-    return this._awards.getItemValueAt();
+    return this._awards.recordValue;
   }
 
   get hasAwards() {
-    return this._awards.hasItems;
-  }
-
-  getAwardAt(day = new Day()) {
-    return this._awards.getItemValueAt(day);
-  }
-
-  hasAwardsAt(day = new Day()) {
-    return this._awards.hasItemsAt(day);
-  }
-
-  getInstanceAt(day = new Day()) {
-    const seniorityType = new SeniorityType(this);
-
-    const awards = this._awards.getItemsAt(day);
-    seniorityType.setAwards(awards);
-
-    return seniorityType;
-  }
-
-  toJSON() {
-    return {
-      seniorityTypeId: this.seniorityTypeId.toJSON(),
-      name: this.name,
-      award: this.award,
-      awards: this._awards.map((award) => award.toJSON()),
-      state: this.state,
-    };
-  }
-
-  // private
-
-  _emitAwardOperation(operation, ...args) {
-    const { done, errors } = this._awards[operation](...args);
-
-    if (!done) {
-      throw errors;
-    }
-    return done;
+    return this._awards.length !== 0;
   }
 }

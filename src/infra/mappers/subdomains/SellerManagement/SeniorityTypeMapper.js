@@ -11,33 +11,31 @@ export class SeniorityTypeMapper extends BaseMapper {
     this.dayMapper = new DayMapper({ commonTypes });
   }
 
-  toDatabase({ seniorityTypeId, name, months, awards }) {
+  toDatabase({ seniorityTypeId, name, months, state, awards }) {
     return {
-      seniorityTypeId: this.seniorityTypeIdMapper.toDatabase(seniorityTypeId),
+      seniority_type_id: this.seniorityTypeIdMapper.toDatabase(seniorityTypeId),
       name,
       months,
+      state,
       awards: awards.map(({ value, day }) => ({
         value,
-        date: this.dayMapper.toDatabase(day),
+        day: this.dayMapper.toDatabase(day),
       })),
     };
   }
 
-  toEntity({ seniorityTypeId, name, months, awards }) {
-    const seniorityTypeEntity = new this.Entity({
+  toEntity({ seniority_type_id, name, months, state, awards }) {
+    return this.Entity.restore({
       seniorityTypeId: this.seniorityTypeIdMapper.toEntity({
-        value: seniorityTypeId,
+        value: seniority_type_id,
       }),
       name,
       months,
-    });
-
-    seniorityTypeEntity.setAwards(
-      awards.map(({ value, date }) => ({
+      state,
+      awards: awards.map(({ value, day }) => ({
         value,
-        day: this.dayMapper.toEntity({ value: date }),
-      }))
-    );
-    return seniorityTypeEntity;
+        day: this.dayMapper.toEntity({ value: day }),
+      })),
+    });
   }
 }

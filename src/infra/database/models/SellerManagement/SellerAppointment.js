@@ -29,8 +29,10 @@ export default (sequelize, DataTypes) => {
   );
 
   SellerAppointment.associate = ({ Seller, Post }) => {
-    SellerAppointment.belongsTo(Seller);
-    SellerAppointment.belongsTo(Post);
+    SellerAppointment.belongsTo(Seller, {
+      foreignKey: 'seller_id',
+    });
+    // SellerAppointment.belongsTo(Post, { foreignKey: 'post_id' });
   };
 
   return SellerAppointment;

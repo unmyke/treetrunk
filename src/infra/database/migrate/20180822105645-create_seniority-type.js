@@ -13,6 +13,14 @@ module.exports = {
           allowNull: false,
           type: Sequelize.STRING,
         },
+        months: {
+          allowNull: false,
+          type: Sequelize.INTEGER,
+        },
+        state: {
+          allowNull: false,
+          type: Sequelize.STRING,
+        },
         created_at: {
           allowNull: false,
           type: Sequelize.DATE,

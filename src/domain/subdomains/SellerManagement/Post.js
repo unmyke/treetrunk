@@ -42,8 +42,8 @@ const transitions = {
 };
 
 export class Post extends BaseEntity {
-  static restore({ name, pieceRates, state }) {
-    const post = new Post({ name, state });
+  static restore({ postId, name, pieceRates, state }) {
+    const post = new Post({ postId, name, state });
     post._pieceRates = Diary.restore(pieceRates);
     post.setState(state);
 
@@ -59,7 +59,7 @@ export class Post extends BaseEntity {
   }
 
   static fsm = {
-    init: 'active',
+    init: states.ACTIVE,
     transitions: [
       { name: transitions.UPDATE, from: states.ACTIVE, to: states.ACTIVE },
       {
@@ -107,7 +107,7 @@ export class Post extends BaseEntity {
     },
   };
 
-  constructor({ postId = new PostId(), name, state = 'active' }) {
+  constructor({ postId = new PostId(), name, state = states.ACTIVE }) {
     super(postId);
     this.name = name;
     this._pieceRates = new Diary();
@@ -125,15 +125,5 @@ export class Post extends BaseEntity {
 
   get hasPieceRates() {
     return this._pieceRates.length !== 0;
-  }
-
-  toJSON() {
-    return {
-      postId: this.postId.toJSON(),
-      name: this.name,
-      pieceRate: this.pieceRate,
-      pieceRates: this._pieceRates.map((pieceRate) => pieceRate.toJSON()),
-      state: this.state,
-    };
   }
 }

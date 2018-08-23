@@ -33,7 +33,7 @@ export default (sequelize, DataTypes) => {
           fields: ['last_name', 'first_name', 'middle_name', 'phone'],
         },
       ],
-      // defaultScope: { include: [{ all: true }] },
+      defaultScope: { include: [{ all: true }] },
     }
   );
 

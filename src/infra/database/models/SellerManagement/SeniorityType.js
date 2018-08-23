@@ -11,6 +11,14 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      months: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
+      state: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
     },
     {
       underscored: true,
@@ -21,12 +29,15 @@ export default (sequelize, DataTypes) => {
           fields: ['name'],
         },
       ],
-      // defaultScope: { include: [{ all: true }] },
+      defaultScope: { include: [{ all: true }] },
     }
   );
 
   SeniorityType.associate = ({ SeniorityTypeAward }) => {
-    SeniorityType.hasMany(SeniorityTypeAward, { as: 'awards' });
+    SeniorityType.hasMany(SeniorityTypeAward, {
+      as: 'awards',
+      foreignKey: 'seniority_type_id',
+    });
   };
 
   return SeniorityType;

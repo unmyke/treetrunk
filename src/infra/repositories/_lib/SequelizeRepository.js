@@ -18,6 +18,8 @@ export class SequelizeRepository extends BaseRepository {
   async add(entity) {
     const model = await this.Model.create(this.mapper.toDatabase(entity));
 
+    console.log(model.appointments);
+
     return this.mapper.toEntity(model);
   }
 

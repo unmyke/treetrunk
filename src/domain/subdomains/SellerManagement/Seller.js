@@ -92,6 +92,7 @@ export class Seller extends BaseEntity {
     middleName,
     lastName,
     phone,
+    state,
     appointments,
   }) {
     const seller = new Seller({
@@ -109,7 +110,7 @@ export class Seller extends BaseEntity {
       );
     }
 
-    seller.setState(calculateState(seller));
+    seller.setState(state);
 
     return seller;
   }

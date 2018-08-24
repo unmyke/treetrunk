@@ -1,7 +1,7 @@
 import { PostId, Day } from '../../commonTypes';
 import { Seller } from './Seller';
 import { Post } from './Post';
-import { errors } from '../../errors';
+// import { errors } from '../../errors';
 
 const states = {
   NEW: 'new',
@@ -48,6 +48,7 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
           seller = Seller.restore({
             ...personalName,
             phone,
+            state: states.NEW,
             appointments,
           });
         });
@@ -63,7 +64,12 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
       context('#2', () => {
         beforeEach(() => {
           appointments = [{ postId: postId1, day: day1 }];
-          seller = Seller.restore({ ...personalName, phone, appointments });
+          seller = Seller.restore({
+            ...personalName,
+            phone,
+            state: states.RECRUITED,
+            appointments,
+          });
         });
 
         test('should return started seller', () => {
@@ -80,7 +86,12 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
             { postId: postId1, day: day1 },
             { postId: dismissPostId, day: day2 },
           ];
-          seller = Seller.restore({ ...personalName, phone, appointments });
+          seller = Seller.restore({
+            ...personalName,
+            phone,
+            state: states.DISMISSED,
+            appointments,
+          });
         });
 
         test('should return closed seller', () => {
@@ -98,7 +109,12 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
             { postId: postId2, day: day2 },
             { postId: dismissPostId, day: day3 },
           ];
-          seller = Seller.restore({ ...personalName, phone, appointments });
+          seller = Seller.restore({
+            ...personalName,
+            phone,
+            state: states.DISMISSED,
+            appointments,
+          });
         });
 
         test('should return closed seller', () => {
@@ -116,7 +132,12 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
             { postId: postId2, day: day3 },
             { postId: dismissPostId, day: day2 },
           ];
-          seller = Seller.restore({ ...personalName, phone, appointments });
+          seller = Seller.restore({
+            ...personalName,
+            phone,
+            state: states.RECRUITED,
+            appointments,
+          });
         });
 
         test('should return started seller', () => {
@@ -135,7 +156,12 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
             { postId: postId3, day: day4 },
             { postId: dismissPostId, day: day2 },
           ];
-          seller = Seller.restore({ ...personalName, phone, appointments });
+          seller = Seller.restore({
+            ...personalName,
+            phone,
+            state: states.RECRUITED,
+            appointments,
+          });
         });
 
         test('should return started seller', () => {
@@ -158,7 +184,12 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
             { postId: dismissPostId, day: day2 },
             { postId: dismissPostId, day: day5 },
           ];
-          seller = Seller.restore({ ...personalName, phone, appointments });
+          seller = Seller.restore({
+            ...personalName,
+            phone,
+            state: states.DISMISSED,
+            appointments,
+          });
         });
 
         test('should return started seller', () => {
@@ -178,7 +209,12 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
             { postId: dismissPostId, day: day2 },
             { postId: dismissPostId, day: day4 },
           ];
-          seller = Seller.restore({ ...personalName, phone, appointments });
+          seller = Seller.restore({
+            ...personalName,
+            phone,
+            state: states.RECRUITED,
+            appointments,
+          });
         });
 
         test('should return started seller', () => {
@@ -190,140 +226,141 @@ describe('Domain :: commonTypes :: Seller :: #static', () => {
       });
     });
 
-    describe('negative', () => {
-      context('#1', () => {
-        beforeEach(() => {
-          appointments = [, { postId: dismissPostId, day: day1 }];
-        });
+    // describe('negative', () => {
+    //   context('#1', () => {
+    //     beforeEach(() => {
+    //       appointments = [, { postId: dismissPostId, day: day1 }];
+    //     });
 
-        test('should throw exeption', () => {
-          expect(() => {
-            seller = Seller.restore({ ...personalName, phone, appointments });
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
+    //     test('should throw exeption', () => {
+    //       expect(() => {
+    //         seller = Seller.restore({ ...personalName, phone, appointments });
+    //       }).toThrowError(errors.inconsistentState());
+    //     });
+    //   });
 
-      context('#2', () => {
-        beforeEach(() => {
-          appointments = [
-            { postId: postId1, day: day2 },
-            { postId: postId2, day: day3 },
-            { postId: dismissPostId, day: day1 },
-          ];
-        });
+    //   context('#2', () => {
+    //     beforeEach(() => {
+    //       appointments = [
+    //         { postId: postId1, day: day2 },
+    //         { postId: postId2, day: day3 },
+    //         { postId: dismissPostId, day: day1 },
+    //       ];
+    //     });
 
-        test('should throw exeption', () => {
-          expect(() => {
-            seller = Seller.restore({ ...personalName, phone, appointments });
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
+    //     test('should throw exeption', () => {
+    //       expect(() => {
+    //         seller = Seller.restore({ ...personalName, phone, appointments });
+    //       }).toThrowError(errors.inconsistentState());
+    //     });
+    //   });
 
-      context('#3', () => {
-        beforeEach(() => {
-          appointments = [
-            { postId: postId1, day: day1 },
-            { postId: dismissPostId, day: day2 },
-            { postId: dismissPostId, day: day3 },
-          ];
-        });
+    //   context('#3', () => {
+    //     beforeEach(() => {
+    //       appointments = [
+    //         { postId: postId1, day: day1 },
+    //         { postId: dismissPostId, day: day2 },
+    //         { postId: dismissPostId, day: day3 },
+    //       ];
+    //     });
 
-        test('should throw exeption', () => {
-          expect(() => {
-            seller = Seller.restore({ ...personalName, phone, appointments });
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
-      context('#4', () => {
-        beforeEach(() => {
-          appointments = [
-            { postId: postId1, day: day1 },
-            { postId: postId2, day: day4 },
-            { postId: dismissPostId, day: day2 },
-            { postId: dismissPostId, day: day3 },
-          ];
-        });
+    //     test('should throw exeption', () => {
+    //       expect(() => {
+    //         seller = Seller.restore({ ...personalName, phone, appointments });
+    //       }).toThrowError(errors.inconsistentState());
+    //     });
+    //   });
+    //   context('#4', () => {
+    //     beforeEach(() => {
+    //       appointments = [
+    //         { postId: postId1, day: day1 },
+    //         { postId: postId2, day: day4 },
+    //         { postId: dismissPostId, day: day2 },
+    //         { postId: dismissPostId, day: day3 },
+    //       ];
+    //     });
 
-        test('should throw exeption', () => {
-          expect(() => {
-            seller = Seller.restore({ ...personalName, phone, appointments });
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
+    //     test('should throw exeption', () => {
+    //       expect(() => {
+    //         seller = Seller.restore({ ...personalName, phone, appointments });
+    //       }).toThrowError(errors.inconsistentState());
+    //     });
+    //   });
 
-      context('#5', () => {
-        beforeEach(() => {
-          appointments = [
-            { postId: postId1, day: day1 },
-            { postId: postId2, day: day3 },
-            { postId: postId2, day: day4 },
-            { postId: dismissPostId, day: day2 },
-          ];
-        });
+    //   context('#5', () => {
+    //     beforeEach(() => {
+    //       appointments = [
+    //         { postId: postId1, day: day1 },
+    //         { postId: postId2, day: day3 },
+    //         { postId: postId2, day: day4 },
+    //         { postId: dismissPostId, day: day2 },
+    //       ];
+    //     });
 
-        test('should throw exeption', () => {
-          expect(() => {
-            seller = Seller.restore({ ...personalName, phone, appointments });
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
+    //     test('should throw exeption', () => {
+    //       expect(() => {
+    //         seller = Seller.restore({ ...personalName, phone, appointments });
+    //       }).toThrowError(errors.inconsistentState());
+    //     });
+    //   });
 
-      context('#6', () => {
-        beforeEach(() => {
-          appointments = [
-            { postId: postId1, day: day1 },
-            { postId: postId2, day: day3 },
-            { postId: postId2, day: day4 },
-            { postId: dismissPostId, day: day2 },
-            { postId: dismissPostId, day: day5 },
-          ];
-        });
+    //   context('#6', () => {
+    //     beforeEach(() => {
+    //       appointments = [
+    //         { postId: postId1, day: day1 },
+    //         { postId: postId2, day: day3 },
+    //         { postId: postId2, day: day4 },
+    //         { postId: dismissPostId, day: day2 },
+    //         { postId: dismissPostId, day: day5 },
+    //       ];
+    //     });
 
-        test('should throw exeption', () => {
-          expect(() => {
-            seller = Seller.restore({ ...personalName, phone, appointments });
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
+    //     test('should throw exeption', () => {
+    //       expect(() => {
+    //         seller = Seller.restore({ ...personalName, phone, appointments });
+    //       }).toThrowError(errors.inconsistentState());
+    //     });
+    //   });
 
-      context('#7', () => {
-        beforeEach(() => {
-          appointments = [
-            { postId: postId1, day: day1 },
-            { postId: postId2, day: day2 },
-            { postId: dismissPostId, day: day2 },
-          ];
-        });
+    //   context('#7', () => {
+    //     beforeEach(() => {
+    //       appointments = [
+    //         { postId: postId1, day: day1 },
+    //         { postId: postId2, day: day2 },
+    //         { postId: dismissPostId, day: day2 },
+    //       ];
+    //     });
 
-        test('should throw exeption', () => {
-          expect(() => {
-            seller = Seller.restore({ ...personalName, phone, appointments });
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
+    //     test('should throw exeption', () => {
+    //       expect(() => {
+    //         seller = Seller.restore({ ...personalName, phone, appointments });
+    //       }).toThrowError(errors.inconsistentState());
+    //     });
+    //   });
 
-      context('#8', () => {
-        beforeEach(() => {
-          appointments = [
-            { postId: postId1, day: day1 },
-            { postId: postId2, day: day1 },
-            { postId: dismissPostId, day: day2 },
-          ];
-        });
+    //   context('#8', () => {
+    //     beforeEach(() => {
+    //       appointments = [
+    //         { postId: postId1, day: day1 },
+    //         { postId: postId2, day: day1 },
+    //         { postId: dismissPostId, day: day2 },
+    //       ];
+    //     });
 
-        test('should throw exeption', () => {
-          expect(() => {
-            seller = Seller.restore({ ...personalName, phone, appointments });
-          }).toThrowError(errors.inconsistentState());
-        });
-      });
-    });
+    //     test('should throw exeption', () => {
+    //       expect(() => {
+    //         seller = Seller.restore({ ...personalName, phone, appointments });
+    //       }).toThrowError(errors.inconsistentState());
+    //     });
+    //   });
+    // });
   });
 
   describe('#instanceAt', () => {
     beforeEach(() => {
       seller = Seller.restore({
         ...personalName,
+        state: states.RECRUITED,
         phone,
         appointments: [
           { postId: postId1, day: day1 },

@@ -32,8 +32,6 @@ const { postId: dismissPostId } = new Post({ name: 'уволен(а)' });
 const appoint1 = { postId: postId1, day: day1 };
 const appoint2 = { postId: postId2, day: day3 };
 const appoint3 = { postId: postId3, day: day4 };
-const appoint4 = { postId: postId4, day: day5 };
-const newAppoint = { postId: newPostId, day: day };
 const dismissAppoint1 = { postId: dismissPostId, day: day2 };
 const dismissAppoint2 = { postId: dismissPostId, day: day4 };
 
@@ -44,7 +42,7 @@ let seller;
 describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
   context('when seller is new', () => {
     beforeEach(() => {
-      seller = Seller.restore({ ...personalName, phone });
+      seller = Seller.restore({ ...personalName, phone, state: states.NEW });
       expect(seller.state).toBe(states.NEW);
     });
 
@@ -103,6 +101,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           seller = Seller.restore({
             ...personalName,
             phone,
+            state: states.RECRUITED,
             appointments: [appoint1],
           });
           expect(seller.state).toBe(states.RECRUITED);
@@ -158,6 +157,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           seller = Seller.restore({
             ...personalName,
             phone,
+            state: states.RECRUITED,
             appointments: [appoint1, appoint2],
           });
           expect(seller.state).toBe(states.RECRUITED);
@@ -215,6 +215,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           seller = Seller.restore({
             ...personalName,
             phone,
+            state: states.RECRUITED,
             appointments: [appoint1, appoint2, dismissAppoint1],
           });
           expect(seller.state).toBe(states.RECRUITED);
@@ -270,6 +271,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           seller = Seller.restore({
             ...personalName,
             phone,
+            state: states.RECRUITED,
             appointments: [appoint1, appoint2, appoint3, dismissAppoint1],
           });
           expect(seller.state).toBe(states.RECRUITED);
@@ -327,6 +329,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       beforeEach(() => {
         seller = Seller.restore({
           ...personalName,
+          state: states.DISMISSED,
           phone,
           appointments: [appoint1, dismissAppoint1],
         });
@@ -384,6 +387,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         seller = Seller.restore({
           ...personalName,
           phone,
+          state: states.DISMISSED,
           appointments: [appoint1, appoint2, dismissAppoint1, dismissAppoint2],
         });
         expect(seller.state).toBe(states.DISMISSED);

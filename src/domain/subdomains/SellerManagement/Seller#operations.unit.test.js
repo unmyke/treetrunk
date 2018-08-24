@@ -2,6 +2,13 @@ import { PostId, Day } from '../../commonTypes';
 import { Seller } from './Seller';
 import { Post } from './Post';
 
+const states = {
+  NEW: 'new',
+  RECRUITED: 'recruited',
+  DISMISSED: 'dismissed',
+  DELETED: 'deleted',
+};
+
 const appointsToRecords = (appoints) =>
   appoints.map(({ postId, day }) => ({ value: postId, day }));
 const lastName = 'lastName';
@@ -45,7 +52,12 @@ let seller;
 describe('Domain :: commonTypes :: Seller', () => {
   context('when seller is new', () => {
     beforeEach(() => {
-      seller = Seller.restore({ ...personalName, phone, appointments: [] });
+      seller = Seller.restore({
+        ...personalName,
+        phone,
+        state: states.NEW,
+        appointments: [],
+      });
     });
 
     describe('#addAppointments', () => {
@@ -126,11 +138,12 @@ describe('Domain :: commonTypes :: Seller', () => {
     });
   });
 
-  context('when seller is started', () => {
+  context('when seller is recruited', () => {
     beforeEach(() => {
       seller = Seller.restore({
         ...personalName,
         phone,
+        state: states.RECRUITED,
         appointments: [
           pastAppoint1,
           appoint1,
@@ -460,11 +473,12 @@ describe('Domain :: commonTypes :: Seller', () => {
     });
   });
 
-  context('when seller is closed', () => {
+  context('when seller is dismissed', () => {
     beforeEach(() => {
       seller = Seller.restore({
         ...personalName,
         phone,
+        state: states.DISMISSED,
         appointments: [pastAppoint1, closeAppoint],
       });
     });

@@ -1,25 +1,12 @@
+import { getSyncOperationRunner } from 'src/infra/support/operationRunner';
+
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { SellerId, PostId, PersonName, Day, Diary } from '../../commonTypes';
 
 // Hadnle errors throw inside Diary class
 
-const diaryOperationRunner = (operation) => {
-  try {
-    return operation();
-  } catch (error) {
-    throw dispatchDiaryError(error);
-  }
-};
-
-const dispatchDiaryError = (originalError) => {
-  const error = diaryErrorMessages[originalError.message];
-  error.originalError = originalError;
-
-  return error;
-};
-
-const diaryErrorMessages = {
+const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.appointmentAlreadyExists(),
   RECORD_DUPLICATE: errors.appointmentDuplicate(),
   RECORD_NOT_FOUND: errors.appointmentNotFound(),
@@ -32,6 +19,7 @@ const diaryErrorMessages = {
   DIARY_HAS_RECORDS_LATER: errors.sellerHasAppointmentsLater(),
   DIARY_NOT_CLOSED: errors.sellerNotDismissed(),
 };
+const diaryOperationRunner = getSyncOperationRunner(diaryErrorMessageMapper);
 
 // FSM
 

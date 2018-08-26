@@ -1,8 +1,10 @@
+import { getSyncOperationRunner } from 'src/infra/support/operationRunner';
+
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { SeniorityTypeId, Day, Diary } from '../../commonTypes';
 
-const diaryErrorMessages = {
+const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.awardAlreadyExists(),
   RECORD_DUPLICATE: errors.awardDuplicate(),
   RECORD_NOT_FOUND: errors.awardNotFound(),
@@ -11,21 +13,7 @@ const diaryErrorMessages = {
   NEW_RECORD_ALREADY_EXISTS: errors.newAwardAlreadyExists(),
   NEW_RECORD_DUPLICATE: errors.newAwardDuplicate(),
 };
-
-const dispatchDiaryError = (originalError) => {
-  const error = errors[diaryErrorMessages[originalError.message]];
-  error.originalError = originalError;
-
-  return error;
-};
-
-const diaryOperationRunner = (operation) => {
-  try {
-    return operation;
-  } catch (error) {
-    throw dispatchDiaryError(error);
-  }
-};
+const diaryOperationRunner = getSyncOperationRunner(diaryErrorMessageMapper);
 
 const states = {
   ACTIVE: 'active',

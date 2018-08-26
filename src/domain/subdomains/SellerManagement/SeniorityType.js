@@ -84,15 +84,15 @@ export class SeniorityType extends BaseEntity {
         this.name = name;
       },
 
-      onBeforeAddAward(lifecycle, value, day = new Day()) {
+      onAddAward(lifecycle, value, day = new Day()) {
         return diaryOperationRunner(() => this._awards.add({ value, day }));
       },
 
-      onBeforeDeleteAward(lifecycle, day = new Day()) {
+      onDeleteAward(lifecycle, day = new Day()) {
         return diaryOperationRunner(() => this._awards.deleteAt(day));
       },
 
-      onBeforeUpdateAward(lifecycle, day, newValue, newDay) {
+      onUpdateAward(lifecycle, day, newValue, newDay) {
         return diaryOperationRunner(() =>
           this._awards.updateTo(day, newValue, newDay)
         );
@@ -100,18 +100,11 @@ export class SeniorityType extends BaseEntity {
     },
   };
 
-  constructor({
-    seniorityTypeId = new SeniorityTypeId(),
-    name,
-    months,
-    state = states.ACTIVE,
-  }) {
+  constructor({ seniorityTypeId = new SeniorityTypeId(), name, months }) {
     super(seniorityTypeId);
     this.name = name;
     this.months = months;
     this._awards = new Diary();
-
-    this.setState(state);
   }
 
   get awards() {

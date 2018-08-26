@@ -79,15 +79,15 @@ export class Post extends BaseEntity {
         this.name = name;
       },
 
-      onBeforeAddPieceRate(lifecycle, value, day = new Day()) {
-        return diaryOperationRunner(() => this._pieceRates.add({ value, day }));
+      onAddPieceRate(lifecycle, value, day = new Day()) {
+        return diaryOperationRunner(() => this._pieceRates.add(value, day));
       },
 
-      onBeforeDeletePieceRate(lifecycle, day = new Day()) {
+      onDeletePieceRate(lifecycle, day = new Day()) {
         return diaryOperationRunner(() => this._pieceRates.deleteAt(day));
       },
 
-      onBeforeUpdatePieceRate(lifecycle, day, newValue, newDay) {
+      onUpdatePieceRate(lifecycle, day, newValue, newDay) {
         return diaryOperationRunner(() =>
           this._pieceRates.updateTo(day, newValue, newDay)
         );
@@ -95,12 +95,10 @@ export class Post extends BaseEntity {
     },
   };
 
-  constructor({ postId = new PostId(), name, state = states.ACTIVE }) {
+  constructor({ postId = new PostId(), name }) {
     super(postId);
     this.name = name;
     this._pieceRates = new Diary();
-
-    this.setState(state);
   }
 
   get pieceRates() {

@@ -1,11 +1,11 @@
 import { startOfDay } from 'date-fns';
 import { SeniorityTypeId, Day } from '../../commonTypes';
 import { SeniorityType } from './SeniorityType';
-import { Award } from './Award';
+import { SeniorityType as states } from '../../states';
 
 const name = '3 месяца';
-
 const months = 3;
+const params = { name, months, state: states.ACTIVE };
 
 const award1value = 400;
 const award2value = 200;
@@ -18,25 +18,27 @@ const award3day = new Day({ value: new Date('2018.03.14 11:00') });
 
 describe('Domain :: entities :: SeniorityType', () => {
   let seniorityType;
-  beforeEach(() => {
-    seniorityType = new SeniorityType({ name, months });
-  });
 
   describe('#constructor', () => {
+    beforeEach(() => {
+      seniorityType = new SeniorityType(params);
+    });
+
     test('should be instance of SeniorityType', () => {
       expect(seniorityType).toBeInstanceOf(SeniorityType);
       expect(seniorityType.seniorityTypeId).toBeInstanceOf(SeniorityTypeId);
       expect(seniorityType.name).toBe(name);
       expect(seniorityType.months).toBe(months);
+      expect(seniorityType.state).toBe(states.ACTIVE);
       expect(seniorityType.awards).toHaveLength(0);
-    });
-
-    test('should have no award', () => {
-      expect(seniorityType.getAwardAt()).toBeUndefined();
     });
   });
 
   describe('#addAward', () => {
+    beforeEach(() => {
+      seniorityType = new SeniorityType(params);
+    });
+
     context('when add one award value', () => {
       test('should have awards length equal 1', () => {
         seniorityType.addAward(award1value, award1day);
@@ -50,15 +52,13 @@ describe('Domain :: entities :: SeniorityType', () => {
         seniorityType.addAward(award1value, award1day);
 
         try {
-          seniorityType.addAward(award1value, award1day);
-        } catch (e) {
-          expect(e.details).toEqual({
-            seniorityType: [
-              'Award with value "400" at 14.01.2018 already exists',
-            ],
-          });
-          expect(seniorityType.awards).toHaveLength(1);
+          seniorityType.addAward(award2value, award1day);
+        } catch ({ message }) {
+          expect(message).toBe('AWARD_ALREADY_EXISTS');
         }
+
+        expect(seniorityType.awards).toHaveLength(1);
+        expect(seniorityType.awards[0].value).toBe(award1value);
       });
     });
 
@@ -68,57 +68,31 @@ describe('Domain :: entities :: SeniorityType', () => {
 
         try {
           seniorityType.addAward(award1value, newDay);
-        } catch (e) {
-          expect(e.details).toEqual({
-            seniorityType: ['Previous award already have value "400"'],
-          });
-          expect(seniorityType.awards).toHaveLength(1);
+        } catch ({ message }) {
+          expect(message).toEqual('AWARD_DUPLICATE');
         }
+        expect(seniorityType.awards).toHaveLength(1);
       });
     });
   });
 
-  describe('#getAwardAt', () => {
+  describe('#deleteAwardAt', () => {
     beforeEach(() => {
-      seniorityType.addAward(award2value, award2day);
-      seniorityType.addAward(award3value, award3day);
-      seniorityType.addAward(award1value, award1day);
-    });
-
-    context('when requested before any award added to seniorityType', () => {
-      test('should return undefined', () => {
-        expect(seniorityType.getAwardAt(award1day.subDays(1))).toBeUndefined();
+      seniorityType = SeniorityType.restore({
+        ...params,
+        awards: [
+          { value: award2value, day: award2day },
+          { value: award3value, day: award3day },
+          { value: award1value, day: award1day },
+        ],
       });
-    });
-
-    context('when requested past award', () => {
-      test("should return award's value belongs to that dateRange", () => {
-        expect(seniorityType.getAwardAt(award2day)).toBe(award2value);
-      });
-    });
-
-    context(
-      'when requested current award associated with seniorityType',
-      () => {
-        test("should return last award's value", () => {
-          expect(seniorityType.getAwardAt(newDay)).toBe(award3value);
-        });
-      }
-    );
-  });
-
-  describe('#deleteAward', () => {
-    beforeEach(() => {
-      seniorityType.addAward(award2value, award2day);
-      seniorityType.addAward(award3value, award3day);
-      seniorityType.addAward(award1value, award1day);
     });
 
     context('when delete existing award', () => {
       test('should decrease awards length', () => {
         expect(seniorityType.awards).toHaveLength(3);
 
-        seniorityType.deleteAward(award3value, award3day);
+        seniorityType.deleteAwardAt(award3day);
 
         expect(seniorityType.awards).toHaveLength(2);
       });
@@ -126,42 +100,40 @@ describe('Domain :: entities :: SeniorityType', () => {
 
     context('when delete seniorityType twice', () => {
       test('should throw exeption', () => {
-        seniorityType.deleteAward(award3value, award3day);
+        seniorityType.deleteAwardAt(award3day);
 
         try {
-          seniorityType.deleteAward(award3value, award3day);
-        } catch (e) {
-          expect(e.details).toEqual({
-            seniorityType: ['Award with value "500" at 14.03.2018 not found'],
-          });
+          seniorityType.deleteAwardAt(award3day);
+        } catch ({ message }) {
+          expect(message).toEqual('AWARD_NOT_FOUND');
           expect(seniorityType.awards).toHaveLength(2);
         }
       });
     });
   });
 
-  describe('#editAward', () => {
+  describe('#updateAwardTo', () => {
     beforeEach(() => {
-      seniorityType.addAward(award1value, award1day);
+      seniorityType = SeniorityType.restore({
+        ...params,
+        awards: [{ value: award1value, day: award1day }],
+      });
     });
 
     context('when appointment has created with wrong award', () => {
       test('should change associated award', () => {
-        seniorityType.editAward(award1value, award1day, award2value, award1day);
+        seniorityType.updateAwardTo(award1day, award2value, award1day);
 
         expect(seniorityType.awards[0].day).toEqual(
           new Day({ value: startOfDay(award1day) })
         );
-        expect(seniorityType.getAwardAt()).toBe(award2value);
       });
     });
 
     context('when award has created with wrong date', () => {
       test('should change associated date', () => {
-        seniorityType.editAward(award1value, award1day, award1value, award2day);
+        seniorityType.updateAwardTo(award1day, award1value, award2day);
         expect(seniorityType.awards).toHaveLength(1);
-        expect(seniorityType.getAwardAt(award1day)).toEqual(undefined);
-        expect(seniorityType.getAwardAt(award2day)).toBe(award1value);
       });
     });
   });

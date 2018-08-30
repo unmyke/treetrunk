@@ -159,6 +159,14 @@ export class Day extends BaseValue {
     return this.value.getTime();
   }
 
+  equals(day) {
+    if (!(day instanceof Day)) {
+      return false;
+    }
+
+    return this.valueOf() === day.valueOf();
+  }
+
   toJSON() {
     return this.format();
   }

@@ -363,6 +363,28 @@ describe('Domain :: commonTypes :: Seller', () => {
         }
       );
 
+      context(
+        'when passed appoint with equal neighbor appoints and new appoint with new postId and same day within',
+        () => {
+          test('should change passed appoint', () => {
+            seller.updateAppointmentTo(
+              appoint2.day,
+              newAppointFromScope.postId,
+              appoint2.day
+            );
+            expect(seller.appointments).toEqual([
+              appoint1,
+              { postId: newAppointFromScope.postId, day: appoint2.day },
+              appoint3,
+            ]);
+
+            expect(seller._appointments._archive.map(({ day }) => day)).toEqual(
+              [day3]
+            );
+          });
+        }
+      );
+
       context('when passed appoints with day sooner than close day ', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {

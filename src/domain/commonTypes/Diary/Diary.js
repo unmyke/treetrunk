@@ -80,7 +80,7 @@ export class Diary extends BaseClass {
     const archiveLastDay = _archive.lastDay;
     const instanceState = {};
 
-    if (archiveLastDay < day) {
+    if (archiveLastDay === undefined || archiveLastDay < day) {
       instanceState.store = _store.filter(
         ({ day: currnetDay }) => currnetDay <= day
       );
@@ -300,10 +300,7 @@ export class Diary extends BaseClass {
   }
 
   filter(fn) {
-    const diary = new Diary();
-    diary.store.this._store.filter(fn);
-
-    return diary;
+    return this._store.filter(fn);
   }
 
   //  private methods
@@ -358,7 +355,8 @@ export class Diary extends BaseClass {
     });
 
     return (
-      dstNeighbours.isExists() && srcRecord.prev.equals(dstNeighbours.prev)
+      isEqualValues(srcDay, dstDay) ||
+      (dstNeighbours.isExists() && srcRecord.prev.equals(dstNeighbours.prev))
     );
   }
 

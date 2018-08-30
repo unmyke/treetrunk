@@ -1,13 +1,7 @@
 import { PostId, Day } from '../../../commonTypes';
+import { Seller as states } from '../../../states';
 import { Seller } from '../Seller';
 import { Post } from '../Post';
-
-const states = {
-  NEW: 'new',
-  RECRUITED: 'recruited',
-  DISMISSED: 'dismissed',
-  DELETED: 'deleted',
-};
 
 const lastName = 'lastName';
 const firstName = 'Firstname';

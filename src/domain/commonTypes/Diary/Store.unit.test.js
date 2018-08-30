@@ -62,7 +62,7 @@ describe('Domain :: commonTypes :: Store', () => {
     record8 = undefined;
   });
 
-  describe('#getNeighbors', () => {
+  describe('#getNeighbours', () => {
     beforeEach(() => {
       record1 = new Record({ value: value1, day: day1 });
       record1.setPrev();
@@ -102,7 +102,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day before day1', () => {
       test('should return prev === undefined and next === record1', () => {
-        const { prev, next } = store.getNeighbors(day1.prev());
+        const { prev, next } = store.getNeighbours(day1.prev());
 
         expect(prev).toBeUndefined();
         expect(next).toBe(record1);
@@ -111,7 +111,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day1', () => {
       test('should return prev === undefined and next === record2', () => {
-        const { prev, next } = store.getNeighbors(day1);
+        const { prev, next } = store.getNeighbours(day1);
 
         expect(prev).toBeUndefined();
         expect(next).toBe(record2);
@@ -120,7 +120,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day2', () => {
       test('should return prev === record1 and next === record3', () => {
-        const { prev, next } = store.getNeighbors(day2);
+        const { prev, next } = store.getNeighbours(day2);
 
         expect(prev).toBe(record1);
         expect(next).toBe(record3);
@@ -129,7 +129,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day3', () => {
       test('should return prev === record2 and next === record4', () => {
-        const { prev, next } = store.getNeighbors(day3);
+        const { prev, next } = store.getNeighbours(day3);
 
         expect(prev).toBe(record2);
         expect(next).toBe(record4);
@@ -138,7 +138,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day4', () => {
       test('should return prev === record3 and next === record5', () => {
-        const { prev, next } = store.getNeighbors(day4);
+        const { prev, next } = store.getNeighbours(day4);
 
         expect(prev).toBe(record3);
         expect(next).toBe(record5);
@@ -147,7 +147,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day5', () => {
       test('should return prev === record4 and next === record6', () => {
-        const { prev, next } = store.getNeighbors(day5);
+        const { prev, next } = store.getNeighbours(day5);
 
         expect(prev).toBe(record4);
         expect(next).toBe(record6);
@@ -156,7 +156,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day6', () => {
       test('should return prev === record5 and next === record7', () => {
-        const { prev, next } = store.getNeighbors(day6);
+        const { prev, next } = store.getNeighbours(day6);
 
         expect(prev).toBe(record5);
         expect(next).toBe(record7);
@@ -165,7 +165,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day7', () => {
       test('should return prev === record6 and next === record8', () => {
-        const { prev, next } = store.getNeighbors(day7);
+        const { prev, next } = store.getNeighbours(day7);
 
         expect(prev).toBe(record6);
         expect(next).toBe(record8);
@@ -174,7 +174,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed day8', () => {
       test('should return prev === record7 and next === undefined', () => {
-        const { prev, next } = store.getNeighbors(day8);
+        const { prev, next } = store.getNeighbours(day8);
 
         expect(prev).toBe(record7);
         expect(next).toBeUndefined();
@@ -183,7 +183,7 @@ describe('Domain :: commonTypes :: Store', () => {
 
     context('when passed late than day8', () => {
       test('should return prev === record7 and next === undefined', () => {
-        const { prev, next } = store.getNeighbors(day8.next());
+        const { prev, next } = store.getNeighbours(day8.next());
 
         expect(prev).toBe(record8);
         expect(next).toBeUndefined();

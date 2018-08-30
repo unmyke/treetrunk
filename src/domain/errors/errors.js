@@ -27,6 +27,8 @@ export const errors = {
   sellerHasAppointmentsLater: makeError('SELLER_HAS_APPOINTMENTS_LATER'),
   sellerNotDismissed: makeError('SELLER_NOT_DISMISSED'),
   sellerDeleted: makeError('SELLER_DELETED'),
+  sellerNotFound: makeError('SELLER_NOT_FOUND'),
+  sellerAlreadyExists: makeError('SELLER_ALREADY_EXISTS'),
 
   // Post
   pieceRateAlreadyExists: makeError('PIECE_RATE_ALREADY_EXISTS'),
@@ -36,6 +38,8 @@ export const errors = {
   pieceRateHasLimitedScope: makeError('PIECE_RATE_HAS_LIMITED_SCOPE'),
   newPieceRateAlreadyExists: makeError('NEW_PIECE_RATE_ALREADY_EXISTS'),
   newPieceRateDuplicate: makeError('NEW_PIECE_RATE_DUPLICATE'),
+  postNotFound: makeError('POST_NOT_FOUND'),
+  postAlreadyExists: makeError('POST_ALREADY_EXISTS'),
 
   // SeniorityType
   awardAlreadyExists: makeError('AWARD_ALREADY_EXISTS'),
@@ -45,12 +49,19 @@ export const errors = {
   awardHasLimitedScope: makeError('AWARD_HAS_LIMITED_SCOPE'),
   newAwardAlreadyExists: makeError('NEW_AWARD_ALREADY_EXISTS'),
   newAwardDuplicate: makeError('NEW_AWARD_DUPLICATE'),
+  seniorityTypeNotFound: makeError('SENIORITY_TYPE_NOT_FOUND'),
+  seniorityTypeAlreadyExists: makeError('SENIORITY_TYPE_ALREADY_EXISTS'),
 
   // FSM
   transitionNotAllowed: makeError('TRANSITION_NOT_ALLOWED'),
 
   // factory
   inconsistentState: makeError('INCONSISTENT_STATE'),
+
+  // repository
+  modelNotFound: makeError('MODEL_NOT_FOUND'),
+  modelAlreadyExists: makeError('MODEL_ALREADY_EXISTS'),
+  databaseError: makeError('DATABASE_ERROR'),
 
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),

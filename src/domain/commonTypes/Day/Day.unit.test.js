@@ -1,4 +1,5 @@
 import { Day } from '.';
+import { isEqualValues } from '../../_lib/BaseMethods';
 
 // const { errorNotADate, errorNotADay, errorNotANumber } = Day;
 
@@ -543,7 +544,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
         const value = new Date('2018-03-08 23:59:59 GMT+0800');
         const day = new Day({ value });
 
-        expect(day.format()).toBe('08.03.2018');
+        expect(day.format()).toBe('2018-03-08T00:00:00.000+08:00');
       });
     });
 

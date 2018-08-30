@@ -1,13 +1,7 @@
 import { PostId, Day } from '../../../commonTypes';
+import { Seller as states } from '../../../states';
 import { Seller } from '../Seller';
 import { Post } from '../Post';
-
-const states = {
-  NEW: 'new',
-  RECRUITED: 'recruited',
-  DISMISSED: 'dismissed',
-  DELETED: 'deleted',
-};
 
 const lastName = 'lastName';
 const firstName = 'Firstname';
@@ -40,7 +34,7 @@ describe('Domain :: entities :: Seller :: #is("recruited")', () => {
     });
 
     test('should return false', () => {
-      expect(seller.is('recruited')).toBeFalsy();
+      expect(seller.is(states.TATESRECRUITED)).toBeFalsy();
     });
   });
 
@@ -57,7 +51,7 @@ describe('Domain :: entities :: Seller :: #is("recruited")', () => {
       });
     });
     test('should return true', () => {
-      expect(seller.is('recruited')).toBeTruthy();
+      expect(seller.is(states.RECRUITED)).toBeTruthy();
     });
   });
 
@@ -75,7 +69,7 @@ describe('Domain :: entities :: Seller :: #is("recruited")', () => {
       });
     });
     test('should return false', () => {
-      expect(seller.is('recruited')).toBeFalsy();
+      expect(seller.is(states.RECRUITED)).toBeFalsy();
     });
   });
 
@@ -94,7 +88,7 @@ describe('Domain :: entities :: Seller :: #is("recruited")', () => {
       });
     });
     test('should return true', () => {
-      expect(seller.is('recruited')).toBeTruthy();
+      expect(seller.is(states.RECRUITED)).toBeTruthy();
     });
   });
 
@@ -116,7 +110,7 @@ describe('Domain :: entities :: Seller :: #is("recruited")', () => {
         });
       });
       test('should return false', () => {
-        expect(seller.is('recruited')).toBeFalsy();
+        expect(seller.is(states.RECRUITED)).toBeFalsy();
       });
     }
   );

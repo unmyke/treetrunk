@@ -2,6 +2,7 @@ import { getSyncOperationRunner } from 'src/infra/support/operationRunner';
 
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
+import { Seller as states } from '../../states';
 import { SellerId, PostId, PersonName, Day, Diary } from '../../commonTypes';
 
 // Hadnle errors throw inside Diary class
@@ -22,13 +23,6 @@ const diaryErrorMessageMapper = {
 const diaryOperationRunner = getSyncOperationRunner(diaryErrorMessageMapper);
 
 // FSM
-
-const states = {
-  NEW: 'new',
-  RECRUITED: 'recruited',
-  DISMISSED: 'dismissed',
-  DELETED: 'deleted',
-};
 
 const transitions = {
   ADD_APPOINTMENT: 'addAppointment',

@@ -1,7 +1,16 @@
 import { startOfDay } from 'date-fns';
+
 import { Day, PostId } from '../../commonTypes';
+import { Post as states } from '../../states';
+
 import { Post } from './Post';
-import { PieceRate } from './PieceRate';
+
+const getRawPost = ({ postId, name, state, pieceRates }) => ({
+  postId,
+  name,
+  state,
+  pieceRates,
+});
 
 const name = 'Флорист';
 
@@ -14,18 +23,18 @@ const pieceRate1day = new Day({ value: new Date('2018.01.14 11:00') });
 const pieceRate2day = new Day({ value: new Date('2018.02.20 11:00') });
 const pieceRate3day = new Day({ value: new Date('2018.03.14 11:00') });
 
-const pieceRate1 = new PieceRate({
+const pieceRate1 = {
   value: pieceRate1value,
   day: pieceRate1day,
-});
-const pieceRate2 = new PieceRate({
+};
+const pieceRate2 = {
   value: pieceRate2value,
   day: pieceRate2day,
-});
-const pieceRate3 = new PieceRate({
+};
+const pieceRate3 = {
   value: pieceRate3value,
   day: pieceRate3day,
-});
+};
 
 const pieceRates = [pieceRate3, pieceRate1, pieceRate2];
 
@@ -40,39 +49,6 @@ describe('Domain :: entities :: Post', () => {
       expect(post).toBeInstanceOf(Post);
       expect(post.postId).toBeInstanceOf(PostId);
       expect(post.pieceRates).toHaveLength(0);
-    });
-  });
-
-  describe('#setPieceRates', () => {
-    context('when post is active', () => {
-      test('should set piece rates', () => {
-        post.setPieceRates(pieceRates);
-
-        expect(post.pieceRates).toEqual(
-          pieceRates.sort((a, b) => a.day > b.day)
-        );
-        expect(post.pieceRates).not.toBe(pieceRates);
-      });
-    });
-
-    context('when post is inactive', () => {
-      beforeEach(() => {
-        post.inactivate();
-        expect(post.state).toBe('inactive');
-      });
-
-      test('should not set piece rates and throw NOT_ALLOWED error', () => {
-        try {
-          post.setPieceRates(pieceRates);
-        } catch (error) {
-          expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({
-            state: ['TRANSITION_NOT_ALLOWED'],
-          });
-        }
-
-        expect(post.pieceRates).toHaveLength(0);
-      });
     });
   });
 
@@ -92,8 +68,7 @@ describe('Domain :: entities :: Post', () => {
         try {
           post.addPieceRate(pieceRate1value, pieceRate1day);
         } catch (error) {
-          expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({ pieceRate: ['ALREADY_EXISTS'] });
+          expect(error.message).toBe('PIECE_RATE_ALREADY_EXISTS');
         }
 
         expect(post.pieceRates).toHaveLength(1);
@@ -107,10 +82,7 @@ describe('Domain :: entities :: Post', () => {
         try {
           post.addPieceRate(pieceRate1value, newDay);
         } catch (error) {
-          expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({
-            pieceRate: ['EQUALS_TO_SURROUNDING_VALUE'],
-          });
+          expect(error.message).toBe('PIECE_RATE_DUPLICATE');
         }
 
         expect(post.pieceRates).toHaveLength(1);
@@ -126,10 +98,7 @@ describe('Domain :: entities :: Post', () => {
         try {
           post.addPieceRate(pieceRate1value, pieceRate1day);
         } catch (error) {
-          expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({
-            pieceRate: ['EQUALS_TO_SURROUNDING_VALUE'],
-          });
+          expect(error.message).toBe('PIECE_RATE_DUPLICATE');
         }
 
         expect(post.pieceRates).toHaveLength(2);
@@ -137,7 +106,7 @@ describe('Domain :: entities :: Post', () => {
     });
   });
 
-  describe('#deletePieceRate', () => {
+  describe('#deletePieceRateAt', () => {
     context('when delete existing pieceRate', () => {
       test('should decrease pieceRates length', () => {
         post.addPieceRate(pieceRate2value, pieceRate2day);
@@ -145,7 +114,7 @@ describe('Domain :: entities :: Post', () => {
         post.addPieceRate(pieceRate1value, pieceRate1day);
         expect(post.pieceRates).toHaveLength(3);
 
-        post.deletePieceRate(pieceRate3value, pieceRate3day);
+        post.deletePieceRateAt(pieceRate3day);
 
         expect(post.pieceRates).toHaveLength(2);
       });
@@ -157,13 +126,12 @@ describe('Domain :: entities :: Post', () => {
         post.addPieceRate(pieceRate3value, pieceRate3day);
         post.addPieceRate(pieceRate1value, pieceRate1day);
 
-        post.deletePieceRate(pieceRate3value, pieceRate3day);
+        post.deletePieceRateAt(pieceRate3day);
 
         try {
-          post.deletePieceRate(pieceRate3value, pieceRate3day);
+          post.deletePieceRateAt(pieceRate3day);
         } catch (error) {
-          expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({ pieceRate: ['NOT_FOUND'] });
+          expect(error.message).toBe('PIECE_RATE_NOT_FOUND');
         }
       });
     });
@@ -176,12 +144,9 @@ describe('Domain :: entities :: Post', () => {
         expect(post.pieceRates).toHaveLength(3);
 
         try {
-          post.deletePieceRate(pieceRate2value, pieceRate2day);
+          post.deletePieceRateAt(pieceRate2day);
         } catch (error) {
-          expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({
-            pieceRate: ['SURROUNDING_VALUES_ARE_EQUAL'],
-          });
+          expect(error.message).toBe('PIECE_RATE_HAS_EQUAL_NEIGHBOURS');
         }
 
         expect(post.pieceRates).toHaveLength(3);
@@ -189,39 +154,48 @@ describe('Domain :: entities :: Post', () => {
     });
   });
 
-  describe('#getInstanceAt', () => {
+  describe('#instanceAt', () => {
     beforeEach(() => {
-      post.setPieceRates([
-        { value: pieceRate3value, day: pieceRate3day },
-        { value: pieceRate2value, day: pieceRate2day },
-        { value: pieceRate1value, day: pieceRate1day },
-      ]);
+      post = Post.restore({
+        postId: new PostId(),
+        name,
+        state: states.ACTIVE,
+        pieceRates: [
+          { value: pieceRate3value, day: pieceRate3day },
+          { value: pieceRate2value, day: pieceRate2day },
+          { value: pieceRate1value, day: pieceRate1day },
+        ],
+      });
       expect(post.pieceRates).toHaveLength(3);
     });
 
     context('when passed no props', () => {
       test('should return equal post, but not this', () => {
-        const newPost = post.getInstanceAt();
-        expect(JSON.stringify(newPost)).toEqual(JSON.stringify(post));
-        expect(post.getInstanceAt()).not.toBe(post);
+        const newPost = Post.instanceAt(post);
+
+        expect(getRawPost(newPost)).toEqual(getRawPost(post));
+        expect(newPost).not.toBe(post);
       });
     });
 
     context('when passed day at penultimate piece rate', () => {
       let expectedPost;
+
       beforeEach(() => {
-        expectedPost = new Post(post);
-        expectedPost.setPieceRates([
-          { value: pieceRate1value, day: pieceRate1day },
-          { value: pieceRate2value, day: pieceRate2day },
-        ]);
+        expectedPost = Post.restore({
+          postId: post.postId,
+          name,
+          state: states.ACTIVE,
+          pieceRates: [
+            { value: pieceRate1value, day: pieceRate1day },
+            { value: pieceRate2value, day: pieceRate2day },
+          ],
+        });
       });
       test('should return equal post without last piece rate', () => {
-        const newPost = post.getInstanceAt(
-          post.pieceRates[post.pieceRates.length - 2].day
-        );
+        const newPost = Post.instanceAt(post, pieceRate2day);
 
-        expect(JSON.stringify(newPost)).toEqual(JSON.stringify(expectedPost));
+        expect(getRawPost(newPost)).toEqual(getRawPost(expectedPost));
       });
     });
 
@@ -232,45 +206,31 @@ describe('Domain :: entities :: Post', () => {
       });
 
       test('should return equal post with empty piece rates array', () => {
-        const newPost = post.getInstanceAt(post.pieceRates[0].day.prev());
+        const newPost = Post.instanceAt(post, pieceRate1day.prev());
 
-        expect(JSON.stringify(newPost)).toEqual(JSON.stringify(expectedPost));
+        expect(getRawPost(newPost)).toEqual(getRawPost(expectedPost));
       });
     });
   });
-  describe('#updatePieceRate', () => {
+  describe('#updatePieceRateTo', () => {
     beforeEach(() => {
       post.addPieceRate(pieceRate1value, pieceRate1day);
     });
 
     context('when appointment has created with wrong pieceRate', () => {
       test('should change associated pieceRate', () => {
-        post.updatePieceRate(
-          pieceRate1value,
-          pieceRate1day,
-          pieceRate2value,
-          pieceRate1day
-        );
+        post.updatePieceRateTo(pieceRate1day, pieceRate3value, pieceRate1day);
 
         expect(post.pieceRates[0].day).toEqual(
           new Day({ value: startOfDay(pieceRate1day) })
         );
-
-        expect(post.getPieceRateAt()).toBe(pieceRate2value);
       });
     });
 
     context('when pieceRate has created with wrong date', () => {
       test('should change associated date', () => {
-        post.updatePieceRate(
-          pieceRate1value,
-          pieceRate1day,
-          pieceRate1value,
-          pieceRate2day
-        );
-        expect(post.getPieceRateAt(pieceRate1day)).toEqual(undefined);
+        post.updatePieceRateTo(pieceRate1day, pieceRate1value, pieceRate2day);
         expect(post.pieceRates).toHaveLength(1);
-        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate1value);
       });
     });
   });
@@ -296,10 +256,7 @@ describe('Domain :: entities :: Post', () => {
         try {
           post.inactivate();
         } catch (error) {
-          expect(error.message).toBe('NOT_ALLOWED');
-          expect(error.details).toEqual({
-            state: ['TRANSITION_NOT_ALLOWED'],
-          });
+          expect(error.message).toBe('TRANSITION_NOT_ALLOWED');
         }
 
         expect(post.state).toBe('inactive');
@@ -328,8 +285,7 @@ describe('Domain :: entities :: Post', () => {
       try {
         post.activate();
       } catch (error) {
-        expect(error.message).toBe('NOT_ALLOWED');
-        expect(error.details).toEqual({ state: ['TRANSITION_NOT_ALLOWED'] });
+        expect(error.message).toBe('TRANSITION_NOT_ALLOWED');
       }
 
       expect(post.state).toBe('active');
@@ -354,41 +310,6 @@ describe('Domain :: entities :: Post', () => {
         }
 
         expect(post.name).toBe('Флорист');
-      });
-    });
-  });
-
-  describe('#getters', () => {
-    context('when piece rates is empty', () => {
-      test('should return undefinded', () => {
-        expect(post.pieceRates).toEqual([]);
-        expect(post.pieceRate).toBeUndefined();
-        expect(post.hasPieceRates).toBeFalsy();
-        expect(post.getPieceRateAt()).toBeUndefined();
-        expect(post.getPieceRateAt(pieceRate1day)).toBeUndefined();
-      });
-    });
-
-    context('when piece rates is exist', () => {
-      beforeEach(() => {
-        post.setPieceRates(pieceRates);
-      });
-      test('should return values', () => {
-        expect(JSON.stringify(post.pieceRates)).toEqual(
-          '[{"value":4,"date":"2018-01-14T00:00:00.000+08:00"},{"value":2,"date":"2018-02-20T00:00:00.000+08:00"},{"value":5.5,"date":"2018-03-14T00:00:00.000+08:00"}]'
-        );
-        expect(post.hasPieceRates).toBeTruthy();
-        expect(post.hasPieceRatesAt()).toBeTruthy();
-        expect(post.hasPieceRatesAt(pieceRate1day.prev())).toBeFalsy();
-        expect(post.hasPieceRatesAt(pieceRate1day)).toBeTruthy();
-        expect(post.hasPieceRatesAt(pieceRate2day)).toBeTruthy();
-        expect(post.hasPieceRatesAt(pieceRate3day)).toBeTruthy();
-
-        expect(post.pieceRate).toBe(pieceRate3value);
-        expect(post.getPieceRateAt()).toBe(pieceRate3value);
-        // expect(post.getPieceRateAt(pieceRate1day)).toBe(pieceRate1value);
-        expect(post.getPieceRateAt(pieceRate2day)).toBe(pieceRate2value);
-        expect(post.getPieceRateAt(pieceRate3day)).toBe(pieceRate3value);
       });
     });
   });

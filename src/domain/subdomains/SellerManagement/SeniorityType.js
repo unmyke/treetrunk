@@ -2,6 +2,7 @@ import { getSyncOperationRunner } from 'src/infra/support/operationRunner';
 
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
+import { SeniorityType as states } from '../../states';
 import { SeniorityTypeId, Day, Diary } from '../../commonTypes';
 
 const diaryErrorMessageMapper = {
@@ -14,11 +15,6 @@ const diaryErrorMessageMapper = {
   NEW_RECORD_DUPLICATE: errors.newAwardDuplicate(),
 };
 const diaryOperationRunner = getSyncOperationRunner(diaryErrorMessageMapper);
-
-const states = {
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-};
 
 const transitions = {
   UPDATE: 'update',
@@ -43,9 +39,17 @@ export class SeniorityType extends BaseEntity {
     return seniorityType;
   }
 
-  static instanceAt({ name, awards, months, state }, day = new Day()) {
-    const seniorityType = new SeniorityType({ name, months, state });
-    seniorityType._awards = Diary.instanceAt(awards, day);
+  static instanceAt(
+    { seniorityTypeId, name, _awards, months, state },
+    day = new Day()
+  ) {
+    const seniorityType = new SeniorityType({
+      seniorityTypeId,
+      name,
+      months,
+      state,
+    });
+    seniorityType._awards = Diary.instanceAt(_awards, day);
     seniorityType.setState(state);
 
     return seniorityType;
@@ -85,14 +89,14 @@ export class SeniorityType extends BaseEntity {
       },
 
       onAddAward(lifecycle, value, day = new Day()) {
-        return diaryOperationRunner(() => this._awards.add({ value, day }));
+        return diaryOperationRunner(() => this._awards.add(value, day));
       },
 
-      onDeleteAward(lifecycle, day = new Day()) {
+      onDeleteAwardAt(lifecycle, day = new Day()) {
         return diaryOperationRunner(() => this._awards.deleteAt(day));
       },
 
-      onUpdateAward(lifecycle, day, newValue, newDay) {
+      onUpdateAwardTo(lifecycle, day, newValue, newDay) {
         return diaryOperationRunner(() =>
           this._awards.updateTo(day, newValue, newDay)
         );

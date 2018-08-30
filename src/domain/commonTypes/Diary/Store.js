@@ -102,6 +102,12 @@ export class Store {
     };
   }
 
+  set(data) {
+    data.forEach(({ value, day }) => {
+      this.add(value, day);
+    });
+  }
+
   getNeighbours(day, { excludeDay } = {}) {
     const key = day.valueOf();
 

@@ -2,6 +2,7 @@ import { getSyncOperationRunner } from 'src/infra/support/operationRunner';
 
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
+import { Post as states } from '../../states';
 import { PostId, Day, Diary } from '../../commonTypes';
 
 const diaryErrorMessageMapper = {
@@ -14,11 +15,6 @@ const diaryErrorMessageMapper = {
   NEW_RECORD_DUPLICATE: errors.newPieceRateDuplicate(),
 };
 const diaryOperationRunner = getSyncOperationRunner(diaryErrorMessageMapper);
-
-const states = {
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-};
 
 const transitions = {
   UPDATE: 'update',
@@ -38,9 +34,9 @@ export class Post extends BaseEntity {
     return post;
   }
 
-  static instanceAt({ name, pieceRates, state }, day = new Day()) {
-    const post = new Post({ name, state });
-    post._pieceRates = Diary.instanceAt(pieceRates, day);
+  static instanceAt({ postId, name, _pieceRates, state }, day = new Day()) {
+    const post = new Post({ postId, name });
+    post._pieceRates = Diary.instanceAt(_pieceRates, day);
     post.setState(state);
 
     return post;
@@ -83,11 +79,11 @@ export class Post extends BaseEntity {
         return diaryOperationRunner(() => this._pieceRates.add(value, day));
       },
 
-      onDeletePieceRate(lifecycle, day = new Day()) {
+      onDeletePieceRateAt(lifecycle, day = new Day()) {
         return diaryOperationRunner(() => this._pieceRates.deleteAt(day));
       },
 
-      onUpdatePieceRate(lifecycle, day, newValue, newDay) {
+      onUpdatePieceRateTo(lifecycle, day, newValue, newDay) {
         return diaryOperationRunner(() =>
           this._pieceRates.updateTo(day, newValue, newDay)
         );

@@ -6,7 +6,7 @@ const SellersController = {
   get router() {
     const router = Router();
 
-    // router.use(inject('serializers.seller'));
+    router.use(inject('serializers.seller'));
 
     router.get(
       '/',

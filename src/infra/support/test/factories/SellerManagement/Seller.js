@@ -2,20 +2,53 @@ export const Seller = (factory, { Seller }) => {
   factory.define(
     'seller',
     Seller,
-    ({ sellerId, lastName, firstName, middleName, phone } = {}) => ({
-      seller_id: sellerId || factory.chance('guid', { version: 4 }),
-      last_name: lastName || factory.chance('last'),
-      first_name: firstName || factory.chance('name'),
-      middle_name: middleName || factory.chance('name', { middle: true }),
-      phone: phone || factory.chance('phone'),
-    }),
     {
-      afterCreate: function(seller, attrs, { appointmentsCount } = {}) {
-        factory.createMany('sellerAppointment', appointmentsCount || 3, {
-          seller_id: seller.seller_id,
-        });
+      seller_id: factory.chance('guid', { version: 4 }),
+      last_name: factory.chance('last'),
+      first_name: factory.chance('name'),
+      middle_name: factory.chance('name', { middle: true }),
+      phone: factory.chance('phone'),
+      state: 'recruited',
+    },
+    {
+      afterCreate: async function(seller, attrs, { appointmentsCount } = {}) {
+        if (
+          appointmentsCount === 0 &&
+          attrs.appointments &&
+          attrs.appointments.length === 0
+        ) {
+          return seller.reload({ include: ['appointments'] });
+        }
 
-        return seller;
+        const appointmentAttrs = {
+          seller_id: seller.seller_id,
+        };
+
+        const appointmentFactoryArgs = ['sellerAppointment'];
+
+        switch (true) {
+          case appointmentsCount !== undefined && appointmentsCount > 0:
+            appointmentFactoryArgs.push(appointmentsCount, appointmentAttrs);
+            break;
+
+          case attrs.appointments !== undefined &&
+            attrs.appointments.length > 0:
+            appointmentFactoryArgs.push(
+              attrs.appointments.map((attr) => ({
+                ...attr,
+                ...appointmentAttrs,
+              }))
+            );
+            break;
+
+          default:
+            appointmentFactoryArgs.push(3, appointmentAttrs);
+            break;
+        }
+
+        return factory
+          .createMany(...appointmentFactoryArgs)
+          .then(() => seller.reload({ include: ['appointments'] }));
       },
     }
   );

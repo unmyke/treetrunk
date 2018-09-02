@@ -9,7 +9,7 @@ export default (sequelize, DataTypes) => {
       },
       value: {
         primaryKey: true,
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
       },
       day: {
         primaryKey: true,
@@ -20,9 +20,10 @@ export default (sequelize, DataTypes) => {
       underscored: true,
       indexes: [
         {
-          name: 'unique_seniority_type_award',
+          name: "award's seniorityTypeId, value and day",
           fields: ['seniority_type_id', 'value', 'day'],
           unique: true,
+          force: true,
         },
       ],
     }

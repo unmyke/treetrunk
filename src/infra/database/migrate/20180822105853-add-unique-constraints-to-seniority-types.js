@@ -2,12 +2,22 @@
 
 module.exports = {
   up: (queryInterface) =>
-    queryInterface.addIndex('seniority_types', {
-      unique: true,
-      name: 'unique_seniority_type_name',
-      fields: ['name'],
-    }),
+    Promise.all([
+      queryInterface.addIndex('seniority_types', {
+        unique: true,
+        name: "seniority type's name",
+        fields: ['name'],
+      }),
+      queryInterface.addIndex('seniority_types', {
+        unique: true,
+        name: "seniority type's months",
+        fields: ['months'],
+      }),
+    ]),
 
   down: (queryInterface) =>
-    queryInterface.removeIndex('seniority_types', 'unique_seniority_type_name'),
+    Promise.all([
+      queryInterface.removeIndex('seniority_types', "seniority type's name"),
+      queryInterface.removeIndex('seniority_types', "seniority type's months"),
+    ]),
 };

@@ -240,16 +240,16 @@ describe('Domain :: entities :: Post', () => {
         expect(post.state).toBe('active');
       });
 
-      test('should change state to "inactive"', () => {
+      test('should change state to "deleted"', () => {
         post.inactivate();
-        expect(post.state).toBe('inactive');
+        expect(post.state).toBe('deleted');
       });
     });
 
-    context('when post\'s state is "inactive"', () => {
+    context('when post\'s state is "deleted"', () => {
       beforeEach(() => {
         post.inactivate();
-        expect(post.state).toBe('inactive');
+        expect(post.state).toBe('deleted');
       });
 
       test('should not change state and throw NOT_ALLOWED error', () => {
@@ -259,16 +259,16 @@ describe('Domain :: entities :: Post', () => {
           expect(error.message).toBe('TRANSITION_NOT_ALLOWED');
         }
 
-        expect(post.state).toBe('inactive');
+        expect(post.state).toBe('deleted');
       });
     });
   });
 
   describe('#activate', () => {
-    context('when post\'s state is "inactive"', () => {
+    context('when post\'s state is "deleted"', () => {
       beforeEach(() => {
         post.inactivate();
-        expect(post.state).toBe('inactive');
+        expect(post.state).toBe('deleted');
       });
       test('should change state to "active"', () => {
         post.activate();

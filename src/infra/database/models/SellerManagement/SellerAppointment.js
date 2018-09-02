@@ -5,14 +5,17 @@ export default (sequelize, DataTypes) => {
     {
       seller_id: {
         primaryKey: true,
+        allowNull: false,
         type: DataTypes.UUID,
       },
       post_id: {
         primaryKey: true,
+        allowNull: false,
         type: DataTypes.UUID,
       },
       day: {
         primaryKey: true,
+        allowNull: false,
         type: DataTypes.DATE,
       },
     },
@@ -21,18 +24,18 @@ export default (sequelize, DataTypes) => {
       indexes: [
         {
           unique: true,
-          name: 'unique_seller_appointment',
+          name: "appointment's sellerId, postId and day",
           fields: ['seller_id', 'post_id', 'day'],
+          force: true,
         },
       ],
     }
   );
 
-  SellerAppointment.associate = ({ Seller, Post }) => {
+  SellerAppointment.associate = ({ Seller }) => {
     SellerAppointment.belongsTo(Seller, {
       foreignKey: 'seller_id',
     });
-    // SellerAppointment.belongsTo(Post, { foreignKey: 'post_id' });
   };
 
   return SellerAppointment;

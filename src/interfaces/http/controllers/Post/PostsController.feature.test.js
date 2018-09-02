@@ -41,18 +41,18 @@ describe('interfaces :: http :: controllers :: Post :: PostsController', () => {
       pieceRates: [],
       state: 'active',
     };
-    const inactivePostWithPieceRatesDTO = {
+    const deletedPostWithPieceRatesDTO = {
       postId: uuidv4(),
       name: 'Цветочник',
       pieceRate: 1,
       pieceRates: pieceRatesDTO,
-      state: 'inactive',
+      state: 'deleted',
     };
-    const inactivePostWithoutPieceRatesDTO = {
+    const deletedPostWithoutPieceRatesDTO = {
       postId: uuidv4(),
       name: 'Старший цветочник',
       pieceRates: [],
-      state: 'inactive',
+      state: 'deleted',
     };
 
     // test aggregates
@@ -76,29 +76,29 @@ describe('interfaces :: http :: controllers :: Post :: PostsController', () => {
       state: activePostWithoutPieceRatesDTO.state,
     });
 
-    const inactivePostWithPieceRates = new Post({
-      postId: new PostId({ value: inactivePostWithPieceRatesDTO.postId }),
-      name: inactivePostWithPieceRatesDTO.name,
-      state: inactivePostWithPieceRatesDTO.state,
+    const deletedPostWithPieceRates = new Post({
+      postId: new PostId({ value: deletedPostWithPieceRatesDTO.postId }),
+      name: deletedPostWithPieceRatesDTO.name,
+      state: deletedPostWithPieceRatesDTO.state,
     });
-    inactivePostWithPieceRates.setPieceRates(pieceRates);
+    deletedPostWithPieceRates.setPieceRates(pieceRates);
 
-    const inactivePostWithoutPieceRates = new Post({
-      postId: new PostId({ value: inactivePostWithoutPieceRatesDTO.postId }),
-      name: inactivePostWithoutPieceRatesDTO.name,
-      state: inactivePostWithoutPieceRatesDTO.state,
+    const deletedPostWithoutPieceRates = new Post({
+      postId: new PostId({ value: deletedPostWithoutPieceRatesDTO.postId }),
+      name: deletedPostWithoutPieceRatesDTO.name,
+      state: deletedPostWithoutPieceRatesDTO.state,
     });
 
     const seedRepoPromiseAllPosts = Promise.all([
       postRepo.add(activePostWithPieceRates),
       postRepo.add(activePostWithoutPieceRates),
-      postRepo.add(inactivePostWithPieceRates),
-      postRepo.add(inactivePostWithoutPieceRates),
+      postRepo.add(deletedPostWithPieceRates),
+      postRepo.add(deletedPostWithoutPieceRates),
     ]);
 
     const seedRepoPromiseInactivePosts = Promise.all([
-      postRepo.add(inactivePostWithPieceRates),
-      postRepo.add(inactivePostWithoutPieceRates),
+      postRepo.add(deletedPostWithPieceRates),
+      postRepo.add(deletedPostWithoutPieceRates),
     ]);
 
     context('when passed invalid props', () => {
@@ -149,7 +149,7 @@ describe('interfaces :: http :: controllers :: Post :: PostsController', () => {
     context('when passed valid props', () => {
       context('when there are persisted filtered posts', () => {
         context('when passed { active: false } query', () => {
-          test('should return 200 with array of inactive posts', async () => {});
+          test('should return 200 with array of deleted posts', async () => {});
         });
 
         context('when passed { hasPieceRates: false } query', () => {
@@ -159,7 +159,7 @@ describe('interfaces :: http :: controllers :: Post :: PostsController', () => {
         context(
           'when passed { active: false, hasPieceRates: false } query',
           () => {
-            test('should return 200 with array of inactive posts without piece rates', async () => {});
+            test('should return 200 with array of deleted posts without piece rates', async () => {});
           }
         );
       });
@@ -272,7 +272,7 @@ describe('interfaces :: http :: controllers :: Post :: PostsController', () => {
           });
 
           context('when there are no sellers appointed to post', () => {
-            test('should set post to inactive state and return 200 with empty json', async () => {});
+            test('should set post to deleted state and return 200 with empty json', async () => {});
           });
         });
       });

@@ -20,9 +20,10 @@ export default (sequelize, DataTypes) => {
       underscored: true,
       indexes: [
         {
-          name: 'unique_post_piece_rate',
+          name: "piece rate's postId, value and day",
           fields: ['post_id', 'value', 'day'],
           unique: true,
+          force: true,
         },
       ],
     }

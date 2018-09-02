@@ -1,43 +1,95 @@
-// import { lowerFirst } from 'lodash';
+import { getAsyncOperationRunner } from '../../support/operationRunner';
 
-import { BaseRepository } from '../../../domain/_lib';
+import { snakeCase, lowerFirst } from 'lodash';
+import { errors } from 'src/domain/errors';
+import { BaseRepository } from 'src/domain/_lib';
+
+const repoErrorMapper = {
+  'Validation error': errors.modelAlreadyExists(),
+  SequelizeScopeError: errors.invalidQuery(),
+};
+
+const repoOperationRunner = getAsyncOperationRunner(repoErrorMapper);
 
 export class SequelizeRepository extends BaseRepository {
-  async getById(entityId) {
-    const model = await this.Model.findById(entityId.value);
-
-    return this.mapper.toEntity(model);
+  async count() {
+    return this.Model.count();
   }
 
-  async getAll(where = {}) {
-    const models = await this.Model.findAll({ where });
-
-    return models.map((model) => this.mapper.toEntity(model));
+  async _getById(entityId) {
+    return this.Model.scope(...this.constructor.scopeIncludeModelsOptions)
+      .findById(entityId.value)
+      .then((model) => {
+        if (model === null) {
+          throw errors.modelNotFound();
+        }
+        return this.mapper.toEntity(model);
+      });
   }
 
-  async add(entity) {
-    const model = await this.Model.create(this.mapper.toDatabase(entity));
-
-    console.log(model.appointments);
-
-    return this.mapper.toEntity(model);
+  async getAll() {
+    return this.find(this.constructor.scopeWhereAllOptions);
   }
 
-  async delete(entityId) {
-    const model = await this.Model.destroy({
-      where: { id: entityId.value, cascade: true },
+  async find(scopeNames = []) {
+    return repoOperationRunner(() =>
+      this.Model.scope(
+        ...this.constructor.scopeIncludeModelsOptions,
+        ...scopeNames
+      )
+        .findAll()
+        .then((models) => models.map((model) => this.mapper.toEntity(model)))
+    );
+  }
+
+  async _add(entity) {
+    return repoOperationRunner(async () => {
+      const model = await this.Model.create(this.mapper.toDatabase(entity), {
+        include: this.constructor.scopeIncludeModelsOptions,
+      });
+
+      return this.mapper.toEntity(model);
+    });
+  }
+
+  async _delete(entityId) {
+    return repoOperationRunner(() =>
+      this.Model.destroy({
+        where: { [this._getIdPropName(entityId)]: entityId.value },
+        cascade: true,
+      }).then((destroyedRowsCount) => {
+        if (destroyedRowsCount === 0) {
+          throw errors.modelNotFound();
+        }
+
+        return true;
+      })
+    );
+  }
+
+  async _update(entity) {
+    const model = await this.Model.findById(this._getIdValueByEntity(entity), {
+      include: this.constructor.scopeIncludeModelsOptions,
     });
 
-    return this.mapper.toEntity(model);
+    if (model === null) {
+      throw errors.modelNotFound();
+    }
+
+    return repoOperationRunner(async () =>
+      model
+        .update(this.mapper.toDatabase(entity))
+        .then((model) => this.mapper.toEntity(model))
+    );
   }
 
-  async update(entity) {
-    const model = await this.Model.findById({
-      where: { id: entity[getEntityIdPropName(entity)].value, cascade: true },
-    });
+  _getIdValueByEntity(entity) {
+    const idPropName = lowerFirst(`${entity.constructor.name}Id`);
 
-    const updatedModel = model.update(this.mapper.toDatabase(entity));
+    return entity[idPropName].value;
+  }
 
-    return this.mapper.toEntity(updatedModel);
+  _getIdPropName(entityId) {
+    return snakeCase(entityId.constructor.name);
   }
 }

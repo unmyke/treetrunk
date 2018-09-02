@@ -4,9 +4,9 @@ module.exports = {
   up: (queryInterface) =>
     queryInterface.addIndex('posts', {
       unique: true,
-      name: 'unique_post',
+      name: "post's name",
       fields: ['name'],
     }),
 
-  down: (queryInterface) => queryInterface.removeIndex('posts', 'unique_post'),
+  down: (queryInterface) => queryInterface.removeIndex('posts', "post's name"),
 };

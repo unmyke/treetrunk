@@ -3,7 +3,6 @@ import { lowerFirst } from 'lodash';
 import {
   getSubdomainsContainer,
   getCommonTypesContainer,
-  forEachSubdomain,
 } from './infra/support/containerHelpers';
 
 import { config } from 'config';
@@ -11,7 +10,7 @@ import { InitializeApplication } from './app/Initializer';
 import { Application } from './app/Application';
 import * as services from './app';
 
-import { subdomains, commonTypes, errors } from './domain';
+import { subdomains, commonTypes, states, errors } from './domain';
 
 import * as repositories from './infra/repositories';
 import { makeValidator } from './infra/support/makeValidator';
@@ -46,6 +45,7 @@ bottle.factory('app', (container) => new Application(container));
 
 bottle.factory('subdomains', () => subdomains);
 bottle.factory('commonTypes', () => commonTypes);
+bottle.factory('states', () => states);
 bottle.constant('errors', errors);
 
 bottle.factory('mappers.commonTypes', () => {

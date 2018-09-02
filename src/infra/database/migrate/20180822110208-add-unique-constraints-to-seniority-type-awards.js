@@ -4,13 +4,13 @@ module.exports = {
   up: (queryInterface) =>
     queryInterface.addIndex('seniority_type_awards', {
       unique: true,
-      name: 'unique_seniority_type_award',
+      name: "award's seniorityTypeId, value and day",
       fields: ['seniority_type_id', 'value', 'day'],
     }),
 
   down: (queryInterface) =>
     queryInterface.removeIndex(
       'seniority_type_awards',
-      'unique_seniority_type_award'
+      "award's seniorityTypeId, value and day"
     ),
 };

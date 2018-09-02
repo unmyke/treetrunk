@@ -64,9 +64,9 @@ export class Post extends BaseEntity {
       {
         name: transitions.INACTIVATE,
         from: states.ACTIVE,
-        to: states.INACTIVE,
+        to: states.DELETED,
       },
-      { name: transitions.ACTIVATE, from: states.INACTIVE, to: states.ACTIVE },
+      { name: transitions.ACTIVATE, from: states.DELETED, to: states.ACTIVE },
     ],
 
     methods: {

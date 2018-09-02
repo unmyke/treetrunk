@@ -52,12 +52,13 @@ const entry = {
   first_name: firstName,
   middle_name: middleName,
   last_name: lastName,
+  state: 'recruited',
   phone,
   appointments: [
-    { post_id: postIdValue0, day: date0 },
-    { post_id: postIdValue1, day: date1 },
-    { post_id: postIdValue2, day: date2 },
-    { post_id: postIdValue3, day: date3 },
+    { seller_id: sellerIdValue, post_id: postIdValue0, day: date0 },
+    { seller_id: sellerIdValue, post_id: postIdValue1, day: date1 },
+    { seller_id: sellerIdValue, post_id: postIdValue2, day: date2 },
+    { seller_id: sellerIdValue, post_id: postIdValue3, day: date3 },
   ],
 };
 
@@ -81,6 +82,7 @@ const entity = Seller.restore({
   firstName,
   middleName,
   lastName,
+  state: 'recruited',
   phone,
   appointments: entityAppointments,
 });

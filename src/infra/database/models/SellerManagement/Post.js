@@ -1,4 +1,6 @@
 'use strict';
+import { Op } from 'sequelize';
+
 export default (sequelize, DataTypes) => {
   let Post = sequelize.define(
     'post',
@@ -21,24 +23,43 @@ export default (sequelize, DataTypes) => {
       indexes: [
         {
           unique: true,
-          name: 'unique_post',
+          name: "post's name",
           fields: ['name'],
+          force: true,
         },
       ],
-      defaultScope: { include: [{ all: true }] },
+      scopes: {
+        get_all: {
+          where: {
+            state: {
+              [Op.ne]: 'deleted',
+            },
+          },
+        },
+        states(states) {
+          return {
+            where: {
+              state: {
+                [Op.in]: states,
+              },
+            },
+          };
+        },
+        include_all: {
+          include: [{ all: true }],
+        },
+      },
     }
   );
 
-  Post.associate = ({ PostPieceRate, SellerAppointment }) => {
+  Post.associate = ({ PostPieceRate }) => {
     Post.hasMany(PostPieceRate, {
       as: 'piece_rates',
       foreignKey: 'post_id',
+      hooks: true,
+      onDelete: 'cascade',
     });
-
-    // Post.hasMany(SellerAppointment, {
-    //   as: 'seller_appointments',
-    //   foreignKey: 'post_id',
-    // });
+    Post.addScope('piece_rates', { include: 'piece_rates' });
   };
 
   return Post;

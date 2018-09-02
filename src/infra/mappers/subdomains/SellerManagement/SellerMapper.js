@@ -19,15 +19,20 @@ export class SellerMapper extends BaseMapper {
     middleName,
     lastName,
     phone,
+    state,
     flatAppointments,
   }) {
+    const seller_id = this.sellerIdMapper.toDatabase(sellerId);
+
     return {
-      seller_id: this.sellerIdMapper.toDatabase(sellerId),
+      seller_id,
       first_name: firstName,
       middle_name: middleName,
       last_name: lastName,
       phone,
+      state,
       appointments: flatAppointments.map(({ postId, day }) => ({
+        seller_id,
         post_id: this.postIdMapper.toDatabase(postId),
         day: this.dayMapper.toDatabase(day),
       })),
@@ -40,6 +45,7 @@ export class SellerMapper extends BaseMapper {
     middle_name,
     last_name,
     phone,
+    state,
     appointments = [],
   }) {
     const sellerEntity = this.Entity.restore({
@@ -48,6 +54,7 @@ export class SellerMapper extends BaseMapper {
       middleName: middle_name,
       lastName: last_name,
       phone,
+      state,
       appointments: appointments.map(({ post_id, day }) => ({
         postId: this.postIdMapper.toEntity({ value: post_id }),
         day: this.dayMapper.toEntity({ value: day }),

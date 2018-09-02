@@ -1,5 +1,5 @@
 const dispatchError = (originalError, errorMessageMapper) => {
-  const error = errorMessageMapper[originalError.message];
+  const error = errorMessageMapper[originalError.message || originalError.name];
 
   if (error === undefined) {
     return originalError;

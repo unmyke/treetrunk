@@ -61,6 +61,7 @@ export const errors = {
   // repository
   modelNotFound: makeError('MODEL_NOT_FOUND'),
   modelAlreadyExists: makeError('MODEL_ALREADY_EXISTS'),
+  invalidQuery: makeError('INVALID_QUERY'),
   databaseError: makeError('DATABASE_ERROR'),
 
   // exapmles

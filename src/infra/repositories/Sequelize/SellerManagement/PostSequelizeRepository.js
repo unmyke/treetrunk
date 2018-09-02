@@ -1,27 +1,66 @@
+import { errors } from 'src/domain/errors';
 import { SequelizeRepository } from '../../_lib';
-import { isEqualValues } from '../../../../domain/_lib/BaseMethods';
+import { getAsyncOperationRunner } from 'src/infra/support/operationRunner';
+
+const repoErrorMessageMapper = {
+  MODEL_ALREADY_EXISTS: errors.postAlreadyExists(),
+  MODEL_NOT_FOUND: errors.postNotFound(),
+};
+
+const repoOperationRunner = getAsyncOperationRunner(repoErrorMessageMapper);
 
 export class PostSequelizeRepository extends SequelizeRepository {
-  async addPieceRate(postId, value, day) {
-    const postModel = await this.Model.findById(postId);
-    await this.postModel.createPieceRate({ value, day });
+  static scopeIncludeModelsOptions = ['piece_rates'];
+  static scopeWhereAllOptions = ['get_all'];
 
-    return await this.mapper.toEntity(await postModel.reload());
+  async getById(postId) {
+    return repoOperationRunner(() => this._getById(postId));
   }
 
-  async deletePieceRate(postId, day) {
-    const postModel = await this.Model.findById(postId.value);
-    const appointmentModel = await postModel.appointments.find(
-      ({ day: appointmentDay }) => isEqualValues(day, appointmentDay)
+  async add(post) {
+    return repoOperationRunner(() => this._add(post));
+  }
+  async delete(postId) {
+    return repoOperationRunner(() => this._delete(postId));
+  }
+
+  async update(post) {
+    return repoOperationRunner(() => this._update(post));
+  }
+
+  async addPieceRate({ value: post_id }, value, { value: day }) {
+    const { PostPieceRate: PostPieceRateModel } = this.models.SellerManagement;
+
+    return repoOperationRunner(() =>
+      PostPieceRateModel.create({ post_id, value, day }).then(() => true)
     );
-
-    await appointmentModel.removePieceRate(appointmentModel);
-
-    return await this.mapper.toEntity(await postModel.reload());
   }
 
-  async updatePieceRate(postId, day, newPostId, newDay) {
-    await this.deletePieceRate(postId, day);
-    return await this.addPieceRate(postId, newPostId, newDay);
+  async deletePieceRateAt({ value: post_id }, { value: day }) {
+    const { PostPieceRate: PostPieceRateModel } = this.models.SellerManagement;
+
+    return repoOperationRunner(() =>
+      PostPieceRateModel.destroy({
+        where: { post_id, day },
+      }).then(() => true)
+    );
+  }
+
+  async updatePieceRateTo(
+    { value: post_id },
+    { value: day },
+    new_value,
+    { value: new_day }
+  ) {
+    const { PostPieceRate: PostPieceRateModel } = this.models.SellerManagement;
+
+    return repoOperationRunner(() =>
+      PostPieceRateModel.update(
+        { value: new_value, day: new_day },
+        {
+          where: { post_id, day },
+        }
+      ).then(() => true)
+    );
   }
 }

@@ -1,4 +1,6 @@
 'use strict';
+import { Op } from 'sequelize';
+
 export default (sequelize, DataTypes) => {
   let SeniorityType = sequelize.define(
     'seniority_type',
@@ -25,11 +27,38 @@ export default (sequelize, DataTypes) => {
       indexes: [
         {
           unique: true,
-          name: 'unique_seniority_type',
+          name: "seniority type's name",
           fields: ['name'],
+          force: true,
+        },
+        {
+          unique: true,
+          name: "seniority type's months",
+          fields: ['months'],
+          force: true,
         },
       ],
-      defaultScope: { include: [{ all: true }] },
+      scopes: {
+        get_all: {
+          where: {
+            state: {
+              [Op.ne]: 'deleted',
+            },
+          },
+        },
+        states(states) {
+          return {
+            where: {
+              state: {
+                [Op.in]: states,
+              },
+            },
+          };
+        },
+        include_all: {
+          include: [{ all: true }],
+        },
+      },
     }
   );
 
@@ -37,7 +66,10 @@ export default (sequelize, DataTypes) => {
     SeniorityType.hasMany(SeniorityTypeAward, {
       as: 'awards',
       foreignKey: 'seniority_type_id',
+      hooks: true,
+      onDelete: 'cascade',
     });
+    SeniorityType.addScope('awards', { include: 'awards' });
   };
 
   return SeniorityType;

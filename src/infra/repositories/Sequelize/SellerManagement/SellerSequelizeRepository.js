@@ -1,30 +1,78 @@
+import { errors } from 'src/domain/errors';
 import { SequelizeRepository } from '../../_lib';
-import { isEqualValues } from '../../../../domain/_lib/BaseMethods';
+import { getAsyncOperationRunner } from 'src/infra/support/operationRunner';
+
+const repoErrorMessageMapper = {
+  MODEL_ALREADY_EXISTS: errors.sellerAlreadyExists(),
+  MODEL_NOT_FOUND: errors.sellerNotFound(),
+};
+
+const repoOperationRunner = getAsyncOperationRunner(repoErrorMessageMapper);
 
 export class SellerSequelizeRepository extends SequelizeRepository {
-  async addAppointment({ value: sellerId }, { value: postId }, { value: day }) {
-    const sellerModel = await this.Model.findById(sellerId);
-    await this.sellerModel.createAppointment({
-      post_id: postId,
-      day,
-    });
+  static scopeIncludeModelsOptions = ['appointments'];
+  static scopeWhereAllOptions = ['get_all'];
 
-    return await this.mapper.toEntity(await sellerModel.reload());
+  async getById(sellerId) {
+    return repoOperationRunner(() => this._getById(sellerId));
   }
 
-  async deleteAppointment(sellerId, day) {
-    const sellerModel = await this.Model.findById(sellerId.value);
-    const appointmentModel = await sellerModel.appointments.find(
-      ({ day: appointmentDay }) => isEqualValues(day, appointmentDay)
+  async add(seller) {
+    return repoOperationRunner(() => this._add(seller));
+  }
+  async delete(sellerId) {
+    return repoOperationRunner(() => this._delete(sellerId));
+  }
+
+  async update(seller) {
+    return repoOperationRunner(() => this._update(seller));
+  }
+
+  async addAppointment(
+    { value: seller_id },
+    { value: post_id },
+    { value: day }
+  ) {
+    const {
+      SellerAppointment: SellerAppointmentModel,
+    } = this.models.SellerManagement;
+
+    return repoOperationRunner(() =>
+      SellerAppointmentModel.create({ seller_id, post_id, day }).then(
+        () => true
+      )
     );
-
-    await appointmentModel.removeAppointment(appointmentModel);
-
-    return await this.mapper.toEntity(await sellerModel.reload());
   }
 
-  async updateAppointment(sellerId, day, newPostId, newDay) {
-    await this.deleteAppointment(sellerId, day);
-    return await this.addAppointment(sellerId, newPostId, newDay);
+  async deleteAppointmentAt({ value: seller_id }, { value: day }) {
+    const {
+      SellerAppointment: SellerAppointmentModel,
+    } = this.models.SellerManagement;
+
+    return repoOperationRunner(() =>
+      SellerAppointmentModel.destroy({
+        where: { seller_id, day },
+      }).then(() => true)
+    );
+  }
+
+  async updateAppointmentTo(
+    { value: seller_id },
+    { value: day },
+    { value: new_post_id },
+    { value: new_day }
+  ) {
+    const {
+      SellerAppointment: SellerAppointmentModel,
+    } = this.models.SellerManagement;
+
+    return repoOperationRunner(() =>
+      SellerAppointmentModel.update(
+        { post_id: new_post_id, day: new_day },
+        {
+          where: { seller_id, day },
+        }
+      ).then(() => true)
+    );
   }
 }

@@ -11,13 +11,8 @@ export const cleanDatabase = () => {
       .then(() => {
         return database.query('SET FOREIGN_KEY_CHECKS = 1');
       })
-      .then(
-        () => {
-          console.log('Database synchronised.');
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+      .catch((err) => {
+        console.log(err);
+      });
   }
 };

@@ -1,4 +1,6 @@
 'use strict';
+import { Op } from 'sequelize';
+
 export default (sequelize, DataTypes) => {
   let Seller = sequelize.define(
     'seller',
@@ -23,17 +25,49 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      state: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
     },
     {
       underscored: true,
       indexes: [
         {
           unique: true,
-          name: 'unique_seller',
+          name: "seller's person name and phone",
           fields: ['last_name', 'first_name', 'middle_name', 'phone'],
+          force: true,
         },
       ],
-      defaultScope: { include: [{ all: true }] },
+      scopes: {
+        get_all: {
+          where: {
+            state: {
+              [Op.ne]: 'deleted',
+            },
+          },
+        },
+        states(states) {
+          return {
+            where: {
+              state: {
+                [Op.in]: states,
+              },
+            },
+          };
+        },
+        include_all: {
+          include: [{ all: true }],
+        },
+      },
+      setterMethods: {
+        updateAppointments(appointments) {
+          return this.removeAppointments().then(function() {
+            return this.addAppointments(appointments);
+          });
+        },
+      },
     }
   );
 
@@ -41,7 +75,23 @@ export default (sequelize, DataTypes) => {
     Seller.hasMany(SellerAppointment, {
       as: 'appointments',
       foreignKey: 'seller_id',
+      hooks: true,
+      onDelete: 'cascade',
     });
+    Seller.addScope('appointments', { include: 'appointments' });
+    // Seller.addScope('postId', function(post_id) {
+    //   return {
+    //     where: {
+    //       appointments: {
+    //         [op.eq]: sequelize.fn('max', sequelize.col('day')
+    //         post_id: {
+    //           ,
+    //         },
+    //       },
+    //     },
+    //     include: 'appointments',
+    //   };
+    // });
   };
 
   return Seller;

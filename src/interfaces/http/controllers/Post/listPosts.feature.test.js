@@ -30,18 +30,18 @@ const activePostWithoutPieceRatesDTO = {
   pieceRates: [],
   state: 'active',
 };
-const inactivePostWithPieceRatesDTO = {
+const deletedPostWithPieceRatesDTO = {
   postId: uuidv4(),
   name: 'Цветочник',
   pieceRate: 1,
   pieceRates: pieceRatesDTO,
-  state: 'inactive',
+  state: 'deleted',
 };
-const inactivePostWithoutPieceRatesDTO = {
+const deletedPostWithoutPieceRatesDTO = {
   postId: uuidv4(),
   name: 'Старший цветочник',
   pieceRates: [],
-  state: 'inactive',
+  state: 'deleted',
 };
 
 // test aggregates
@@ -65,17 +65,17 @@ const activePostWithoutPieceRates = new Post({
   state: activePostWithoutPieceRatesDTO.state,
 });
 
-const inactivePostWithPieceRates = new Post({
-  postId: new PostId({ value: inactivePostWithPieceRatesDTO.postId }),
-  name: inactivePostWithPieceRatesDTO.name,
-  state: inactivePostWithPieceRatesDTO.state,
+const deletedPostWithPieceRates = new Post({
+  postId: new PostId({ value: deletedPostWithPieceRatesDTO.postId }),
+  name: deletedPostWithPieceRatesDTO.name,
+  state: deletedPostWithPieceRatesDTO.state,
 });
-inactivePostWithPieceRates.setPieceRates(pieceRates);
+deletedPostWithPieceRates.setPieceRates(pieceRates);
 
-const inactivePostWithoutPieceRates = new Post({
-  postId: new PostId({ value: inactivePostWithoutPieceRatesDTO.postId }),
-  name: inactivePostWithoutPieceRatesDTO.name,
-  state: inactivePostWithoutPieceRatesDTO.state,
+const deletedPostWithoutPieceRates = new Post({
+  postId: new PostId({ value: deletedPostWithoutPieceRatesDTO.postId }),
+  name: deletedPostWithoutPieceRatesDTO.name,
+  state: deletedPostWithoutPieceRatesDTO.state,
 });
 
 describe('API :: GET /api/posts', () => {
@@ -89,8 +89,8 @@ describe('API :: GET /api/posts', () => {
         return Promise.all([
           postRepo.add(activePostWithPieceRates),
           postRepo.add(activePostWithoutPieceRates),
-          postRepo.add(inactivePostWithPieceRates),
-          postRepo.add(inactivePostWithoutPieceRates),
+          postRepo.add(deletedPostWithPieceRates),
+          postRepo.add(deletedPostWithoutPieceRates),
         ]);
       });
 
@@ -106,8 +106,8 @@ describe('API :: GET /api/posts', () => {
     context('when there is no persisted active posts', () => {
       beforeEach(() => {
         return Promise.all([
-          postRepo.add(inactivePostWithPieceRates),
-          postRepo.add(inactivePostWithoutPieceRates),
+          postRepo.add(deletedPostWithPieceRates),
+          postRepo.add(deletedPostWithoutPieceRates),
         ]);
       });
       test('should return 200 with empty array', async () => {
@@ -125,20 +125,20 @@ describe('API :: GET /api/posts', () => {
         return Promise.all([
           postRepo.add(activePostWithPieceRates),
           postRepo.add(activePostWithoutPieceRates),
-          postRepo.add(inactivePostWithPieceRates),
-          postRepo.add(inactivePostWithoutPieceRates),
+          postRepo.add(deletedPostWithPieceRates),
+          postRepo.add(deletedPostWithoutPieceRates),
         ]);
       });
       context('when passed { active: false }', () => {
-        test('should return 200 with array of inactive posts', async () => {
+        test('should return 200 with array of deleted posts', async () => {
           const { statusCode, body } = await request().get(
             '/api/posts?active=false'
           );
 
           expect(statusCode).toBe(200);
           expect(body).toHaveLength(2);
-          expect(body[0]).toEqual(inactivePostWithPieceRatesDTO);
-          expect(body[1]).toEqual(inactivePostWithoutPieceRatesDTO);
+          expect(body[0]).toEqual(deletedPostWithPieceRatesDTO);
+          expect(body[1]).toEqual(deletedPostWithoutPieceRatesDTO);
         });
       });
       context('when passed { hasPieceRates: false }', () => {
@@ -150,19 +150,19 @@ describe('API :: GET /api/posts', () => {
           expect(statusCode).toBe(200);
           expect(body).toHaveLength(2);
           expect(body[0]).toEqual(activePostWithoutPieceRatesDTO);
-          expect(body[1]).toEqual(inactivePostWithoutPieceRatesDTO);
+          expect(body[1]).toEqual(deletedPostWithoutPieceRatesDTO);
         });
       });
 
       context('when passed { active: false, hasPieceRates: false }', () => {
-        test('should return 200 with array of inactive posts whithout piece rates', async () => {
+        test('should return 200 with array of deleted posts whithout piece rates', async () => {
           const { statusCode, body } = await request().get(
             '/api/posts?active=false&hasPieceRates=false'
           );
 
           expect(statusCode).toBe(200);
           expect(body).toHaveLength(1);
-          expect(body[0]).toEqual(inactivePostWithoutPieceRatesDTO);
+          expect(body[0]).toEqual(deletedPostWithoutPieceRatesDTO);
         });
       });
     });

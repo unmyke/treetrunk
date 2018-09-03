@@ -29,7 +29,7 @@ const {
   database,
 } = container;
 
-const getAllSellers = GetAllSellers();
+let getAllSellers;
 
 // const postId = new PostId({ value: uuidv4() });
 
@@ -58,7 +58,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
   beforeEach(() => {
     // sellerId = new SellerId({ value: uuidv4() });
     // sellerEntity = new Seller({ ...sellerProps, sellerId });
-
+    getAllSellers = GetAllSellers();
     return cleanDatabase();
   });
 
@@ -69,20 +69,24 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
   describe('#execute', () => {
     context('when there is no sellers in database', () => {
       test('should return empty array', async () => {
-        expect.assertions(1);
+        expect.assertions(2);
 
-        getAllSellers.on('SUCCESS', (sellers) => {
-          expect(sellers).toHaveLength(0);
-        });
+        const mock = jest.fn();
+
+        getAllSellers.on('SUCCESS', mock);
 
         await getAllSellers.execute();
+
+        expect(mock.mock.calls.length).toBe(1);
+        console.log(mock.mock.calls[0]);
+        expect(mock.mock.calls[0][0].length).toBe(0);
       });
     });
 
     context('when there is sellers in database', () => {
       beforeEach(() => {
         return factory
-          .create('seller', [
+          .createMany('seller', [
             {
               first_name: 'first_name1',
               middle_name: 'middle_name1',
@@ -149,6 +153,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
           expect.assertions(1);
 
           getAllSellers.on('SUCCESS', (sellers) => {
+            console.log(sellers.length);
             expect(sellers).toHaveLength(6);
           });
 

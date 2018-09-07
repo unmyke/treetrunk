@@ -1,6 +1,24 @@
 import { Operation } from '../../_lib';
 import { Seller as states } from '../../../domain/states';
 
+const getMonthsRangeQuery = (sellers) => {
+  const range = sellers.reduce(({ min, max }, { months }) => {
+    const newMin = min === undefined || months < min ? months : min;
+    const newMax = max === undefined || months > max ? months : max;
+
+    return {
+      min: newMin,
+      max: newMax,
+    };
+  }, {});
+
+  return { monthsBetween: range };
+};
+
+const getPostIdsQuery = (sellers) => ({
+  postIds: sellers.map(({ postId }) => postId),
+});
+
 export class GetAllSellers extends Operation {
   static constraints = {
     state: { inclusion: states },
@@ -20,51 +38,12 @@ export class GetAllSellers extends Operation {
 
     try {
       const sellers = await sellerRepo.find(query);
-      // const seniorityTypes = await seniorityTypeRepo.find({
-      //   sellers: sellers.map(({ sellerId }) => sellerId),
-      // });
-      // const postIds = [
-      //   ...sellers.reduce(
-      //     (postIdsSet, seller) => new Set([...postIdsSet, ...seller.postIds]),
-      //     new Set()
-      //   ),
-      // ];
-      // const posts = await postRepo.getByIds(postIds);
+      const [posts, seniorityTypes] = await Promise.all([
+        postRepo.find(getPostIdsQuery(sellers)),
+        seniorityTypeRepo.find(getMonthsRangeQuery(sellers)),
+      ]);
 
-      // const sellersDTO = sellers.map(async (seller) => {
-      //   const {
-      //     sellerId: { value: sellerId },
-      //     fullName,
-      //     seniority,
-      //     recruitDay: { value: recruitDate },
-      //   } = seller;
-
-      //   const sellerDTO = {
-      //     sellerId,
-      //     fullName,
-      //     seniority,
-      //     recruitDate,
-      //   };
-
-      //   const postId = seller.getPostIdAt();
-      //   const { name, pieceRate } = sellerService.getSellerPost(seller, posts);
-
-      //   sellerDTO.postName = name;
-      //   sellerDTO.pieceRate = pieceRate;
-
-      //   const sellerService = new SellerService();
-
-      //   const seniorityType = sellerService.getSellerSeniorityType(
-      //     seller,
-      //     seniorityTypes
-      //   );
-
-      //   sellerDTO.award = seniorityType ? seniorityType.award : undefined;
-
-      //   return sellerDTO;
-      // });
-
-      this.emit(SUCCESS, sellers);
+      this.emit(SUCCESS, { sellers, posts, seniorityTypes });
     } catch (error) {
       if (error.message === 'ValidationError') {
         return this.emit(VALIDATION_ERROR, error);

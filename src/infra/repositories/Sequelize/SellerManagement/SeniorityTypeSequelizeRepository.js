@@ -13,6 +13,16 @@ export class SeniorityTypeSequelizeRepository extends SequelizeRepository {
   static scopeIncludeModelsOptions = ['awards'];
   static scopeWhereAllOptions = ['get_all'];
 
+  find({ monthsLessOrEqual }) {
+    const query = [];
+
+    if (monthsLessOrEqual) {
+      query.push({ method: ['monthsLessOrEqual', monthsLessOrEqual] });
+    }
+
+    return this._find(query);
+  }
+
   async getById(seniorityTypeId) {
     return repoOperationRunner(() => this._getById(seniorityTypeId));
   }

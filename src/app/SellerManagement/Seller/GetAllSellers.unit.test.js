@@ -78,7 +78,6 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
         await getAllSellers.execute();
 
         expect(mock.mock.calls.length).toBe(1);
-        console.log(mock.mock.calls[0]);
         expect(mock.mock.calls[0][0].length).toBe(0);
       });
     });

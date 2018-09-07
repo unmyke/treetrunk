@@ -136,15 +136,15 @@ describe('Infra :: Repository :: SeniorityType', () => {
     beforeEach(() => {
       return factory
         .createMany('seniorityType', [
-          { state: 'active' },
-          { state: 'deleted' },
-          { state: 'active' },
-          { state: 'deleted' },
-          { state: 'active' },
-          { state: 'deleted' },
-          { state: 'active' },
-          { state: 'active' },
-          { state: 'active' },
+          { months: 1, state: 'active' },
+          { months: 2, state: 'deleted' },
+          { months: 3, state: 'active' },
+          { months: 4, state: 'deleted' },
+          { months: 5, state: 'active' },
+          { months: 6, state: 'deleted' },
+          { months: 7, state: 'active' },
+          { months: 8, state: 'active' },
+          { months: 9, state: 'active' },
         ])
         .catch((e) => {
           console.log(e);
@@ -156,7 +156,7 @@ describe('Infra :: Repository :: SeniorityType', () => {
         expect.assertions(3);
 
         const seniorityTypes = await seniorityTypeRepo.find([
-          { method: ['states', ['active']] },
+          { states: ['active'] },
         ]);
 
         expect(seniorityTypes).toHaveLength(6);
@@ -169,9 +169,23 @@ describe('Infra :: Repository :: SeniorityType', () => {
       test('should return array of seniorityTypes', async () => {
         expect.assertions(3);
 
-        const seniorityTypes = await seniorityTypeRepo.find([
-          { method: ['states', ['deleted']] },
-        ]);
+        const seniorityTypes = await seniorityTypeRepo.find({
+          states: ['deleted'],
+        });
+
+        expect(seniorityTypes).toHaveLength(3);
+        expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
+        expect(seniorityTypes[0].state).toBe('deleted');
+      });
+    });
+
+    context('when there are deleted seniorityTypes in db', () => {
+      test('should return array of seniorityTypes', async () => {
+        expect.assertions(3);
+
+        const seniorityTypes = await seniorityTypeRepo.find({
+          states: ['deleted'],
+        });
 
         expect(seniorityTypes).toHaveLength(3);
         expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
@@ -183,9 +197,9 @@ describe('Infra :: Repository :: SeniorityType', () => {
       test('should return array of seniorityTypes', async () => {
         expect.assertions(3);
 
-        const seniorityTypes = await seniorityTypeRepo.find([
-          { method: ['states', ['active', 'deleted']] },
-        ]);
+        const seniorityTypes = await seniorityTypeRepo.find({
+          states: ['active', 'deleted'],
+        });
 
         expect(seniorityTypes).toHaveLength(9);
         expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);

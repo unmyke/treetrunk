@@ -1,17 +1,17 @@
-export const Seller = (factory, { Seller }) => {
+export const Seller = (factory, { Seller }, attrs) => {
   factory.define(
     'seller',
     Seller,
-    {
+    (buildOptions) => ({
       seller_id: factory.chance('guid', { version: 4 }),
       last_name: factory.chance('last'),
       first_name: factory.chance('name'),
       middle_name: factory.chance('name', { middle: true }),
       phone: factory.chance('phone'),
       state: 'recruited',
-    },
+    }),
     {
-      afterCreate: async function(seller, attrs, { appointmentsCount } = {}) {
+      afterCreate: async function(seller, attrs, { appointments } = {}) {
         if (
           appointmentsCount === 0 &&
           attrs.appointments &&
@@ -25,6 +25,7 @@ export const Seller = (factory, { Seller }) => {
         };
 
         const appointmentFactoryArgs = ['sellerAppointment'];
+        console.log(attrs);
 
         switch (true) {
           case appointmentsCount !== undefined && appointmentsCount > 0:

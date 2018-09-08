@@ -11,6 +11,8 @@ import {
   differenceInMonths as differenceInMonthsFNS,
   addDays as addDaysFNS,
   subDays as subDaysFNS,
+  addMonths as addMonthsFNS,
+  subMonths as subMonthsFNS,
 } from 'date-fns';
 
 const ru = require('date-fns/locale/ru');
@@ -96,6 +98,14 @@ export class Day extends BaseValue {
 
   subDays(num = 0) {
     return new Day({ value: subDaysFNS(this.value, num) });
+  }
+
+  addMonths(num = 0) {
+    return new Day({ value: addMonthsFNS(this.value, num) });
+  }
+
+  subMonths(num = 0) {
+    return new Day({ value: subMonthsFNS(this.value, num) });
   }
 
   difference(day = new Day()) {

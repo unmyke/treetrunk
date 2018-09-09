@@ -1,5 +1,6 @@
 'use strict';
 import { Op } from 'sequelize';
+import { getSearchScope } from '../_lib';
 
 export default (sequelize, DataTypes) => {
   let Post = sequelize.define(
@@ -36,6 +37,15 @@ export default (sequelize, DataTypes) => {
             },
           },
         },
+        postIds(post_ids) {
+          return {
+            where: {
+              post_id: {
+                [Op.in]: post_ids,
+              },
+            },
+          };
+        },
         states(states) {
           return {
             where: {
@@ -44,6 +54,10 @@ export default (sequelize, DataTypes) => {
               },
             },
           };
+        },
+        search: getSearchScope('name'),
+        include_all: {
+          include: [{ all: true }],
         },
         include_all: {
           include: [{ all: true }],

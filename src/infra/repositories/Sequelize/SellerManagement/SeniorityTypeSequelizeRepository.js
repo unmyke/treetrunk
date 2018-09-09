@@ -13,11 +13,15 @@ export class SeniorityTypeSequelizeRepository extends SequelizeRepository {
   static scopeIncludeModelsOptions = ['awards'];
   static scopeWhereAllOptions = ['get_all'];
 
-  find({ monthsLessOrEqual }) {
+  find({ monthsBetween, states }) {
     const query = [];
 
-    if (monthsLessOrEqual) {
-      query.push({ method: ['monthsLessOrEqual', monthsLessOrEqual] });
+    if (monthsBetween) {
+      query.push({ method: ['monthsBetween', monthsBetween] });
+    }
+
+    if (states) {
+      query.push({ method: ['states', states] });
     }
 
     return this._find(query);

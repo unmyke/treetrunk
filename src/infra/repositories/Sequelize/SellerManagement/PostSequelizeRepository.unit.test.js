@@ -3,6 +3,7 @@ import { factory } from 'src/infra/support/test/factory';
 import { cleanDatabase } from 'src/infra/support/test/cleanDatabase';
 
 import { container } from 'src/container';
+import { PostIdMapper } from '../../../mappers/commonTypes/PostIdMapper';
 
 const getRawPost = ({ postId, name, phone, pieceRates }) => ({
   postId,
@@ -29,6 +30,7 @@ const {
   },
   database,
 } = container;
+const postIdMapper = new PostIdMapper({ commonTypes: { PostId } });
 
 const value = 2.5;
 
@@ -91,10 +93,10 @@ describe('Infra :: Repository :: Post', () => {
     context('when there are posts in db', () => {
       beforeEach(() => {
         return factory.createMany('post', [
-          { first_name: 'Post1', state: 'deleted' },
-          { first_name: 'Post2', state: 'active' },
-          { first_name: 'Post3', state: 'deleted' },
-          { first_name: 'Post4', state: 'active' },
+          { name: 'Post1', state: 'deleted' },
+          { name: 'Post2', state: 'active' },
+          { name: 'Post3', state: 'deleted' },
+          { name: 'Post4', state: 'active' },
         ]);
       });
 
@@ -122,62 +124,144 @@ describe('Infra :: Repository :: Post', () => {
   });
 
   describe('#find', () => {
+    let postIds;
+
     beforeEach(() => {
       return factory
         .createMany('post', [
-          { state: 'active' },
+          { name: 'post1', state: 'active' },
           { state: 'deleted' },
-          { state: 'active' },
+          { name: 'post2', state: 'active' },
           { state: 'deleted' },
-          { state: 'active' },
+          { name: 'post3', state: 'active' },
           { state: 'deleted' },
+          { name: 'post4', state: 'active' },
           { state: 'active' },
-          { state: 'active' },
-          { state: 'active' },
+          { name: 'post5', state: 'active' },
         ])
+        .then((posts) => {
+          postIds = posts
+            .map(({ post_id }) => new PostId({ value: post_id }))
+            .filter((postId, index) => index % 3 === 0);
+        })
         .catch((e) => {
           console.log(e);
         });
     });
 
-    context('when there are active posts in db', () => {
-      test('should return array of posts', async () => {
-        expect.assertions(3);
+    context('when passed states-query', () => {
+      context('when there are active posts in db', () => {
+        test('should return array of posts', async () => {
+          expect.assertions(3);
 
-        const posts = await postRepo.find([{ method: ['states', ['active']] }]);
+          const posts = await postRepo.find({ states: ['active'] });
 
-        expect(posts).toHaveLength(6);
-        expect(posts[0]).toBeInstanceOf(Post);
-        expect(posts[0].state).toBe('active');
+          expect(posts).toHaveLength(6);
+          expect(posts[0]).toBeInstanceOf(Post);
+          expect(posts[0].state).toBe('active');
+        });
+      });
+
+      context('when there are deleted posts in db', () => {
+        test('should return array of posts', async () => {
+          expect.assertions(3);
+
+          const posts = await postRepo.find({ states: ['deleted'] });
+
+          expect(posts).toHaveLength(3);
+          expect(posts[0]).toBeInstanceOf(Post);
+          expect(posts[0].state).toBe('deleted');
+        });
+      });
+
+      context('when there are active and deleted posts in db', () => {
+        test('should return array of posts', async () => {
+          expect.assertions(3);
+
+          const posts = await postRepo.find({ states: ['active', 'deleted'] });
+
+          expect(posts).toHaveLength(9);
+          expect(posts[0]).toBeInstanceOf(Post);
+          expect(['active', 'deleted']).toContain(posts[0].state);
+        });
       });
     });
 
-    context('when there are deleted posts in db', () => {
-      test('should return array of posts', async () => {
-        expect.assertions(3);
+    context('when passed postIds-query', () => {
+      context(
+        'when there are posts with postId in passed postIds-query in db',
+        () => {
+          test('should return array of posts', async () => {
+            expect.assertions(5);
 
-        const posts = await postRepo.find([
-          { method: ['states', ['deleted']] },
-        ]);
+            const posts = await postRepo.find({
+              postIds,
+            });
 
-        expect(posts).toHaveLength(3);
-        expect(posts[0]).toBeInstanceOf(Post);
-        expect(posts[0].state).toBe('deleted');
-      });
+            expect(posts).toHaveLength(3);
+            expect(posts[0]).toBeInstanceOf(Post);
+            expect(postIds.map(postIdMapper.toDatabase)).toContain(
+              postIdMapper.toDatabase(posts[0].postId)
+            );
+            expect(postIds.map(postIdMapper.toDatabase)).toContain(
+              postIdMapper.toDatabase(posts[1].postId)
+            );
+            expect(postIds.map(postIdMapper.toDatabase)).toContain(
+              postIdMapper.toDatabase(posts[2].postId)
+            );
+          });
+        }
+      );
     });
 
-    context('when there are active and deleted posts in db', () => {
-      test('should return array of posts', async () => {
-        expect.assertions(3);
+    context('when passed postIds-query and states-query', () => {
+      context(
+        'when there are posts with postId in passed postIds-query in db',
+        () => {
+          test('should return array of posts', async () => {
+            expect.assertions(6);
 
-        const posts = await postRepo.find([
-          { method: ['states', ['active', 'deleted']] },
-        ]);
+            const posts = await postRepo.find({
+              postIds,
+              states: ['active'],
+            });
 
-        expect(posts).toHaveLength(9);
-        expect(posts[0]).toBeInstanceOf(Post);
-        expect(['active', 'deleted']).toContain(posts[0].state);
-      });
+            expect(posts).toHaveLength(2);
+            expect(posts[0]).toBeInstanceOf(Post);
+            expect(postIds.map(postIdMapper.toDatabase)).toContain(
+              postIdMapper.toDatabase(posts[0].postId)
+            );
+            expect(posts[0].state).toBe('active');
+            expect(postIds.map(postIdMapper.toDatabase)).toContain(
+              postIdMapper.toDatabase(posts[1].postId)
+            );
+            expect(posts[1].state).toBe('active');
+          });
+        }
+      );
+    });
+
+    context('when passed search-query', () => {
+      context(
+        'when there are posts with name like seacrh string in passed search-query in db',
+        () => {
+          test('should return array of posts', async () => {
+            expect.assertions(7);
+
+            const posts = await postRepo.find({
+              search: 'pOst',
+            });
+
+            expect(posts).toHaveLength(5);
+            expect(posts[0]).toBeInstanceOf(Post);
+            expect(posts[0].name).toMatch(/.*post.*/);
+            expect(posts[1].name).toMatch(/.*post.*/);
+            expect(posts[2].name).toMatch(/.*post.*/);
+            expect(posts[3].name).toMatch(/.*post.*/);
+            expect(posts[4].name).toMatch(/.*post.*/);
+          });
+        }
+      );
     });
   });
 

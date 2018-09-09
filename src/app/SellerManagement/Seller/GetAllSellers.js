@@ -33,7 +33,6 @@ export class GetAllSellers extends Operation {
         Post: postRepo,
         SeniorityType: seniorityTypeRepo,
       },
-      entities: { SellerService },
     } = this;
 
     try {

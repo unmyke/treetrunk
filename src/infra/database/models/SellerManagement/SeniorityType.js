@@ -46,6 +46,16 @@ export default (sequelize, DataTypes) => {
             },
           },
         },
+        monthsBetween({ min, max }) {
+          return {
+            where: {
+              months: {
+                [Op.gte]: min,
+                [Op.lte]: max,
+              },
+            },
+          };
+        },
         states(states) {
           return {
             where: {

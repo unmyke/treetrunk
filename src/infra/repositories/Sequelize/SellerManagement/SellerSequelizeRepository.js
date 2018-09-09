@@ -13,6 +13,20 @@ export class SellerSequelizeRepository extends SequelizeRepository {
   static scopeIncludeModelsOptions = ['appointments'];
   static scopeWhereAllOptions = ['get_all'];
 
+  async find({ search, states }) {
+    const query = [];
+
+    if (search) {
+      query.push({ method: ['search', search] });
+    }
+
+    if (states) {
+      query.push({ method: ['states', states] });
+    }
+
+    return this._find(query);
+  }
+
   async getById(sellerId) {
     return repoOperationRunner(() => this._getById(sellerId));
   }

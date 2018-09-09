@@ -1,5 +1,6 @@
 'use strict';
 import { Op } from 'sequelize';
+import { getSearchScope } from '../_lib';
 
 export default (sequelize, DataTypes) => {
   let Seller = sequelize.define(
@@ -48,15 +49,19 @@ export default (sequelize, DataTypes) => {
             },
           },
         },
-        states(states) {
-          return {
-            where: {
-              state: {
-                [Op.in]: states,
-              },
+        states: (states) => ({
+          where: {
+            state: {
+              [Op.in]: states,
             },
-          };
-        },
+          },
+        }),
+        search: getSearchScope(
+          'last_name',
+          'first_name',
+          'middle_name',
+          'phone'
+        ),
         include_all: {
           include: [{ all: true }],
         },

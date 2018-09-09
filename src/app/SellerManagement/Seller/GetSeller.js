@@ -4,12 +4,10 @@ export class GetSeller extends Operation {
   async execute(sellerIdValue) {
     const { SUCCESS, ERROR, NOT_FOUND } = this.outputs;
     const {
-      commonTypes: { SellerId },
       repositories: {
         Seller: sellerRepo,
         Post: postRepo,
-        // Shop: shopRepo,
-        // Workshift: workshiftRepo,
+        SeniorityType: seniorityTypeRepo,
       },
     } = this;
 

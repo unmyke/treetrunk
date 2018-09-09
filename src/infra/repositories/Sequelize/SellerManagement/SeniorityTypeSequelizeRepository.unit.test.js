@@ -102,10 +102,10 @@ describe('Infra :: Repository :: SeniorityType', () => {
     context('when there are seniorityTypes in db', () => {
       beforeEach(() => {
         return factory.createMany('seniorityType', [
-          { first_name: 'SeniorityType1', state: 'deleted' },
-          { first_name: 'SeniorityType2', state: 'active' },
-          { first_name: 'SeniorityType3', state: 'deleted' },
-          { first_name: 'SeniorityType4', state: 'active' },
+          { name: 'SeniorityType1', state: 'deleted' },
+          { name: 'SeniorityType2', state: 'active' },
+          { name: 'SeniorityType3', state: 'deleted' },
+          { name: 'SeniorityType4', state: 'active' },
         ]);
       });
 
@@ -151,60 +151,88 @@ describe('Infra :: Repository :: SeniorityType', () => {
         });
     });
 
-    context('when there are active seniorityTypes in db', () => {
-      test('should return array of seniorityTypes', async () => {
-        expect.assertions(3);
+    context('when passed states-query', () => {
+      context('when there are active seniorityTypes in db', () => {
+        test('should return array of seniorityTypes', async () => {
+          expect.assertions(3);
 
-        const seniorityTypes = await seniorityTypeRepo.find([
-          { states: ['active'] },
-        ]);
+          const seniorityTypes = await seniorityTypeRepo.find({
+            states: ['active'],
+          });
 
-        expect(seniorityTypes).toHaveLength(6);
-        expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
-        expect(seniorityTypes[0].state).toBe('active');
+          expect(seniorityTypes).toHaveLength(6);
+          expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
+          expect(seniorityTypes[0].state).toBe('active');
+        });
+      });
+
+      context('when there are deleted seniorityTypes in db', () => {
+        test('should return array of seniorityTypes', async () => {
+          expect.assertions(3);
+
+          const seniorityTypes = await seniorityTypeRepo.find({
+            states: ['deleted'],
+          });
+
+          expect(seniorityTypes).toHaveLength(3);
+          expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
+          expect(seniorityTypes[0].state).toBe('deleted');
+        });
+      });
+
+      context('when there are deleted seniorityTypes in db', () => {
+        test('should return array of seniorityTypes', async () => {
+          expect.assertions(3);
+
+          const seniorityTypes = await seniorityTypeRepo.find({
+            states: ['deleted'],
+          });
+
+          expect(seniorityTypes).toHaveLength(3);
+          expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
+          expect(seniorityTypes[0].state).toBe('deleted');
+        });
+      });
+
+      context('when there are active and deleted seniorityTypes in db', () => {
+        test('should return array of seniorityTypes', async () => {
+          expect.assertions(3);
+
+          const seniorityTypes = await seniorityTypeRepo.find({
+            states: ['active', 'deleted'],
+          });
+
+          expect(seniorityTypes).toHaveLength(9);
+          expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
+          expect(['active', 'deleted']).toContain(seniorityTypes[0].state);
+        });
       });
     });
 
-    context('when there are deleted seniorityTypes in db', () => {
-      test('should return array of seniorityTypes', async () => {
-        expect.assertions(3);
+    context('when passed montsBetween-query', () => {
+      context(
+        'when there are seniorityTypes with months between 3 and 6 in db',
+        () => {
+          test('should return array of seniorityTypes', async () => {
+            expect.assertions(10);
 
-        const seniorityTypes = await seniorityTypeRepo.find({
-          states: ['deleted'],
-        });
+            const seniorityTypes = await seniorityTypeRepo.find({
+              monthsBetween: { min: 3, max: 6 },
+            });
 
-        expect(seniorityTypes).toHaveLength(3);
-        expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
-        expect(seniorityTypes[0].state).toBe('deleted');
-      });
-    });
-
-    context('when there are deleted seniorityTypes in db', () => {
-      test('should return array of seniorityTypes', async () => {
-        expect.assertions(3);
-
-        const seniorityTypes = await seniorityTypeRepo.find({
-          states: ['deleted'],
-        });
-
-        expect(seniorityTypes).toHaveLength(3);
-        expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
-        expect(seniorityTypes[0].state).toBe('deleted');
-      });
-    });
-
-    context('when there are active and deleted seniorityTypes in db', () => {
-      test('should return array of seniorityTypes', async () => {
-        expect.assertions(3);
-
-        const seniorityTypes = await seniorityTypeRepo.find({
-          states: ['active', 'deleted'],
-        });
-
-        expect(seniorityTypes).toHaveLength(9);
-        expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
-        expect(['active', 'deleted']).toContain(seniorityTypes[0].state);
-      });
+            expect(seniorityTypes).toHaveLength(4);
+            expect(seniorityTypes[0]).toBeInstanceOf(SeniorityType);
+            expect(seniorityTypes[0].months).toBeGreaterThanOrEqual(3);
+            expect(seniorityTypes[0].months).toBeLessThanOrEqual(6);
+            expect(seniorityTypes[1].months).toBeGreaterThanOrEqual(3);
+            expect(seniorityTypes[1].months).toBeLessThanOrEqual(6);
+            expect(seniorityTypes[2].months).toBeGreaterThanOrEqual(3);
+            expect(seniorityTypes[2].months).toBeLessThanOrEqual(6);
+            expect(seniorityTypes[3].months).toBeGreaterThanOrEqual(3);
+            expect(seniorityTypes[3].months).toBeLessThanOrEqual(6);
+          });
+        }
+      );
     });
   });
 

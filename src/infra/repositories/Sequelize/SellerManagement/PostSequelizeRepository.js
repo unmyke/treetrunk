@@ -13,6 +13,27 @@ export class PostSequelizeRepository extends SequelizeRepository {
   static scopeIncludeModelsOptions = ['piece_rates'];
   static scopeWhereAllOptions = ['get_all'];
 
+  async find({ postIds, search, states }) {
+    const query = [];
+
+    if (search) {
+      query.push({ method: ['search', search] });
+    }
+
+    if (postIds) {
+      const post_ids = postIds.map((postId) =>
+        this.mappers.commonTypes.PostId.toDatabase(postId)
+      );
+      query.push({ method: ['postIds', post_ids] });
+    }
+
+    if (states) {
+      query.push({ method: ['states', states] });
+    }
+
+    return this._find(query);
+  }
+
   async getById(postId) {
     return repoOperationRunner(() => this._getById(postId));
   }

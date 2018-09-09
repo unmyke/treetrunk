@@ -26,6 +26,7 @@ const {
       Seller: { getAllSellers: GetAllSellers },
     },
   },
+  commonTypes: { Day },
   database,
 } = container;
 
@@ -74,11 +75,14 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
         const mock = jest.fn();
 
         getAllSellers.on('SUCCESS', mock);
+        getAllSellers.on('ERROR', (e) => {
+          console.log(e);
+        });
 
         await getAllSellers.execute();
 
         expect(mock.mock.calls.length).toBe(1);
-        expect(mock.mock.calls[0][0].length).toBe(0);
+        expect(mock.mock.calls[0][0].sellers.length).toBe(0);
       });
     });
 
@@ -92,6 +96,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
               last_name: 'last_name1',
               phone: 'phone1',
               state: 'recruited',
+              appointments: [{ day: new Day().subMonths(1).value }],
             },
             {
               first_name: 'first_name1',
@@ -99,6 +104,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
               last_name: 'last_name1',
               phone: 'phone2',
               state: 'recruited',
+              appointments: [{ day: new Day().subMonths(2).value }],
             },
             {
               first_name: 'first_name2',
@@ -106,6 +112,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
               last_name: 'last_name1',
               phone: 'phone3',
               state: 'new',
+              appointments: [],
             },
             {
               first_name: 'first_name3',
@@ -113,6 +120,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
               last_name: 'last_name2',
               phone: 'phone4',
               state: 'new',
+              appointments: [],
             },
             {
               first_name: 'first_name3',
@@ -120,6 +128,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
               last_name: 'last_name2',
               phone: 'phone4',
               state: 'dismissed',
+              appointments: [],
             },
             {
               first_name: 'first_name3',
@@ -127,6 +136,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
               last_name: 'last_name2',
               phone: 'phone4',
               state: 'dismissed',
+              appointments: [],
             },
             {
               first_name: 'first_name4',
@@ -134,6 +144,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
               last_name: 'last_name3',
               phone: 'phone4',
               state: 'deleted',
+              appointments: [],
             },
             {
               first_name: 'first_name4',
@@ -141,6 +152,7 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
               last_name: 'last_name3',
               phone: 'phone4',
               state: 'deleted',
+              appointments: [],
             },
           ])
           .catch((e) => {
@@ -151,10 +163,13 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
         test('should return array of undeleted sellers', async () => {
           expect.assertions(1);
 
-          getAllSellers.on('SUCCESS', (sellers) => {
-            console.log(sellers.length);
+          getAllSellers.on('SUCCESS', ({ sellers, posts, seniorityTypes }) => {
             expect(sellers).toHaveLength(6);
           });
+
+          // getAllSellers.on('ERROR', (e) => {
+          //   console.log(e);
+          // });
 
           await getAllSellers.execute();
         });

@@ -28,15 +28,17 @@ export class SequelizeRepository extends BaseRepository {
   }
 
   async getAll() {
-    return this.find(this.constructor.scopeWhereAllOptions);
+    return this._find(this.constructor.scopeWhereAllOptions);
   }
 
-  async find(scopeNames = []) {
+  async _find(scopeNames = []) {
+    const scopes = [
+      ...this.constructor.scopeIncludeModelsOptions,
+      ...scopeNames,
+    ];
+
     return repoOperationRunner(() =>
-      this.Model.scope(
-        ...this.constructor.scopeIncludeModelsOptions,
-        ...scopeNames
-      )
+      this.Model.scope(scopes)
         .findAll()
         .then((models) => models.map((model) => this.mapper.toEntity(model)))
     );

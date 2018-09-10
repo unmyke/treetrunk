@@ -1,24 +1,7 @@
-import uuidv4 from 'uuid/v4';
 import { factory } from 'src/infra/support/test/factory';
 import { cleanDatabase } from 'src/infra/support/test/cleanDatabase';
 
 import { container } from 'src/container';
-
-const getRawSeller = ({
-  sellerId,
-  firstName,
-  middleName,
-  lastName,
-  phone,
-  flatAppointments,
-}) => ({
-  sellerId,
-  firstName,
-  middleName,
-  lastName,
-  phone,
-  flatAppointments,
-});
 
 const {
   services: {
@@ -32,33 +15,8 @@ const {
 
 let getAllSellers;
 
-// const postId = new PostId({ value: uuidv4() });
-
-// const sellerProps = {
-//   lastName: 'Lastname',
-//   firstName: 'Firstname',
-//   middleName: 'Middlename',
-//   phone: '55-66-77',
-// };
-
-// const newSellerProps = {
-//   firstName: `${sellerProps.firstName}_new`,
-//   middleName: `${sellerProps.middleName}_new`,
-//   lastName: `${sellerProps.lastName}_new`,
-//   phone: `${sellerProps.phone}_new`,
-// };
-
-// const day = new Day({ value: new Date('2018.01.01') });
-// const newDay = new Day();
-
-// let sellerEntity;
-// let sellerId;
-// let newSellerEntity;
-
 describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
   beforeEach(() => {
-    // sellerId = new SellerId({ value: uuidv4() });
-    // sellerEntity = new Seller({ ...sellerProps, sellerId });
     getAllSellers = GetAllSellers();
     return cleanDatabase();
   });
@@ -70,19 +28,19 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
   describe('#execute', () => {
     context('when there is no sellers in database', () => {
       test('should return empty array', async () => {
-        expect.assertions(2);
+        expect.assertions(3);
 
-        const mock = jest.fn();
+        const mockOnSuccess = jest.fn();
+        const mockOnError = jest.fn();
 
-        getAllSellers.on('SUCCESS', mock);
-        getAllSellers.on('ERROR', (e) => {
-          console.log(e);
-        });
+        getAllSellers.on('SUCCESS', mockOnSuccess);
+        getAllSellers.on('ERROR', mockOnError);
 
         await getAllSellers.execute();
 
-        expect(mock.mock.calls.length).toBe(1);
-        expect(mock.mock.calls[0][0].sellers.length).toBe(0);
+        expect(mockOnSuccess.mock.calls.length).toBe(1);
+        expect(mockOnSuccess.mock.calls[0][0].sellers.length).toBe(0);
+        expect(mockOnError.mock.calls.length).toBe(0);
       });
     });
 
@@ -160,25 +118,68 @@ describe('App :: SellerManagement :: Seller :: GetAllSellers', () => {
           });
       });
       context('when there is no query', () => {
-        test('should return array of undeleted sellers', async () => {
-          expect.assertions(1);
+        test('should return array of sellers', async () => {
+          expect.assertions(4);
+          const mockOnSuccess = jest.fn();
+          const mockOnError = jest.fn();
 
-          getAllSellers.on('SUCCESS', ({ sellers, posts, seniorityTypes }) => {
-            expect(sellers).toHaveLength(6);
-          });
-
-          // getAllSellers.on('ERROR', (e) => {
-          //   console.log(e);
-          // });
+          getAllSellers.on('SUCCESS', mockOnSuccess);
+          getAllSellers.on('ERROR', mockOnError);
 
           await getAllSellers.execute();
+
+          const { sellers, posts } = mockOnSuccess.mock.calls[0][0];
+
+          expect(mockOnSuccess.mock.calls.length).toBe(1);
+          expect(sellers.length).toBe(8);
+          expect(posts.length).toBe(8);
+          expect(mockOnError.mock.calls.length).toBe(0);
         });
       });
-      context('when query contains first name', () => {});
-      context('when query contains middle name', () => {});
-      context('when query contains last name', () => {});
-      context('when query contains phone', () => {});
-      context('when query contains state', () => {});
+      context('when query contains search attribute', () => {
+        test('should return array of sellers', async () => {
+          expect.assertions(4);
+          const mockOnSuccess = jest.fn();
+          const mockOnError = jest.fn();
+          const query = {
+            search: 'middle_name2',
+          };
+
+          getAllSellers.on('SUCCESS', mockOnSuccess);
+          getAllSellers.on('ERROR', mockOnError);
+
+          await getAllSellers.execute(query);
+
+          const { sellers, posts } = mockOnSuccess.mock.calls[0][0];
+
+          expect(mockOnSuccess.mock.calls.length).toBe(1);
+          expect(sellers.length).toBe(4);
+          expect(posts.length).toBe(4);
+          expect(mockOnError.mock.calls.length).toBe(0);
+        });
+      });
+      context('when query contains state', () => {
+        test('should return array of sellers', async () => {
+          expect.assertions(4);
+          const mockOnSuccess = jest.fn();
+          const mockOnError = jest.fn();
+          const query = {
+            states: ['new', 'dismissed', 'deleted'],
+          };
+
+          getAllSellers.on('SUCCESS', mockOnSuccess);
+          getAllSellers.on('ERROR', mockOnError);
+
+          await getAllSellers.execute(query);
+
+          const { sellers, posts } = mockOnSuccess.mock.calls[0][0];
+
+          expect(mockOnSuccess.mock.calls.length).toBe(1);
+          expect(sellers.length).toBe(6);
+          expect(posts.length).toBe(6);
+          expect(mockOnError.mock.calls.length).toBe(0);
+        });
+      });
     });
   });
 });

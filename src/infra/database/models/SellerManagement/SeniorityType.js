@@ -1,5 +1,6 @@
 'use strict';
 import { Op } from 'sequelize';
+import { getSearchScope, states } from '../_lib';
 
 export default (sequelize, DataTypes) => {
   let SeniorityType = sequelize.define(
@@ -56,15 +57,8 @@ export default (sequelize, DataTypes) => {
             },
           };
         },
-        states(states) {
-          return {
-            where: {
-              state: {
-                [Op.in]: states,
-              },
-            },
-          };
-        },
+        search: getSearchScope('name'),
+        states,
         include_all: {
           include: [{ all: true }],
         },

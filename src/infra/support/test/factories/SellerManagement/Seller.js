@@ -11,7 +11,7 @@ export const Seller = (factory, { Seller }, attrs) => {
       state: 'recruited',
     }),
     {
-      afterCreate: async function(seller, attrs, { appointments } = {}) {
+      afterCreate: async function(seller, attrs, { appointmentsCount } = {}) {
         if (
           appointmentsCount === 0 &&
           attrs.appointments &&
@@ -25,7 +25,6 @@ export const Seller = (factory, { Seller }, attrs) => {
         };
 
         const appointmentFactoryArgs = ['sellerAppointment'];
-        console.log(attrs);
 
         switch (true) {
           case appointmentsCount !== undefined && appointmentsCount > 0:

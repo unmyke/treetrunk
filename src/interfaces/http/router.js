@@ -35,9 +35,9 @@ export const router = ({
     .use(containerMiddleware)
     .use('/docs', swaggerMiddleware);
 
-  apiRouter.use('/sellers', controller('Seller'));
-  apiRouter.use('/posts', controller('Post'));
-  apiRouter.use('/seniority_types', controller('SeniorityType'));
+  apiRouter.use('/seller_management', controller('SellerManagement'));
+  // apiRouter.use('/posts', controller('Post'));
+  // apiRouter.use('/seniority_types', controller('SeniorityType'));
 
   router.use('/api', apiRouter);
 

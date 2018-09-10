@@ -170,9 +170,7 @@ describe('Infra :: Repository :: Seller', () => {
       test('should return array of sellers', async () => {
         expect.assertions(3);
 
-        const sellers = await sellerRepo.find([
-          { method: ['states', ['new']] },
-        ]);
+        const sellers = await sellerRepo.find({ states: ['new'] });
 
         expect(sellers).toHaveLength(4);
         expect(sellers[0]).toBeInstanceOf(Seller);
@@ -184,9 +182,7 @@ describe('Infra :: Repository :: Seller', () => {
       test('should return array of sellers', async () => {
         expect.assertions(3);
 
-        const sellers = await sellerRepo.find([
-          { method: ['states', ['recruited']] },
-        ]);
+        const sellers = await sellerRepo.find({ states: ['recruited'] });
 
         expect(sellers).toHaveLength(5);
         expect(sellers[0]).toBeInstanceOf(Seller);
@@ -198,9 +194,7 @@ describe('Infra :: Repository :: Seller', () => {
       test('should return array of sellers', async () => {
         expect.assertions(3);
 
-        const sellers = await sellerRepo.find([
-          { method: ['states', ['dismissed']] },
-        ]);
+        const sellers = await sellerRepo.find({ states: ['dismissed'] });
 
         expect(sellers).toHaveLength(6);
         expect(sellers[0]).toBeInstanceOf(Seller);
@@ -212,9 +206,7 @@ describe('Infra :: Repository :: Seller', () => {
       test('should return array of sellers', async () => {
         expect.assertions(3);
 
-        const sellers = await sellerRepo.find([
-          { method: ['states', ['deleted']] },
-        ]);
+        const sellers = await sellerRepo.find({ states: ['deleted'] });
 
         expect(sellers).toHaveLength(3);
         expect(sellers[0]).toBeInstanceOf(Seller);
@@ -226,9 +218,7 @@ describe('Infra :: Repository :: Seller', () => {
       test('should return array of sellers', async () => {
         expect.assertions(3);
 
-        const sellers = await sellerRepo.find([
-          { method: ['states', ['new', 'recruited']] },
-        ]);
+        const sellers = await sellerRepo.find({ states: ['new', 'recruited'] });
 
         expect(sellers).toHaveLength(9);
         expect(sellers[0]).toBeInstanceOf(Seller);

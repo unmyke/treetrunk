@@ -6,6 +6,7 @@ module.exports = {
   seeds: [
     {
       name: 'dismissPostId',
+      SubdomainName: 'SellerManagement',
       ModelName: 'Post',
       values: { name: 'уволен(а)' },
       callback: define,

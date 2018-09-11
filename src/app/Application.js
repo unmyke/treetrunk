@@ -33,6 +33,9 @@ export class Application {
       })
       .on(INITIALIZE_ERROR, (error) => {
         console.log('Can not initialize');
+      })
+      .on(ERROR, (error) => {
+        console.log(error);
       });
 
     this.initializeApplication.execute({ config: this.appConfig });

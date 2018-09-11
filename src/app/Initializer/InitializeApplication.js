@@ -6,7 +6,10 @@ export class InitializeApplication extends Operation {
     super({ makeValidator, commonTypes });
 
     this.entities = Object.keys(subdomains).reduce((acc, SubdomainName) => {
-      return { ...acc, ...subdomains[SubdomainName].entities };
+      return {
+        ...acc,
+        [SubdomainName]: subdomains[SubdomainName],
+      };
     }, {});
 
     this.repositories = Object.keys(repositories).reduce(
@@ -22,17 +25,19 @@ export class InitializeApplication extends Operation {
 
     try {
       config.seeds.forEach(async (seed) => {
-        const { name, ModelName, values, callback } = seed;
+        const { SubdomainName, ModelName, values } = seed;
         const {
           repositories: { [ModelName]: repo },
-          entities: { [ModelName]: Entity },
+          entities: {
+            [SubdomainName]: { [ModelName]: Entity },
+          },
         } = this;
 
         let model;
 
         model = await repo.getOne({ where: values });
 
-        if (model === undefined) {
+        if (model === null) {
           const newModel = new Entity(values);
           model = await repo.add(newModel);
         }

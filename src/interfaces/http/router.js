@@ -35,7 +35,8 @@ export const router = ({
     .use(containerMiddleware)
     .use('/docs', swaggerMiddleware);
 
-  router.use('/api', controller());
+  controller(apiRouter);
+  router.use('/api', apiRouter);
 
   router.use(errorHandler);
 

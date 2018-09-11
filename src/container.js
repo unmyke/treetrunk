@@ -84,61 +84,24 @@ bottle.factory(
   ({ makeValidator, subdomains, commonTypes, errors, repositories }) => {
     return getSubdomainsContainer(
       services,
-      (EntityOperations, SubdomainName, EntityName) => {
+      (EntityOperations, SubdomainName) => {
         return Object.keys(EntityOperations).reduce((acc, operationName) => {
           return {
             ...acc,
             [lowerFirst(operationName)]: () =>
               new EntityOperations[operationName]({
+                entities: subdomains[SubdomainName],
+                commonTypes,
+                repositories: repositories[SubdomainName],
                 validate: makeValidator(
                   EntityOperations[operationName].constraints
                 ),
-                commonTypes,
                 errors,
-                repositories: repositories[SubdomainName],
-                entities: subdomains[SubdomainName],
               }),
           };
         }, {});
       }
     );
-
-    // const subdomainsServices = Object.keys(services).reduce(
-    //   (acc, SubdomainName) => {
-    //     const subdomainRepositories = repositories[SubdomainName];
-    //     const entities = subdomains[SubdomainName];
-    //     const subdomainServices = Object.keys(services[SubdomainName]).reduce(
-    //       (acc, EntityName) => {
-    //         const Operations = services[SubdomainName][EntityName];
-
-    //         const operations = Object.keys(Operations).reduce(
-    //           (acc, operationName) => {
-    //             return {
-    //               ...acc,
-    //               [lowerFirst(operationName)]: () =>
-    //                 new Operations[operationName]({
-    //                   validate: makeValidator(
-    //                     Operations[operationName].constraints
-    //                   ),
-    //                   commonTypes,
-    //                   errors,
-    //                   repositories: subdomainRepositories,
-    //                   entities,
-    //                   domainServices,
-    //                 }),
-    //             };
-    //           },
-    //           {}
-    //         );
-    //         return { ...acc, [EntityName]: operations };
-    //       },
-    //       {}
-    //     );
-    //     return { ...acc, [SubdomainName]: subdomainServices };
-    //   },
-    //   {}
-    // );
-    // return subdomainsServices;
   }
 );
 

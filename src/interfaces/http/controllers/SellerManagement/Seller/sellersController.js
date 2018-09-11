@@ -1,51 +1,51 @@
 import { Router } from 'express';
-import { inject } from '../../utils/bottle-express';
+import { injectOperation, injec } from '../../../utils/bottle-express';
 import Status from 'http-status';
 
 const SellersController = {
   get router() {
     const router = Router();
 
-    router.use(inject('serializers.seller'));
+    // router.use(injectSerializer('serializers.seller'));
 
     router.get(
       '/',
-      inject('SellerManagement', 'Seller', 'getAllSellers'),
+      injectOperation('SellerManagement', 'Seller', 'getAllSellers'),
       this.index
     );
     router.get(
       '/:sellerId',
-      inject('SellerManagement', 'Seller', 'getSeller'),
+      injectOperation('SellerManagement', 'Seller', 'getSeller'),
       this.show
     );
     router.post(
       '/',
-      inject('SellerManagement', 'Seller', 'createSeller'),
+      injectOperation('SellerManagement', 'Seller', 'createSeller'),
       this.create
     );
     router.put(
       '/:sellerId',
-      inject('SellerManagement', 'Seller', 'updateSeller'),
+      injectOperation('SellerManagement', 'Seller', 'updateSeller'),
       this.update
     );
     router.delete(
       '/:sellerId',
-      inject('SellerManagement', 'Seller', 'deleteSeller'),
+      injectOperation('SellerManagement', 'Seller', 'deleteSeller'),
       this.delete
     );
     router.post(
       '/:sellerId/appointments',
-      inject('SellerManagement', 'Seller', 'createSellerAppointment'),
+      injectOperation('SellerManagement', 'Seller', 'createSellerAppointment'),
       this.createAppointment
     );
     router.put(
       '/:sellerId/appointments',
-      inject('SellerManagement', 'Seller', 'updateSellerAppointment'),
+      injectOperation('SellerManagement', 'Seller', 'updateSellerAppointment'),
       this.updateAppointment
     );
     router.delete(
       '/:sellerId/appointments',
-      inject('SellerManagement', 'Seller', 'deleteSellerAppointment'),
+      injectOperation('SellerManagement', 'Seller', 'deleteSellerAppointment'),
       this.deleteAppointment
     );
 
@@ -57,8 +57,8 @@ const SellersController = {
     const { SUCCESS, ERROR } = getAllSellers.outputs;
 
     getAllSellers
-      .on(SUCCESS, (sellers) => {
-        res.status(Status.OK).json(sellers);
+      .on(SUCCESS, ({ sellers, posts, seniorityTypes }) => {
+        res.status(Status.OK).json({ sellers, posts, seniorityTypes });
       })
       .on(ERROR, next);
 

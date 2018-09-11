@@ -12,6 +12,14 @@ const repoErrorMapper = {
 const repoOperationRunner = getAsyncOperationRunner(repoErrorMapper);
 
 export class SequelizeRepository extends BaseRepository {
+  async getAll() {
+    return this._find(this.constructor.scopeWhereAllOptions);
+  }
+
+  async getOne(query) {
+    return this.Model.findOne(query);
+  }
+
   async count() {
     return this.Model.count();
   }
@@ -25,10 +33,6 @@ export class SequelizeRepository extends BaseRepository {
         }
         return this.mapper.toEntity(model);
       });
-  }
-
-  async getAll() {
-    return this._find(this.constructor.scopeWhereAllOptions);
   }
 
   async _find(scopeNames = []) {

@@ -18,7 +18,6 @@ export class InitializeApplication extends Operation {
   }
 
   async execute({ config }) {
-    const { repositories, entities } = this;
     const { SUCCESS, ERROR, INITIALIZE_ERROR } = this.outputs;
 
     try {

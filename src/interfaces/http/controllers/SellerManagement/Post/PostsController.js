@@ -1,51 +1,54 @@
 import { Router } from 'express';
-import { inject } from '../../utils/bottle-express';
+import {
+  injectOperation,
+  injectSerializer,
+} from '../../../utils/bottle-express';
 import Status from 'http-status';
 
 const PostsController = {
   get router() {
     const router = Router();
 
-    // router.use(inject('serializers.post'));
+    // router.use(injectSerializer('serializers.post'));
 
     router.get(
       '/',
-      inject('SellerManagement', 'Post', 'getAllPosts'),
+      injectOperation('SellerManagement', 'Post', 'getAllPosts'),
       this.index
     );
     router.get(
       '/:postId',
-      inject('SellerManagement', 'Post', 'getPost'),
+      injectOperation('SellerManagement', 'Post', 'getPost'),
       this.show
     );
     router.post(
       '/',
-      inject('SellerManagement', 'Post', 'createPost'),
+      injectOperation('SellerManagement', 'Post', 'createPost'),
       this.create
     );
     router.put(
       '/:postId',
-      inject('SellerManagement', 'Post', 'updatePost'),
+      injectOperation('SellerManagement', 'Post', 'updatePost'),
       this.update
     );
     router.delete(
       '/:postId',
-      inject('SellerManagement', 'Post', 'deletePost'),
+      injectOperation('SellerManagement', 'Post', 'deletePost'),
       this.delete
     );
     router.post(
       '/:postId/piece_rates',
-      inject('SellerManagement', 'Post', 'createPostPieceRate'),
+      injectOperation('SellerManagement', 'Post', 'createPostPieceRate'),
       this.createPieceRate
     );
     // router.put(
     //   '/:postId/piece_rates',
-    //   inject('SellerManagement', 'Post', 'updatePostPieceRate'),
+    //   injectOperation('SellerManagement', 'Post', 'updatePostPieceRate'),
     //   this.updatePieceRate
     // );
     router.delete(
       '/:postId/piece_rates',
-      inject('SellerManagement', 'Post', 'deletePostPieceRate'),
+      injectOperation('SellerManagement', 'Post', 'deletePostPieceRate'),
       this.deletePieceRate
     );
 

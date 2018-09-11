@@ -1,51 +1,82 @@
 import { Router } from 'express';
-import { inject } from '../../utils/bottle-express';
+import {
+  injectOperation,
+  injectSerializer,
+} from '../../../utils/bottle-express';
 import Status from 'http-status';
 
 const SeniorityTypesController = {
   get router() {
     const router = Router();
 
-    // router.use(inject('serializers.seniorityType'));
+    // router.use(injectSerializer('serializers.seniorityType'));
 
     router.get(
       '/',
-      inject('SellerManagement', 'SeniorityType', 'getAllSeniorityTypes'),
+      injectOperation(
+        'SellerManagement',
+        'SeniorityType',
+        'getAllSeniorityTypes'
+      ),
       this.index
     );
     router.get(
       '/:seniorityTypeId',
-      inject('SellerManagement', 'SeniorityType', 'getSeniorityType'),
+      injectOperation('SellerManagement', 'SeniorityType', 'getSeniorityType'),
       this.show
     );
     router.post(
       '/',
-      inject('SellerManagement', 'SeniorityType', 'createSeniorityType'),
+      injectOperation(
+        'SellerManagement',
+        'SeniorityType',
+        'createSeniorityType'
+      ),
       this.create
     );
     router.put(
       '/:seniorityTypeId',
-      inject('SellerManagement', 'SeniorityType', 'updateSeniorityType'),
+      injectOperation(
+        'SellerManagement',
+        'SeniorityType',
+        'updateSeniorityType'
+      ),
       this.update
     );
     router.delete(
       '/:seniorityTypeId',
-      inject('SellerManagement', 'SeniorityType', 'deleteSeniorityType'),
+      injectOperation(
+        'SellerManagement',
+        'SeniorityType',
+        'deleteSeniorityType'
+      ),
       this.delete
     );
     router.post(
       '/:seniorityTypeId/awards',
-      inject('SellerManagement', 'SeniorityType', 'createSeniorityTypeAward'),
+      injectOperation(
+        'SellerManagement',
+        'SeniorityType',
+        'createSeniorityTypeAward'
+      ),
       this.createAward
     );
     router.put(
       '/:seniorityTypeId/awards',
-      inject('SellerManagement', 'SeniorityType', 'updateSeniorityTypeAward'),
+      injectOperation(
+        'SellerManagement',
+        'SeniorityType',
+        'updateSeniorityTypeAward'
+      ),
       this.updateAward
     );
     router.delete(
       '/:seniorityTypeId/awards',
-      inject('SellerManagement', 'SeniorityType', 'deleteSeniorityTypeAward'),
+      injectOperation(
+        'SellerManagement',
+        'SeniorityType',
+        'deleteSeniorityTypeAward'
+      ),
       this.deleteAward
     );
 

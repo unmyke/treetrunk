@@ -1,10 +1,21 @@
 import { Router } from 'express';
+import { snakeCase } from 'lodash';
+
 import * as Controllers from '../controllers';
 
-export function createControllerRoutes(controller) {
-  const router = Router();
-  router.use(controller);
-  const Controller = Controllers[controller];
+export function createControllerRoutes() {
+  const rootRouter = Router();
+  Object.keys(Controllers).forEach((subdomainName) => {
+    const subdomainRouter = Router();
 
-  return Controller.router;
+    Object.keys(Controllers[subdomainName]).forEach((entityName) => {
+      const entityRouter = Controllers[subdomainName][entityName].router;
+      subdomainRouter.use(snakeCase(entityName.toLowerCase()), entityRouter);
+    });
+
+    rootRouter.use(snakeCase(subdomainName.toLowerCase()), subdomainRouter);
+    return rootRouter;
+  });
+
+  return rootRouter;
 }

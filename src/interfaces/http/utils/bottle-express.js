@@ -8,7 +8,7 @@ export const injectSerializer = (serializerName) => (req, res, next) => {
   next();
 };
 
-export const inject = (SubdomainName, EntityName, serviceName) => (
+export const injectOperation = (SubdomainName, EntityName, serviceName) => (
   req,
   res,
   next

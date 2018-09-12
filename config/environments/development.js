@@ -3,6 +3,7 @@ const logPath = path.join(__dirname, '../../logs/development.log');
 
 export const envConfig = {
   web: {
+    domain: 'localhost',
     port: 3000,
   },
   logging: {

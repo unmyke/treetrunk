@@ -11,14 +11,14 @@ export function createControllerRoutes(rootRouter) {
     Object.keys(Controllers[subdomainName]).forEach((entityName) => {
       const entityRouter = Controllers[subdomainName][entityName].router;
       subdomainRouter.use(
-        snakeCase(lowerFirst(pluralize(entityName))),
+        `/${snakeCase(lowerFirst(pluralize(entityName)))}`,
         entityRouter
       );
-      console.log(snakeCase(lowerFirst(pluralize(entityName))));
+      console.log(`/${snakeCase(lowerFirst(pluralize(entityName)))}`);
     });
 
-    rootRouter.use(snakeCase(lowerFirst(subdomainName)), subdomainRouter);
-    console.log(snakeCase(lowerFirst(subdomainName)));
+    rootRouter.use(`/${snakeCase(lowerFirst(subdomainName))}`, subdomainRouter);
+    console.log(`/${snakeCase(lowerFirst(subdomainName))}`);
     return rootRouter;
   });
 

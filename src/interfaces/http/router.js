@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import methodOverride from 'method-override';
 import { createControllerRoutes as controller } from './utils/createControllerRoutes';
+import { getRoutes } from './utils/getRoutes';
 
 export const router = ({
   config,
@@ -12,6 +13,7 @@ export const router = ({
   loggerMiddleware,
   errorHandler,
   swaggerMiddleware,
+  logger,
 }) => {
   const router = Router();
 
@@ -40,5 +42,6 @@ export const router = ({
 
   router.use(errorHandler);
 
+  logger.info(JSON.stringify(getRoutes(router)));
   return router;
 };

@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { injectOperation, injec } from '../../../utils/bottle-express';
+import {
+  injectOperation,
+  injectSerializer,
+} from '../../../utils/bottle-express';
 import Status from 'http-status';
 
 const SellersController = {

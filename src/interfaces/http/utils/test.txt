@@ -1,0 +1,168 @@
+[
+  {
+    "links": {
+      "self": "http://localhost/sellers/1"
+    },
+    "data": {
+      "type": "sellers",
+      "id": "1",
+      "links": {
+        "self": "http://localhost/sellers/1"
+      },
+      "attributes": {
+        "id": "1",
+        "first_name": "Firstname",
+        "middle_name": "Middlename",
+        "last_name": "Lastname",
+        "phone": "00-00-00",
+        "post_id": "1",
+        "recruitDay": "2018-04-23T00:00:00.000Z",
+        "dismissDay": "2018-06-23T00:00:00.000Z",
+        "seniority": null,
+        "appointments": [
+          { "post_id": "1", "day": "2018-04-23T00:00:00.000Z" },
+          { "post_id": "2", "day": "2018-05-23T00:00:00.000Z" }
+        ]
+      },
+      "relationships": {
+        "post": {
+          "links": {
+            "related": "http://localhost/sellers/1/post"
+          }
+        }
+      }
+    }
+  },
+  {
+    "links": {
+      "self": "http://localhost/sellers"
+    },
+    "data": [
+      {
+        "type": "sellers",
+        "id": "1",
+        "attributes": {
+          "title": "JSON API paints my bikeshed!"
+        }
+      },
+      {
+        "type": "sellers",
+        "id": "2",
+        "attributes": {
+          "title": "Rails is Omakase"
+        }
+      }
+    ]
+  }
+]
+
+
+
+
+const sellers = [ Seller {
+  sellerId: SellerId { _value: '2d184c79-fd9c-4fe5-9a0f-0a63cc80cda8' },
+  _personName:
+   PersonName {
+     _firstName: 'first_name1',
+     _middleName: 'middle_name1',
+     _lastName: 'last_name1' },
+  phone: 'phone1',
+  _appointments: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Seller {
+  sellerId: SellerId { _value: '3c7f4b1b-ba6f-4e30-b91d-d75274620ec4' },
+  _personName:
+   PersonName {
+     _firstName: 'first_name3',
+     _middleName: 'middle_name4',
+     _lastName: 'last_name2' },
+  phone: 'phone4',
+  _appointments: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Seller {
+  sellerId: SellerId { _value: '49382cee-a060-4f6f-b508-e1716f23f6eb' },
+  _personName:
+   PersonName {
+     _firstName: 'first_name3',
+     _middleName: 'middle_name3',
+     _lastName: 'last_name2' },
+  phone: 'phone4',
+  _appointments: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Seller {
+  sellerId: SellerId { _value: '4d92784a-bfe9-4381-9ca5-88dc0ade0888' },
+  _personName:
+   PersonName {
+     _firstName: 'first_name3',
+     _middleName: 'middle_name2',
+     _lastName: 'last_name2' },
+  phone: 'phone4',
+  _appointments: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Seller {
+  sellerId: SellerId { _value: '670aa949-1828-4c48-b510-490650ee063c' },
+  _personName:
+   PersonName {
+     _firstName: 'first_name4',
+     _middleName: 'middle_name2',
+     _lastName: 'last_name3' },
+  phone: 'phone4',
+  _appointments: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Seller {
+  sellerId: SellerId { _value: '7837d146-a7d5-4fb3-a8b2-bf6daab24256' },
+  _personName:
+   PersonName {
+     _firstName: 'first_name1',
+     _middleName: 'middle_name2',
+     _lastName: 'last_name1' },
+  phone: 'phone2',
+  _appointments: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Seller {
+  sellerId: SellerId { _value: 'ab658272-7e19-4e0a-81d4-ee00d9a21f49' },
+  _personName:
+   PersonName {
+     _firstName: 'first_name2',
+     _middleName: 'middle_name2',
+     _lastName: 'last_name1' },
+  phone: 'phone3',
+  _appointments: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Seller {
+  sellerId: SellerId { _value: 'fb8bff17-fe51-4420-9311-f120dcd4aa10' },
+  _personName:
+   PersonName {
+     _firstName: 'first_name4',
+     _middleName: 'middle_name4',
+     _lastName: 'last_name3' },
+  phone: 'phone4',
+  _appointments: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } } ]
+
+console.log src/app/SellerManagement/Seller/GetAllSellers.unit.test.js:133
+[ Post {
+  postId: PostId { _value: '19aca052-369a-4664-8a54-9ca9ad160bf8' },
+  name: 'gaglowfawuanemimofzinnawlocohgosposotago',
+  _pieceRates: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Post {
+  postId: PostId { _value: '1dc775ba-412c-4d58-961f-c7783fc321d6' },
+  name: 'havauhizacmafdawhapudgapguicwifonustictu',
+  _pieceRates: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Post {
+  postId: PostId { _value: '2c167ca2-2858-4f43-881c-5c6a96b1c4df' },
+  name: 'tukbekibhisuzvukudgukjomoclenaclobturazp',
+  _pieceRates: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Post {
+  postId: PostId { _value: '32d0a5a8-3d8f-4358-8164-66be75bcbc05' },
+  name: 'rovotaensifbotzosiucekojidodinejrispidov',
+  _pieceRates: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Post {
+  postId: PostId { _value: '6b770edf-2a86-4c89-b977-986f706cc0ed' },
+  name: 'jofduwcilopowvituniwewanzikfikebuhpibvuv',
+  _pieceRates: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Post {
+  postId: PostId { _value: '92dedac2-b496-4633-8577-33100c862556' },
+  name: 'huhlichocehpelekumokekedefipiikikoodewav',
+  _pieceRates: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Post {
+  postId: PostId { _value: 'c06a4373-cd1d-4290-a6c3-b3ad8a97ac71' },
+  name: 'zuukfakvoidicohijloorwesacpebnevuadmanze',
+  _pieceRates: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } },
+Post {
+  postId: PostId { _value: 'f6dcee4f-a764-4cf9-875a-82b0285e4276' },
+  name: 'jojkabwerrizobzojwiwowvewavvasareuvduccu',
+  _pieceRates: Diary { _store: [Store], _archive: [Store], _fsm: [JSM] } } ]
+  

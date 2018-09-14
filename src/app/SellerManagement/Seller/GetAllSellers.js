@@ -16,7 +16,15 @@ const getMonthsRangeQuery = (sellers) => {
 };
 
 const getPostIdsQuery = (sellers) => ({
-  postIds: sellers.map(({ postId }) => postId),
+  postIds: sellers.reduce((allPostIds, { postIds }) => {
+    const uniquePostIds = postIds.filter(
+      (postId) =>
+        allPostIds.find((currentPostId) => currentPostId.equals(postId)) ===
+        undefined
+    );
+
+    return [...allPostIds, ...uniquePostIds];
+  }, []),
 });
 
 export class GetAllSellers extends Operation {

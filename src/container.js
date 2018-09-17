@@ -24,7 +24,10 @@ import { errorHandler } from './interfaces/http/errors/errorHandler';
 import { devErrorHandler } from './interfaces/http/errors/devErrorHandler';
 import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
-// import * as serializers from './interfaces/http/serializers';
+import {
+  commonTypes as commonTypesSerializers,
+  subdomains as subdomainsSerializers,
+} from './interfaces/http/serializers';
 
 import { db } from './infra/database/models';
 const { database, models } = db;
@@ -75,6 +78,16 @@ bottle.factory('repositories', ({ mappers }) => {
         models,
         mapper: mappers.subdomains[SubdomainName][EntityName],
         mappers,
+      })
+  );
+});
+
+bottle.factory('serializers', () => {
+  return getSubdomainsContainer(
+    subdomainsSerializers,
+    (Serializer) =>
+      new Serializer({
+        commonTypes: commonTypesSerializers,
       })
   );
 });

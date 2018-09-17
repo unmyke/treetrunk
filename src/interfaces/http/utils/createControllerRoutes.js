@@ -14,11 +14,9 @@ export function createControllerRoutes(rootRouter) {
         `/${snakeCase(lowerFirst(pluralize(entityName)))}`,
         entityRouter
       );
-      console.log(`/${snakeCase(lowerFirst(pluralize(entityName)))}`);
     });
 
     rootRouter.use(`/${snakeCase(lowerFirst(subdomainName))}`, subdomainRouter);
-    console.log(`/${snakeCase(lowerFirst(subdomainName))}`);
     return rootRouter;
   });
 

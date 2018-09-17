@@ -5,6 +5,7 @@ import { BaseId } from './BaseId';
 import { BaseService } from './BaseService';
 import { BaseAdapter } from './BaseAdapter';
 import { BaseRepository } from './BaseRepository';
+import { BaseSerializer } from './BaseSerializer';
 
 export {
   BaseClass,
@@ -14,4 +15,5 @@ export {
   BaseService,
   BaseAdapter,
   BaseRepository,
+  BaseSerializer,
 };

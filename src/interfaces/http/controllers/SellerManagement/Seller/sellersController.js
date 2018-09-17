@@ -9,7 +9,7 @@ const SellersController = {
   get router() {
     const router = Router();
 
-    // router.use(injectSerializer('serializers.seller'));
+    router.use(injectSerializer('SellerManagement', 'Seller'));
 
     router.get(
       '/',

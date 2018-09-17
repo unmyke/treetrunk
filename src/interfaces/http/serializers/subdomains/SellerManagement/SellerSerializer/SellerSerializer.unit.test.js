@@ -1,4 +1,5 @@
 import { subMonths, startOfDay } from 'date-fns';
+import { Serializer as JSONAPISerializer } from 'jsonapi-serializer';
 
 import * as commonTypes from '../../../commonTypes';
 import { SellerSerializer as Serializer } from './SellerSerializer';
@@ -180,3 +181,23 @@ describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
     });
   });
 });
+const sellerJSONAPISerializer = new JSONAPISerializer('sellers', {
+  topLevelLinks: ['https://treetrunk.krona03.ru/api/seller_management/sellers'],
+  attributes: [
+    'id',
+    'first_name',
+    'middle_name',
+    'last_name',
+    'phone',
+    'state',
+    'post',
+    'recruit_day',
+    'dismiss_day',
+    'seniority',
+    'appointments',
+  ],
+});
+// console.log(newSerializedSeller);
+// console.log(recruitedSerializedSeller1);
+console.log(sellerJSONAPISerializer.serialize(recruitedSerializedSeller2));
+// console.log(dismissSerializedSeller);

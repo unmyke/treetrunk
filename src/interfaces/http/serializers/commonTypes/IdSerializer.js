@@ -1,3 +1,3 @@
-export const BaseIdSerializer = {
+export const IdSerializer = {
   serialize: ({ value: id } = {}) => id,
 };

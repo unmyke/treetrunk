@@ -54,20 +54,23 @@ const commonSerializedSeniorityType = {
 const newSerializedSeniorityType = {
   ...commonSerializedSeniorityType,
   state: seniorityTypeRestoreProps1.state,
-  award: undefined,
+  award: null,
   awards: [],
 };
 const recruitedSerializedSeniorityType1 = {
   ...commonSerializedSeniorityType,
   state: seniorityTypeRestoreProps2.state,
   award: value1,
-  awards: [{ value: value1, day: date1 }],
+  awards: [{ value: value1, day: date1.toString() }],
 };
 const recruitedSerializedSeniorityType2 = {
   ...commonSerializedSeniorityType,
   state: seniorityTypeRestoreProps3.state,
   award: value2,
-  awards: [{ value: value1, day: date1 }, { value: value2, day: date2 }],
+  awards: [
+    { value: value1, day: date1.toString() },
+    { value: value2, day: date2.toString() },
+  ],
 };
 const serializer = new Serializer({ commonTypes });
 

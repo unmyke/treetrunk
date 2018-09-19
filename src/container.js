@@ -85,10 +85,7 @@ bottle.factory('repositories', ({ mappers }) => {
 bottle.factory('serializers', () => {
   return getSubdomainsContainer(
     subdomainsSerializers,
-    (Serializer) =>
-      new Serializer({
-        commonTypes: commonTypesSerializers,
-      })
+    (Serializer) => new Serializer()
   );
 });
 

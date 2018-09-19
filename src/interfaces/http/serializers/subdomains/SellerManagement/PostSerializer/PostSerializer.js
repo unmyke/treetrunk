@@ -1,25 +1,29 @@
 // import { Serializer } from 'jsonapi-serializer';
+import { mapperTypes } from '../../../_lib';
 import { BaseSerializer } from 'src/domain/_lib';
+import { Id as IdSerializer, Day as daySerializer } from '../../../commonTypes';
+
+const { IDENTITY, ARRAY, CALLBACK } = mapperTypes;
 
 export class PostSerializer extends BaseSerializer {
-  serialize(post) {
-    const {
-      PostId: { serialize: serializePostId },
-      Day: { serialize: serializeDay },
-    } = this.commonTypes;
-    const { postId, name, pieceRate, state } = post;
-
-    const piece_rates = post.pieceRates.map(({ value, day }) => ({
-      value,
-      day: serializeDay(day),
-    }));
-
-    return {
-      id: serializePostId(postId),
-      name,
-      piece_rate: pieceRate,
-      state,
-      piece_rates,
-    };
-  }
+  static mapper = {
+    postId: {
+      type: CALLBACK,
+      propName: 'id',
+      serialize: IdSerializer.serialize,
+    },
+    name: { type: IDENTITY },
+    state: { type: IDENTITY },
+    pieceRate: { type: IDENTITY },
+    pieceRates: {
+      type: ARRAY,
+      serialize: {
+        value: { type: IDENTITY },
+        day: {
+          type: CALLBACK,
+          serialize: daySerializer.serialize,
+        },
+      },
+    },
+  };
 }

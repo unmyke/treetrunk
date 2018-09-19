@@ -1,7 +1,6 @@
 import { subMonths, startOfDay } from 'date-fns';
 import { Serializer as JSONAPISerializer } from 'jsonapi-serializer';
 
-import * as commonTypes from '../../../commonTypes';
 import { SellerSerializer as Serializer } from './SellerSerializer';
 import { Seller } from 'src/domain/subdomains/SellerManagement';
 import { SellerId, Day, PostId } from 'src/domain/commonTypes';
@@ -86,10 +85,10 @@ const commonSerializedSeller = {
 const newSerializedSeller = {
   ...commonSerializedSeller,
   state: newSellerRestoreProps.state,
-  post: undefined,
-  recruit_day: undefined,
-  dismiss_day: undefined,
-  seniority: undefined,
+  post: null,
+  recruit_day: null,
+  dismiss_day: null,
+  seniority: null,
   appointments: [],
 };
 const recruitedSerializedSeller1 = {
@@ -97,7 +96,7 @@ const recruitedSerializedSeller1 = {
   state: recruitedSellerRestoreProps1.state,
   post: postId2.value,
   recruit_day: date1.toString(),
-  dismiss_day: undefined,
+  dismiss_day: null,
   seniority: 4,
   appointments: [
     { post: postId1.value, day: date1.toString() },
@@ -107,10 +106,10 @@ const recruitedSerializedSeller1 = {
 const dismissSerializedSeller = {
   ...commonSerializedSeller,
   state: dismissSellerRestoreProps.state,
-  post: undefined,
-  recruit_day: undefined,
+  post: null,
+  recruit_day: null,
   dismiss_day: dismissDate.toString(),
-  seniority: undefined,
+  seniority: null,
   appointments: [],
 };
 const recruitedSerializedSeller2 = {
@@ -118,11 +117,11 @@ const recruitedSerializedSeller2 = {
   state: recruitedSellerRestoreProps2.state,
   post: postId3.value,
   recruit_day: date3.toString(),
-  dismiss_day: undefined,
+  dismiss_day: null,
   seniority: 1,
   appointments: [{ post: postId3.value, day: date3.toString() }],
 };
-const serializer = new Serializer({ commonTypes });
+const serializer = new Serializer();
 
 describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
   let seller, sellerRestoreProps, serializedSeller;
@@ -181,6 +180,7 @@ describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
     });
   });
 });
+
 const sellerJSONAPISerializer = new JSONAPISerializer('sellers', {
   // topLevelLinks: ['https://treetrunk.krona03.ru/api/seller_management/sellers'],
   attributes: Object.keys(recruitedSerializedSeller2),
@@ -198,19 +198,3 @@ console.log(
     ])
   )
 );
-
-const mapper = {
-  sellerId: 'id',
-  firstName: 'first_name',
-  middleName: 'middle_name',
-  lastName: 'last_name',
-  phone: 'phone',
-  state: 'state',
-  postId: 'post',
-  recruitDay: 'recruit_day',
-  dismissDay: 'dismiss_day',
-  seniority: 'seniority',
-  appointments: [{ postId: 'post', day: 'day' }],
-};
-
-// console.log(dismissSerializedSeller);

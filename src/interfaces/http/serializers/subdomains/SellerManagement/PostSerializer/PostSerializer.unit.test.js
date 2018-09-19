@@ -54,20 +54,23 @@ const commonSerializedPost = {
 const newSerializedPost = {
   ...commonSerializedPost,
   state: postRestoreProps1.state,
-  piece_rate: undefined,
+  piece_rate: null,
   piece_rates: [],
 };
 const recruitedSerializedPost1 = {
   ...commonSerializedPost,
   state: postRestoreProps2.state,
   piece_rate: value1,
-  piece_rates: [{ value: value1, day: date1 }],
+  piece_rates: [{ value: value1, day: date1.toString() }],
 };
 const recruitedSerializedPost2 = {
   ...commonSerializedPost,
   state: postRestoreProps3.state,
   piece_rate: value2,
-  piece_rates: [{ value: value1, day: date1 }, { value: value2, day: date2 }],
+  piece_rates: [
+    { value: value1, day: date1.toString() },
+    { value: value2, day: date2.toString() },
+  ],
 };
 const serializer = new Serializer({ commonTypes });
 

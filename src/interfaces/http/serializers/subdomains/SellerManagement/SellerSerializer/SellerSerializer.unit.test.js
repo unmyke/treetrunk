@@ -96,12 +96,12 @@ const recruitedSerializedSeller1 = {
   ...commonSerializedSeller,
   state: recruitedSellerRestoreProps1.state,
   post: postId2.value,
-  recruit_day: date1,
+  recruit_day: date1.toString(),
   dismiss_day: undefined,
   seniority: 4,
   appointments: [
-    { post: postId1.value, day: day1.value },
-    { post: postId2.value, day: day2.value },
+    { post: postId1.value, day: date1.toString() },
+    { post: postId2.value, day: date2.toString() },
   ],
 };
 const dismissSerializedSeller = {
@@ -109,7 +109,7 @@ const dismissSerializedSeller = {
   state: dismissSellerRestoreProps.state,
   post: undefined,
   recruit_day: undefined,
-  dismiss_day: dismissDate,
+  dismiss_day: dismissDate.toString(),
   seniority: undefined,
   appointments: [],
 };
@@ -117,10 +117,10 @@ const recruitedSerializedSeller2 = {
   ...commonSerializedSeller,
   state: recruitedSellerRestoreProps2.state,
   post: postId3.value,
-  recruit_day: date3,
+  recruit_day: date3.toString(),
   dismiss_day: undefined,
   seniority: 1,
-  appointments: [{ post: postId3.value, day: day3.value }],
+  appointments: [{ post: postId3.value, day: date3.toString() }],
 };
 const serializer = new Serializer({ commonTypes });
 
@@ -182,22 +182,35 @@ describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
   });
 });
 const sellerJSONAPISerializer = new JSONAPISerializer('sellers', {
-  topLevelLinks: ['https://treetrunk.krona03.ru/api/seller_management/sellers'],
-  attributes: [
-    'id',
-    'first_name',
-    'middle_name',
-    'last_name',
-    'phone',
-    'state',
-    'post',
-    'recruit_day',
-    'dismiss_day',
-    'seniority',
-    'appointments',
-  ],
+  // topLevelLinks: ['https://treetrunk.krona03.ru/api/seller_management/sellers'],
+  attributes: Object.keys(recruitedSerializedSeller2),
+  nullIfMissing: true,
 });
 // console.log(newSerializedSeller);
 // console.log(recruitedSerializedSeller1);
-console.log(sellerJSONAPISerializer.serialize(recruitedSerializedSeller2));
+console.log(
+  JSON.stringify(
+    sellerJSONAPISerializer.serialize([
+      newSerializedSeller,
+      dismissSerializedSeller,
+      recruitedSerializedSeller1,
+      recruitedSerializedSeller2,
+    ])
+  )
+);
+
+const mapper = {
+  sellerId: 'id',
+  firstName: 'first_name',
+  middleName: 'middle_name',
+  lastName: 'last_name',
+  phone: 'phone',
+  state: 'state',
+  postId: 'post',
+  recruitDay: 'recruit_day',
+  dismissDay: 'dismiss_day',
+  seniority: 'seniority',
+  appointments: [{ postId: 'post', day: 'day' }],
+};
+
 // console.log(dismissSerializedSeller);

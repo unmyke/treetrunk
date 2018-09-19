@@ -1,3 +1,3 @@
 export const DaySerializer = {
-  serialize: ({ value: day } = {}) => day,
+  serialize: (day) => day && day.value.toString(),
 };

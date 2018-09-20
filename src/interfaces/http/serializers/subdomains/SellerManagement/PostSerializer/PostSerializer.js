@@ -9,7 +9,7 @@ export class PostSerializer extends BaseSerializer {
   static mapper = {
     postId: {
       type: CALLBACK,
-      propName: 'id',
+      attrName: 'id',
       serialize: IdSerializer.serialize,
     },
     name: { type: IDENTITY },

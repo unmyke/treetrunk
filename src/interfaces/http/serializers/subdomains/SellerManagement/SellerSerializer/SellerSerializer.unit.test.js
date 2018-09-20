@@ -123,7 +123,7 @@ const recruitedSerializedSeller2 = {
 };
 const serializer = new Serializer();
 
-describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
+describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', () => {
   let seller, sellerRestoreProps, serializedSeller;
 
   beforeEach(() => {});
@@ -136,8 +136,8 @@ describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
       serializedSeller = newSerializedSeller;
     });
 
-    test('should return serialized seller', () => {
-      expect(serializer.serialize(seller)).toEqual(serializedSeller);
+    test('should return seller DTO', () => {
+      expect(serializer.toDTO(seller)).toEqual(serializedSeller);
     });
   });
 
@@ -149,8 +149,8 @@ describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
       serializedSeller = recruitedSerializedSeller1;
     });
 
-    test('should return serialized seller', () => {
-      expect(serializer.serialize(seller)).toEqual(serializedSeller);
+    test('should return seller DTO', () => {
+      expect(serializer.toDTO(seller)).toEqual(serializedSeller);
     });
   });
 
@@ -162,8 +162,8 @@ describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
       serializedSeller = dismissSerializedSeller;
     });
 
-    test('should return serialized seller', () => {
-      expect(serializer.serialize(seller)).toEqual(serializedSeller);
+    test('should return seller DTO', () => {
+      expect(serializer.toDTO(seller)).toEqual(serializedSeller);
     });
   });
 
@@ -175,8 +175,8 @@ describe('interfaces :: serializers :: SellerManagement :: Seller', () => {
       serializedSeller = recruitedSerializedSeller2;
     });
 
-    test('should return serialized seller', () => {
-      expect(serializer.serialize(seller)).toEqual(serializedSeller);
+    test('should return seller DTO', () => {
+      expect(serializer.toDTO(seller)).toEqual(serializedSeller);
     });
   });
 });

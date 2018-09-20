@@ -9,7 +9,7 @@ export class SellerSerializer extends BaseSerializer {
   static mapper = {
     sellerId: {
       type: CALLBACK,
-      propName: 'id',
+      attrName: 'id',
       serialize: IdSerializer.serialize,
     },
     firstName: { type: IDENTITY },
@@ -19,7 +19,7 @@ export class SellerSerializer extends BaseSerializer {
     state: { type: IDENTITY },
     postId: {
       type: CALLBACK,
-      propName: 'post',
+      attrName: 'post',
       serialize: IdSerializer.serialize,
     },
     recruitDay: {
@@ -36,7 +36,7 @@ export class SellerSerializer extends BaseSerializer {
       serialize: {
         postId: {
           type: CALLBACK,
-          propName: 'post',
+          attrName: 'post',
           serialize: IdSerializer.serialize,
         },
         day: {

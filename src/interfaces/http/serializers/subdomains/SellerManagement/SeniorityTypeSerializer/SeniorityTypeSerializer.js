@@ -9,7 +9,7 @@ export class SeniorityTypeSerializer extends BaseSerializer {
   static mapper = {
     seniorityTypeId: {
       type: CALLBACK,
-      propName: 'id',
+      attrName: 'id',
       serialize: IdSerializer.serialize,
     },
     name: { type: IDENTITY },

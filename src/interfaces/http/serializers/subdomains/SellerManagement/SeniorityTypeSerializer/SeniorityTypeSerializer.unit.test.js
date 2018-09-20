@@ -87,10 +87,8 @@ describe('interfaces :: serializers :: SeniorityTypeManagement :: SeniorityType'
       serializedSeniorityType = newSerializedSeniorityType;
     });
 
-    test('should return serialized seniorityType', () => {
-      expect(serializer.serialize(seniorityType)).toEqual(
-        serializedSeniorityType
-      );
+    test('should return seniorityType DTO', () => {
+      expect(serializer.toDTO(seniorityType)).toEqual(serializedSeniorityType);
     });
   });
 
@@ -102,10 +100,8 @@ describe('interfaces :: serializers :: SeniorityTypeManagement :: SeniorityType'
       serializedSeniorityType = recruitedSerializedSeniorityType1;
     });
 
-    test('should return serialized seniorityType', () => {
-      expect(serializer.serialize(seniorityType)).toEqual(
-        serializedSeniorityType
-      );
+    test('should return seniorityType DTO', () => {
+      expect(serializer.toDTO(seniorityType)).toEqual(serializedSeniorityType);
     });
   });
 
@@ -117,10 +113,8 @@ describe('interfaces :: serializers :: SeniorityTypeManagement :: SeniorityType'
       serializedSeniorityType = recruitedSerializedSeniorityType2;
     });
 
-    test('should return serialized seniorityType', () => {
-      expect(serializer.serialize(seniorityType)).toEqual(
-        serializedSeniorityType
-      );
+    test('should return seniorityType DTO', () => {
+      expect(serializer.toDTO(seniorityType)).toEqual(serializedSeniorityType);
     });
   });
 });

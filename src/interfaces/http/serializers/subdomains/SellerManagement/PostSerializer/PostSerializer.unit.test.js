@@ -87,8 +87,8 @@ describe('interfaces :: serializers :: PostManagement :: Post', () => {
       serializedPost = newSerializedPost;
     });
 
-    test('should return serialized post', () => {
-      expect(serializer.serialize(post)).toEqual(serializedPost);
+    test('should return post DTO', () => {
+      expect(serializer.toDTO(post)).toEqual(serializedPost);
     });
   });
 
@@ -100,8 +100,8 @@ describe('interfaces :: serializers :: PostManagement :: Post', () => {
       serializedPost = recruitedSerializedPost1;
     });
 
-    test('should return serialized post', () => {
-      expect(serializer.serialize(post)).toEqual(serializedPost);
+    test('should return post DTO', () => {
+      expect(serializer.toDTO(post)).toEqual(serializedPost);
     });
   });
 
@@ -113,8 +113,8 @@ describe('interfaces :: serializers :: PostManagement :: Post', () => {
       serializedPost = recruitedSerializedPost2;
     });
 
-    test('should return serialized post', () => {
-      expect(serializer.serialize(post)).toEqual(serializedPost);
+    test('should return post DTO', () => {
+      expect(serializer.toDTO(post)).toEqual(serializedPost);
     });
   });
 });

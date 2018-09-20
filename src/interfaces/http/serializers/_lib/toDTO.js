@@ -25,8 +25,8 @@ export const toDTO = (obj, mapper) => {
 
   return mapperAttrs.reduce((newObj, mapperAttrName) => {
     const newPropName =
-      mapper[mapperAttrName].propName !== undefined
-        ? mapper[mapperAttrName].propName
+      mapper[mapperAttrName].attrName !== undefined
+        ? mapper[mapperAttrName].attrName
         : snakeCase(mapperAttrName);
     return {
       ...newObj,

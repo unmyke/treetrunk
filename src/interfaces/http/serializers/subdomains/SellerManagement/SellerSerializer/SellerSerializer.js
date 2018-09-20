@@ -1,11 +1,21 @@
-// import { Serializer } from 'jsonapi-serializer';
 import { BaseSerializer } from 'src/domain/_lib';
 import { mapperTypes } from '../../../_lib';
 import { Id as IdSerializer, Day as daySerializer } from '../../../commonTypes';
+import { PostSerializer } from '../PostSerializer';
+import { SeniorityTypeSerializer } from '../SeniorityTypeSerializer';
 
 const { IDENTITY, ARRAY, CALLBACK } = mapperTypes;
 
 export class SellerSerializer extends BaseSerializer {
+  static get resourceName() {
+    return 'sellers';
+  }
+
+  static includedSerializer = {
+    post: new PostSerializer(),
+    seniorityType: new SeniorityTypeSerializer(),
+  };
+
   static mapper = {
     sellerId: {
       type: CALLBACK,

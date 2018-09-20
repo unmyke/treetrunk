@@ -2,7 +2,11 @@ import { subMonths, startOfDay } from 'date-fns';
 import { Serializer as JSONAPISerializer } from 'jsonapi-serializer';
 
 import { SellerSerializer as Serializer } from './SellerSerializer';
-import { Seller } from 'src/domain/subdomains/SellerManagement';
+import {
+  Seller,
+  Post,
+  SeniorityType,
+} from 'src/domain/subdomains/SellerManagement';
 import { SellerId, Day, PostId } from 'src/domain/commonTypes';
 import { Seller as states } from 'src/domain/states';
 
@@ -181,20 +185,32 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', (
   });
 });
 
-const sellerJSONAPISerializer = new JSONAPISerializer('sellers', {
-  // topLevelLinks: ['https://treetrunk.krona03.ru/api/seller_management/sellers'],
-  attributes: Object.keys(recruitedSerializedSeller2),
-  nullIfMissing: true,
-});
-// console.log(newSerializedSeller);
-// console.log(recruitedSerializedSeller1);
+// const sellerJSONAPISerializer = new JSONAPISerializer('sellers', {
+//   // topLevelLinks: ['https://treetrunk.krona03.ru/api/seller_management/sellers'],
+//   attributes: Object.keys(recruitedSerializedSeller2),
+//   nullIfMissing: true,
+// });
+// // console.log(newSerializedSeller);
+// // console.log(recruitedSerializedSeller1);
+// console.log(
+//   JSON.stringify(
+//     sellerJSONAPISerializer.serialize([
+//       newSerializedSeller,
+//       dismissSerializedSeller,
+//       recruitedSerializedSeller1,
+//       recruitedSerializedSeller2,
+//     ])
+//   )
+// );
+
+const posts = [0, 1, 2].map((num) => new Post({ name: `postName${num}` }));
+const seniorityTypes = [0, 1, 2].map(
+  (num) => new SeniorityType({ name: `seniorityTypeName${num}`, months: num })
+);
+
 console.log(
-  JSON.stringify(
-    sellerJSONAPISerializer.serialize([
-      newSerializedSeller,
-      dismissSerializedSeller,
-      recruitedSerializedSeller1,
-      recruitedSerializedSeller2,
-    ])
-  )
+  serializer.serialize({
+    data: Seller.restore(recruitedSellerRestoreProps2),
+    included: { post: posts, seniorityType: seniorityTypes },
+  })
 );

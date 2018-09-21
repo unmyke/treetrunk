@@ -6,6 +6,7 @@ import { Id as IdSerializer, Day as daySerializer } from '../../../commonTypes';
 const { IDENTITY, ARRAY, CALLBACK } = mapperTypes;
 
 export class SeniorityTypeSerializer extends BaseSerializer {
+  static resourceName = 'seniority_types';
   static mapper = {
     seniorityTypeId: {
       type: CALLBACK,

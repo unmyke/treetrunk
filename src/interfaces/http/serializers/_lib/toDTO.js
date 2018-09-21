@@ -28,6 +28,9 @@ export const toDTO = (obj, mapper) => {
       mapper[mapperAttrName].attrName !== undefined
         ? mapper[mapperAttrName].attrName
         : snakeCase(mapperAttrName);
+    // console.log(mapperAttrName);
+    // console.log(obj[mapperAttrName]);
+    // console.log(mapper[mapperAttrName]);
     return {
       ...newObj,
       [newPropName]: getNewValue(obj[mapperAttrName], mapper[mapperAttrName]),

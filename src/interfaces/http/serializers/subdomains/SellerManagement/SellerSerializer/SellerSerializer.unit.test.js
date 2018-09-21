@@ -1,4 +1,5 @@
 import { subMonths, startOfDay } from 'date-fns';
+import { inspect } from 'util';
 import { Serializer as JSONAPISerializer } from 'jsonapi-serializer';
 
 import { SellerSerializer as Serializer } from './SellerSerializer';
@@ -209,8 +210,19 @@ const seniorityTypes = [0, 1, 2].map(
 );
 
 console.log(
-  serializer.serialize({
-    data: Seller.restore(recruitedSellerRestoreProps2),
-    included: { post: posts, seniorityType: seniorityTypes },
-  })
+  inspect(
+    serializer.serialize({
+      data: Seller.restore(recruitedSellerRestoreProps2),
+      included: { post: posts, seniorityType: seniorityTypes },
+    }).included
+  )
+);
+
+console.log(
+  inspect(
+    serializer.serialize({
+      data: Seller.restore(recruitedSellerRestoreProps2),
+      included: { post: [posts[0]], seniorityType: [seniorityTypes[0]] },
+    }).included
+  )
 );

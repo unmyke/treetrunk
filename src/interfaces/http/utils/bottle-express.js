@@ -3,13 +3,12 @@ export const containerMiddleware = (container) => (req, res, next) => {
   next();
 };
 
-export const injectSerializer = (SubdomainName, EntityName, serializerName) => (
+export const injectSerializer = (SubdomainName, EntityName) => (
   req,
   res,
   next
 ) => {
-  req[serializerName] =
-    req.container.serializers[SubdomainName][EntityName][serializerName];
+  req.serializer = req.container.serializers[SubdomainName][EntityName];
   next();
 };
 

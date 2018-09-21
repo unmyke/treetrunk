@@ -17,20 +17,26 @@ export class BaseSerializer {
     return toDTO(entity, this.constructor.mapper);
   }
 
-  serialize({ data, included }) {
+  serialize({ data, included = {} }) {
     const primaryResourceDto = Array.isArray(data)
-      ? data.map(this.toDTO)
+      ? data.map((item) => this.toDTO(item))
       : this.toDTO(data);
     const primaryResource = this.serializer.serialize(primaryResourceDto);
 
-    const includedResources = Object.keys(included).map(
-      (includedResourceName) => {
+    const includedResources = Object.keys(included).reduce(
+      (includedResources, includedResourceName) => {
         const includedSerializer = this.constructor.includedSerializer[
           includedResourceName
         ];
-        console.log(included[includedResourceName]);
-        return includedSerializer.serialize(included[includedResourceName]);
-      }
+
+        return [
+          ...includedResources,
+          ...includedSerializer.serialize({
+            data: included[includedResourceName],
+          }).data,
+        ];
+      },
+      []
     );
 
     return { ...primaryResource, included: includedResources };

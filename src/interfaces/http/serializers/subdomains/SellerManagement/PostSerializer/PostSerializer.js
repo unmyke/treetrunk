@@ -6,6 +6,8 @@ import { Id as IdSerializer, Day as daySerializer } from '../../../commonTypes';
 const { IDENTITY, ARRAY, CALLBACK } = mapperTypes;
 
 export class PostSerializer extends BaseSerializer {
+  static resourceName = 'posts';
+
   static mapper = {
     postId: {
       type: CALLBACK,

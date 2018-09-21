@@ -61,7 +61,12 @@ const SellersController = {
 
     getAllSellers
       .on(SUCCESS, ({ sellers, posts, seniorityTypes }) => {
-        res.status(Status.OK).json({ sellers, posts, seniorityTypes });
+        res.status(Status.OK).json(
+          req.serializer.serialize({
+            data: sellers,
+            included: { posts, seniorityTypes },
+          })
+        );
       })
       .on(ERROR, next);
 

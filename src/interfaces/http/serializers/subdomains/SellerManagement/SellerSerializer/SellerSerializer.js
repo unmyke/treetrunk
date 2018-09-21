@@ -7,9 +7,7 @@ import { SeniorityTypeSerializer } from '../SeniorityTypeSerializer';
 const { IDENTITY, ARRAY, CALLBACK } = mapperTypes;
 
 export class SellerSerializer extends BaseSerializer {
-  static get resourceName() {
-    return 'sellers';
-  }
+  static resourceName = 'sellers';
 
   static includedSerializer = {
     post: new PostSerializer(),

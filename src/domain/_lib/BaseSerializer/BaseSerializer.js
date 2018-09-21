@@ -1,4 +1,5 @@
 import { Serializer } from 'jsonapi-serializer';
+import {} from 'config/application';
 
 import {
   toDTO,
@@ -7,21 +8,23 @@ import {
 
 export class BaseSerializer {
   constructor() {
-    this.serializer = new Serializer(this.constructor.resourceName, {
+    this.JSONAPISerializer = new Serializer(this.constructor.resourceName, {
       ...getResorceAttibutes(this.constructor.mapper),
       keyForAttribute: 'snake_case',
     });
   }
 
-  toDTO(entity) {
-    return toDTO(entity, this.constructor.mapper);
+  toDTO(entity, parentEntity) {
+    return toDTO(entity, parentEntity, this.constructor.mapper);
   }
 
   serialize({ data, included = {} }) {
     const primaryResourceDto = Array.isArray(data)
-      ? data.map((item) => this.toDTO(item))
+      ? data.map((item) => this.toDTO(item, data))
       : this.toDTO(data);
-    const primaryResource = this.serializer.serialize(primaryResourceDto);
+    const primaryResource = this.JSONAPISerializer.serialize(
+      primaryResourceDto
+    );
 
     const includedResources = Object.keys(included).reduce(
       (includedResources, includedResourceName) => {

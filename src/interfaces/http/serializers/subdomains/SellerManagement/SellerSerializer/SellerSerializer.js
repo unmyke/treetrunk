@@ -10,8 +10,8 @@ export class SellerSerializer extends BaseSerializer {
   static resourceName = 'sellers';
 
   static includedSerializer = {
-    post: new PostSerializer(),
-    seniorityType: new SeniorityTypeSerializer(),
+    posts: new PostSerializer(),
+    seniorityTypes: new SeniorityTypeSerializer(),
   };
 
   static mapper = {
@@ -25,6 +25,14 @@ export class SellerSerializer extends BaseSerializer {
     lastName: { type: IDENTITY },
     phone: { type: IDENTITY },
     state: { type: IDENTITY },
+    links: {
+      type: CALLBACK,
+      serialize: (curValue, { sellerId: { value } }) => ({
+        self: `http://${this.constructor.config.domain}:${
+          this.constructor.config.port
+        }/seller_management/${this.constructor.propName}/${value}`,
+      }),
+    },
     postId: {
       type: CALLBACK,
       attrName: 'post',

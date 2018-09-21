@@ -213,16 +213,19 @@ console.log(
   inspect(
     serializer.serialize({
       data: Seller.restore(recruitedSellerRestoreProps2),
-      included: { post: posts, seniorityType: seniorityTypes },
-    }).included
+      included: { posts, seniorityTypes },
+    })
   )
 );
 
 console.log(
   inspect(
     serializer.serialize({
-      data: Seller.restore(recruitedSellerRestoreProps2),
-      included: { post: [posts[0]], seniorityType: [seniorityTypes[0]] },
-    }).included
+      data: [
+        Seller.restore(recruitedSellerRestoreProps1),
+        Seller.restore(recruitedSellerRestoreProps2),
+      ],
+      included: { posts: [posts[0]], seniorityTypes: [seniorityTypes[0]] },
+    })
   )
 );

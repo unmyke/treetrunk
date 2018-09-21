@@ -6,16 +6,16 @@ export const mapperTypes = {
   ARRAY: 'array',
 };
 
-export const toDTO = (obj, mapper) => {
-  const getNewValue = (value, { type, serialize: mapper }) => {
+export const toDTO = (obj, parentObj, mapper) => {
+  const getNewValue = (value, parentObj, { type, serialize: mapper }) => {
     switch (type) {
       case mapperTypes.CALLBACK:
-        const callbackValue = mapper(value);
+        const callbackValue = mapper(value, parentObj);
         return callbackValue !== undefined ? callbackValue : null;
       case mapperTypes.OBJECT:
-        return toDTO(value, mapper);
+        return toDTO(value, parentObj, mapper);
       case mapperTypes.ARRAY:
-        return value.map((value) => toDTO(value, mapper));
+        return value.map((value, parentObj) => toDTO(value, parentObj, mapper));
       default:
         return value != undefined ? value : null;
     }
@@ -33,7 +33,11 @@ export const toDTO = (obj, mapper) => {
     // console.log(mapper[mapperAttrName]);
     return {
       ...newObj,
-      [newPropName]: getNewValue(obj[mapperAttrName], mapper[mapperAttrName]),
+      [newPropName]: getNewValue(
+        obj[mapperAttrName],
+        obj,
+        mapper[mapperAttrName]
+      ),
     };
   }, {});
 };

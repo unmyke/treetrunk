@@ -29,8 +29,8 @@ const getPostIdsQuery = (sellers) => ({
 
 export class GetAllSellers extends Operation {
   static constraints = {
-    state: { inclusion: states },
-    first_name: {},
+    states: { inclusion: states },
+    search: {},
   };
 
   async execute(query = {}) {

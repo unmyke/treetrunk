@@ -1,5 +1,8 @@
 export const envConfig = {
-  web: {},
+  web: {
+    domain: 'test',
+    port: 'testport',
+  },
   logging: {
     appenders: {
       out: { type: 'console' },

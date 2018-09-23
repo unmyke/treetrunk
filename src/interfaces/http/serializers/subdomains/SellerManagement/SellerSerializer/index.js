@@ -1,3 +1,3 @@
-import { SellerSerializer } from './SellerSerializer';
+import { sellerSerializer } from './sellerSerializer';
 
-export { SellerSerializer };
+export { sellerSerializer };

@@ -209,23 +209,23 @@ const seniorityTypes = [0, 1, 2].map(
   (num) => new SeniorityType({ name: `seniorityTypeName${num}`, months: num })
 );
 
-console.log(
-  inspect(
-    serializer.serialize({
-      data: Seller.restore(recruitedSellerRestoreProps2),
-      included: { posts, seniorityTypes },
-    })
-  )
-);
+// console.log(
+//   inspect(
+//     serializer.serialize({
+//       data: Seller.restore(recruitedSellerRestoreProps2),
+//       included: { posts, seniorityTypes },
+//     })
+//   )
+// );
 
 console.log(
   inspect(
-    serializer.serialize({
+    serializer.toSerializer({
       data: [
         Seller.restore(recruitedSellerRestoreProps1),
         Seller.restore(recruitedSellerRestoreProps2),
       ],
       included: { posts: [posts[0]], seniorityTypes: [seniorityTypes[0]] },
-    })
+    }).data
   )
 );

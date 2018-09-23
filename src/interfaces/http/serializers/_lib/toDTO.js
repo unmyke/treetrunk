@@ -1,21 +1,35 @@
-import { snakeCase } from 'lodash';
 export const mapperTypes = {
   IDENTITY: 'identity',
   CALLBACK: 'callback',
   OBJECT: 'object',
   ARRAY: 'array',
+  INCLUDED: 'included',
 };
 
-export const toDTO = (obj, parentObj, mapper) => {
-  const getNewValue = (value, parentObj, { type, serialize: mapper }) => {
+export const toDTO = (obj, { mapper, resourceName, config }) => {
+  const getNewValue = (
+    value,
+    parentObj,
+    { type, attrName, serialize: mapper }
+  ) => {
     switch (type) {
       case mapperTypes.CALLBACK:
-        const callbackValue = mapper(value, parentObj);
+        const callbackValue = mapper(value, parentObj, {
+          resourceName,
+          config,
+        });
         return callbackValue !== undefined ? callbackValue : null;
       case mapperTypes.OBJECT:
-        return toDTO(value, parentObj, mapper);
+        return toDTO(value, parentObj, { mapper, config });
+      case mapperTypes.INCLUDED:
+        const includedEntity = included[attrName].find(
+          ({ [`${attrName}Id`]: id }) => value.equals(id)
+        );
+        return mapper.toDTO({ data: includedEntity, included });
       case mapperTypes.ARRAY:
-        return value.map((value, parentObj) => toDTO(value, parentObj, mapper));
+        return value.map((value, parentObj) =>
+          toDTO(value, parentObj, { mapper, config })
+        );
       default:
         return value != undefined ? value : null;
     }
@@ -27,10 +41,7 @@ export const toDTO = (obj, parentObj, mapper) => {
     const newPropName =
       mapper[mapperAttrName].attrName !== undefined
         ? mapper[mapperAttrName].attrName
-        : snakeCase(mapperAttrName);
-    // console.log(mapperAttrName);
-    // console.log(obj[mapperAttrName]);
-    // console.log(mapper[mapperAttrName]);
+        : mapperAttrName;
     return {
       ...newObj,
       [newPropName]: getNewValue(

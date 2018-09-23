@@ -1,65 +1,93 @@
-import { BaseSerializer } from 'src/domain/_lib';
-import { mapperTypes } from '../../../_lib';
-import { Id as IdSerializer, Day as daySerializer } from '../../../commonTypes';
-import { PostSerializer } from '../PostSerializer';
-import { SeniorityTypeSerializer } from '../SeniorityTypeSerializer';
+import { Id as idSerializer, Day as daySerializer } from '../../../commonTypes';
+import { postSerializer } from '../postSerializer';
+import { seniorityTypeSerializer } from '../seniorityTypeSerializer';
+import { SellerManagementBaseSerializer } from '../sellerManagementBaseSerializer';
 
-const { IDENTITY, ARRAY, CALLBACK } = mapperTypes;
-
-export class SellerSerializer extends BaseSerializer {
-  static resourceName = 'sellers';
-
-  static includedSerializer = {
-    posts: new PostSerializer(),
-    seniorityTypes: new SeniorityTypeSerializer(),
-  };
-
-  static mapper = {
-    sellerId: {
-      type: CALLBACK,
-      attrName: 'id',
-      serialize: IdSerializer.serialize,
-    },
-    firstName: { type: IDENTITY },
-    middleName: { type: IDENTITY },
-    lastName: { type: IDENTITY },
-    phone: { type: IDENTITY },
-    state: { type: IDENTITY },
-    links: {
-      type: CALLBACK,
-      serialize: (curValue, { sellerId: { value } }) => ({
-        self: `http://${this.constructor.config.domain}:${
-          this.constructor.config.port
-        }/seller_management/${this.constructor.propName}/${value}`,
-      }),
-    },
-    postId: {
-      type: CALLBACK,
-      attrName: 'post',
-      serialize: IdSerializer.serialize,
-    },
-    recruitDay: {
-      type: CALLBACK,
-      serialize: daySerializer.serialize,
-    },
-    dismissDay: {
-      type: CALLBACK,
-      serialize: daySerializer.serialize,
-    },
-    seniority: { type: IDENTITY },
-    appointments: {
-      type: ARRAY,
-      serialize: {
-        postId: {
-          type: CALLBACK,
-          attrName: 'post',
-          serialize: IdSerializer.serialize,
-        },
-        day: {
-          type: CALLBACK,
-          serialize: daySerializer.serialize,
-        },
+const mapper = {
+  sellerId: {
+    type: CALLBACK,
+    attrName: 'id',
+    serialize: idSerializer,
+  },
+  firstName: { type: IDENTITY },
+  middleName: { type: IDENTITY },
+  lastName: { type: IDENTITY },
+  phone: { type: IDENTITY },
+  state: { type: IDENTITY },
+  postId: {
+    type: INCLUDED,
+    attrName: 'post',
+    serialize: postSerializer,
+  },
+  recruitDay: {
+    type: CALLBACK,
+    serialize: daySerializer,
+  },
+  dismissDay: {
+    type: CALLBACK,
+    serialize: daySerializer,
+  },
+  seniority: { type: IDENTITY },
+  seniorityType: {
+    type: INCLUDED,
+    serialize: seniorityTypeSerializer,
+  },
+  appointments: {
+    type: ARRAY,
+    serialize: {
+      postId: {
+        type: INCLUDED,
+        attrName: 'post',
+        serialize: postSerializer,
+      },
+      day: {
+        type: CALLBACK,
+        serialize: daySerializer,
       },
     },
-  };
+  },
+};
+
+export class SellerSerializer extends SellerManagementBaseSerializer {
+  constructor() {
+    super({
+      resourceName: 'seller',
+      mapper,
+    });
+  }
+
+  getOptions() {
+    return {
+      attributes: [
+        'firstName',
+        'middleName',
+        'lastName',
+        'phone',
+        'state',
+        'post',
+        'recruitDay',
+        'dismissDay',
+        'seniority',
+        'appointments',
+      ],
+      post: {
+        ref: 'postId',
+        dataLinks: {
+          self: ({ postId }) => `${rootUri}/posts/${postId}`,
+        },
+      },
+      recruitDay,
+      dismissDay,
+      appointments: {
+        attributes: ['post', 'day'],
+        post: {
+          ref: 'postId',
+          dataLinks: {
+            self: ({ postId }) => `${rootUri}/posts/${postId}`,
+          },
+        },
+      },
+      transform: this.toDTO,
+    };
+  }
 }

@@ -5,42 +5,41 @@ import { SellerManagementBaseSerializer } from '../SellerManagementBaseSerialize
 
 const { IDENTITY, ARRAY, CALLBACK } = mapperTypes;
 
-export class PostSerializer extends SellerManagementBaseSerializer {
-  static mapper = {
-    postId: {
-      type: CALLBACK,
-      attrName: 'id',
-      toDTO: idSerializer.toDTO,
-    },
-    name: { type: IDENTITY },
-    state: { type: IDENTITY },
-    pieceRate: { type: IDENTITY },
-    pieceRates: {
-      type: ARRAY,
-      toDTO: {
-        value: { type: IDENTITY },
-        day: {
-          type: CALLBACK,
-          toDTO: daySerializer.toDTO,
-        },
+const attrs = {
+  postId: {
+    type: CALLBACK,
+    attrName: 'id',
+    toDTO: idSerializer.toDTO,
+  },
+  name: { type: IDENTITY },
+  state: { type: IDENTITY },
+  pieceRate: { type: IDENTITY },
+  pieceRates: {
+    type: ARRAY,
+    toDTO: {
+      value: { type: IDENTITY },
+      day: {
+        type: CALLBACK,
+        toDTO: daySerializer.toDTO,
       },
     },
-  };
+  },
+};
 
+const entityOptions = {
+  attributes: ['id', 'name', 'state', 'pieceRate', 'pieceRates'],
+  pieceRates: {
+    attributes: ['value', 'day'],
+  },
+  // transform: this.toDTO,
+};
+
+export class PostSerializer extends SellerManagementBaseSerializer {
   constructor() {
     super({
       resourceName: 'post',
-      mapper,
+      attrs,
+      entityOptions,
     });
-  }
-
-  getOptions() {
-    return {
-      attributes: ['id', 'name', 'state', 'pieceRate', 'pieceRates'],
-      pieceRates: {
-        attributes: ['value', 'day'],
-      },
-      transform: this.toDTO,
-    };
   }
 }

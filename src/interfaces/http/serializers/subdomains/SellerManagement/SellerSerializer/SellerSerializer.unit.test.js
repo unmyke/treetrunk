@@ -1,6 +1,6 @@
 import { subMonths, startOfDay } from 'date-fns';
-import { inspect } from 'util';
-import { Serializer as JSONAPISerializer } from 'jsonapi-serializer';
+// import { inspect } from 'util';
+// import { Serializer as JSONAPISerializer } from 'jsonapi-serializer';
 
 import { SellerSerializer as Serializer } from './SellerSerializer';
 import {
@@ -16,6 +16,12 @@ const date1 = subMonths(today, 4);
 const date2 = subMonths(today, 3);
 const dismissDate = subMonths(today, 2);
 const date3 = subMonths(today, 1);
+const day1 = new Day({ value: date1 });
+const day2 = new Day({ value: date2 });
+const dismissDay = new Day({
+  value: dismissDate,
+});
+const day3 = new Day({ value: date3 });
 
 const dismissPostId = new PostId();
 PostId.dismissPostId = dismissPostId;
@@ -23,12 +29,34 @@ const postId1 = new PostId();
 const postId2 = new PostId();
 const postId3 = new PostId();
 
-const day1 = new Day({ value: date1 });
-const day2 = new Day({ value: date2 });
-const dismissDay = new Day({
-  value: dismissDate,
+const post1 = Post.restore({
+  postId: postId1,
+  name: 'post1',
+  state: 'active',
+  pieceRates: [{ value: 1, day: day1 }, { value: 2, day: day2 }],
 });
-const day3 = new Day({ value: date3 });
+const post2 = Post.restore({
+  postId: postId2,
+  name: 'post2',
+  state: 'active',
+  pieceRates: [
+    { value: 1, day: day1 },
+    { value: 2, day: day2 },
+    { value: 3, day: day3 },
+  ],
+});
+
+const post3 = Post.restore({
+  postId: postId3,
+  name: 'post3',
+  state: 'active',
+  pieceRates: [],
+});
+const posts = [post1, post2, post3];
+
+const seniorityTypes = [0, 1, 2, 3, 4, 5, 6].map(
+  (num) => new SeniorityType({ name: `seniorityTypeName${num}`, months: num })
+);
 
 const appointment1 = { postId: postId1, day: day1 };
 const appointment2 = { postId: postId2, day: day2 };
@@ -128,7 +156,7 @@ const recruitedSerializedSeller2 = {
 };
 const serializer = new Serializer();
 
-describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', () => {
+describe('interfaces :: serializers :: SellerManagement :: Seller :: # serialize', () => {
   let seller, sellerRestoreProps, serializedSeller;
 
   beforeEach(() => {});
@@ -142,7 +170,12 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', (
     });
 
     test('should return seller DTO', () => {
-      expect(serializer.toDTO(seller)).toEqual(serializedSeller);
+      expect(
+        serializer.serialize({
+          data: seller,
+          included: { posts, seniorityTypes },
+        })
+      ).toEqual(serializedSeller);
     });
   });
 
@@ -155,7 +188,12 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', (
     });
 
     test('should return seller DTO', () => {
-      expect(serializer.toDTO(seller)).toEqual(serializedSeller);
+      expect(
+        serializer.serialize({
+          data: seller,
+          included: { posts, seniorityTypes },
+        })
+      ).toEqual(serializedSeller);
     });
   });
 
@@ -168,7 +206,12 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', (
     });
 
     test('should return seller DTO', () => {
-      expect(serializer.toDTO(seller)).toEqual(serializedSeller);
+      expect(
+        serializer.serialize({
+          data: seller,
+          included: { posts, seniorityTypes },
+        })
+      ).toEqual(serializedSeller);
     });
   });
 
@@ -181,7 +224,12 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', (
     });
 
     test('should return seller DTO', () => {
-      expect(serializer.toDTO(seller)).toEqual(serializedSeller);
+      expect(
+        serializer.serialize({
+          data: seller,
+          included: { posts, seniorityTypes },
+        })
+      ).toEqual(serializedSeller);
     });
   });
 });
@@ -195,7 +243,7 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', (
 // // console.log(recruitedSerializedSeller1);
 // console.log(
 //   JSON.stringify(
-//     sellerJSONAPISerializer.serialize([
+//     sellerJSONAPISerializer.serialize({ data: [}
 //       newSerializedSeller,
 //       dismissSerializedSeller,
 //       recruitedSerializedSeller1,
@@ -204,28 +252,28 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # toDTO', (
 //   )
 // );
 
-const posts = [0, 1, 2].map((num) => new Post({ name: `postName${num}` }));
-const seniorityTypes = [0, 1, 2].map(
-  (num) => new SeniorityType({ name: `seniorityTypeName${num}`, months: num })
-);
+// const posts = [0, 1, 2].map((num) => new Post({ name: `postName${num}` }));
+// const seniorityTypes = [0, 1, 2].map(
+//   (num) => new SeniorityType({ name: `seniorityTypeName${num}`, months: num })
+// );
 
 // console.log(
 //   inspect(
-//     serializer.serialize({
+//     serializer.serialize({ data: {}
 //       data: Seller.restore(recruitedSellerRestoreProps2),
 //       included: { posts, seniorityTypes },
 //     })
 //   )
 // );
 
-console.log(
-  inspect(
-    serializer.toSerializer({
-      data: [
-        Seller.restore(recruitedSellerRestoreProps1),
-        Seller.restore(recruitedSellerRestoreProps2),
-      ],
-      included: { posts: [posts[0]], seniorityTypes: [seniorityTypes[0]] },
-    }).data
-  )
-);
+// console.log(
+//   inspect(
+//     serializer.toSerializer({
+//       data: [
+//         Seller.restore(recruitedSellerRestoreProps1),
+//         Seller.restore(recruitedSellerRestoreProps2),
+//       ],
+//       included: { posts, seniorityTypes },
+//     }).data
+//   )
+// );

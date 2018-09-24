@@ -7,7 +7,7 @@ import { Id as idSerializer } from '../../commonTypes';
 import { errors } from '../../../../../domain';
 
 export class BaseSerializer {
-  constructor({ resourceName, subdomainResourceName, mapper }) {
+  constructor({ resourceName, subdomainResourceName, attrs, entityOptions }) {
     const server = { ...config.web };
     this.server = server;
 
@@ -26,16 +26,14 @@ export class BaseSerializer {
 
     this.rootUri = rootUri;
     this.entityResourceUri = entityResourceUri;
-    this.mapper = mapper;
+    this.attrs = attrs;
     this.entityOptions = entityOptions;
 
-    const entityOptions = this.getOptions();
     const JSONAPISerializerOptions = {
       ...entityOptions,
       id: idName,
       dataLinks: {
-        self: ({ [idName]: idName }) =>
-          `${entityResourceUri}/${idSerializer.serialize(idName)}`,
+        self: ({ [idName]: idName }) => `${entityResourceUri}/${idName}`,
       },
       keyForAttribute: 'snake_case',
     };
@@ -48,17 +46,20 @@ export class BaseSerializer {
     this.data = data;
     this.included = included;
 
-    const entity = this.toDTO({ data, included }, this.mapper);
+    const entity = this.toDTO({ data, included });
 
     return this.JSONAPISerializer.serialize(entity);
   }
 
-  toDTO = ({ data, included }, parentObj) => {
-    return this._toDTO({ data, included }, this.mapper);
+  toDTO = ({ data, included }) => {
+    if (Array.isArray(data)) {
+      return data.map((data) => this._toDTO({ data, included }, this.attrs));
+    }
+    return this._toDTO({ data, included }, this.attrs);
   };
 
-  _toDTO({ data, included }, { type, attrName, mapper, getter }) {
-    const getValue = (value, included, { type, attrName, mapper, getter }) => {
+  _toDTO({ data, included }, attrs) {
+    const getValue = (value, included, { type, mapper, getter }) => {
       switch (type) {
         case mapperTypes.IDENTITY:
           return value !== undefined ? value : null;
@@ -73,24 +74,30 @@ export class BaseSerializer {
           return mapper({ data: item, included });
 
         case mapperTypes.INCLUDED:
-          const entity = included[attrName].find(getter);
+          const entity = getter(data, included);
 
-          return mapper({ data: entity, included });
+          return entity !== undefined
+            ? mapper({ data: entity, included })
+            : null;
 
         default:
           throw errors.invalidMapperType();
       }
     };
-    const attrNames = Object.keys(mapper);
+
+    const attrNames = Object.keys(attrs);
 
     return attrNames.reduce((mappedObj, curAttrName) => {
+      const { type, attrName, mapper, getter } = attrs[curAttrName];
       const newAttrName = attrName || curAttrName;
+      // console.log(attrs);
       return {
         ...mappedObj,
-        [newAttrName]: getValue(data[attrName], include, {
+        [newAttrName]: getValue(data[curAttrName], included, {
           type,
           attrName,
-          mapper: mapper[attrName],
+          mapper,
+          getter,
         }),
       };
     }, {});

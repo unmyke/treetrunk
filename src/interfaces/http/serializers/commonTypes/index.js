@@ -1,4 +1,4 @@
-import { IdSerializer as Id } from './IdSerializer';
-import { DaySerializer as Day } from './DaySerializer';
+import { idSerializer as Id } from './idSerializer';
+import { daySerializer as Day } from './daySerializer';
 
 export { Id, Day };

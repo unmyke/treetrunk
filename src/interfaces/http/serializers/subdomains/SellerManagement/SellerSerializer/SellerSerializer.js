@@ -1,13 +1,16 @@
 import { Id as idSerializer, Day as daySerializer } from '../../../commonTypes';
-import { postSerializer } from '../postSerializer';
-import { seniorityTypeSerializer } from '../seniorityTypeSerializer';
-import { SellerManagementBaseSerializer } from '../sellerManagementBaseSerializer';
+import { PostSerializer } from '../PostSerializer';
+import { SeniorityTypeSerializer } from '../SeniorityTypeSerializer';
+import { SellerManagementBaseSerializer } from '../SellerManagementBaseSerializer';
+
+const postSerializer = new PostSerializer();
+const seniorityTypeSerializer = new SeniorityTypeSerializer();
 
 const mapper = {
   sellerId: {
     type: CALLBACK,
     attrName: 'id',
-    serialize: idSerializer,
+    mapper: idSerializer.toDTO,
   },
   firstName: { type: IDENTITY },
   middleName: { type: IDENTITY },
@@ -17,32 +20,41 @@ const mapper = {
   postId: {
     type: INCLUDED,
     attrName: 'post',
-    serialize: postSerializer,
+    mapper: postSerializer.toDTO,
   },
   recruitDay: {
     type: CALLBACK,
-    serialize: daySerializer,
+    mapper: daySerializer.toDTO,
   },
   dismissDay: {
     type: CALLBACK,
-    serialize: daySerializer,
+    mapper: daySerializer.toDTO,
   },
   seniority: { type: IDENTITY },
   seniorityType: {
     type: INCLUDED,
-    serialize: seniorityTypeSerializer,
+    getter: (value, { seniority }, included) => {
+      return included.seniorityType
+        .filter(({ months }) => months <= seniority)
+        .sort((a, b) => a - b)[0];
+    },
+    mapper: seniorityTypeSerializer.toDTO,
   },
   appointments: {
     type: ARRAY,
-    serialize: {
+    mapper: {
       postId: {
         type: INCLUDED,
         attrName: 'post',
-        serialize: postSerializer,
+        getter: (postId, included) =>
+          included.post.find(({ postId: curPostId }) =>
+            curPostId.equals(postId)
+          ),
+        mapper: postSerializer.toDTO,
       },
       day: {
         type: CALLBACK,
-        serialize: daySerializer,
+        mapper: daySerializer.toDTO,
       },
     },
   },
@@ -53,41 +65,44 @@ export class SellerSerializer extends SellerManagementBaseSerializer {
     super({
       resourceName: 'seller',
       mapper,
-    });
-  }
-
-  getOptions() {
-    return {
-      attributes: [
-        'firstName',
-        'middleName',
-        'lastName',
-        'phone',
-        'state',
-        'post',
-        'recruitDay',
-        'dismissDay',
-        'seniority',
-        'appointments',
-      ],
-      post: {
-        ref: 'postId',
-        dataLinks: {
-          self: ({ postId }) => `${rootUri}/posts/${postId}`,
-        },
-      },
-      recruitDay,
-      dismissDay,
-      appointments: {
-        attributes: ['post', 'day'],
+      entityOptions: {
+        attributes: [
+          'id',
+          'firstName',
+          'middleName',
+          'lastName',
+          'phone',
+          'state',
+          'post',
+          'recruitDay',
+          'dismissDay',
+          'seniority',
+          'appointments',
+        ],
         post: {
           ref: 'postId',
           dataLinks: {
-            self: ({ postId }) => `${rootUri}/posts/${postId}`,
+            self: ({ postId }) => `${this.rootUri}/posts/${postId}`,
           },
         },
+        seniorityType: {
+          ref: 'seniorityTypeId',
+          dataLinks: {
+            self: ({ seniorityTypeId }) =>
+              `${this.rootUri}/seniority_types/${seniorityTypeId}`,
+          },
+        },
+        appointments: {
+          attributes: ['post', 'day'],
+          post: {
+            ref: 'postId',
+            dataLinks: {
+              self: ({ postId }) => `${this.rootUri}/posts/${postId}`,
+            },
+          },
+        },
+        transform: this.toDTO,
       },
-      transform: this.toDTO,
-    };
+    });
   }
 }

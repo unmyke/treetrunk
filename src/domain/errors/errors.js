@@ -64,6 +64,9 @@ export const errors = {
   invalidQuery: makeError('INVALID_QUERY'),
   databaseError: makeError('DATABASE_ERROR'),
 
+  // serializer
+  invalidMapperType: makeError('INVALID_MAPPER_TYPE'),
+
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),
   // articleNotBanned: makeError('ARTICLE_NOT_BANNED'),

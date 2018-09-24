@@ -1,3 +1,3 @@
-export const DaySerializer = {
-  serialize: (day) => day && day.value.toString(),
+export const daySerializer = {
+  toDTO: ({ data: { value: day } = {} }) => day && day.value.toString(),
 };

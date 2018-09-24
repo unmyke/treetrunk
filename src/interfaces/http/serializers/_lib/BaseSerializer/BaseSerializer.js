@@ -1,8 +1,10 @@
 import pluralize from 'pluralize';
 import { Serializer } from 'jsonapi-serializer';
 import { config } from 'config';
+import { mapperTypes } from '../../_lib';
 
 import { Id as idSerializer } from '../../commonTypes';
+import { errors } from '../../../../../domain';
 
 export class BaseSerializer {
   constructor({ resourceName, subdomainResourceName, mapper }) {
@@ -25,8 +27,6 @@ export class BaseSerializer {
     this.rootUri = rootUri;
     this.entityResourceUri = entityResourceUri;
     this.mapper = mapper;
-
-    const entityOptions = this.getOptions();
     this.entityOptions = entityOptions;
 
     const entityOptions = this.getOptions();
@@ -53,7 +53,46 @@ export class BaseSerializer {
     return this.JSONAPISerializer.serialize(entity);
   }
 
-  toDTO({ data, included }) {
+  toDTO = ({ data, included }, parentObj) => {
     return this._toDTO({ data, included }, this.mapper);
+  };
+
+  _toDTO({ data, included }, { type, attrName, mapper, getter }) {
+    const getValue = (value, included, { type, attrName, mapper, getter }) => {
+      switch (type) {
+        case mapperTypes.IDENTITY:
+          return value !== undefined ? value : null;
+
+        case mapperTypes.CALLBACK:
+          return mapper(value);
+
+        case mapperTypes.ARRAY:
+          return value.map((item) => mapper({ data: item, included }));
+
+        case mapperTypes.OBJECT:
+          return mapper({ data: item, included });
+
+        case mapperTypes.INCLUDED:
+          const entity = included[attrName].find(getter);
+
+          return mapper({ data: entity, included });
+
+        default:
+          throw errors.invalidMapperType();
+      }
+    };
+    const attrNames = Object.keys(mapper);
+
+    return attrNames.reduce((mappedObj, curAttrName) => {
+      const newAttrName = attrName || curAttrName;
+      return {
+        ...mappedObj,
+        [newAttrName]: getValue(data[attrName], include, {
+          type,
+          attrName,
+          mapper: mapper[attrName],
+        }),
+      };
+    }, {});
   }
 }

@@ -1,6 +1,6 @@
 import { subMonths, startOfDay } from 'date-fns';
 import { merge } from 'lodash';
-// import { inspect } from 'util';
+import { inspect } from 'util';
 // import { Serializer as JSONAPISerializer } from 'jsonapi-serializer';
 
 import { SellerSerializer as Serializer } from './SellerSerializer';
@@ -118,6 +118,7 @@ const commonSerializedSeller = {
       self: `${rootUri}/sellers/${commonRestoreSellerProps.sellerId.value}`,
     },
     attributes: {
+      id: commonRestoreSellerProps.sellerId.value,
       first_name: commonRestoreSellerProps.firstName,
       middle_name: commonRestoreSellerProps.middleName,
       last_name: commonRestoreSellerProps.lastName,
@@ -130,29 +131,92 @@ const newSerializedSeller = merge({}, commonSerializedSeller, {
     attributes: {
       id: newSellerRestoreProps.sellerId.value,
       state: newSellerRestoreProps.state,
-      post: null,
       recruit_day: null,
       dismiss_day: null,
       seniority: null,
       appointments: [],
+    },
+    relationships: {
+      post: { data: null },
+      seniority_type: { data: null },
     },
   },
 });
 const recruitedSerializedSeller1 = merge({}, commonSerializedSeller, {
   data: {
     attributes: {
-      id: recruitedSellerRestoreProps1.sellerId.value,
       state: recruitedSellerRestoreProps1.state,
-      post: postId2.value,
       recruit_day: date1,
       dismiss_day: null,
       seniority: 4,
       appointments: [
-        { post: postId1.value, day: date1 },
-        { post: postId2.value, day: date2 },
+        {
+          // post: postId1.value,
+          day: date1,
+        },
+        {
+          // post: postId2.value,
+          day: date2,
+        },
       ],
     },
+    relationships: {
+      post: {
+        data: {
+          type: 'posts',
+          id: postId2.value,
+        },
+      },
+      seniority_type: {
+        data: {
+          type: 'seniority_types',
+          id: seniorityTypes[0].seniorityTypeId.value,
+        },
+      },
+    },
   },
+  included: [
+    {
+      type: 'seniority_types',
+      id: seniorityTypes[0].seniorityTypeId.value,
+      attributes: {
+        id: seniorityTypes[0].seniorityTypeId.value,
+        name: seniorityTypes[0].name,
+        state: seniorityTypes[0].state,
+        award: null,
+        awards: [],
+      },
+    },
+    {
+      type: 'posts',
+      id: postId2.value,
+      attributes: {
+        id: postId2.value,
+        name: post2.name,
+        state: post2.state,
+        piece_rate: post2.pieceRates[2].value,
+        piece_rates: post2.pieceRates.map(({ value, day: { value: day } }) => ({
+          value,
+          day,
+        })),
+      },
+      relationships: {},
+    },
+    {
+      type: 'posts',
+      id: postId1.value,
+      attributes: {
+        id: postId1.value,
+        name: post1.name,
+        state: post1.state,
+        piece_rate: post1.pieceRates[1].value,
+        piece_rates: post1.pieceRates.map(({ value, day: { value: day } }) => ({
+          value,
+          day,
+        })),
+      },
+    },
+  ],
 });
 const dismissSerializedSeller = merge({}, commonSerializedSeller, {
   data: {
@@ -218,12 +282,26 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # serialize
     });
 
     test('should return seller DTO', () => {
-      expect(
-        serializer.serialize({
-          data: seller,
-          included: { posts, seniorityTypes },
-        })
-      ).toEqual(serializedSeller);
+      // console.log(
+      //   inspect(
+      //     serializer.serialize({
+      //       data: seller,
+      //       included: { posts, seniorityTypes },
+      //     }),
+      //     { showHidden: false, depth: null }
+      //   )
+      // );
+      // console.log(
+      //   inspect(recruitedSerializedSeller1, { showHidden: false, depth: null })
+      // );
+      const sellerNew = serializer.serialize({
+        data: seller,
+        included: { posts, seniorityTypes },
+      });
+      // expect(sellerNew.id).toEqual(serializedSeller.id);
+      // expect(sellerNew.type).toEqual(serializedSeller.type);
+      expect(sellerNew.data).toEqual(serializedSeller.data);
+      expect(sellerNew.included).toEqual(serializedSeller.included);
     });
   });
 

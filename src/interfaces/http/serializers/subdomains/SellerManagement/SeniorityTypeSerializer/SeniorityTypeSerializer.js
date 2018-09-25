@@ -1,4 +1,3 @@
-// import { Serializer } from 'jsonapi-serializer';
 import { SellerManagementBaseSerializer } from '../SellerManagementBaseSerializer';
 import { mapperTypes } from '../../../_lib';
 import { Id as idSerializer, Day as daySerializer } from '../../../commonTypes';

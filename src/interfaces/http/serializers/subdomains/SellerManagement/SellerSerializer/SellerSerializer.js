@@ -80,11 +80,11 @@ const entityOptions = {
     'lastName',
     'phone',
     'state',
-    'post',
     'recruitDay',
     'dismissDay',
     'seniority',
     'seniorityType',
+    'post',
     'appointments',
   ],
   post: {
@@ -93,6 +93,7 @@ const entityOptions = {
   },
   seniorityType: {
     ref: 'id',
+    type: 'seniority_types',
     ...seniorityTypeSerializer.JSONAPISerializerOptions,
   },
   appointments: {

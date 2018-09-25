@@ -1,5 +1,6 @@
 import { inspect } from 'util';
 import pluralize from 'pluralize';
+import { snakeCase } from 'lodash';
 import { Serializer } from 'jsonapi-serializer';
 import { config } from 'config';
 import { errors } from 'src/domain';
@@ -37,14 +38,15 @@ export class BaseSerializer {
       },
       keyForAttribute: 'snake_case',
       nullIfMissing: true,
+      typeForAttribute: (attribute) => pluralize(snakeCase(attribute)),
     };
     this.JSONAPISerializerOptions = JSONAPISerializerOptions;
 
     const JSONAPISerializer = new Serializer(type, JSONAPISerializerOptions);
     this.JSONAPISerializer = JSONAPISerializer;
-    console.log(
-      inspect(JSONAPISerializerOptions, { showHidden: false, depth: null })
-    );
+    // console.log(
+    //   inspect(JSONAPISerializerOptions, { showHidden: false, depth: null })
+    // );
   }
 
   serialize({ data, included }) {
@@ -106,7 +108,7 @@ export class BaseSerializer {
     return attrNames.reduce((mappedObj, curAttrName) => {
       const mapper = attrs[curAttrName];
       const newAttrName = mapper.attrName || curAttrName;
-      // console.log(attrs);
+
       return {
         ...mappedObj,
         [newAttrName]: getValue(data[curAttrName], included, mapper),

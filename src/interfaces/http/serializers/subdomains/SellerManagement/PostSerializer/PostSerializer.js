@@ -9,18 +9,18 @@ const attrs = {
   postId: {
     type: CALLBACK,
     attrName: 'id',
-    toDTO: idSerializer.toDTO,
+    serializer: idSerializer,
   },
   name: { type: IDENTITY },
   state: { type: IDENTITY },
   pieceRate: { type: IDENTITY },
   pieceRates: {
     type: ARRAY,
-    toDTO: {
+    attrs: {
       value: { type: IDENTITY },
       day: {
         type: CALLBACK,
-        toDTO: daySerializer.toDTO,
+        serializer: daySerializer,
       },
     },
   },
@@ -31,7 +31,7 @@ const entityOptions = {
   pieceRates: {
     attributes: ['value', 'day'],
   },
-  // transform: this.toDTO,
+  // transform: this,
 };
 
 export class PostSerializer extends SellerManagementBaseSerializer {

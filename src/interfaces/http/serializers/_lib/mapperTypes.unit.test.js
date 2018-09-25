@@ -1,4 +1,4 @@
-import { toDTO, mapperTypes } from './toDTO';
+import { toDTO, mapperTypes } from './mapperTypes';
 
 const { IDENTITY, CALLBACK, OBJECT, ARRAY } = mapperTypes;
 

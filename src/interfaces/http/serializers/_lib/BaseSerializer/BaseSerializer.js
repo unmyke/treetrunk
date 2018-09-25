@@ -1,10 +1,11 @@
+import { inspect } from 'util';
 import pluralize from 'pluralize';
 import { Serializer } from 'jsonapi-serializer';
 import { config } from 'config';
-import { mapperTypes } from '../../_lib';
+import { errors } from 'src/domain';
+import { mapperTypes } from '../mapperTypes';
 
-import { Id as idSerializer } from '../../commonTypes';
-import { errors } from '../../../../../domain';
+const { IDENTITY, CALLBACK, OBJECT, ARRAY, INCLUDED } = mapperTypes;
 
 export class BaseSerializer {
   constructor({ resourceName, subdomainResourceName, attrs, entityOptions }) {
@@ -37,10 +38,13 @@ export class BaseSerializer {
       keyForAttribute: 'snake_case',
       nullIfMissing: true,
     };
+    this.JSONAPISerializerOptions = JSONAPISerializerOptions;
 
     const JSONAPISerializer = new Serializer(type, JSONAPISerializerOptions);
     this.JSONAPISerializer = JSONAPISerializer;
-    // console.log(JSONAPISerializerOptions);
+    console.log(
+      inspect(JSONAPISerializerOptions, { showHidden: false, depth: null })
+    );
   }
 
   serialize({ data, included }) {
@@ -48,7 +52,7 @@ export class BaseSerializer {
     this.included = included;
 
     const entity = this.toDTO({ data, included });
-    console.log(entity);
+    // console.log(inspect(entity, { showHidden: false, depth: null }));
 
     return this.JSONAPISerializer.serialize(entity);
   }
@@ -61,30 +65,32 @@ export class BaseSerializer {
   };
 
   _toDTO({ data, included }, attrs) {
-    const getValue = (value, included, { type, mapper, getter }) => {
+    const getValue = (value, included, { type, attrs, serializer, getter }) => {
       let result;
       switch (type) {
-        case mapperTypes.IDENTITY:
+        case IDENTITY:
           result = value;
           break;
 
-        case mapperTypes.CALLBACK:
-          result = mapper({ data: value });
+        case CALLBACK:
+          result = serializer.toDTO({ data: value });
           break;
 
-        case mapperTypes.ARRAY:
-          result = value.map((item) => mapper({ data: item, included }));
+        case ARRAY:
+          result = value.map((item) =>
+            this._toDTO({ data: item, included }, attrs)
+          );
           break;
 
-        case mapperTypes.OBJECT:
-          result = mapper({ data: item, included });
+        case OBJECT:
+          result = serializer.toDTO({ data: item, included });
           break;
 
-        case mapperTypes.INCLUDED:
+        case INCLUDED:
           const entity = getter(data, included);
 
           if (entity !== undefined) {
-            result = mapper({ data: entity, included });
+            result = serializer.toDTO({ data: entity, included });
           }
           break;
 
@@ -98,17 +104,12 @@ export class BaseSerializer {
     const attrNames = Object.keys(attrs);
 
     return attrNames.reduce((mappedObj, curAttrName) => {
-      const { type, attrName, mapper, getter } = attrs[curAttrName];
-      const newAttrName = attrName || curAttrName;
+      const mapper = attrs[curAttrName];
+      const newAttrName = mapper.attrName || curAttrName;
       // console.log(attrs);
       return {
         ...mappedObj,
-        [newAttrName]: getValue(data[curAttrName], included, {
-          type,
-          attrName,
-          mapper,
-          getter,
-        }),
+        [newAttrName]: getValue(data[curAttrName], included, mapper),
       };
     }, {});
   }

@@ -1,5 +1,5 @@
-import { toDTO, mapperTypes } from './toDTO';
+import { mapperTypes } from './mapperTypes';
 import { getResorceAttibutes } from './getResorceAttibutes';
 import { BaseSerializer } from './BaseSerializer';
 
-export { toDTO, mapperTypes, getResorceAttibutes, BaseSerializer };
+export { mapperTypes, getResorceAttibutes, BaseSerializer };

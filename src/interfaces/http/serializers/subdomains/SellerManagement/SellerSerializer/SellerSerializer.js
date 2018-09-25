@@ -13,7 +13,7 @@ const attrs = {
   sellerId: {
     type: CALLBACK,
     attrName: 'id',
-    mapper: idSerializer.toDTO,
+    serializer: idSerializer,
   },
   firstName: { type: IDENTITY },
   middleName: { type: IDENTITY },
@@ -29,15 +29,15 @@ const attrs = {
       }
       return posts.find(({ postId: curPostId }) => curPostId.equals(postId));
     },
-    mapper: postSerializer.toDTO,
+    serializer: postSerializer,
   },
   recruitDay: {
     type: CALLBACK,
-    mapper: daySerializer.toDTO,
+    serializer: daySerializer,
   },
   dismissDay: {
     type: CALLBACK,
-    mapper: daySerializer.toDTO,
+    serializer: daySerializer,
   },
   seniority: { type: IDENTITY },
   seniorityType: {
@@ -47,21 +47,27 @@ const attrs = {
         .filter(({ months }) => months <= seniority)
         .sort((a, b) => a - b)[0];
     },
-    mapper: seniorityTypeSerializer.toDTO,
+    serializer: seniorityTypeSerializer,
   },
   appointments: {
     type: ARRAY,
-    mapper: {
+    attrs: {
       postId: {
         type: INCLUDED,
         attrName: 'post',
-        getter: (postId, seller, { posts }) =>
-          posts.find(({ postId: curPostId }) => curPostId.equals(postId)),
-        mapper: postSerializer.toDTO,
+        getter: ({ postId }, { posts }) => {
+          if (postId === undefined) {
+            return;
+          }
+          return posts.find(({ postId: curPostId }) =>
+            curPostId.equals(postId)
+          );
+        },
+        serializer: postSerializer,
       },
       day: {
         type: CALLBACK,
-        mapper: daySerializer.toDTO,
+        serializer: daySerializer,
       },
     },
   },
@@ -82,28 +88,21 @@ const entityOptions = {
     'appointments',
   ],
   post: {
-    ref: 'postId',
-    dataLinks: {
-      self: ({ postId }) => `${this.rootUri}/posts/${postId}`,
-    },
+    ref: 'id',
+    ...postSerializer.JSONAPISerializerOptions,
   },
   seniorityType: {
-    ref: 'seniorityTypeId',
-    dataLinks: {
-      self: ({ seniorityTypeId }) =>
-        `${this.rootUri}/seniority_types/${seniorityTypeId}`,
-    },
+    ref: 'id',
+    ...seniorityTypeSerializer.JSONAPISerializerOptions,
   },
   appointments: {
-    attributes: ['postId', 'day'],
+    attributes: ['post', 'day'],
     post: {
-      ref: 'postId',
-      dataLinks: {
-        self: ({ postId }) => `${this.rootUri}/posts/${postId}`,
-      },
+      ref: 'id',
+      ...postSerializer.JSONAPISerializerOptions,
     },
   },
-  // transform: this.toDTO,
+  // transform: this,
 };
 
 export class SellerSerializer extends SellerManagementBaseSerializer {

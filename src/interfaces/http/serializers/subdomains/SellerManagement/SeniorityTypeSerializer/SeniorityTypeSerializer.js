@@ -9,26 +9,26 @@ const attrs = {
   seniorityTypeId: {
     type: CALLBACK,
     attrName: 'id',
-    serialize: idSerializer.serialize,
+    serializer: idSerializer,
   },
   name: { type: IDENTITY },
   state: { type: IDENTITY },
   award: { type: IDENTITY },
   awards: {
     type: ARRAY,
-    serialize: {
+    attrs: {
       value: { type: IDENTITY },
       day: {
         type: CALLBACK,
-        serialize: daySerializer.serialize,
+        serializer: daySerializer,
       },
     },
   },
 };
 
 const entityOptions = {
-  attributes: ['id', 'name', 'months', 'state', 'award', 'award'],
-  appointments: {
+  attributes: ['id', 'name', 'months', 'state', 'award', 'awards'],
+  awards: {
     attributes: ['value', 'day'],
   },
   // transform: this.toDTO,

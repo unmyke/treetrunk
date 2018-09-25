@@ -1,5 +1,5 @@
 import { snakeCase } from 'lodash';
-import { mapperTypes } from './toDTO';
+import { mapperTypes } from './mapperTypes';
 const { OBJECT, ARRAY } = mapperTypes;
 
 export const getResorceAttibutes = (mapper) => {

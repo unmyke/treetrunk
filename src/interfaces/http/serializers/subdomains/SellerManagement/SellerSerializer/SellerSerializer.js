@@ -78,6 +78,7 @@ const entityOptions = {
     'recruitDay',
     'dismissDay',
     'seniority',
+    'seniorityType',
     'appointments',
   ],
   post: {
@@ -94,7 +95,7 @@ const entityOptions = {
     },
   },
   appointments: {
-    attributes: ['post', 'day'],
+    attributes: ['postId', 'day'],
     post: {
       ref: 'postId',
       dataLinks: {

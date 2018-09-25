@@ -1,3 +1,3 @@
 export const idSerializer = {
-  toDTO: ({ data: { value: id } = {} }) => id,
+  toDTO: ({ data: { value: id = null } = {} }) => id,
 };

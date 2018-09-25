@@ -1,4 +1,5 @@
 import { subMonths, startOfDay } from 'date-fns';
+import { merge } from 'lodash';
 // import { inspect } from 'util';
 // import { Serializer as JSONAPISerializer } from 'jsonapi-serializer';
 
@@ -11,6 +12,7 @@ import {
 import { SellerId, Day, PostId } from 'src/domain/commonTypes';
 import { Seller as states } from 'src/domain/states';
 
+const rootUri = 'http://test:testport/seller_management';
 const today = startOfDay(new Date());
 const date1 = subMonths(today, 4);
 const date2 = subMonths(today, 3);
@@ -109,57 +111,85 @@ const recruitedSellerRestoreProps2 = {
 };
 
 const commonSerializedSeller = {
-  id: commonRestoreSellerProps.sellerId.value,
-  first_name: commonRestoreSellerProps.firstName,
-  middle_name: commonRestoreSellerProps.middleName,
-  last_name: commonRestoreSellerProps.lastName,
-  phone,
+  data: {
+    id: commonRestoreSellerProps.sellerId.value,
+    type: 'sellers',
+    links: {
+      self: `${rootUri}/sellers/${commonRestoreSellerProps.sellerId.value}`,
+    },
+    attributes: {
+      first_name: commonRestoreSellerProps.firstName,
+      middle_name: commonRestoreSellerProps.middleName,
+      last_name: commonRestoreSellerProps.lastName,
+      phone,
+    },
+  },
 };
-const newSerializedSeller = {
-  ...commonSerializedSeller,
-  state: newSellerRestoreProps.state,
-  post: null,
-  recruit_day: null,
-  dismiss_day: null,
-  seniority: null,
-  appointments: [],
-};
-const recruitedSerializedSeller1 = {
-  ...commonSerializedSeller,
-  state: recruitedSellerRestoreProps1.state,
-  post: postId2.value,
-  recruit_day: date1.toString(),
-  dismiss_day: null,
-  seniority: 4,
-  appointments: [
-    { post: postId1.value, day: date1.toString() },
-    { post: postId2.value, day: date2.toString() },
-  ],
-};
-const dismissSerializedSeller = {
-  ...commonSerializedSeller,
-  state: dismissSellerRestoreProps.state,
-  post: null,
-  recruit_day: null,
-  dismiss_day: dismissDate.toString(),
-  seniority: null,
-  appointments: [],
-};
-const recruitedSerializedSeller2 = {
-  ...commonSerializedSeller,
-  state: recruitedSellerRestoreProps2.state,
-  post: postId3.value,
-  recruit_day: date3.toString(),
-  dismiss_day: null,
-  seniority: 1,
-  appointments: [{ post: postId3.value, day: date3.toString() }],
-};
+const newSerializedSeller = merge({}, commonSerializedSeller, {
+  data: {
+    attributes: {
+      id: newSellerRestoreProps.sellerId.value,
+      state: newSellerRestoreProps.state,
+      post: null,
+      recruit_day: null,
+      dismiss_day: null,
+      seniority: null,
+      appointments: [],
+    },
+  },
+});
+const recruitedSerializedSeller1 = merge({}, commonSerializedSeller, {
+  data: {
+    attributes: {
+      id: recruitedSellerRestoreProps1.sellerId.value,
+      state: recruitedSellerRestoreProps1.state,
+      post: postId2.value,
+      recruit_day: date1,
+      dismiss_day: null,
+      seniority: 4,
+      appointments: [
+        { post: postId1.value, day: date1 },
+        { post: postId2.value, day: date2 },
+      ],
+    },
+  },
+});
+const dismissSerializedSeller = merge({}, commonSerializedSeller, {
+  data: {
+    attributes: {
+      id: dismissSellerRestoreProps.sellerId.value,
+      state: dismissSellerRestoreProps.state,
+      post: null,
+      recruit_day: null,
+      dismiss_day: dismissDate,
+      seniority: null,
+      appointments: [],
+    },
+  },
+});
+const recruitedSerializedSeller2 = merge({}, commonSerializedSeller, {
+  data: {
+    attributes: {
+      id: recruitedSellerRestoreProps2.sellerId.value,
+      state: recruitedSellerRestoreProps2.state,
+      post: postId3.value,
+      recruit_day: date3,
+      dismiss_day: null,
+      seniority: 1,
+      appointments: [{ post: postId3.value, day: date3 }],
+    },
+  },
+});
 const serializer = new Serializer();
 
 describe('interfaces :: serializers :: SellerManagement :: Seller :: # serialize', () => {
   let seller, sellerRestoreProps, serializedSeller;
 
-  beforeEach(() => {});
+  beforeEach(() => {
+    seller = undefined;
+    sellerRestoreProps = undefined;
+    serializedSeller = undefined;
+  });
 
   context('when passed new seller', () => {
     beforeEach(() => {

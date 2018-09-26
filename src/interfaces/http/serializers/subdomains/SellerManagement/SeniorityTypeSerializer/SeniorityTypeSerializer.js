@@ -11,6 +11,7 @@ const attrs = {
     serializer: idSerializer,
   },
   name: { type: IDENTITY },
+  months: { type: IDENTITY },
   state: { type: IDENTITY },
   award: { type: IDENTITY },
   awards: {

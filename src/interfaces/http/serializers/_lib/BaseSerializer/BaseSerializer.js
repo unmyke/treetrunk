@@ -44,9 +44,6 @@ export class BaseSerializer {
 
     const JSONAPISerializer = new Serializer(type, JSONAPISerializerOptions);
     this.JSONAPISerializer = JSONAPISerializer;
-    // console.log(
-    //   inspect(JSONAPISerializerOptions, { showHidden: false, depth: null })
-    // );
   }
 
   serialize({ data, included }) {
@@ -55,12 +52,19 @@ export class BaseSerializer {
 
     const entity = this.toDTO({ data, included });
     // console.log(inspect(entity, { showHidden: false, depth: null }));
+    console.log(
+      inspect(this.JSONAPISerializerOptions, { showHidden: false, depth: null })
+    );
 
     return this.JSONAPISerializer.serialize(entity);
   }
 
   toDTO = ({ data, included }) => {
     if (Array.isArray(data)) {
+      this.attrs.JSONAPISerializerOptions.topLevelLinks = {
+        self: entityResourceUri,
+      };
+
       return data.map((data) => this._toDTO({ data, included }, this.attrs));
     }
     return this._toDTO({ data, included }, this.attrs);

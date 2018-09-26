@@ -43,9 +43,11 @@ const attrs = {
   seniorityType: {
     type: INCLUDED,
     getter: ({ seniority }, { seniorityTypes }) => {
-      return seniorityTypes
-        .filter(({ months }) => months <= seniority)
-        .sort((a, b) => a - b)[0];
+      if (seniority !== undefined) {
+        return seniorityTypes
+          .filter(({ months }) => seniority >= months)
+          .sort(({ months: a }, { months: b }) => b - a)[0];
+      }
     },
     serializer: seniorityTypeSerializer,
   },

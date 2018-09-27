@@ -490,10 +490,19 @@ describe('interfaces :: serializers :: SellerManagement :: Seller :: # serialize
 
 // console.log('## newSerializedSeller ##');
 // console.log(inspect(newSerializedSeller, { showHidden: false, depth: null }));
-// console.log('## recruitedSerializedSeller1 ##');
-// console.log(
-//   inspect(recruitedSerializedSeller1, { showHidden: false, depth: null })
-// );
+console.log('## recruitedSerializedSeller1 ##');
+console.log(
+  inspect(
+    serializer.serialize({
+      data: Seller.restore(recruitedSellerRestoreProps1),
+      included: { posts, seniorityTypes },
+    }),
+    {
+      showHidden: false,
+      depth: null,
+    }
+  )
+);
 // console.log('## dismissSerializedSeller ##');
 // console.log(
 //   inspect(dismissSerializedSeller, { showHidden: false, depth: null })

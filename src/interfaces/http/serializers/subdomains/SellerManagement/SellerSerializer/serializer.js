@@ -1,21 +1,30 @@
 const { inspect } = require('util');
 const { Serializer } = require('jsonapi-serializer');
+const { normalize, schema } = require('normalizr');
 
-const optsResource = {
+const resourceSchema = new schema.Entity('resource');
+const complexResourceSchema = new schema.Entity('resource', {
+  array: [{ inResource: resourceSchema }],
+  rootResource: resourceSchema,
+});
+
+const resourceJSONAPISerializerOpts = {
   attributes: ['id', 'simpleProp'],
 };
 
-const optsComplexResource = {
-  attributes: ['array', 'simpleProp', 'resource'],
+const complexResourceJSONAPISerializerOpts = {
+  attributes: ['array', 'simpleProp', 'rootResource'],
   array: {
-    attributes: ['resource', 'simpleProp'],
-    resource: {
-      ...optsResource,
+    ref: 'id',
+    // ignoreRelationshipData: 'true',
+    attributes: ['inResource', 'simpleProp'],
+    inResource: {
+      ...resourceJSONAPISerializerOpts,
       ref: 'id',
     },
   },
-  resource: {
-    ...optsResource,
+  rootResource: {
+    ...resourceJSONAPISerializerOpts,
     ref: 'id',
   },
   keyForAttribute: 'snake_case',
@@ -41,21 +50,41 @@ const resource4 = {
 const complexResource1 = {
   id: 'complexResource1',
   simpleProp: 'complexResource1SimpleProp',
-  resource: resource1,
+  rootResource: resource1,
   array: [
-    { resource: resource1, simpleProp: 'complexResource1ArrarySimpleResource' },
-    { resource: resource3, simpleProp: 'complexResource1ArrarySimpleResource' },
-    { resource: resource4, simpleProp: 'complexResource1ArrarySimpleResource' },
+    {
+      id: 3,
+      inResource: resource1,
+      simpleProp: 'complexResource1ArrarySimpleResource1Prop',
+    },
+    {
+      id: 4,
+      inResource: resource3,
+      simpleProp: 'complexResource1ArrarySimpleResource3Prop',
+    },
+    {
+      id: 5,
+      inResource: resource4,
+      simpleProp: 'complexResource1ArrarySimpleResource4Prop',
+    },
   ],
 };
 
 const complexResource2 = {
   id: 'complexResource2',
   simpleProp: 'complexResource2SimpleProp',
-  resource: resource1,
+  rootResource: resource1,
   array: [
-    { resource: resource1, simpleProp: 'complexResource2ArrarySimpleResource' },
-    { resource: resource2, simpleProp: 'complexResource2ArrarySimpleResource' },
+    {
+      id: 1,
+      inResource: resource1,
+      simpleProp: 'complexResource2ArrarySimpleResource1Prop',
+    },
+    {
+      id: 2,
+      inResource: resource2,
+      simpleProp: 'complexResource2ArrarySimpleResource2Prop',
+    },
   ],
 };
 
@@ -63,9 +92,17 @@ const complexResources = [complexResource1, complexResource2];
 
 console.log(
   inspect(
-    new Serializer('complexResource', optsComplexResource).serialize(
-      complexResources
-    ),
+    new Serializer(
+      'complexResource',
+      complexResourceJSONAPISerializerOpts
+    ).serialize(complexResources),
     { showHidden: false, depth: null }
   )
+);
+
+console.log(
+  inspect(normalize(complexResource1, complexResourceSchema), {
+    showHidden: false,
+    depth: null,
+  })
 );

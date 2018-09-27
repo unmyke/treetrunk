@@ -52,9 +52,9 @@ export class BaseSerializer {
 
     const entity = this.toDTO({ data, included });
     // console.log(inspect(entity, { showHidden: false, depth: null }));
-    console.log(
-      inspect(this.JSONAPISerializerOptions, { showHidden: false, depth: null })
-    );
+    // console.log(
+    //   inspect(this.JSONAPISerializerOptions, { showHidden: false, depth: null })
+    // );
 
     return this.JSONAPISerializer.serialize(entity);
   }

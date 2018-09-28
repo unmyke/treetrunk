@@ -261,7 +261,9 @@ const recruitedSerializedSeller1 = merge({}, commonSerializedSeller, {
       seniority: 4,
       appointments: [
         {
-          // post: postId1.value,
+          post: {
+            data: {},
+          },
           day: date1,
         },
         {
@@ -494,7 +496,10 @@ console.log('## recruitedSerializedSeller1 ##');
 console.log(
   inspect(
     serializer.serialize({
-      data: Seller.restore(recruitedSellerRestoreProps1),
+      data: [
+        Seller.restore(recruitedSellerRestoreProps1),
+        Seller.restore(recruitedSellerRestoreProps2),
+      ],
       included: { posts, seniorityTypes },
     }),
     {

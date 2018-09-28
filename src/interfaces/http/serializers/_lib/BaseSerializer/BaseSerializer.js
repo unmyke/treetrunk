@@ -6,7 +6,14 @@ import { config } from 'config';
 import { errors } from 'src/domain';
 import { mapperTypes } from '../mapperTypes';
 
-const { IDENTITY, CALLBACK, OBJECT, ARRAY, INCLUDED } = mapperTypes;
+const {
+  IDENTITY,
+  ID_GENERATOR,
+  CALLBACK,
+  OBJECT,
+  ARRAY,
+  INCLUDED,
+} = mapperTypes;
 
 export class BaseSerializer {
   constructor({ resourceName, subdomainResourceName, attrs, entityOptions }) {
@@ -61,12 +68,13 @@ export class BaseSerializer {
 
   toDTO = ({ data, included }) => {
     if (Array.isArray(data)) {
-      this.attrs.JSONAPISerializerOptions.topLevelLinks = {
-        self: entityResourceUri,
+      this.JSONAPISerializerOptions.topLevelLinks = {
+        self: this.entityResourceUri,
       };
 
       return data.map((data) => this._toDTO({ data, included }, this.attrs));
     }
+
     return this._toDTO({ data, included }, this.attrs);
   };
 
@@ -76,6 +84,10 @@ export class BaseSerializer {
       switch (type) {
         case IDENTITY:
           result = value;
+          break;
+
+        case ID_GENERATOR:
+          result = getter(data);
           break;
 
         case CALLBACK:

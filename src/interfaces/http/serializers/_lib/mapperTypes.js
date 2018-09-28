@@ -1,5 +1,6 @@
 export const mapperTypes = {
   IDENTITY: 'identity',
+  ID_GENERATOR: 'igGenerator',
   CALLBACK: 'callback',
   OBJECT: 'object',
   ARRAY: 'array',

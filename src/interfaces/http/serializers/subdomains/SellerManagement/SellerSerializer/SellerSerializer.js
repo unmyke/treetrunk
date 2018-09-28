@@ -2,12 +2,14 @@ import { Id as idSerializer, Day as daySerializer } from '../../../commonTypes';
 import { PostSerializer } from '../PostSerializer';
 import { SeniorityTypeSerializer } from '../SeniorityTypeSerializer';
 import { SellerManagementBaseSerializer } from '../SellerManagementBaseSerializer';
+import { AppointmentSerializer } from './AppointmentSerializer';
 import { mapperTypes } from '../../../_lib';
 
 const { IDENTITY, ARRAY, CALLBACK, INCLUDED } = mapperTypes;
 
 const postSerializer = new PostSerializer();
 const seniorityTypeSerializer = new SeniorityTypeSerializer();
+const appointmentSerializer = new AppointmentSerializer();
 
 const attrs = {
   sellerId: {
@@ -54,23 +56,7 @@ const attrs = {
   appointments: {
     type: ARRAY,
     attrs: {
-      postId: {
-        type: INCLUDED,
-        attrName: 'post',
-        getter: ({ postId }, { posts }) => {
-          if (postId === undefined) {
-            return;
-          }
-          return posts.find(({ postId: curPostId }) =>
-            curPostId.equals(postId)
-          );
-        },
-        serializer: postSerializer,
-      },
-      day: {
-        type: CALLBACK,
-        serializer: daySerializer,
-      },
+      ...appointmentSerializer.attrs,
     },
   },
 };
@@ -99,11 +85,8 @@ const entityOptions = {
     ...seniorityTypeSerializer.JSONAPISerializerOptions,
   },
   appointments: {
-    attributes: ['post', 'day'],
-    post: {
-      ref: 'id',
-      ...postSerializer.JSONAPISerializerOptions,
-    },
+    ref: 'id',
+    ...appointmentSerializer.JSONAPISerializerOptions,
   },
   // transform: this,
 };

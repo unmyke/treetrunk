@@ -1,32 +1,6 @@
 import { Operation } from '../../_lib';
 import { Seller as states } from '../../../domain/states';
 
-const getMonthsRangeQuery = (sellers) => {
-  const range = sellers.reduce(({ min, max }, { months }) => {
-    const newMin = min === undefined || months < min ? months : min;
-    const newMax = max === undefined || months > max ? months : max;
-
-    return {
-      min: newMin,
-      max: newMax,
-    };
-  }, {});
-
-  return { monthsBetween: range };
-};
-
-const getPostIdsQuery = (sellers) => ({
-  postIds: sellers.reduce((allPostIds, { postIds }) => {
-    const uniquePostIds = postIds.filter(
-      (postId) =>
-        allPostIds.find((currentPostId) => currentPostId.equals(postId)) ===
-        undefined
-    );
-
-    return [...allPostIds, ...uniquePostIds];
-  }, []),
-});
-
 export class GetAllSellers extends Operation {
   static constraints = {
     states: { inclusion: states },
@@ -41,13 +15,23 @@ export class GetAllSellers extends Operation {
         Post: postRepo,
         SeniorityType: seniorityTypeRepo,
       },
+      entities: { SellerService },
     } = this;
 
     try {
       const sellers = await sellerRepo.find(query);
+
+      const sellerService = new SellerService({
+        repositories: {
+          Seller: sellerRepo,
+          Post: postRepo,
+          SeniorityType: seniorityTypeRepo,
+        },
+      });
+
       const [posts, seniorityTypes] = await Promise.all([
-        postRepo.find(getPostIdsQuery(sellers)),
-        seniorityTypeRepo.find(getMonthsRangeQuery(sellers)),
+        sellerService.getPostIdsQuery(sellers),
+        sellerService.getMonthsRangeQuery(sellers),
       ]);
 
       this.emit(SUCCESS, { sellers, posts, seniorityTypes });

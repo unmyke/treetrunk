@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
-import { Serializer } from 'jsonapi-serializer';
+import { Deserializer } from 'jsonapi-serializer';
 import { config } from 'config';
 import { errors } from 'src/domain';
 import { mapperTypes } from '../mapperTypes';
@@ -15,7 +15,7 @@ const {
   INCLUDED,
 } = mapperTypes;
 
-export class BaseSerializer {
+export class BaseDeserializer {
   constructor({ resourceName, subdomainResourceName, attrs, entityOptions }) {
     const server = { ...config.web };
     this.server = server;
@@ -38,7 +38,7 @@ export class BaseSerializer {
     this.attrs = attrs;
     this.entityOptions = entityOptions;
 
-    const JSONAPISerializerOptions = {
+    const JSONAPIDeserializerOptions = {
       ...entityOptions,
       dataLinks: {
         self: ({ id }) => `${entityResourceUri}/${id}`,
@@ -47,7 +47,7 @@ export class BaseSerializer {
       nullIfMissing: true,
       typeForAttribute: (attribute) => pluralize(snakeCase(attribute)),
     };
-    this.JSONAPISerializerOptions = JSONAPISerializerOptions;
+    this.JSONAPIDeserializerOptions = JSONAPIDeserializerOptions;
   }
 
   serialize({ data, included }) {
@@ -57,32 +57,32 @@ export class BaseSerializer {
     const entity = this.toDTO({ data, included });
     // console.log(inspect(entity, { showHidden: false, depth: null }));
     // console.log(
-    //   inspect(this.JSONAPISerializerOptions, { showHidden: false, depth: null })
+    //   inspect(this.JSONAPIDeserializerOptions, { showHidden: false, depth: null })
     // );
 
-    return this.JSONAPISerializer.serialize(entity);
+    return this.JSONAPIDeserializer.serialize(entity);
   }
 
-  setJSONSerializer(type, opts) {
-    const JSONAPISerializer = new Serializer(type, opts);
-    this.JSONAPISerializer = JSONAPISerializer;
+  setJSONDeserializer(type, opts) {
+    const JSONAPIDeserializer = new Deserializer(type, opts);
+    this.JSONAPIDeserializer = JSONAPIDeserializer;
   }
 
   toDTO = ({ data, included }) => {
-    this.JSONAPISerializerOptions.topLevelLinks = {
+    this.JSONAPIDeserializerOptions.topLevelLinks = {
       self: this.entityResourceUri,
     };
 
     if (Array.isArray(data)) {
-      this.JSONAPISerializerOptions.meta = {
+      this.JSONAPIDeserializerOptions.meta = {
         count: data.length,
       };
 
-      this.setJSONSerializer(this.type, this.JSONAPISerializerOptions);
+      this.setJSONDeserializer(this.type, this.JSONAPIDeserializerOptions);
       return data.map((data) => this._toDTO({ data, included }, this.attrs));
     }
 
-    this.setJSONSerializer(this.type, this.JSONAPISerializerOptions);
+    this.setJSONDeserializer(this.type, this.JSONAPIDeserializerOptions);
     return this._toDTO({ data, included }, this.attrs);
   };
 

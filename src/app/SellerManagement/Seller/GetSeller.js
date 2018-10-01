@@ -4,51 +4,33 @@ export class GetSeller extends Operation {
   async execute(sellerIdValue) {
     const { SUCCESS, ERROR, NOT_FOUND } = this.outputs;
     const {
+      commonTypes: { SellerId },
       repositories: {
         Seller: sellerRepo,
         Post: postRepo,
         SeniorityType: seniorityTypeRepo,
       },
+      entities: { SellerService },
     } = this;
 
     try {
       const sellerId = new SellerId({ value: sellerIdValue });
       const seller = await sellerRepo.getById(sellerId);
-      const sellerDTO = {
-        sellerId: sellerIdValue,
-        lastName: seller.personName.lastName,
-        firstName: seller.personName.firstName,
-        middleName: seller.personName.middleName,
-      };
 
-      const appointmentsDTO = seller.appointments.map(
-        async ({ postId, day }) => {
-          const { name: postName } = await postRepo.getById(postId.value);
-          return {
-            postId: postId.value,
-            postName,
-            date: day.value,
-          };
-        }
-      );
-      sellerDTO.appointments = appointmentsDTO;
+      const sellerService = new SellerService({
+        repositories: {
+          Seller: sellerRepo,
+          Post: postRepo,
+          SeniorityType: seniorityTypeRepo,
+        },
+      });
 
-      // const workshifts = workshiftRepo.getBySellerId(sellerId);
-      // const workshiftsDTO = workshifts.map((workshift) => {
-      //   const shop = shopRepo.getById(workshift.shopId);
-      //   const workshiftType = workshiftTypeRepo.getById(
-      //     workshift.workshiftTypeId
-      //   );
-      //   return {
-      //     workshiftId: workshiftId.value,
-      //     shopAddress: shop.address,
-      //     hours: workshift.getHoursBySellerId(sellerId),
-      //   };
-      // });
+      const [posts, seniorityTypes] = await Promise.all([
+        sellerService.getPostIdsQuery([seller]),
+        sellerService.getMonthsRangeQuery([seller]),
+      ]);
 
-      // sellerDTO.workshifts = workshiftsDTO;
-
-      this.emit(SUCCESS, sellerDTO);
+      this.emit(SUCCESS, { seller, posts, seniorityTypes });
     } catch (error) {
       if (error.message === 'NOT_FOUND') {
         return this.emit(NOT_FOUND, error);

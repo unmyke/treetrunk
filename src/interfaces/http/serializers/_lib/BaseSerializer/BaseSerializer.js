@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
-import { Serializer } from 'jsonapi-serializer';
+import { Serializer, Deserializer } from 'jsonapi-serializer';
 import { config } from 'config';
 import { errors } from 'src/domain';
 import { mapperTypes } from '../mapperTypes';
@@ -61,6 +61,15 @@ export class BaseSerializer {
     // );
 
     return this.JSONAPISerializer.serialize(entity);
+  }
+
+  async deserialize(json) {
+    const JSONAPIDeserializer = new Deserializer({
+      keyForAttribute: 'camelCase',
+    });
+    this.JSONAPIDeserializer = JSONAPIDeserializer;
+
+    return this.JSONAPIDeserializer.deserialize(json);
   }
 
   setJSONSerializer(type, opts) {

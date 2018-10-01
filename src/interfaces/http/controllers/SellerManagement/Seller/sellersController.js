@@ -108,8 +108,13 @@ const SellersController = {
     } = createSeller.outputs;
 
     createSeller
-      .on(SUCCESS, (seller) => {
-        res.status(Status.CREATED).json(seller);
+      .on(SUCCESS, ({ seller, posts, seniorityTypes }) => {
+        res.status(Status.CREATED).json(
+          req.serializer.serialize({
+            data: seller,
+            included: { posts, seniorityTypes },
+          })
+        );
       })
       .on(VALIDATION_ERROR, (error) => {
         res.status(Status.BAD_REQUEST).json({

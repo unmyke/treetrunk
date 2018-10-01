@@ -24,10 +24,7 @@ import { errorHandler } from './interfaces/http/errors/errorHandler';
 import { devErrorHandler } from './interfaces/http/errors/devErrorHandler';
 import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
-import {
-  commonTypes as commonTypesSerializers,
-  subdomains as subdomainsSerializers,
-} from './interfaces/http/serializers';
+import { subdomains as subdomainsSerializers } from './interfaces/http/serializers';
 
 import { db } from './infra/database/models';
 const { database, models } = db;

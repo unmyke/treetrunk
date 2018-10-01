@@ -25,22 +25,41 @@ export class CreateSeller extends Operation {
     },
   };
 
-  async execute({ firstName, middleName, lastName, phone }) {
+  async execute(sellerPromise) {
     const { SUCCESS, ERROR, VALIDATION_ERROR, ALREADY_EXISTS } = this.outputs;
     const {
-      repositories: { Seller: sellerRepo },
-      entities: { Seller },
+      repositories: {
+        Seller: sellerRepo,
+        Post: postRepo,
+        SeniorityType: seniorityTypeRepo,
+      },
+      entities: { Seller, SellerService },
       validate,
     } = this;
 
-    try {
-      validate({ firstName, middleName, lastName, phone }, { exception: true });
+    const { firstName, middleName, lastName, phone } = await sellerPromise;
 
+    // console.log(firstName, middleName, lastName, phone);
+
+    try {
       const seller = new Seller({ firstName, middleName, lastName, phone });
+      // validate({ firstName, middleName, lastName, phone }, { exception: true });
 
       const newSeller = await sellerRepo.add(seller);
+      const sellerService = new SellerService({
+        repositories: {
+          Seller: sellerRepo,
+          Post: postRepo,
+          SeniorityType: seniorityTypeRepo,
+        },
+      });
 
-      this.emit(SUCCESS, newSeller.toJSON());
+      const [posts, seniorityTypes] = await Promise.all([
+        sellerService.getPostIdsQuery([newSeller]),
+        sellerService.getMonthsRangeQuery([newSeller]),
+      ]);
+
+      this.emit(SUCCESS, { seller: newSeller, posts, seniorityTypes });
     } catch (error) {
       switch (error.code) {
         case 'ALREADY_EXISTS':

@@ -1,7 +1,11 @@
 import { inspect } from 'util';
 import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
-import { Serializer, Deserializer } from 'jsonapi-serializer';
+import {
+  Serializer,
+  Deserializer,
+  Error as JSONAPIError,
+} from 'jsonapi-serializer';
 import { config } from 'config';
 import { errors } from 'src/domain';
 import { mapperTypes } from '../mapperTypes';
@@ -48,6 +52,10 @@ export class BaseSerializer {
       typeForAttribute: (attribute) => pluralize(snakeCase(attribute)),
     };
     this.JSONAPISerializerOptions = JSONAPISerializerOptions;
+  }
+
+  serializeErrors({ message }) {
+    return new JSONAPIError({ id: message });
   }
 
   serialize({ data, included }) {

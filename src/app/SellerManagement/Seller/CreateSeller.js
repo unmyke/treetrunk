@@ -1,4 +1,5 @@
 import { Operation } from '../../_lib';
+import { equalErrors } from '../../../domain/errors';
 
 export class CreateSeller extends Operation {
   static constraints = {
@@ -21,7 +22,7 @@ export class CreateSeller extends Operation {
       presence: {
         allowEmpty: false,
       },
-      format: /^[0-9 \-\+\(\)]+$/,
+      format: { pattern: /^[0-9 \-\+\(\)]+$/ },
     },
   };
 
@@ -35,6 +36,7 @@ export class CreateSeller extends Operation {
       },
       entities: { Seller, SellerService },
       validate,
+      errors,
     } = this;
 
     const { firstName, middleName, lastName, phone } = await sellerPromise;
@@ -43,7 +45,7 @@ export class CreateSeller extends Operation {
 
     try {
       const seller = new Seller({ firstName, middleName, lastName, phone });
-      // validate({ firstName, middleName, lastName, phone }, { exception: true });
+      validate({ firstName, middleName, lastName, phone }, { exception: true });
 
       const newSeller = await sellerRepo.add(seller);
       const sellerService = new SellerService({
@@ -61,11 +63,11 @@ export class CreateSeller extends Operation {
 
       this.emit(SUCCESS, { seller: newSeller, posts, seniorityTypes });
     } catch (error) {
-      switch (error.code) {
-        case 'ALREADY_EXISTS':
+      switch (true) {
+        case equalErrors(error, errors.sellerAlreadyExists()):
           this.emit(ALREADY_EXISTS, error);
           break;
-        case 'INVALID_VALUE':
+        case equalErrors(error, errors.validationError()):
           this.emit(VALIDATION_ERROR, error);
           break;
         default:

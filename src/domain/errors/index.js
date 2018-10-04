@@ -1,3 +1,4 @@
 import { errors } from './errors';
+import { equalErrors } from './equalErrors';
 
-export { errors };
+export { equalErrors, errors };

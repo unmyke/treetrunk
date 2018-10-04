@@ -88,10 +88,9 @@ const SellersController = {
         );
       })
       .on(NOT_FOUND, (error) => {
-        res.status(Status.NOT_FOUND).json({
-          type: 'NotFoundError',
-          details: error.details,
-        });
+        res
+          .status(Status.NOT_FOUND)
+          .json(req.serializer.serializeErrors(error));
       })
       .on(ERROR, next);
 
@@ -117,16 +116,12 @@ const SellersController = {
         );
       })
       .on(VALIDATION_ERROR, (error) => {
-        res.status(Status.BAD_REQUEST).json({
-          type: 'ValidationError',
-          details: error.details,
-        });
+        res
+          .status(Status.BAD_REQUEST)
+          .json(req.serializer.serializeErrors(error));
       })
       .on(ALREADY_EXISTS, (error) => {
-        res.status(Status.CONFLICT).json({
-          type: 'AlreadyExists',
-          details: error.details,
-        });
+        res.status(Status.CONFLICT).json(req.serializer.serializeErrors(error));
       })
       .on(ERROR, next);
 

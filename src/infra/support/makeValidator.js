@@ -2,32 +2,24 @@ import validate from 'validate.js';
 import { Day, DayRange } from 'src/domain/commonTypes';
 import isValidDate from 'date-fns/is_valid';
 
-const jsonAPIErrorformatter = (errors) => {
-  return errors.map(({ attribute, error }) => {
-    return {
-      source: {
-        pointer: `/data/attributes/${attribute}`,
-      },
-      message: 'Invalid Attribute',
-      detail: error,
-    };
-  });
-};
+const uuidv4Regexp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const mockAPIErrorFormatter = (errors) => errors;
 
 export const makeValidator = (constraints, errors) => {
   const validator = (entity, options = { exception: false }) => {
-    const errors = validate(
+    const validationErrors = validate(
       entity,
       constraints || entity.constructor.constraints,
       { format: 'jsonAPIError' }
     );
 
-    if (errors && options.exception) {
-      const err = errors.create(errors);
-      throw err;
+    if (validationErrors && options.exception) {
+      // const err = errors.validationError();
+      // err.details = validationErrors;
+      throw errors.validationError();
     }
 
-    return errors;
+    return validationErrors;
   };
 
   validate.validators.hasOne = (value) => {
@@ -38,7 +30,7 @@ export const makeValidator = (constraints, errors) => {
   };
 
   validate.validators.hasMany = (value) => {
-    if (value.length === 0) {
+    if (Array.isArray(value) || value.length === 0) {
       return null;
     }
     return value.map(validator);
@@ -129,7 +121,15 @@ export const makeValidator = (constraints, errors) => {
     return null;
   };
 
-  validate.formatters.jsonAPIError = jsonAPIErrorformatter;
+  validate.validators.uuidv4 = (value) => {
+    if (value || uuidv4Regexp.test(value)) {
+      return `"${value}" is not a valid UUIDV4.`;
+    }
+    return null;
+  };
+
+  // validate.formatters.jsonAPIError = JSONAPIErrorformatter;
+  validate.formatters.jsonAPIError = mockAPIErrorFormatter;
 
   return validator;
 };

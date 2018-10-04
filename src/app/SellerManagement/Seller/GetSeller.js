@@ -1,6 +1,18 @@
 import { Operation } from '../../_lib';
+import { equalErrors } from '../../../domain/errors';
+
+equalErrors;
 
 export class GetSeller extends Operation {
+  static constrains = {
+    sellerIdValue: {
+      presence: {
+        allowEmpty: false,
+      },
+      format: { pattern: /^[0-9 \-\+\(\)]+$/ },
+    },
+  };
+
   async execute(sellerIdValue) {
     const { SUCCESS, ERROR, NOT_FOUND } = this.outputs;
     const {
@@ -11,6 +23,8 @@ export class GetSeller extends Operation {
         SeniorityType: seniorityTypeRepo,
       },
       entities: { SellerService },
+      validate,
+      errors,
     } = this;
 
     try {
@@ -32,7 +46,7 @@ export class GetSeller extends Operation {
 
       this.emit(SUCCESS, { seller, posts, seniorityTypes });
     } catch (error) {
-      if (error.message === 'NOT_FOUND') {
+      if (equalErrors(error, errors.sellerNotFound())) {
         return this.emit(NOT_FOUND, error);
       }
 

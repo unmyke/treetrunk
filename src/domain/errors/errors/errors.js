@@ -67,6 +67,9 @@ export const errors = {
   // serializer
   invalidMapperType: makeError('INVALID_MAPPER_TYPE'),
 
+  // validate
+  validationError: makeError('VALIDATION_ERROR'),
+
   // exapmles
   // articleAlreadyBanned: makeError('ARTICLE_BANNED'),
   // articleNotBanned: makeError('ARTICLE_NOT_BANNED'),

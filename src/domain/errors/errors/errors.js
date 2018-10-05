@@ -1,4 +1,8 @@
-const makeError = (message) => () => new Error(message);
+const makeError = (message) => (detail) => {
+  const err = new Error(message);
+  err.detail = detail;
+  return err;
+};
 
 export const errors = {
   // Diary

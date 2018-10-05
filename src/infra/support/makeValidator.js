@@ -3,20 +3,18 @@ import { Day, DayRange } from 'src/domain/commonTypes';
 import isValidDate from 'date-fns/is_valid';
 
 const uuidv4Regexp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const mockAPIErrorFormatter = (errors) => errors;
+// const mockAPIErrorFormatter = (errors) => errors;
 
 export const makeValidator = (constraints, errors) => {
   const validator = (entity, options = { exception: false }) => {
     const validationErrors = validate(
       entity,
       constraints || entity.constructor.constraints,
-      { format: 'jsonAPIError' }
+      { format: 'flat' }
     );
 
     if (validationErrors && options.exception) {
-      // const err = errors.validationError();
-      // err.details = validationErrors;
-      throw errors.validationError();
+      throw errors.validationError(validationErrors);
     }
 
     return validationErrors;
@@ -122,14 +120,15 @@ export const makeValidator = (constraints, errors) => {
   };
 
   validate.validators.uuidv4 = (value) => {
-    if (value || uuidv4Regexp.test(value)) {
+    if (value && !uuidv4Regexp.test(value)) {
       return `"${value}" is not a valid UUIDV4.`;
     }
+
     return null;
   };
 
   // validate.formatters.jsonAPIError = JSONAPIErrorformatter;
-  validate.formatters.jsonAPIError = mockAPIErrorFormatter;
+  // validate.formatters.jsonAPIError = mockAPIErrorFormatter;
 
   return validator;
 };

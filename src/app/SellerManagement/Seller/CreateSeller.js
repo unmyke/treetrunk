@@ -67,9 +67,11 @@ export class CreateSeller extends Operation {
         case equalErrors(error, errors.sellerAlreadyExists()):
           this.emit(ALREADY_EXISTS, error);
           break;
+
         case equalErrors(error, errors.validationError()):
           this.emit(VALIDATION_ERROR, error);
           break;
+
         default:
           this.emit(ERROR, error);
           break;

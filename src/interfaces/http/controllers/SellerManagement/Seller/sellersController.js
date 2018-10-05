@@ -76,7 +76,7 @@ const SellersController = {
   show(req, res, next) {
     const { getSeller } = req;
 
-    const { SUCCESS, ERROR, NOT_FOUND } = getSeller.outputs;
+    const { SUCCESS, ERROR, NOT_FOUND, VALIDATION_ERROR } = getSeller.outputs;
 
     getSeller
       .on(SUCCESS, ({ seller, posts, seniorityTypes }) => {
@@ -90,6 +90,11 @@ const SellersController = {
       .on(NOT_FOUND, (error) => {
         res
           .status(Status.NOT_FOUND)
+          .json(req.serializer.serializeErrors(error));
+      })
+      .on(VALIDATION_ERROR, (error) => {
+        res
+          .status(Status.BAD_REQUEST)
           .json(req.serializer.serializeErrors(error));
       })
       .on(ERROR, next);

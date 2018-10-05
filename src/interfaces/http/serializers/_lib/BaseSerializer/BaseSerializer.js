@@ -54,8 +54,8 @@ export class BaseSerializer {
     this.JSONAPISerializerOptions = JSONAPISerializerOptions;
   }
 
-  serializeErrors({ message }) {
-    return new JSONAPIError({ id: message });
+  serializeErrors({ message, detail }) {
+    return new JSONAPIError({ id: message, detail });
   }
 
   serialize({ data, included }) {

@@ -1,4 +1,3 @@
-import { inspect } from 'util';
 import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
 import {
@@ -9,6 +8,7 @@ import {
 import { config } from 'config';
 import { errors } from 'src/domain';
 import { mapperTypes } from '../mapperTypes';
+import { Error as errorSerializer } from '../../commonTypes';
 
 const {
   IDENTITY,
@@ -54,8 +54,8 @@ export class BaseSerializer {
     this.JSONAPISerializerOptions = JSONAPISerializerOptions;
   }
 
-  serializeErrors({ message, detail }) {
-    return new JSONAPIError({ id: message, detail });
+  serializeErrors(error, status) {
+    return errorSerializer.serialize(error, status);
   }
 
   serialize({ data, included }) {

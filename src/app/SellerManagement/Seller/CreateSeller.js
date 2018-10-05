@@ -22,7 +22,7 @@ export class CreateSeller extends Operation {
       presence: {
         allowEmpty: false,
       },
-      format: { pattern: /^[0-9 \-\+\(\)]+$/ },
+      phone: true,
     },
   };
 

@@ -2,8 +2,18 @@ import validate from 'validate.js';
 import { Day, DayRange } from 'src/domain/commonTypes';
 import isValidDate from 'date-fns/is_valid';
 
-const uuidv4Regexp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-// const mockAPIErrorFormatter = (errors) => errors;
+const testRegex = {
+  uuidv4(value) {
+    return this._test(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      value
+    );
+  },
+  phone(value) {
+    return this._test(/^\+7( \d{3}){2}(-\d{2}){2}$/, value);
+  },
+  _test: (regex, value) => regex.test(value),
+};
 
 export const makeValidator = (constraints, errors) => {
   const validator = (entity, options = { exception: false }) => {
@@ -120,15 +130,20 @@ export const makeValidator = (constraints, errors) => {
   };
 
   validate.validators.uuidv4 = (value) => {
-    if (value && !uuidv4Regexp.test(value)) {
+    if (value && !testRegex.uuidv4(value)) {
       return `"${value}" is not a valid UUIDV4.`;
     }
 
     return null;
   };
 
-  // validate.formatters.jsonAPIError = JSONAPIErrorformatter;
-  // validate.formatters.jsonAPIError = mockAPIErrorFormatter;
+  validate.validators.phone = (value) => {
+    if (value && !testRegex.phone(value)) {
+      return `"${value}" is not a valid phone number.`;
+    }
+
+    return null;
+  };
 
   return validator;
 };

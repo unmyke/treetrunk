@@ -90,12 +90,12 @@ const SellersController = {
       .on(NOT_FOUND, (error) => {
         res
           .status(Status.NOT_FOUND)
-          .json(req.serializer.serializeErrors(error));
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(VALIDATION_ERROR, (error) => {
         res
           .status(Status.BAD_REQUEST)
-          .json(req.serializer.serializeErrors(error));
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(ERROR, next);
 
@@ -123,14 +123,25 @@ const SellersController = {
       .on(VALIDATION_ERROR, (error) => {
         res
           .status(Status.BAD_REQUEST)
-          .json(req.serializer.serializeErrors(error));
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(ALREADY_EXISTS, (error) => {
-        res.status(Status.CONFLICT).json(req.serializer.serializeErrors(error));
+        res
+          .status(Status.CONFLICT)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(ERROR, next);
 
-    createSeller.execute(req.serializer.deserialize(req.body));
+    req.serializer.deserialize(req.body).then(
+      (seller) => {
+        createSeller.execute(seller);
+      },
+      (error) => {
+        res
+          .status(Status.BAD_REQUEST)
+          .json(req.serializer.serializeErrors(error, res.status));
+      }
+    );
   },
 
   update(req, res, next) {

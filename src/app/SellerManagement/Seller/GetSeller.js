@@ -6,6 +6,9 @@ equalErrors;
 export class GetSeller extends Operation {
   static constraints = {
     sellerIdValue: {
+      presence: {
+        allowEmpty: false,
+      },
       uuidv4: true,
     },
   };

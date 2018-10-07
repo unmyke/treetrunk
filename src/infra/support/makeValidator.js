@@ -145,5 +145,13 @@ export const makeValidator = (constraints, errors) => {
     return null;
   };
 
+  validate.validators.notEmpty = (value) => {
+    if (value !== undefined && validate.isEmpty(value)) {
+      return "can't be empty.";
+    }
+
+    return null;
+  };
+
   return validator;
 };

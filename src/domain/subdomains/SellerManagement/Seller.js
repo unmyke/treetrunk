@@ -144,6 +144,11 @@ export class Seller extends BaseEntity {
         from: states.DISMISSED,
         to: states.DISMISSED,
       },
+      {
+        name: transitions.DELETE,
+        from: states.DISMISSED,
+        to: states.DELETED,
+      },
     ],
 
     methods: {
@@ -282,11 +287,11 @@ export class Seller extends BaseEntity {
 
   update({ lastName, firstName, middleName, phone }) {
     this._personName = new PersonName({
-      lastName,
-      firstName,
-      middleName,
+      lastName: lastName || this.lastName,
+      firstName: firstName || this.firstName,
+      middleName: middleName || this.middleName,
     });
 
-    this.phone = phone;
+    this.phone = phone || this.phone;
   }
 }

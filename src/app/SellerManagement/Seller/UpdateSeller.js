@@ -1,4 +1,5 @@
 import { Operation } from '../../_lib';
+import { equalErrors } from '../../../domain/errors';
 
 export class UpdateSeller extends Operation {
   static constraints = {
@@ -6,48 +7,47 @@ export class UpdateSeller extends Operation {
       presence: {
         allowEmpty: false,
       },
-      format: {
-        pattern: '[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}',
-        message: '^SellerId: "%{value}" must be UUID',
-      },
+      uuidv4: true,
     },
     firstName: {
-      presence: {
-        allowEmpty: false,
-      },
+      notEmpty: true,
     },
     middleName: {
-      presence: {
-        allowEmpty: false,
-      },
+      notEmpty: true,
     },
     lastName: {
-      presence: {
-        allowEmpty: false,
-      },
+      notEmpty: true,
     },
     phone: {
-      presence: {
-        allowEmpty: false,
-      },
-      format: /^[\d \+\-\(\)]+$/,
+      phone: true,
     },
   };
 
-  async execute({ sellerIdValue, firstName, middleName, lastName, phone }) {
+  async execute({
+    sellerId: sellerIdValue,
+    firstName,
+    middleName,
+    lastName,
+    phone,
+  }) {
     const {
       SUCCESS,
       VALIDATION_ERROR,
       NOT_FOUND,
       ALREADY_EXISTS,
-      NOTHING_TO_UPDATE,
       ERROR,
     } = this.outputs;
 
     const {
-      repositories: { Seller: sellerRepo },
+      repositories: {
+        Seller: sellerRepo,
+        Post: postRepo,
+        SeniorityType: seniorityTypeRepo,
+      },
+      entities: { SellerService },
       commonTypes: { SellerId },
       validate,
+      errors,
     } = this;
 
     try {
@@ -61,21 +61,39 @@ export class UpdateSeller extends Operation {
 
       seller.update({ firstName, middleName, lastName, phone });
 
-      const updatedSeller = await sellerRepo.save(seller);
+      const updatedSeller = await sellerRepo.update(seller);
 
-      this.emit(SUCCESS, updatedSeller.toJSON());
+      const sellerService = new SellerService({
+        repositories: {
+          Seller: sellerRepo,
+          Post: postRepo,
+          SeniorityType: seniorityTypeRepo,
+        },
+      });
+
+      const [posts, seniorityTypes] = await Promise.all([
+        sellerService.getPostIdsQuery([updatedSeller]),
+        sellerService.getMonthsRangeQuery([updatedSeller]),
+      ]);
+
+      this.emit(SUCCESS, { seller: updatedSeller, posts, seniorityTypes });
     } catch (error) {
-      switch (error.code) {
-        case 'INVALID_VALUE':
-          return this.emit(VALIDATION_ERROR, error);
-        case 'NOT_FOUND':
-          return this.emit(NOT_FOUND, error);
-        case 'ALREADY_EXISTS':
-          return this.emit(ALREADY_EXISTS, error);
-        case 'NOTHING_TO_UPDATE':
-          return this.emit(NOTHING_TO_UPDATE, error);
+      switch (true) {
+        case equalErrors(error, errors.validationError()):
+          this.emit(VALIDATION_ERROR, error);
+          break;
+
+        case equalErrors(error, errors.sellerAlreadyExists()):
+          this.emit(ALREADY_EXISTS, error);
+          break;
+
+        case equalErrors(error, errors.sellerNotFound()):
+          this.emit(NOT_FOUND, error);
+          break;
+
         default:
           this.emit(ERROR, error);
+          break;
       }
     }
   }
@@ -86,6 +104,5 @@ UpdateSeller.setOutputs([
   'VALIDATION_ERROR',
   'NOT_FOUND',
   'ALREADY_EXISTS',
-  'NOTHING_TO_UPDATE',
   'ERROR',
 ]);

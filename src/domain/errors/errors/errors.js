@@ -75,6 +75,7 @@ export const errors = {
 
   // serializer
   invalidMapperType: makeError('INVALID_MAPPER_TYPE'),
+  invalidJSONAPIFormat: makeError('INVALID_JSONAPI_FORMAT'),
 
   // validate
   validationError: makeError('VALIDATION_ERROR'),

@@ -1,10 +1,6 @@
 import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
-import {
-  Serializer,
-  Deserializer,
-  Error as JSONAPIError,
-} from 'jsonapi-serializer';
+import { Serializer, Deserializer } from 'jsonapi-serializer';
 import { config } from 'config';
 import { errors } from 'src/domain';
 import { mapperTypes } from '../mapperTypes';
@@ -77,7 +73,12 @@ export class BaseSerializer {
     });
     this.JSONAPIDeserializer = JSONAPIDeserializer;
 
-    return this.JSONAPIDeserializer.deserialize(json);
+    try {
+      return this.JSONAPIDeserializer.deserialize(json);
+    } catch (error) {
+      const err = errors.invalidJSONAPIFormat(error.message);
+      throw err;
+    }
   }
 
   setJSONSerializer(type, opts) {

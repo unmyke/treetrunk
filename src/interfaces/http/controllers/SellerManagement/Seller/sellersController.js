@@ -26,7 +26,7 @@ const SellersController = {
       injectOperation('SellerManagement', 'Seller', 'createSeller'),
       this.create
     );
-    router.put(
+    router.patch(
       '/:sellerId',
       injectOperation('SellerManagement', 'Seller', 'updateSeller'),
       this.update
@@ -41,7 +41,7 @@ const SellersController = {
       injectOperation('SellerManagement', 'Seller', 'createSellerAppointment'),
       this.createAppointment
     );
-    router.put(
+    router.patch(
       '/:sellerId/appointments',
       injectOperation('SellerManagement', 'Seller', 'updateSellerAppointment'),
       this.updateAppointment
@@ -151,66 +151,79 @@ const SellersController = {
       VALIDATION_ERROR,
       NOT_FOUND,
       ALREADY_EXISTS,
-      NOTHING_TO_UPDATE,
       ERROR,
     } = updateSeller.outputs;
 
     updateSeller
-      .on(SUCCESS, (seller) => {
-        res.status(Status.ACCEPTED).json(seller);
+      .on(SUCCESS, ({ seller, posts, seniorityTypes }) => {
+        res.status(Status.CREATED).json(
+          req.serializer.serialize({
+            data: seller,
+            included: { posts, seniorityTypes },
+          })
+        );
       })
       .on(VALIDATION_ERROR, (error) => {
-        res.status(Status.BAD_REQUEST).json({
-          type: 'ValidationError',
-          details: error.details,
-        });
+        res
+          .status(Status.BAD_REQUEST)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(NOT_FOUND, (error) => {
-        res.status(Status.NOT_FOUND).json({
-          type: 'NotFoundError',
-          details: error.details,
-        });
+        res
+          .status(Status.NOT_FOUND)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(ALREADY_EXISTS, (error) => {
-        res.status(Status.CONFLICT).json({
-          type: 'AlreadyExists',
-          details: error.details,
-        });
-      })
-      .on(NOTHING_TO_UPDATE, (error) => {
-        res.status(Status.BAD_REQUEST).json({
-          type: 'NothingToUpdate',
-          details: error.details,
-        });
+        res
+          .status(Status.CONFLICT)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(ERROR, next);
 
-    updateSeller.execute({ sellerIdValue: req.params.sellerId, ...req.body });
+    req.serializer.deserialize(req.body).then(
+      (seller) => {
+        updateSeller.execute({ sellerId: req.params.sellerId, ...seller });
+      },
+      (error) => {
+        res
+          .status(Status.BAD_REQUEST)
+          .json(req.serializer.serializeErrors(error, res.status));
+      }
+    );
   },
 
   delete(req, res, next) {
     const { deleteSeller } = req;
-    const { SUCCESS, NOT_FOUND, NOT_ALLOWED, ERROR } = deleteSeller.outputs;
+    const {
+      SUCCESS,
+      NOT_FOUND,
+      VALIDATION_ERROR,
+      NOT_ALLOWED,
+      ERROR,
+    } = deleteSeller.outputs;
 
     deleteSeller
       .on(SUCCESS, () => {
         res.status(Status.ACCEPTED).end();
       })
       .on(NOT_FOUND, (error) => {
-        res.status(Status.NOT_FOUND).json({
-          type: 'NotFoundError',
-          details: error.details,
-        });
+        res
+          .status(Status.NOT_FOUND)
+          .json(req.serializer.serializeErrors(error, res.status));
+      })
+      .on(VALIDATION_ERROR, (error) => {
+        res
+          .status(Status.NOT_FOUND)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(NOT_ALLOWED, (error) => {
-        res.status(Status.CONFLICT).json({
-          type: 'NotAllowedError',
-          details: error.details,
-        });
+        res
+          .status(Status.CONFLICT)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(ERROR, next);
 
-    deleteSeller.execute({ sellerIdValue: req.params.sellerId });
+    deleteSeller.execute(req.params.sellerId);
   },
 
   createAppointment(req, res, next) {
@@ -220,44 +233,41 @@ const SellersController = {
       VALIDATION_ERROR,
       NOT_FOUND,
       ALREADY_EXISTS,
-      NOTHING_TO_UPDATE,
       ERROR,
     } = createSellerAppointment.outputs;
 
     createSellerAppointment
-      .on(SUCCESS, (seller) => {
-        res.status(Status.CREATED).json(seller);
+      .on(SUCCESS, ({ seller, posts, seniorityTypes }) => {
+        res.status(Status.CREATED).json(
+          req.serializer.serialize({
+            data: seller,
+            included: { posts, seniorityTypes },
+          })
+        );
       })
       .on(VALIDATION_ERROR, (error) => {
-        res.status(Status.BAD_REQUEST).json({
-          type: 'ValidationError',
-          details: error.details,
-        });
+        res
+          .status(Status.BAD_REQUEST)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(NOT_FOUND, (error) => {
-        res.status(Status.NOT_FOUND).json({
-          type: 'NotFoundError',
-          details: error.details,
-        });
+        res
+          .status(Status.NOT_FOUND)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(ALREADY_EXISTS, (error) => {
-        res.status(Status.BAD_REQUEST).json({
-          type: 'AlreadyExists',
-          details: error.details,
-        });
-      })
-      .on(NOTHING_TO_UPDATE, (error) => {
-        res.status(Status.BAD_REQUEST).json({
-          type: 'NothingToUpdate',
-          details: error.details,
-        });
+        res
+          .status(Status.CONFLICT)
+          .json(req.serializer.serializeErrors(error, res.status));
       })
       .on(ERROR, next);
 
-    createSellerAppointment.execute({
-      sellerIdValue: req.params.sellerId,
-      ...req.body,
-    });
+    createSellerAppointment.execute(
+      req.serializer.deserialize({
+        ...req.body,
+        sellerId: req.params.sellerId,
+      })
+    );
   },
 
   updateAppointment(req, res, next) {

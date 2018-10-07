@@ -1,8 +1,17 @@
 import { Operation } from '../../_lib';
 
 export class CreateSellerAppointment extends Operation {
-  async execute(sellerIdValue, { postId: postIdValue, appointDate }) {
-    const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
+  async execute({
+    sellerIdValue,
+    appointments: { postId: postIdValue, day: appointDate },
+  }) {
+    const {
+      SUCCESS,
+      NOT_FOUND,
+      ALREADY_EXISTS,
+      VALIDATION_ERROR,
+      ERROR,
+    } = this.outputs;
     const {
       repositories: { Seller: sellerRepo },
       commonTypes: { PostId, SellerId },
@@ -28,4 +37,9 @@ export class CreateSellerAppointment extends Operation {
   }
 }
 
-CreateSellerAppointment.setOutputs(['SUCCESS', 'ERROR', 'VALIDATION_ERROR']);
+CreateSellerAppointment.setOutputs([
+  'SUCCESS',
+  'NOT_FOUND',
+  'ALREADY_EXISTS',
+  'VALIDATION_ERROR',
+]);

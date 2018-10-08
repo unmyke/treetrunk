@@ -39,26 +39,23 @@ export class CreateSeller extends Operation {
       errors,
     } = this;
 
+    const sellerService = new SellerService({
+      repositories: {
+        Seller: sellerRepo,
+        Post: postRepo,
+        SeniorityType: seniorityTypeRepo,
+      },
+    });
+
     const { firstName, middleName, lastName, phone } = await sellerPromise;
 
-    // console.log(firstName, middleName, lastName, phone);
-
     try {
-      const seller = new Seller({ firstName, middleName, lastName, phone });
       validate({ firstName, middleName, lastName, phone }, { exception: true });
 
+      const seller = new Seller({ firstName, middleName, lastName, phone });
       const newSeller = await sellerRepo.add(seller);
-      const sellerService = new SellerService({
-        repositories: {
-          Seller: sellerRepo,
-          Post: postRepo,
-          SeniorityType: seniorityTypeRepo,
-        },
-      });
-
-      const [posts, seniorityTypes] = await Promise.all([
-        sellerService.getPostIdsQuery([newSeller]),
-        sellerService.getMonthsRangeQuery([newSeller]),
+      const { posts, seniorityTypes } = await sellerService.getIncluded([
+        newSeller,
       ]);
 
       this.emit(SUCCESS, { seller: newSeller, posts, seniorityTypes });

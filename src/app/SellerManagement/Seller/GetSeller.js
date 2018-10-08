@@ -27,26 +27,25 @@ export class GetSeller extends Operation {
       errors,
     } = this;
 
+    const sellerService = new SellerService({
+      repositories: {
+        Seller: sellerRepo,
+        Post: postRepo,
+        SeniorityType: seniorityTypeRepo,
+      },
+    });
+
     try {
       validate({ sellerIdValue }, { exception: true });
 
       const sellerId = new SellerId({ value: sellerIdValue });
-      const seller = await sellerRepo.getById(sellerId);
+      const newSeller = await sellerRepo.getById(sellerId);
 
-      const sellerService = new SellerService({
-        repositories: {
-          Seller: sellerRepo,
-          Post: postRepo,
-          SeniorityType: seniorityTypeRepo,
-        },
-      });
-
-      const [posts, seniorityTypes] = await Promise.all([
-        sellerService.getPostIdsQuery([seller]),
-        sellerService.getMonthsRangeQuery([seller]),
+      const { posts, seniorityTypes } = await sellerService.getIncluded([
+        newSeller,
       ]);
 
-      this.emit(SUCCESS, { seller, posts, seniorityTypes });
+      this.emit(SUCCESS, { seller: newSeller, posts, seniorityTypes });
     } catch (error) {
       switch (true) {
         case equalErrors(error, errors.sellerNotFound()):

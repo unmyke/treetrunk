@@ -1,29 +1,42 @@
 import { BaseService } from '../../_lib';
-import { Day } from '../../commonTypes';
+import { Day, SellerId } from '../../commonTypes';
 
 export class SellerService extends BaseService {
-  getMonthsRangeQuery(sellers) {
-    const range = sellers.reduce(({ min, max }, { months }) => {
-      const newMin = min === undefined || months < min ? months : min;
-      const newMax = max === undefined || months > max ? months : max;
-
-      return {
-        min: newMin,
-        max: newMax,
-      };
-    }, {});
-
-    return this.repositories.SeniorityType.find({ monthsBetween: range });
+  getSellersByQuery(query) {
+    return this.repositories.Seller.find(query).then((sellers) =>
+      Promise.all([Promise.resolve(sellers), ...this.getIncluded(sellers)])
+    );
   }
 
-  getPostIdsQuery(sellers) {
-    const postIds = new Set(
-      sellers.reduce(
-        (allPostIds, { postIds }) => [...allPostIds, ...postIds],
-        []
-      )
+  getSellerById(sellerIdValue) {
+    const sellerId = new SellerId({ value: sellerIdValue });
+
+    return this.repositories.Seller.getById(sellerId).then((seller) =>
+      Promise.all([Promise.resolve(seller), ...this.getIncluded([seller])])
+    );
+  }
+
+  getIncluded(sellers) {
+    const { allPostIds, monthsBetween } = sellers.reduce(
+      ({ allPostIds, monthsBetween: { min, max } }, { months, postIds }) => {
+        const newPostIds = [...allPostIds, ...postIds];
+
+        const newMin = min === undefined || months < min ? months : min;
+        const newMax = max === undefined || months > max ? months : max;
+
+        const newMonthsBetween = {
+          min: newMin,
+          max: newMax,
+        };
+
+        return { allPostIds: newPostIds, monthsBetween: newMonthsBetween };
+      },
+      { allPostIds: [], monthsBetween: {} }
     );
 
-    return this.repositories.Post.find({ postIds: [...postIds] });
+    return Promise.all([
+      this.repositories.Post.find({ postIds: [...new Set(allPostIds)] }),
+      this.repositories.SeniorityType.find({ monthsBetween }),
+    ]).then(([posts, seniorityTypes]) => ({ posts, seniorityTypes }));
   }
 }

@@ -4,7 +4,9 @@ import { Seller as states } from '../../../domain/states';
 export class GetAllSellers extends Operation {
   static constraints = {
     states: { inclusion: states },
-    search: {},
+    search: {
+      notEmpty: true,
+    },
   };
 
   async execute(query = {}) {
@@ -16,23 +18,26 @@ export class GetAllSellers extends Operation {
         SeniorityType: seniorityTypeRepo,
       },
       entities: { SellerService },
+      validate,
     } = this;
 
+    const sellerService = new SellerService({
+      repositories: {
+        Seller: sellerRepo,
+        Post: postRepo,
+        SeniorityType: seniorityTypeRepo,
+      },
+    });
+
     try {
+      validate(query);
+
       const sellers = await sellerRepo.find(query);
+      const { posts, seniorityTypes } = await sellerService.getIncluded(
+        sellers
+      );
 
-      const sellerService = new SellerService({
-        repositories: {
-          Seller: sellerRepo,
-          Post: postRepo,
-          SeniorityType: seniorityTypeRepo,
-        },
-      });
-
-      const [posts, seniorityTypes] = await Promise.all([
-        sellerService.getPostIdsQuery(sellers),
-        sellerService.getMonthsRangeQuery(sellers),
-      ]);
+      console.log({ sellers, posts, seniorityTypes });
 
       this.emit(SUCCESS, { sellers, posts, seniorityTypes });
     } catch (error) {

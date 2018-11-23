@@ -17,6 +17,7 @@ const attrs = {
     attrName: 'id',
     serializer: idSerializer,
   },
+  fullName: { type: IDENTITY },
   firstName: { type: IDENTITY },
   middleName: { type: IDENTITY },
   lastName: { type: IDENTITY },

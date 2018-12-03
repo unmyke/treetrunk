@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import pluralize from 'pluralize';
-import { snakeCase, lowerFirst } from 'lodash';
+import { kebabCase, lowerFirst } from 'lodash';
 
 import * as Controllers from '../controllers';
 
@@ -11,12 +11,12 @@ export function createControllerRoutes(rootRouter) {
     Object.keys(Controllers[subdomainName]).forEach((entityName) => {
       const entityRouter = Controllers[subdomainName][entityName].router;
       subdomainRouter.use(
-        `/${snakeCase(lowerFirst(pluralize(entityName)))}`,
+        `/${kebabCase(lowerFirst(pluralize(entityName)))}`,
         entityRouter
       );
     });
 
-    rootRouter.use(`/${snakeCase(lowerFirst(subdomainName))}`, subdomainRouter);
+    rootRouter.use(`/${kebabCase(lowerFirst(subdomainName))}`, subdomainRouter);
     return rootRouter;
   });
 

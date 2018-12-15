@@ -8,7 +8,7 @@ module.exports = {
       name: 'dismissPostId',
       SubdomainName: 'SellerManagement',
       ModelName: 'Post',
-      values: { name: 'уволен(а)' },
+      values: { name: 'уволен(а)', state: 'ACTIVE' },
       callback: define,
     },
   ],

@@ -1,3 +1,3 @@
-import { SellerManagement } from './Sequelize';
+import { SellerManagement } from './Mongoose';
 
 export { SellerManagement };

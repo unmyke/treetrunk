@@ -1,18 +1,26 @@
+var commonOptions = {
+  useNewUrlParser: true,
+};
+
 module.exports = {
   development: {
-    username: 'treetrunk',
-    password: 'Tree00trunk',
-    database: 'treetrunk_development',
-    host: '127.0.0.1',
-    dialect: 'mysql',
+    dbName: 'treetrunk-development',
+    user: 'treetrunk',
+    pass: 'Tree00trunk',
+    ...commonOptions,
   },
   test: {
-    username: 'treetrunk',
-    password: 'Tree00trunk',
-    database: 'treetrunk_test',
-    host: '127.0.0.1',
-    dialect: 'mysql',
-    logging: null,
+    dbName: 'treetrunk-test',
+    user: 'treetrunk',
+    pass: 'Tree00trunk',
+    ...commonOptions,
   },
-  production: process.env.DATABASE_URL,
+  production: {
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT,
+    dbName: process.env.DATABASE_NAME || 'treetrunk',
+    user: process.env.DATABASE_USER,
+    pass: process.env.DATABASE_PATH,
+    ...commonOptions,
+  },
 };

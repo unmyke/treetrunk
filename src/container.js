@@ -26,8 +26,7 @@ import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
 
 import { subdomains as subdomainsSerializers } from './interfaces/http/serializers';
 
-import { db } from './infra/database/models';
-const { database, models } = db;
+import { database, models } from './infra/database';
 import {
   commonTypes as commonTypesMappers,
   subdomains as subdomainsMappers,

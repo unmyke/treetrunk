@@ -1,21 +1,10 @@
-import { Schema } from 'mongoose';
+import { Model } from 'mongorito';
 
-export const SellerSchema = new Schema({
-  _id: Schema.Types.ObjectId,
-  firstName: String,
-  middleName: String,
-  lastName: String,
-  phone: String,
-  state: String,
-  appointments: [
-    {
-      postId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Author',
-      },
-      day: Date,
-    },
-  ],
-  createdAt: Date,
-  updatedAt: Date,
-});
+export class Seller extends Model {}
+
+export const embeds = [
+  {
+    path: 'appointments.post',
+    model: 'Post',
+  },
+];

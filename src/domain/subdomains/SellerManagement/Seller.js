@@ -71,22 +71,21 @@ export class Seller extends BaseEntity {
   // Factories
 
   static restore({
-    sellerId,
     firstName,
     middleName,
     lastName,
     phone,
     state,
     appointments,
-    createdAt,
+    ...props
   }) {
     const seller = new Seller({
-      sellerId,
       firstName,
       middleName,
       lastName,
       phone,
-      createdAt,
+      appointments,
+      ...props,
     });
 
     if (appointments !== undefined) {
@@ -102,10 +101,16 @@ export class Seller extends BaseEntity {
   }
 
   static instanceAt(
-    { firstName, middleName, lastName, phone, _appointments },
+    { firstName, middleName, lastName, phone, _appointments, ...props },
     day = new Day()
   ) {
-    const seller = new Seller({ firstName, middleName, lastName, phone });
+    const seller = new Seller({
+      firstName,
+      middleName,
+      lastName,
+      phone,
+      ...props,
+    });
 
     seller._appointments = Diary.instanceAt(_appointments, day);
     seller.setState(calculateState(seller));
@@ -225,31 +230,17 @@ export class Seller extends BaseEntity {
           this._appointments.updateCloseTo(day)
         );
       },
-
-      onAfterTransition() {
-        this.updatedAt = new Date();
-      },
     },
   };
 
-  constructor({
-    sellerId = new SellerId(),
-    lastName,
-    firstName,
-    middleName,
-    phone,
-    createdAt = new Date(),
-    updatedAt,
-  }) {
-    super(sellerId);
+  constructor({ lastName, firstName, middleName, phone, ...props }) {
+    super(props);
     this._personName = new PersonName({
       lastName,
       firstName,
       middleName,
     });
     this.phone = phone;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
 
     this._appointments = new Diary();
 

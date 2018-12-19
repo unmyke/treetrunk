@@ -4,6 +4,7 @@ import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { SeniorityType as states } from '../../states';
 import { SeniorityTypeId, Day, Diary } from '../../commonTypes';
+import { loop } from 'src/domain/_lib/BaseMethods';
 
 const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.awardAlreadyExists(),
@@ -26,12 +27,11 @@ const transitions = {
 };
 
 export class SeniorityType extends BaseEntity {
-  static restore({ seniorityTypeId, name, months, state, awards }) {
+  static restore({ name, months, state, awards, ...props }) {
     const seniorityType = new SeniorityType({
-      seniorityTypeId,
       name,
       months,
-      state,
+      ...props,
     });
     seniorityType._awards = Diary.restore(awards);
     seniorityType.setState(state);
@@ -40,14 +40,14 @@ export class SeniorityType extends BaseEntity {
   }
 
   static instanceAt(
-    { seniorityTypeId, name, _awards, months, state },
+    { name, _awards, months, state, ...props },
     day = new Day()
   ) {
     const seniorityType = new SeniorityType({
       seniorityTypeId,
       name,
       months,
-      state,
+      ...props,
     });
     seniorityType._awards = Diary.instanceAt(_awards, day);
     seniorityType.setState(state);
@@ -58,7 +58,7 @@ export class SeniorityType extends BaseEntity {
   static fsm = {
     init: states.ACTIVE,
     transitions: [
-      { name: transitions.UPDATE, from: states.ACTIVE, to: states.ACTIVE },
+      { name: transitions.UPDATE, from: '*', to: loop },
       {
         name: transitions.ADD_PIECE_RATE,
         from: states.ACTIVE,
@@ -83,20 +83,19 @@ export class SeniorityType extends BaseEntity {
     ],
 
     methods: {
-      // update({ name })
-      onUpdate(lifecycle, { name }) {
-        this.name = name;
+      onUpdate(_, { name }) {
+        this.name = name || this.name;
       },
 
-      onAddAward(lifecycle, value, day = new Day()) {
+      onAddAward(_, value, day = new Day()) {
         return diaryOperationRunner(() => this._awards.add(value, day));
       },
 
-      onDeleteAwardAt(lifecycle, day = new Day()) {
+      onDeleteAwardAt(_, day = new Day()) {
         return diaryOperationRunner(() => this._awards.deleteAt(day));
       },
 
-      onUpdateAwardTo(lifecycle, day, newValue, newDay) {
+      onUpdateAwardTo(_, day, newValue, newDay) {
         return diaryOperationRunner(() =>
           this._awards.updateTo(day, newValue, newDay)
         );
@@ -104,8 +103,8 @@ export class SeniorityType extends BaseEntity {
     },
   };
 
-  constructor({ seniorityTypeId = new SeniorityTypeId(), name, months }) {
-    super(seniorityTypeId);
+  constructor({ name, months, ...props }) {
+    super(props);
     this.name = name;
     this.months = months;
     this._awards = new Diary();

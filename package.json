@@ -47,7 +47,7 @@
     "lodash": "^4.17.10",
     "log4js": "^2.6.1",
     "method-override": "^2.3.10",
-    "mongoose": "^5.4.0",
+    "mongorito": "^3.0.4",
     "morgan": "^1.9.0",
     "nodemod": "^1.5.19",
     "nodemon": "^1.17.4",

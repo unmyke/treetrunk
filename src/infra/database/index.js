@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import { Database } from 'mongorito';
 import { config } from 'config';
-import * as models from './models';
+// import * as models from './models';
 
 const getUrl = ({ dbName, ...options }) => {
   const protocol = 'mongodb';
@@ -14,20 +14,17 @@ const { db: dbConfig } = config;
 let database;
 
 if (dbConfig) {
-  const { host, port, dbName, ...options } = dbConfig;
-  mongoose.connect(
-    getUrl({ host, port, dbName }),
-    options
+  const { host, port, dbName, user, pass, ...options } = dbConfig;
+  const auth = user ? { user, password: pass } : undefined;
+
+  database = new Database(getUrl({ host, port, dbName }), { auth, ...options });
+
+  database.connect().then(
+    () => {
+      console.log('Database connection successful.');
+    },
+    ({ message }) => console.error(`Database connection error: ${message}`)
   );
-  database = mongoose.connection;
-
-  database.on('error', ({ message }) => {
-    console.error(`Database connection error: ${message}`);
-  });
-
-  database.once('open', () => {
-    console.log('Database connection successful.');
-  });
 } else {
   /* eslint-disable no-console */
   console.error('Database config file found, disabling database.');

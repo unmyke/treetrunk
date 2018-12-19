@@ -3,7 +3,8 @@ import { getSyncOperationRunner } from 'src/infra/support/operationRunner';
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { Post as states } from '../../states';
-import { PostId, Day, Diary } from '../../commonTypes';
+import { Day, Diary } from '../../commonTypes';
+import { loop } from 'src/domain/_lib/BaseMethods';
 
 const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.pieceRateAlreadyExists(),
@@ -26,16 +27,16 @@ const transitions = {
 };
 
 export class Post extends BaseEntity {
-  static restore({ postId, name, pieceRates, state }) {
-    const post = new Post({ postId, name, state });
+  static restore({ name, pieceRates, state, ...props }) {
+    const post = new Post({ name, state, ...props });
     post._pieceRates = Diary.restore(pieceRates);
     post.setState(state);
 
     return post;
   }
 
-  static instanceAt({ postId, name, _pieceRates, state }, day = new Day()) {
-    const post = new Post({ postId, name });
+  static instanceAt({ name, _pieceRates, state, ...props }, day = new Day()) {
+    const post = new Post({ name, ...props });
     post._pieceRates = Diary.instanceAt(_pieceRates, day);
     post.setState(state);
 
@@ -45,7 +46,7 @@ export class Post extends BaseEntity {
   static fsm = {
     init: states.ACTIVE,
     transitions: [
-      { name: transitions.UPDATE, from: states.ACTIVE, to: states.ACTIVE },
+      { name: transitions.UPDATE, from: '*', to: loop },
       {
         name: transitions.ADD_PIECE_RATE,
         from: states.ACTIVE,
@@ -71,19 +72,19 @@ export class Post extends BaseEntity {
 
     methods: {
       // update({ name })
-      onUpdate(lifecycle, { name }) {
+      onBeforeUpdate(lifecycle, { name }) {
         this.name = name;
       },
 
-      onAddPieceRate(lifecycle, value, day = new Day()) {
+      onBeforeAddPieceRate(lifecycle, value, day = new Day()) {
         return diaryOperationRunner(() => this._pieceRates.add(value, day));
       },
 
-      onDeletePieceRateAt(lifecycle, day = new Day()) {
+      onBeforeDeletePieceRateAt(lifecycle, day = new Day()) {
         return diaryOperationRunner(() => this._pieceRates.deleteAt(day));
       },
 
-      onUpdatePieceRateTo(lifecycle, day, newValue, newDay) {
+      onBeforeUpdatePieceRateTo(lifecycle, day, newValue, newDay) {
         return diaryOperationRunner(() =>
           this._pieceRates.updateTo(day, newValue, newDay)
         );
@@ -91,8 +92,8 @@ export class Post extends BaseEntity {
     },
   };
 
-  constructor({ postId = new PostId(), name }) {
-    super(postId);
+  constructor({ name, ...props }) {
+    super(props);
     this.name = name;
     this._pieceRates = new Diary();
   }

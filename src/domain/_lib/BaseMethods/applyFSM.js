@@ -22,6 +22,10 @@ export const applyFSM = (EntityClass) => {
       onInvalidTransition() {
         throw errors.transitionNotAllowed();
       },
+
+      onAfterTransition() {
+        this.updatedAt = new Date();
+      },
       ...methods,
     },
   });

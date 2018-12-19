@@ -1,5 +1,6 @@
 import StateMachine from 'javascript-state-machine';
 import { errors } from '../../errors';
+import { toState } from './fsmHelpers';
 
 const SET_STATE_TRANSITION = 'setState';
 
@@ -12,9 +13,7 @@ export const applyFSM = (EntityClass) => {
       {
         name: SET_STATE_TRANSITION,
         from: init,
-        to: function(state) {
-          return state;
-        },
+        to: toState,
       },
       ...transitions,
     ],

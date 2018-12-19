@@ -1,6 +1,7 @@
 import { getSyncOperationRunner } from 'src/infra/support/operationRunner';
 
 import { BaseEntity } from '../../_lib';
+import { loop } from '../../_lib/BaseMethods';
 import { errors } from '../../errors';
 import { Seller as states } from '../../states';
 import { SellerId, PostId, PersonName, Day, Diary } from '../../commonTypes';
@@ -25,6 +26,7 @@ const diaryOperationRunner = getSyncOperationRunner(diaryErrorMessageMapper);
 // FSM
 
 const transitions = {
+  UPDATE: 'update',
   ADD_APPOINTMENT: 'addAppointment',
   DELETE_APPOINTMENT_AT: 'deleteAppointmentAt',
   UPDATE_APPOINTMENT_TO: 'updateAppointmentTo',
@@ -76,6 +78,7 @@ export class Seller extends BaseEntity {
     phone,
     state,
     appointments,
+    createdAt,
   }) {
     const seller = new Seller({
       sellerId,
@@ -83,6 +86,7 @@ export class Seller extends BaseEntity {
       middleName,
       lastName,
       phone,
+      createdAt,
     });
 
     if (appointments !== undefined) {
@@ -114,6 +118,11 @@ export class Seller extends BaseEntity {
   static fsm = {
     init: states.NEW,
     transitions: [
+      {
+        name: transitions.UPDATE,
+        from: '*',
+        to: loop,
+      },
       {
         name: transitions.ADD_APPOINTMENT,
         from: [states.NEW, states.RECRUITED, states.DISMISSED],
@@ -152,7 +161,7 @@ export class Seller extends BaseEntity {
     ],
 
     methods: {
-      onInvalidTransition(transition, from) {
+      onBeforeInvalidTransition(transition, from) {
         switch (from) {
           case states.DELETED:
             throw errors.sellerDeleted();
@@ -179,32 +188,46 @@ export class Seller extends BaseEntity {
         }
       },
 
-      onAddAppointment(lifecycle, postId, day = new Day()) {
+      onBeforeUpdate(_, { lastName, firstName, middleName, phone }) {
+        this._personName = new PersonName({
+          lastName: lastName || this.lastName,
+          firstName: firstName || this.firstName,
+          middleName: middleName || this.middleName,
+        });
+
+        this.phone = phone || this.phone;
+      },
+
+      onBeforeAddAppointment(_, postId, day = new Day()) {
         return diaryOperationRunner(() => this._appointments.add(postId, day));
       },
 
-      onDeleteAppointmentAt(lifecycle, day = new Day()) {
+      onBeforeDeleteAppointmentAt(_, day = new Day()) {
         return diaryOperationRunner(() => this._appointments.deleteAt(day));
       },
 
-      onUpdateAppointmentTo(lifecycle, day, newPostId, newDay = new Day()) {
+      onBeforeUpdateAppointmentTo(_, day, newPostId, newDay = new Day()) {
         return diaryOperationRunner(() =>
           this._appointments.updateTo(day, newPostId, newDay)
         );
       },
 
-      onDismissAt(lifecycle, day = new Day()) {
+      onBeforeDismissAt(_, day = new Day()) {
         return diaryOperationRunner(() => this._appointments.addCloseAt(day));
       },
 
-      onDeleteDismiss() {
+      onBeforeDeleteDismiss() {
         return diaryOperationRunner(() => this._appointments.deleteClose());
       },
 
-      onUpdateDismissTo(lifecycle, day = new Day()) {
+      onBeforeUpdateDismissTo(_, day = new Day()) {
         return diaryOperationRunner(() =>
           this._appointments.updateCloseTo(day)
         );
+      },
+
+      onAfterTransition() {
+        this.updatedAt = new Date();
       },
     },
   };
@@ -215,6 +238,8 @@ export class Seller extends BaseEntity {
     firstName,
     middleName,
     phone,
+    createdAt = new Date(),
+    updatedAt,
   }) {
     super(sellerId);
     this._personName = new PersonName({
@@ -223,6 +248,8 @@ export class Seller extends BaseEntity {
       middleName,
     });
     this.phone = phone;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
 
     this._appointments = new Diary();
 
@@ -283,15 +310,5 @@ export class Seller extends BaseEntity {
         postId: value,
         day,
       }));
-  }
-
-  update({ lastName, firstName, middleName, phone }) {
-    this._personName = new PersonName({
-      lastName: lastName || this.lastName,
-      firstName: firstName || this.firstName,
-      middleName: middleName || this.middleName,
-    });
-
-    this.phone = phone || this.phone;
   }
 }

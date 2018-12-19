@@ -1,5 +1,4 @@
-import { applyFSM } from './applyFSM';
-import { getDayComparator } from './getDayComparator';
-import { isEqualValues } from './isEqualValues';
-
-export { applyFSM, getDayComparator, isEqualValues };
+export { applyFSM } from './applyFSM';
+export { getDayComparator } from './getDayComparator';
+export { isEqualValues } from './isEqualValues';
+export { loop, toState } from './fsmHelpers';

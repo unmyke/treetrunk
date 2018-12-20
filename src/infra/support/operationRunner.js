@@ -18,6 +18,20 @@ export const getAsyncOperationRunner = (errorMessageMapper) => (operation) => {
   );
 };
 
+export const getOperationRunner = (errorMessageMapper) => (operation) => {
+  try {
+    const res = operation();
+    if (res instanceof Promise) {
+      res.catch((error) => {
+        throw dispatchError(error, errorMessageMapper);
+      });
+    }
+    return res;
+  } catch (error) {
+    throw dispatchError(error, errorMessageMapper);
+  }
+};
+
 export const getSyncOperationRunner = (errorMessageMapper) => (operation) => {
   try {
     return operation();

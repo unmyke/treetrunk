@@ -1,4 +1,4 @@
-export const envConfig = {
+exports.envConfig = {
   web: {
     domain: 'test',
     port: 'testport',

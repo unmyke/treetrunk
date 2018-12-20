@@ -1,4 +1,4 @@
-var commonOptions = {
+const commonOptions = {
   useNewUrlParser: true,
 };
 

@@ -1,7 +1,7 @@
-import path from 'path';
+const path = require('path');
 const logPath = path.join(__dirname, '../../logs/development.log');
 
-export const envConfig = {
+exports.envConfig = {
   web: {
     domain: 'localhost',
     port: 3001,

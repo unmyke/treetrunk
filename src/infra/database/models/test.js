@@ -15,10 +15,10 @@ const postId1 = uuidv4();
 const postId2 = uuidv4();
 const sellerId1 = uuidv4();
 
-const post1 = new Post({ id: postId1, name: 'postName1' });
-const post2 = new Post({ id: postId2, name: 'postName1' });
+const post1 = new Post({ _id: postId1, name: 'postName1' });
+const post2 = new Post({ _id: postId2, name: 'postName1' });
 const seller = new Seller({
-  id: sellerId1,
+  _id: sellerId1,
   name: 'sellername',
   appointments: [
     { post: post1, day: new Date() },

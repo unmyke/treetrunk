@@ -1,6 +1,7 @@
 import { Database } from 'mongorito';
 import { config } from 'config';
-// import * as models from './models';
+import * as models from './models';
+import { modelLoader } from './modelLoader';
 
 const getUrl = ({ dbName, ...options }) => {
   const protocol = 'mongodb';
@@ -22,6 +23,7 @@ if (dbConfig) {
   database.connect().then(
     () => {
       console.log('Database connection successful.');
+      modelLoader(models, db);
     },
     ({ message }) => console.error(`Database connection error: ${message}`)
   );

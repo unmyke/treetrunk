@@ -132,4 +132,4 @@ bottle.constant('swaggerMiddleware', swaggerMiddleware);
 bottle.constant('database', database);
 bottle.constant('models', models);
 
-export const container = bottle.container;
+export default bottle.container;

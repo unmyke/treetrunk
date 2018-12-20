@@ -16,6 +16,10 @@
     "prettier/prettier": ["error"]
   },
   "parser": "babel-eslint",
-  "plugins": ["prettier"],
-  "extends": ["plugin:prettier/recommended", "prettier"]
+  "plugins": ["prettier", "flowtype"],
+  "extends": [
+    "plugin:prettier/recommended",
+    "prettier",
+    "plugin:flowtype/recommended"
+  ]
 }

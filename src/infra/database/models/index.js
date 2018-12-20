@@ -1,3 +1,3 @@
-export { Seller } from './Seller';
-export { Post } from './Post';
-export { SeniorityType } from './SeniorityType';
+export { Seller } from './seller';
+export { Post } from './post';
+export { SeniorityType } from './seniority-type';

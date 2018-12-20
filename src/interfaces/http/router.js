@@ -4,8 +4,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import methodOverride from 'method-override';
-import { createControllerRoutes as controller } from './utils/createControllerRoutes';
-import { getRoutes } from './utils/getRoutes';
+import { createControllerRoutes as controller } from './utils/create-controller-routes';
+import { getRoutes } from './utils/get-routes';
 
 export const router = ({
   config,

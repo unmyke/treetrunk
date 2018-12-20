@@ -1,3 +1,1 @@
-import { InitializeApplication } from './InitializeApplication';
-
-export { InitializeApplication };
+export { InitializeApplication } from './initialize-application';

@@ -1,7 +1,7 @@
 import { Database } from 'mongorito';
 import { config } from 'config';
 import * as models from './models';
-import { modelLoader } from './modelLoader';
+import { modelLoader } from './model-loader';
 
 const getUrl = ({ dbName, ...options }) => {
   const protocol = 'mongodb';

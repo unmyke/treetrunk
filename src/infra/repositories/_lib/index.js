@@ -1,3 +1,1 @@
-import { SequelizeRepository } from './SequelizeRepository';
-
-export { SequelizeRepository };
+export { SequelizeRepository } from './sequelize-repository';

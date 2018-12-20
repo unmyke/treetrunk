@@ -1,3 +1,1 @@
-import { SellerManagement } from './Mongoose';
-
-export { SellerManagement };
+export { SellerManagement } from './mongoose';

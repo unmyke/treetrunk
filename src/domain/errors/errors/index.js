@@ -1,3 +1,1 @@
-import { errors } from './errors';
-
-export { errors };
+export { errors } from './errors';

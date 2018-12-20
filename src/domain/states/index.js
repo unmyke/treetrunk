@@ -1,5 +1,5 @@
-import Seller from './Seller';
-import Post from './Post';
-import SeniorityType from './SeniorityType';
+import Seller from './seller';
+import Post from './post';
+import SeniorityType from './seniority-type';
 
 export { Seller, Post, SeniorityType };

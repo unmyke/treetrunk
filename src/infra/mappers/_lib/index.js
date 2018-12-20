@@ -1,4 +1,2 @@
-import { BaseMapper } from './BaseMapper';
-import { BaseIdMapper } from './BaseIdMapper';
-
-export { BaseMapper, BaseIdMapper };
+export { BaseMapper } from './base-mapper';
+export { BaseIdMapper } from './base-id-mapper';

@@ -1,3 +1,1 @@
-import { Operation } from './Operation';
-
-export { Operation };
+export { Operation } from './operation';

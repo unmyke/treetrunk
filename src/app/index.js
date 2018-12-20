@@ -1,4 +1,4 @@
-import * as SellerManagement from './SellerManagement';
-// import * as Initializer from './Initializer';
+import * as SellerManagement from './seller-management';
+// import * as Initializer from './initializer';
 
 export { SellerManagement };

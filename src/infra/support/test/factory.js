@@ -1,5 +1,5 @@
 import { factory as factoryG, SequelizeAdapter } from 'factory-girl';
-import { loadFactories } from 'src/infra/support/loadFactories';
+import { loadFactories } from 'src/infra/support/load-factories';
 import { db } from 'src/infra/database/models';
 import * as factories from './factories';
 

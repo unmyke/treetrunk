@@ -1,3 +1,3 @@
-import * as SellerManagement from './SellerManagement';
+import * as SellerManagement from './seller-management';
 
 export { SellerManagement };

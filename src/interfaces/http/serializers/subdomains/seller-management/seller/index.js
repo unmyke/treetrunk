@@ -1,0 +1,1 @@
+export { SellerSerializer } from './seller';

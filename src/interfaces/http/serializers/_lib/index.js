@@ -1,5 +1,3 @@
-import { mapperTypes } from './mapperTypes';
-import { getResorceAttibutes } from './getResorceAttibutes';
-import { BaseSerializer } from './BaseSerializer';
-
-export { mapperTypes, getResorceAttibutes, BaseSerializer };
+export { mapperTypes } from './mapper-types';
+export { getResorceAttibutes } from './get-resorce-attibutes';
+export { BaseSerializer } from './BaseSerializer';

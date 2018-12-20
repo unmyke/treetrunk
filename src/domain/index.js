@@ -1,5 +1,5 @@
 import * as subdomains from './subdomains';
-import * as commonTypes from './commonTypes';
+import * as commonTypes from './common-types';
 import * as states from './states';
 import { errors } from './errors';
 

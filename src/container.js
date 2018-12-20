@@ -3,26 +3,26 @@ import { lowerFirst } from 'lodash';
 import {
   getSubdomainsContainer,
   getCommonTypesContainer,
-} from './infra/support/containerHelpers';
+} from './infra/support/container-helpers';
 
 import { config } from 'config';
-import { InitializeApplication } from './app/Initializer';
-import { Application } from './app/Application';
+import { InitializeApplication } from './app/initializer';
+import { Application } from './app/application';
 import * as services from './app';
 
 import { subdomains, commonTypes, states, errors } from './domain';
 
 import * as repositories from './infra/repositories';
-import { makeValidator } from './infra/support/makeValidator';
+import { makeValidator } from './infra/support/make-validator';
 
-import { Server } from './interfaces/http/Server';
+import { Server } from './interfaces/http/server';
 import { router } from './interfaces/http/router';
 import { logger } from './infra/logging/logger';
 
-import { loggerMiddleware } from './interfaces/http/logging/loggerMiddleware';
-import { errorHandler } from './interfaces/http/errors/errorHandler';
-import { devErrorHandler } from './interfaces/http/errors/devErrorHandler';
-import { swaggerMiddleware } from './interfaces/http/swagger/swaggerMiddleware';
+import { loggerMiddleware } from './interfaces/http/logging/logger-middleware';
+import { errorHandler } from './interfaces/http/errors/error-handler';
+import { devErrorHandler } from './interfaces/http/errors/dev-error-handler';
+import { swaggerMiddleware } from './interfaces/http/swagger/swagger-middleware';
 
 import { subdomains as subdomainsSerializers } from './interfaces/http/serializers';
 

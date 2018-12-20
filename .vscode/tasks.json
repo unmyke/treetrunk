@@ -1,14 +1,9 @@
 {
-  "version": "0.1.0",
-  "command": "${workspaceRoot}/node_modules/.bin/babel",
-  "isShellCommand": true,
+  "version": "2.0.0",
+  "command": "yarn",
   "tasks": [
     {
-      "args": ["src", "--out-dir", "lib", "-w", "--source-maps"],
-      "taskName": "watch",
-      "suppressTaskName": true,
-      "isBuildCommand": true,
-      "isBackground": true
+      "label": "build"
     }
   ]
 }

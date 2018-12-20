@@ -7,8 +7,22 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Запустить программу",
-      "program": "${workspaceFolder}/index.js"
+      "name": "Launch App",
+      "sourceMaps": true,
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/index.js",
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
+      "env": {
+        "NODE_PATH": "${workspaceRoot}"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Current File",
+      "sourceMaps": true,
+      "program": "${file}",
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"]
     }
   ]
 }

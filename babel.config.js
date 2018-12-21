@@ -5,6 +5,9 @@ module.exports = function(api) {
       [
         '@babel/env',
         {
+          targets: {
+            node: '8.10',
+          },
           useBuiltIns: 'usage',
         },
         '@babel/preset-react',

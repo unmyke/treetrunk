@@ -1,0 +1,1 @@
+export { sellersRoutes } from './routes';

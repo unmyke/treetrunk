@@ -3,7 +3,8 @@
   "command": "yarn",
   "tasks": [
     {
-      "label": "build"
+      "type": "shell",
+      "label": "compile"
     }
   ]
 }

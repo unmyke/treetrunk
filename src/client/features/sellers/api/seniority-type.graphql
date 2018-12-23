@@ -1,0 +1,32 @@
+type SeniorityType {
+  id: ID!
+  name: String!
+  award: Float!
+  awards: [Award!]!
+  state: State!
+}
+
+type Award {
+  value: Float!
+  day: Day!
+}
+
+type Query {
+  getSeniorityTypes: [SeniorityType!]!
+  getSeniorityType(id: ID!): SeniorityType!
+}
+
+type Mutation {
+  createSeniorityType(id: ID!): SeniorityType!
+  updateSeniorityType(post: SeniorityTypeInput!): SeniorityType!
+  deleteSeniorityType(id: ID!): Boolean!
+  restoreSeniorityType(id: ID!): Boolean!
+  addAward(id: ID!, value: Float!, day: Day!): SeniorityType!
+  deleteAwardAt(id: ID!, day: Day!): SeniorityType!
+  updateAwardTo(
+    id: ID!
+    day: Day!
+    newValue: Float!
+    newDay: Day!
+  ): SeniorityType!
+}

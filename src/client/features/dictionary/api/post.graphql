@@ -1,0 +1,27 @@
+type Post {
+  id: ID!
+  name: String!
+  pieceRate: Float!
+  pieceRates: [PieceRate!]!
+  state: State!
+}
+
+type PieceRate {
+  value: Float!
+  day: Day!
+}
+
+type Query {
+  getPosts: [Post!]!
+  getPost(id: ID!): Post!
+}
+
+type Mutation {
+  createPost(id: ID!): Post!
+  updatePost(post: PostInput!): Post!
+  deletePost(id: ID!): Boolean!
+  restorePost(id: ID!): Boolean!
+  addPieceRate(id: ID!, value: Float!, day: Day!): Post!
+  deletePieceRateAt(id: ID!, day: Day!): Post!
+  updatePieceRateTo(id: ID!, day: Day!, newValue: Float!, newDay: Day!): Post!
+}

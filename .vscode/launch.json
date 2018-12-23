@@ -7,25 +7,19 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch App",
-      "sourceMaps": true,
-      // "preLaunchTask": "build",
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/babel-node",
-      "cwd": "${workspaceFolder}",
+      "name": "nodemon",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
+      "runtimeArgs": ["--exec", "yarn", "babel-node"],
       "program": "${workspaceFolder}/src/index.js",
-      // "outFiles": ["${workspaceRoot}/dist/**/*.js"],
-      "env": {
-        "NODE_PATH": "${workspaceRoot}"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch Current File",
+      "cwd": "${workspaceFolder}",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
       "sourceMaps": true,
-      "preLaunchTask": "build",
-      "program": "${file}",
-      "outFiles": ["${workspaceRoot}/dist/**/*.js"]
+      "outFiles": ["dst/***.js*"],
+      "env": {
+        "NODE_PATH": "."
+      }
     }
   ]
 }

@@ -1,0 +1,7 @@
+scalar Day
+scalar Phone
+
+enum DeletableEntitysState {
+  ACTIVE
+  DELETED
+}

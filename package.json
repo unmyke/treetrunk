@@ -7,9 +7,11 @@
   "license": "MIT",
   "scripts": {
     "babel-node": "babel-node",
-    "build": "babel src --out-dir dist --source-maps",
-    "compile": "yarn build --watch",
-    "start": "nodemon --exec node -- ./cluster.js",
+    "wepback": "webpack",
+    "build:client": "yarn run webpack --mode production --config-name client",
+    "build:server": "yarn run webpack --mode production --config-name server",
+    "build": "yarn run build:client && yarn run build:client",
+    "start": "node -- ./cluster.js",
     "dev": "NODE_PATH=. NODE_ENV=development nodemon --exec yarn run babel-node ./src/index.js",
     "console": "NODE_PATH=. yarn run babel-node src/interfaces/console/index.js",
     "jest": "yarn test",
@@ -63,6 +65,7 @@
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-flowtype": "^3.2.0",
     "eslint-plugin-prettier": "^3.0.0",
+    "html-webpack-plugin": "^3.2.0",
     "husky": "^1.3.0",
     "jest": "^23.6.0",
     "jest-plugin-context": "^2.9.0",
@@ -70,6 +73,7 @@
     "prettier": "^1.15.3",
     "webpack": "^4.28.2",
     "webpack-cli": "^3.1.2",
+    "webpack-merge": "^4.1.5",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {

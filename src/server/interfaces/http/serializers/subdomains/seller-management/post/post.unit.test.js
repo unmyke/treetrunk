@@ -2,9 +2,9 @@ import { subMonths, startOfDay } from 'date-fns';
 
 import * as commonTypes from '../../../common-types';
 import { PostSerializer as Serializer } from './post';
-import { Post } from 'src/domain/subdomains/SellerManagement';
-import { PostId, Day } from 'src/domain/common-types';
-import { Post as states } from 'src/domain/states';
+import { Post } from '@domain/subdomains/SellerManagement';
+import { PostId, Day } from '@domain/common-types';
+import { Post as states } from '@domain/states';
 
 const today = startOfDay(new Date());
 const date1 = subMonths(today, 3);

@@ -1,6 +1,6 @@
 import { factory as factoryG, SequelizeAdapter } from 'factory-girl';
-import { loadFactories } from 'src/infra/support/load-factories';
-import { db } from 'src/infra/database/models';
+import { loadFactories } from '@infra/support/load-factories';
+import { db } from '@infra/database/models';
 import * as factories from './factories';
 
 const { models } = db;

@@ -5,34 +5,34 @@ import {
   getCommonTypesContainer,
 } from './infra/support/container-helpers';
 
-import { config } from 'config';
-import { InitializeApplication } from './app/initializer';
-import { Application } from './app/application';
-import * as services from './app';
+import { config } from '@config';
+import { InitializeApplication } from '@app/initializer';
+import { Application } from '@app/application';
+import * as services from '@app';
 
-import { subdomains, commonTypes, states, errors } from './domain';
+import { subdomains, commonTypes, states, errors } from '@domain';
 
-import * as repositories from './infra/repositories';
-import { makeValidator } from './infra/support/make-validator';
+import * as repositories from '@infra/repositories';
+import { makeValidator } from '@infra/support/make-validator';
 
-import { Server } from './interfaces/http/server';
-import { router } from './interfaces/http/router';
-import { logger } from './infra/logging/logger';
+import { Server } from '@interfaces/http/server';
+import { router } from '@interfaces/http/router';
+import { logger } from '@infra/logging/logger';
 
-import { loggerMiddleware } from './interfaces/http/logging/logger-middleware';
-import { errorHandler } from './interfaces/http/errors/error-handler';
-import { devErrorHandler } from './interfaces/http/errors/dev-error-handler';
-import { swaggerMiddleware } from './interfaces/http/swagger/swagger-middleware';
+import { loggerMiddleware } from '@interfaces/http/logging/logger-middleware';
+import { errorHandler } from '@interfaces/http/errors/error-handler';
+import { devErrorHandler } from '@interfaces/http/errors/dev-error-handler';
+import { swaggerMiddleware } from '@interfaces/http/swagger/swagger-middleware';
 
-import { subdomains as subdomainsSerializers } from './interfaces/http/serializers';
+import { subdomains as subdomainsSerializers } from '@interfaces/http/serializers';
 
-import { database, models } from './infra/database';
+import { database, models } from '@infra/database';
 import {
   commonTypes as commonTypesMappers,
   subdomains as subdomainsMappers,
-} from './infra/mappers';
+} from '@infra/mappers';
 
-import { containerMiddleware } from './interfaces/http/utils/bottle-express';
+import { containerMiddleware } from '@interfaces/http/utils/bottle-express';
 
 const bottle = new Bottle();
 

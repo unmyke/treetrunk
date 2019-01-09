@@ -1,5 +1,5 @@
 import { Database } from 'mongorito';
-import { config } from 'config';
+import { config } from '@config';
 import * as models from './models';
 import { modelLoader } from './model-loader';
 

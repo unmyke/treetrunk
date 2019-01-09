@@ -2,9 +2,9 @@ import { subMonths, startOfDay } from 'date-fns';
 
 import * as commonTypes from '../../../common-types';
 import { SeniorityTypeSerializer as Serializer } from './seniority-type';
-import { SeniorityType } from 'src/domain/subdomains/SellerManagement';
-import { SeniorityTypeId, Day } from 'src/domain/common-types';
-import { SeniorityType as states } from 'src/domain/states';
+import { SeniorityType } from '@domain/subdomains/SellerManagement';
+import { SeniorityTypeId, Day } from '@domain/common-types';
+import { SeniorityType as states } from '@domain/states';
 
 const today = startOfDay(new Date());
 const date1 = subMonths(today, 3);

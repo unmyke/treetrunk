@@ -7,14 +7,9 @@ import {
   Seller,
   Post,
   SeniorityType,
-} from 'src/domain/subdomains/SellerManagement';
-import {
-  SellerId,
-  Day,
-  PostId,
-  SeniorityTypeId,
-} from 'src/domain/common-types';
-import { Seller as states } from 'src/domain/states';
+} from '@domain/subdomains/SellerManagement';
+import { SellerId, Day, PostId, SeniorityTypeId } from '@domain/common-types';
+import { Seller as states } from '@domain/states';
 
 const simplifyCollection = (collection) =>
   collection.map(({ value, day: { value: day } }) => ({ value, day }));

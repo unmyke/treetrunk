@@ -7,13 +7,13 @@ import {
   FilterList as FilterListIcon,
 } from '@material-ui/icons';
 
-import { actionTypes } from 'constants/table';
+import { actionTypes } from '@constants/table';
 import {
   getAction,
   hasEmptyRows,
   hasSingleRow,
   hasOneOrManyRows,
-} from 'lib/table-helpers';
+} from '@lib/table-helpers';
 
 const { CREATE, FILTER, RESTORE, DELETE, EDIT, ERASE } = actionTypes;
 

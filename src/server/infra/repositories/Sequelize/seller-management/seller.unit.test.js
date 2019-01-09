@@ -1,8 +1,8 @@
 import uuidv4 from 'uuid/v4';
-import { factory } from 'src/infra/support/test/factory';
-import { cleanDatabase } from 'src/infra/support/test/clean-database';
+import { factory } from '@infra/support/test/factory';
+import { cleanDatabase } from '@infra/support/test/clean-database';
 
-import { container } from 'src/container';
+import { container } from '@container';
 
 const getRawSeller = ({
   sellerId,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { CreateSellerPage, UpdateSellerPage, SellersListPage } from './pages';
-import paths from 'constants/paths';
+import paths from '@constants/paths';
 
 const baseUri = paths.sellers.path;
 

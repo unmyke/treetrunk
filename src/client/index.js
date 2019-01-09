@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
 
-import { App } from 'app';
+import { App } from './app';
 import { graphqlClient } from 'graphql-client';
-import * as serviceWorker from 'service-worker';
+import * as serviceWorker from './service-worker';
 
 ReactDOM.render(
   <ApolloProvider client={graphqlClient}>

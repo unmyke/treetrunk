@@ -1,6 +1,6 @@
-import { errors } from 'src/domain/errors';
+import { errors } from '@domain/errors';
 import { SequelizeRepository } from '../../_lib';
-import { getAsyncOperationRunner } from 'src/infra/support/operation-runner';
+import { getAsyncOperationRunner } from '@infra/support/operation-runner';
 
 const repoErrorMessageMapper = {
   MODEL_ALREADY_EXISTS: errors.seniorityTypeAlreadyExists(),

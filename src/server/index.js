@@ -1,6 +1,6 @@
 // import('@babel/polyfill');
 import EventEmitter from 'events';
-import { container } from './container';
+import container from './container';
 
 export class Server extends EventEmitter {
   start() {

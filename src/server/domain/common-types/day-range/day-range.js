@@ -1,6 +1,6 @@
 import { BaseValue } from '../../_lib';
 import { Day } from '../day';
-// import { addErrorDefinitionProperty } from 'src/infra/support/addErrorDefinition';
+// import { addErrorDefinitionProperty } from '@infra/support/addErrorDefinition';
 
 export class DayRange extends BaseValue {
   // Errors

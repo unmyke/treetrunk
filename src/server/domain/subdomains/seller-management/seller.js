@@ -1,4 +1,4 @@
-import { getSyncOperationRunner } from 'src/infra/support/operation-runner';
+import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
 import { BaseEntity } from '../../_lib';
 import { loop } from '../../_lib/base-methods';

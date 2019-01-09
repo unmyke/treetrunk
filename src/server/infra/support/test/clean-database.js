@@ -1,4 +1,4 @@
-import { container } from 'src/container';
+import { container } from '@container';
 const { database } = container;
 
 export const cleanDatabase = () => {

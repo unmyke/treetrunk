@@ -18,7 +18,7 @@ import {
 const ru = require('date-fns/locale/ru');
 
 import { BaseValue } from '../../_lib';
-import { isValidDate, convertDate } from 'src/infra/support/date-helpers';
+import { isValidDate, convertDate } from '@infra/support/date-helpers';
 
 function isMinusZero(value) {
   if (value !== 0) {

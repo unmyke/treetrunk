@@ -1,5 +1,5 @@
 import React from 'react';
-import { headerTypes } from 'constants/table';
+import { headerTypes } from '@constants/table';
 import {
   Create,
   Filter,
@@ -7,8 +7,8 @@ import {
   Delete,
   Restore,
   Erase,
-} from 'ui/atoms/table-actions';
-import { getIsInStatesPredicate } from 'lib/table-helpers';
+} from '@ui/atoms/table-actions';
+import { getIsInStatesPredicate } from '@lib/table-helpers';
 import states from './states';
 import {
   createSeller,

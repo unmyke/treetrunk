@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import styles from './styles';
 
-import { NavLink } from 'ui/atoms';
+import { NavLink } from '@ui/atoms';
 
 export const Nav = withStyles(styles)(({ classes, items }) => (
   <nav className={classes.navbar}>

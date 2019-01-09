@@ -2,7 +2,7 @@ import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
 import { Serializer, Deserializer } from 'jsonapi-serializer';
 import { config } from 'config';
-import { errors } from 'src/domain';
+import { errors } from '@domain';
 import { mapperTypes } from '../mapper-types';
 import { Error as errorSerializer } from '../../common-types';
 

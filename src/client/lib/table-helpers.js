@@ -1,5 +1,5 @@
 import React from 'react';
-import { TableAction } from 'ui/atoms';
+import { TableAction } from '@ui/atoms';
 
 const desc = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {

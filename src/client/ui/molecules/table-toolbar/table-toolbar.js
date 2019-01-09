@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { Toolbar } from '@material-ui/core';
 import { TableActionController } from '../table-action-controller';
-import { TableTitle } from 'ui/atoms';
+import { TableTitle } from '@ui/atoms';
 
 import { withStyles } from '@material-ui/core/styles';
 import styles from './styles';

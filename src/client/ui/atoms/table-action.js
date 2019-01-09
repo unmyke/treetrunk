@@ -1,7 +1,7 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import { IconButton, Tooltip } from '@material-ui/core';
-import { noop } from 'lib/noop';
+import { noop } from '@lib/noop';
 
 export const TableAction = ({
   title,

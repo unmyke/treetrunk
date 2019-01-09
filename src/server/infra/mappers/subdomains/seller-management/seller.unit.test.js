@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid/v4';
 
 import { SellerMapper } from './seller';
-import { container } from 'src/container';
+import { container } from '@container';
 
 const sellerToDTO = ({
   sellerId,

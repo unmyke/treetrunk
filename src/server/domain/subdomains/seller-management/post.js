@@ -1,11 +1,10 @@
-import { getSyncOperationRunner } from 'src/infra/support/operation-runner';
+import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { Post as states } from '../../states';
 import { Day, Diary } from '../../common-types';
-import { loop } from 'src/domain/_lib/base-methods';
-import { SellerId } from 'dist/domain/common-types/seller-id/seller-id';
+import { loop } from '@domain/_lib/base-methods';
 
 const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.pieceRateAlreadyExists(),

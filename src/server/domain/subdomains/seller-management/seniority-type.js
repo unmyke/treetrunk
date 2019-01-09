@@ -1,10 +1,10 @@
-import { getSyncOperationRunner } from 'src/infra/support/operation-runner';
+import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { SeniorityType as states } from '../../states';
 import { SeniorityTypeId, Day, Diary } from '../../common-types';
-import { loop } from 'src/domain/_lib/base-methods';
+import { loop } from '@domain/_lib/base-methods';
 
 const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.awardAlreadyExists(),

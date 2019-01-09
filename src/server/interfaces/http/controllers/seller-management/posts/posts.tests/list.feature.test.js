@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
-import { container } from 'src/container';
-import { request } from 'src/infra/support/test/request';
+import { container } from '@container';
+import { request } from '@infra/support/test/request';
 
 const {
   subdomains: {

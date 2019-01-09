@@ -1,8 +1,8 @@
 import { getAsyncOperationRunner } from '../../support/operation-runner';
 
 import { snakeCase, lowerFirst } from 'lodash';
-import { errors } from 'src/domain/errors';
-import { BaseRepository } from 'src/domain/_lib';
+import { errors } from '@domain/errors';
+import { BaseRepository } from '@domain/_lib';
 
 const repoErrorMapper = {
   'Validation error': errors.modelAlreadyExists(),

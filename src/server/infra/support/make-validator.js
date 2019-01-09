@@ -1,5 +1,5 @@
 import validate from 'validate.js';
-import { Day, DayRange } from 'src/domain/common-types';
+import { Day, DayRange } from '@domain/common-types';
 import isValidDate from 'date-fns/is_valid';
 
 const testRegex = {

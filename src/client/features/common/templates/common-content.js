@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { MainTemplate } from 'ui/templates';
+import { MainTemplate } from '@ui/templates';
 import { Header, Footer } from '../organizms';
 import { ContainerTemplate } from './container';
 

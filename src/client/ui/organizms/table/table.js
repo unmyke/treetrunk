@@ -10,12 +10,12 @@ import {
   Paper,
   Checkbox,
 } from '@material-ui/core';
-import { TableHead, TableToolbar } from 'ui/molecules';
+import { TableHead, TableToolbar } from '@ui/molecules';
 
 import { withStyles } from '@material-ui/core/styles';
 import styles from './styles';
 
-import { stableSort, getSorting, getItemValue } from 'lib/table-helpers';
+import { stableSort, getSorting, getItemValue } from '@lib/table-helpers';
 
 export const Table = withStyles(styles)(
   class Table extends Component {

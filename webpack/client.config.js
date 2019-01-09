@@ -1,9 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const babelOptions = require('../babel/client.config');
 
 module.exports = {
-  name: 'client',
   entry: './src/client',
   target: 'web',
   plugins: [
@@ -20,7 +18,7 @@ module.exports = {
       },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=100000',
+        use: ['url-loader'],
       },
     ],
   },
@@ -28,6 +26,8 @@ module.exports = {
     alias: {
       '@features': path.resolve(__dirname, '../src/client/features'),
       '@ui': path.resolve(__dirname, '../src/client/ui'),
+      '@constants': path.resolve(__dirname, '../src/client/constants'),
+      '@lib': path.resolve(__dirname, '../src/client/lib'),
     },
   },
   devServer: {

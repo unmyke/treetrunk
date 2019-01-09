@@ -1,4 +1,5 @@
 const merge = require('webpack-merge');
+const upperFirst = (str) => str[0].toUpperCase() + str.slice(1);
 
 const webpackConfigs = {
   common: require('./webpack/common.config'),
@@ -16,52 +17,49 @@ const babelConfig = {
   development: require('./babel/development.config'),
 };
 
-const getBabelModule = (configName) => ({
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: 'babel-loader',
-          options: babelConfig[configName],
-        },
-      },
-    ],
-  },
-});
-
-const serverProductionConfig = merge(
-  common,
-  production,
-  server,
-  getBabelModule('common'),
-  getBabelModule('server'),
-  getBabelModule('production')
+const serverProductionConfig = merge.smart(
+  webpackConfigs.common,
+  webpackConfigs.production,
+  webpackConfigs.server,
+  babelConfig.common,
+  babelConfig.server,
+  babelConfig.production,
+  {
+    name: 'server-production',
+  }
 );
-const serverDevelopmentConfig = merge(
-  webpackConfigs['common'],
-  webpackConfigs['development'],
-  webpackConfigs['server'],
-  getBabelModule('common'),
-  getBabelModule('server'),
-  getBabelModule('development')
+const serverDevelopmentConfig = merge.smart(
+  webpackConfigs.common,
+  webpackConfigs.development,
+  webpackConfigs.server,
+  babelConfig.common,
+  babelConfig.server,
+  babelConfig.development,
+  {
+    name: 'server-development',
+  }
 );
-const clientProductionConfig = merge(
-  webpackConfigs['common'],
-  webpackConfigs['production'],
-  webpackConfigs['client'],
-  getBabelModule('common'),
-  getBabelModule('client'),
-  getBabelModule('production')
+const clientProductionConfig = merge.smart(
+  webpackConfigs.common,
+  webpackConfigs.production,
+  webpackConfigs.client,
+  babelConfig.common,
+  babelConfig.client,
+  babelConfig.production,
+  {
+    name: 'client-production',
+  }
 );
-const clientDevelopmentConfig = merge(
-  webpackConfigs['common'],
-  webpackConfigs['development'],
-  webpackConfigs['client'],
-  getBabelModule('common'),
-  getBabelModule('client'),
-  getBabelModule('development')
+const clientDevelopmentConfig = merge.smart(
+  webpackConfigs.common,
+  webpackConfigs.development,
+  webpackConfigs.client,
+  babelConfig.common,
+  babelConfig.client,
+  babelConfig.development,
+  {
+    name: 'client-development',
+  }
 );
 
 module.exports = [

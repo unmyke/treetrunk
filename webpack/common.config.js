@@ -1,21 +1,21 @@
 const path = require('path');
-const outputDirectory = path.resolve(__dirname, '..', '../dist');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const outputDirectory = path.resolve(__dirname, '../dist');
+const rootDirectory = path.resolve(__dirname, '..');
 
-module.exports = ({ name, entry, babelOptions, aliases, rules }) => ({
-  name,
-  entry,
-  mode: process.env.NODE_ENV || 'production',
+module.exports = {
+  mode: process.env.NODE_ENV || 'development',
   output: {
     path: outputDirectory,
     filename: '[name].bundle.js',
   },
-  plugins: [new CleanWebpackPlugin([outputDirectory])],
+  plugins: [new CleanWebpackPlugin([outputDirectory], { root: rootDirectory })],
   resolve: {
     alias: {
-      '@config': path.resolve(__dirname, '..', 'config'),
+      '@config': path.resolve(__dirname, '../config'),
     },
   },
   stats: {
     colors: true,
   },
-});
+};

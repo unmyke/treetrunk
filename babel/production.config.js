@@ -1,10 +1,14 @@
-module.exports = {
+const getConfig = require('./getConfig');
+
+const config = {
   presets: [
     [
-      '@babel/env',
+      '@babel/preset-env',
       {
-        uglify: true,
+        forceAllTransforms: true,
       },
     ],
   ],
 };
+
+module.exports = getConfig(config);

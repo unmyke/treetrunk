@@ -1,13 +1,15 @@
-module.exports = {
+const getConfig = require('./getConfig');
+
+const config = {
   presets: [
     [
-      '@babel/env',
+      '@babel/preset-env',
       {
-        targets: '> 0.25%, not dead',
+        targets: { browsers: '> 0.25%, not dead' },
         useBuiltIns: 'usage',
       },
-      '@babel/preset-react',
     ],
+    '@babel/preset-react',
   ],
 
   // plugins: [
@@ -38,3 +40,5 @@ module.exports = {
   //   '@babel/plugin-proposal-json-strings',
   // ],
 };
+
+module.exports = getConfig(config);

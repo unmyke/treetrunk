@@ -11,6 +11,7 @@ module.exports = {
       '@infra': path.resolve(__dirname, '../src/server/infra'),
       '@interfaces': path.resolve(__dirname, '../src/server/interfaces'),
     },
+    extensions: ['.js'],
   },
   externals: [nodeExternals()],
 };

@@ -1,4 +1,6 @@
+/* eslint-disable global-require */
 const merge = require('webpack-merge');
+
 const upperFirst = (str) => str[0].toUpperCase() + str.slice(1);
 
 const webpackConfigs = {

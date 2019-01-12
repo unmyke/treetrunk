@@ -1,7 +1,7 @@
 exports.envConfig = {
   web: {
-    domain: 'test',
-    port: 'testport',
+    domain: process.env.DOMAIN || 'test',
+    port: process.env.PORT || 'testport',
   },
   logging: {
     appenders: {

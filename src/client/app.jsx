@@ -13,9 +13,11 @@ import styles from './styles';
 const routes = rootRoutes();
 // console.log(routes);
 
-export const App = withStyles(styles)(({ classes }) => (
+const App = withStyles(styles)(({ classes }) => (
   <div className={classes.layout}>
     <CssBaseline />
     <Switch>{routes}</Switch>
   </div>
 ));
+
+export default App;

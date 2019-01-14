@@ -1,10 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/client',
+  entry: { cleint: './src/client' },
   target: 'web',
-  output: { publicPath: '/' },
+  // output: { publicPath: './src/client/public/' },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/client/public/index.html',
@@ -30,7 +31,7 @@ module.exports = {
       '@constants': path.resolve(__dirname, '../src/client/constants'),
       '@lib': path.resolve(__dirname, '../src/client/lib'),
     },
-    extensions: ['.js', '.jsx'],
+    extensions: ['.mjs', '.js', '.jsx'],
   },
   devServer: {
     open: true,

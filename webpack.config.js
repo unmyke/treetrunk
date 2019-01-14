@@ -1,8 +1,6 @@
 /* eslint-disable global-require */
 const merge = require('webpack-merge');
 
-const upperFirst = (str) => str[0].toUpperCase() + str.slice(1);
-
 const webpackConfigs = {
   common: require('./webpack/common.config'),
   server: require('./webpack/server.config'),
@@ -70,3 +68,7 @@ module.exports = [
   clientProductionConfig,
   clientDevelopmentConfig,
 ];
+module.exports.serverProduction = serverProductionConfig;
+module.exports.serverDevelopment = serverDevelopmentConfig;
+module.exports.clientProduction = clientProductionConfig;
+module.exports.clientDevelopment = clientDevelopmentConfig;

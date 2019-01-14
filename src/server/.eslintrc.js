@@ -9,7 +9,7 @@ module.exports = {
     'import/resolver': {
       webpack: {
         config: path.resolve(__dirname, '../../webpack.config.js'),
-        'config-index': 2,
+        'config-index': 0,
       },
     },
   },

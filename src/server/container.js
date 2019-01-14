@@ -1,9 +1,8 @@
+/* eslint-disable no-shadow */
+/* eslint-disable import/namespace */
+/* eslint-disable import/no-extraneous-dependencies */
 import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
-import {
-  getSubdomainsContainer,
-  getCommonTypesContainer,
-} from './infra/support/container-helpers';
 
 import { config } from '@config';
 import { InitializeApplication } from '@app/initializer';
@@ -33,6 +32,10 @@ import {
 } from '@infra/mappers';
 
 import { containerMiddleware } from '@interfaces/http/utils/bottle-express';
+import {
+  getSubdomainsContainer,
+  getCommonTypesContainer,
+} from './infra/support/container-helpers';
 
 const bottle = new Bottle();
 
@@ -47,26 +50,26 @@ bottle.factory('commonTypes', () => commonTypes);
 bottle.factory('states', () => states);
 bottle.constant('errors', errors);
 
-bottle.factory('mappers.commonTypes', () => {
-  return getCommonTypesContainer(
+bottle.factory('mappers.commonTypes', () =>
+  getCommonTypesContainer(
     commonTypesMappers,
     (Mapper) => new Mapper({ commonTypes })
-  );
-});
+  )
+);
 
-bottle.factory('mappers.subdomains', () => {
-  return getSubdomainsContainer(
+bottle.factory('mappers.subdomains', () =>
+  getSubdomainsContainer(
     subdomainsMappers,
     (Mapper, SubdomainName, EntityName) => {
       const Entity = subdomains[SubdomainName][EntityName];
 
       return new Mapper({ commonTypes, Entity });
     }
-  );
-});
+  )
+);
 
-bottle.factory('repositories', ({ mappers }) => {
-  return getSubdomainsContainer(
+bottle.factory('repositories', ({ mappers }) =>
+  getSubdomainsContainer(
     repositories,
     (Repository, SubdomainName, EntityName) =>
       new Repository({
@@ -75,41 +78,38 @@ bottle.factory('repositories', ({ mappers }) => {
         mapper: mappers.subdomains[SubdomainName][EntityName],
         mappers,
       })
-  );
-});
+  )
+);
 
-bottle.factory('serializers', () => {
-  return getSubdomainsContainer(
+bottle.factory('serializers', () =>
+  getSubdomainsContainer(
     subdomainsSerializers,
     (Serializer) => new Serializer()
-  );
-});
+  )
+);
 
 bottle.factory(
   'services',
-  ({ makeValidator, subdomains, commonTypes, errors, repositories }) => {
-    return getSubdomainsContainer(
-      services,
-      (EntityOperations, SubdomainName) => {
-        return Object.keys(EntityOperations).reduce((acc, operationName) => {
-          return {
-            ...acc,
-            [lowerFirst(operationName)]: () =>
-              new EntityOperations[operationName]({
-                entities: subdomains[SubdomainName],
-                commonTypes,
-                repositories: repositories[SubdomainName],
-                validate: makeValidator(
-                  EntityOperations[operationName].constraints,
-                  errors
-                ),
-                errors,
-              }),
-          };
-        }, {});
-      }
-    );
-  }
+  ({ makeValidator, subdomains, commonTypes, errors, repositories }) =>
+    getSubdomainsContainer(services, (EntityOperations, SubdomainName) =>
+      Object.keys(EntityOperations).reduce(
+        (acc, operationName) => ({
+          ...acc,
+          [lowerFirst(operationName)]: () =>
+            new EntityOperations[operationName]({
+              entities: subdomains[SubdomainName],
+              commonTypes,
+              repositories: repositories[SubdomainName],
+              validate: makeValidator(
+                EntityOperations[operationName].constraints,
+                errors
+              ),
+              errors,
+            }),
+        }),
+        {}
+      )
+    )
 );
 
 bottle.constant('makeValidator', makeValidator);

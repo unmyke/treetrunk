@@ -1,8 +1,9 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 
 module.exports = {
-  entry: './src/server',
+  entry: { server: './src/server' },
   target: 'node',
   resolve: {
     alias: {

@@ -10,8 +10,8 @@
     "build:server": "webpack --config-name server-production",
     "build": "yarn run build:client && yarn run build:server",
     "dev:client": "webpack-dev-server --config-name client-development",
-    "dev:server": "webpack --config-name server-development",
-    "dev": "webpack --config-name server-development",
+    "dev:api": "webpack --config-name server-development --env api",
+    "dev": "nodemon --exec babel-node src/server",
     "start": "node -- ./cluster.js",
     "console": "NODE_PATH=. yarn run babel-node src/interfaces/console/index.js",
     "jest": "yarn test",
@@ -85,6 +85,7 @@
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1",
     "webpack-dev-middleware": "^3.5.0",
+    "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.2.1",
     "webpack-node-externals": "^1.7.2"
   },

@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: { cleint: './src/client' },
   target: 'web',
-  // output: { publicPath: './src/client/public/' },
+  output: { publicPath: '/' },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/client/public/index.html',
@@ -38,6 +38,7 @@ module.exports = {
     compress: true,
     contentBase: path.resolve(__dirname, '../dist/'),
     watchContentBase: true,
+    historyApiFallback: true,
     proxy: {
       '/graphql': 'http://localhost:9000',
     },

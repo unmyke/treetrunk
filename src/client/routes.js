@@ -15,4 +15,6 @@ const routes = [
   { id: 'NotFound', component: NotFoundPage },
 ];
 
-export const rootRoutes = () => <RoutesList routes={routes} />;
+const rootRoutes = () => <RoutesList routes={routes} />;
+
+export default rootRoutes;

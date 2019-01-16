@@ -10,7 +10,7 @@
       "name": "nodemon",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
       "runtimeArgs": ["--exec", "yarn", "babel-node"],
-      "program": "${workspaceFolder}/src/index.js",
+      "program": "${workspaceFolder}/dist/client.bundle.index.js",
       "cwd": "${workspaceFolder}",
       "restart": true,
       "console": "integratedTerminal",
@@ -20,6 +20,15 @@
       "env": {
         "NODE_PATH": "."
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "build",
+      "program": "${workspaceFolder}/node_modules/.bin/webpack-cli",
+      "args": ["--config", "webpack.config.js", "2"],
+      "autoAttachChildProcesses": true,
+      "stopOnEntry": true
     }
   ]
 }

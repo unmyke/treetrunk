@@ -6,12 +6,12 @@ import 'typeface-roboto';
 import { CssBaseline } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
-import { rootRoutes } from './routes';
+import rootRoutes from './routes';
 
 import styles from './styles';
 
 const routes = rootRoutes();
-// console.log(routes);
+console.log(routes.props.routes[0]);
 
 const App = withStyles(styles)(({ classes }) => (
   <div className={classes.layout}>

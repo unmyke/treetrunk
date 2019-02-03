@@ -1,11 +1,6 @@
-const path = require('path');
+const webpack = require('webpack');
 
-const outputDirectory = path.resolve(__dirname, '../dist');
-
-module.exports = {
+module.exports = () => ({
   mode: 'production',
-  output: {
-    path: outputDirectory,
-    filename: '[name].[hash].bundle.js',
-  },
-};
+  plugins: [new webpack.HashedModuleIdsPlugin()],
+});

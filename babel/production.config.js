@@ -1,6 +1,4 @@
-const getConfig = require('./getConfig');
-
-const config = {
+module.exports = {
   presets: [
     [
       '@babel/preset-env',
@@ -10,5 +8,3 @@ const config = {
     ],
   ],
 };
-
-module.exports = getConfig(config);

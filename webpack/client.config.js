@@ -1,15 +1,30 @@
+/* eslint-disable indent */
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
-module.exports = {
-  entry: { cleint: './src/client' },
+const root = process.env.PWD;
+const rootSrc = path.resolve(root, 'src/client/');
+
+module.exports = () => ({
+  entry: { client: rootSrc },
   target: 'web',
-  output: { publicPath: '/' },
+  output: {
+    publicPath: '/',
+  },
   plugins: [
+    new webpack.DefinePlugin({
+      PRODUCTION: JSON.stringify(true),
+      VERSION: JSON.stringify('5fa3b9'),
+      'process.BROWSER_SUPPORTS_HTML5': true,
+      TWO: '1+1',
+      'typeof window': JSON.stringify('object'),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    }),
     new HtmlWebpackPlugin({
-      template: './src/client/public/index.html',
-      favicon: './src/client/public/favicon.ico',
+      template: path.join(rootSrc, 'public/index.html'),
+      favicon: path.join(rootSrc, 'public/favicon.ico'),
     }),
   ],
   module: {
@@ -26,21 +41,15 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@features': path.resolve(__dirname, '../src/client/features'),
-      '@ui': path.resolve(__dirname, '../src/client/ui'),
-      '@constants': path.resolve(__dirname, '../src/client/constants'),
-      '@lib': path.resolve(__dirname, '../src/client/lib'),
+      // '@config': path.join(root, 'config'),
+      '@features': path.join(rootSrc, 'features'),
+      '@ui': path.join(rootSrc, 'ui'),
+      '@lib': path.join(rootSrc, 'lib'),
     },
     extensions: ['.mjs', '.js', '.jsx'],
   },
-  devServer: {
-    open: true,
-    compress: true,
-    contentBase: path.resolve(__dirname, '../dist/'),
-    watchContentBase: true,
-    historyApiFallback: true,
-    proxy: {
-      '/graphql': 'http://localhost:9000',
-    },
+  node: {
+    process: true,
   },
-};
+  externals: ['./webpack'],
+});

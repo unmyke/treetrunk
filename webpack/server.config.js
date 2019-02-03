@@ -2,17 +2,20 @@
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 
-module.exports = {
-  entry: { server: './src/server' },
+const root = process.env.PWD;
+const srcRoot = path.join(root, 'src/server');
+
+module.exports = () => ({
+  entry: { server: srcRoot },
   target: 'node',
   resolve: {
     alias: {
-      '@app': path.resolve(__dirname, '../src/server/app'),
-      '@domain': path.resolve(__dirname, '../src/server/domain'),
-      '@infra': path.resolve(__dirname, '../src/server/infra'),
-      '@interfaces': path.resolve(__dirname, '../src/server/interfaces'),
+      '@app': path.join(srcRoot, 'app'),
+      '@domain': path.join(srcRoot, 'domain'),
+      '@infra': path.join(srcRoot, 'infra'),
+      '@interfaces': path.join(srcRoot, 'interfaces'),
     },
     extensions: ['.js'],
   },
   externals: [nodeExternals()],
-};
+});

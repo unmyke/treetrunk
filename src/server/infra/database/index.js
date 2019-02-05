@@ -1,24 +1,22 @@
 import { Database } from 'mongorito';
-import { config } from '@config';
+import config from '@config';
 import * as models from './models';
-import { modelLoader } from './model-loader';
+import modelLoader from './model-loader';
 
-const getUrl = ({ dbName, ...options }) => {
+const getUrl = ({ db, host, port }) => {
   const protocol = 'mongodb';
-  const host = options.host ? options.host : 'localhost';
-  const port = options.port ? `:${options.port}` : '';
 
-  return `${protocol}://${host}${port}/${dbName}`;
+  return `${protocol}://${host}${port}/${db}`;
 };
 
 const { db: dbConfig } = config;
 let database;
 
 if (dbConfig) {
-  const { host, port, dbName, user, pass, ...options } = dbConfig;
+  const { host, port, db, user, pass, ...options } = dbConfig;
   const auth = user ? { user, password: pass } : undefined;
 
-  database = new Database(getUrl({ host, port, dbName }), { auth, ...options });
+  database = new Database(getUrl({ host, port, db }), { auth, ...options });
 
   database.connect().then(
     () => {

@@ -1,3 +1,3 @@
 import { Model } from 'mongorito';
 
-export class SeniorityType extends Model {}
+export default class SeniorityType extends Model {}

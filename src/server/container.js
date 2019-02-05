@@ -4,7 +4,7 @@
 import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
 
-import { config } from '@config';
+import config from '@config';
 import { InitializeApplication } from '@app/initializer';
 import { Application } from '@app/application';
 import * as services from '@app';

@@ -6,7 +6,7 @@ const embedToModel = (model, models) => {
   }
 };
 
-export const modelLoader = (models, db) => {
+const modelLoader = (models, db) => {
   const modelNames = Object.keys(models);
 
   modelNames.forEach((modelName) => {
@@ -17,3 +17,5 @@ export const modelLoader = (models, db) => {
 
   return models;
 };
+
+export default modelLoader;

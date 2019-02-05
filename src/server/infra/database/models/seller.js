@@ -1,6 +1,6 @@
 import { Model } from 'mongorito';
 
-export class Seller extends Model {}
+export default class Seller extends Model {}
 
 Seller.toEmbed = [
   {

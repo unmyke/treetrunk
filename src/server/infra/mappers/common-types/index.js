@@ -1,4 +1,4 @@
-export { SellerIdMapper as SellerId } from './seller-id';
-export { SeniorityTypeIdMapper as SeniorityTypeId } from './seniority-type-id';
-export { PostIdMapper as PostId } from './post-id';
-export { DayMapper as Day } from './day';
+export { default as SellerId } from './seller-id';
+export { default as SeniorityTypeId } from './seniority-type-id';
+export { default as PostId } from './post-id';
+export { default as Day } from './day';

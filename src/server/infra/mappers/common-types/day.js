@@ -1,11 +1,20 @@
 import { BaseMapper } from '../_lib';
 
-export class DayMapper extends BaseMapper {
-  toDatabase({ value }) {
-    return value;
-  }
+const DayMapper = ({ commonTypes, Entity }) => {
+  const baseMapper = BaseMapper({ commonTypes, Entity });
 
-  toEntity({ value }) {
-    return new this.commonTypes.Day({ value: new Date(value) });
-  }
-}
+  const toDatabase = ({ value }) => {
+    return value;
+  };
+
+  const toEntity = ({ value }) => {
+    return new baseMapper.commonTypes.Day({ value: new Date(value) });
+  };
+
+  return Object.freeze({
+    toDatabase,
+    toEntity,
+  });
+};
+
+export default DayMapper;

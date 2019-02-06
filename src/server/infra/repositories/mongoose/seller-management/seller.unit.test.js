@@ -4,5 +4,5 @@ import * as models from '../../../database/models';
 const modelName = 'Seller';
 
 describe('SellerRepository', () => {
-  const sellerRepo = new SellerRepository({ models, modelName });
+  const sellerRepo = new SellerRepository({ mappers, models, modelName });
 });

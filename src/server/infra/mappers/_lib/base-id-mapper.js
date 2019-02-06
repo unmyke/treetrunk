@@ -1,11 +1,16 @@
-import { BaseMapper } from './base-mapper';
+import BaseMapper from './base-mapper';
 
-export class BaseIdMapper extends BaseMapper {
-  toDatabase({ value }) {
-    return value;
-  }
+const BaseIdMapper = ({ Entity, commonTypes }) => {
+  const baseMapper = BaseMapper({ Entity, commonTypes });
 
-  toEntity({ value }) {
-    return new this.commonTypes[this.constructor.EntityIdName]({ value });
-  }
-}
+  const toDatabase = ({ value }) => value;
+  const toEntity = ({ value }) =>
+    new baseMapper.commonTypes[baseMapper.constructor.EntityIdName]({ value });
+
+  return Object.freeze({
+    toDatabase,
+    toEntity,
+  });
+};
+
+export default BaseIdMapper;

@@ -10,6 +10,7 @@ module.exports = () => ({
   target: 'node',
   resolve: {
     alias: {
+      '@container': path.join(srcRoot, 'container'),
       '@app': path.join(srcRoot, 'app'),
       '@domain': path.join(srcRoot, 'domain'),
       '@infra': path.join(srcRoot, 'infra'),

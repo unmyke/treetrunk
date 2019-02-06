@@ -18,7 +18,7 @@
     "dev:server": "concurrently --kill-others \"npm:watch\" \"npm:nodemon\"",
     "dev": "concurrently --kill-others \"npm:dev:*\"",
     "start": "yarn run build && node dist/server/production.bundle.js",
-    "console": "NODE_PATH=. yarn run babel-node src/server/interfaces/console/index.js",
+    "console": "yarn run build-dev:server && node dist/server/interfaces/console/index.js",
     "jest": "yarn test",
     "test": "NODE_PATH=. NODE_ENV=test jest --testURL='http://localhost/'",
     "test:all": "yarn run test:unit && yarn run test:features",

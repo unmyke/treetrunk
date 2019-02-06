@@ -1,27 +1,12 @@
-const BaseRepository = ({ models, modelName }) => {
-  const Model = models[modelName];
+import BaseRepository from './base';
 
-  const getById = (id) => {
-    return Model.find({ id }).then(
-      (entity) => entity,
-      (error) => {
-        throw error;
-      }
-    );
-  };
-
-  const save = (entity) => {
-    return Model.find({ id: entity.id }).then(
-      (entity) => entity,
-      (error) => {
-        throw error;
-      }
-    );
-  };
+const SellerRepository = ({ models }) => {
+  const baseRepo = new BaseRepository({ models, modelName: 'Seller' });
 
   return Object.freeze({
-    getById,
-    save,
+    getById: baseRepo.getById,
+    save: baseRepo.save,
   });
 };
-export default BaseRepository;
+
+export default SellerRepository;

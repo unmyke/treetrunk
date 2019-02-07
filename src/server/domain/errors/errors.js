@@ -9,7 +9,7 @@ const makeError = (message) => (detail) => {
   return err;
 };
 
-export const errors = {
+const errors = {
   // Diary
   recordAlreadyExists: makeError('RECORD_ALREADY_EXISTS'),
   recordDuplicate: makeError('RECORD_DUPLICATE'),
@@ -106,3 +106,5 @@ export const errors = {
   // stageNotDefined: makeError('STAGE_NOT_DEFINED'),
   // stageNotFinal: makeError('STAGE_NOT_FINAL'),
 };
+
+export default errors;

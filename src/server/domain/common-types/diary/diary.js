@@ -1,3 +1,7 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-shadow */
+/* eslint-disable no-underscore-dangle */
 import {
   applyFSM,
   getDayComparator,
@@ -5,8 +9,8 @@ import {
 } from '../../_lib/base-methods';
 import { errors } from '../../errors';
 import { BaseClass } from '../../_lib';
-import { Day } from '../day';
-import { Store } from './store';
+import Day from '../day';
+import Store from './store';
 
 const states = {
   NEW: 'new',
@@ -24,7 +28,7 @@ const transitions = {
 };
 
 const stateTransitionFunctions = {
-  [transitions.DELETE_AT]: function() {
+  [transitions.DELETE_AT]() {
     if (this._store.size === 1) {
       if (this._archive.size === 0) {
         return states.NEW;
@@ -49,7 +53,7 @@ const calculateState = ({ _store, _archive }) => {
   return states.STARTED;
 };
 
-export class Diary extends BaseClass {
+export default class Diary extends BaseClass {
   // factory
   static restore(records = [], closeValue) {
     const diary = new Diary();
@@ -179,53 +183,53 @@ export class Diary extends BaseClass {
       },
 
       // operaton validations
-      onBeforeAdd(lifecycle, value, day) {
+      onBeforeAdd(_, value, day) {
         this._checkAdd(value, day);
       },
 
-      onBeforeDeleteAt(lifecycle, day) {
+      onBeforeDeleteAt(_, day) {
         this._checkDeleteAt(day);
       },
 
-      onBeforeUpdateTo(lifecycle, day, newValue, newDay) {
+      onBeforeUpdateTo(_, day, newValue, newDay) {
         this._checkUpdateTo(day, newValue, newDay);
       },
 
-      onBeforeAddCloseAt(lifecycle, day) {
+      onBeforeAddCloseAt(_, day) {
         this._checkAddCloseAt(day);
       },
 
-      onBeforeUpdateCloseTo(lifecycle, day) {
+      onBeforeUpdateCloseTo(_, day) {
         this._checkUpdateCloseTo(day);
       },
 
       // operatons
-      onAdd(lifecycle, value, day) {
+      onAdd(_, value, day) {
         return this._store.add(value, day);
       },
 
-      onDeleteAt(lifecycle, day) {
+      onDeleteAt(_, day) {
         return this._store.delete(day);
       },
 
-      onUpdateTo(lifecycle, day, newValue, newDay) {
+      onUpdateTo(_, day, newValue, newDay) {
         return this._store.update(day, newValue, newDay);
       },
 
-      onAddCloseAt(lifecycle, day) {
+      onAddCloseAt(_, day) {
         this._archive.add(this._store, day);
 
         this._store = new Store();
       },
 
-      onDeleteClose(lifecycle) {
+      onDeleteClose(_) {
         const { value, day } = this._archive.last;
 
         this._store = value;
         this._archive.delete(day);
       },
 
-      onUpdateCloseTo(lifecycle, newDay) {
+      onUpdateCloseTo(_, newDay) {
         const { value, day } = this._archive.last;
 
         this._archive.delete(day);
@@ -405,6 +409,7 @@ export class Diary extends BaseClass {
       throw error;
     }
   }
+
   _diaryHasNotRecordsLater(day) {
     this._hasRecordsLater(this._store, day);
   }

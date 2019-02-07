@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable no-shadow */
 /* eslint-disable import/namespace */
 /* eslint-disable import/no-extraneous-dependencies */
@@ -50,29 +51,25 @@ bottle.factory('commonTypes', () => commonTypes);
 bottle.factory('states', () => states);
 bottle.constant('errors', errors);
 
-bottle.factory('mappers.commonTypes', () =>
-  getCommonTypesContainer(
-    commonTypesMappers,
-    (Mapper) => new Mapper({ commonTypes })
+bottle.factory('mappers.commonTypes', ({ commonTypes }) =>
+  getCommonTypesContainer(commonTypesMappers, (Mapper) =>
+    Mapper({ commonTypes })
   )
 );
 
-bottle.factory('mappers.subdomains', () =>
+bottle.factory('mappers.subdomains', ({ subdomains, commonTypes }) =>
   getSubdomainsContainer(
     subdomainsMappers,
-    (Mapper, SubdomainName, EntityName) => {
-      const Entity = subdomains[SubdomainName][EntityName];
-
-      return new Mapper({ commonTypes, Entity });
-    }
+    (Mapper, SubdomainName, EntityName) =>
+      Mapper({ commonTypes, Entity: subdomains[SubdomainName][EntityName] })
   )
 );
 
-bottle.factory('repositories', ({ mappers }) =>
+bottle.factory('repositories', ({ mappers, models }) =>
   getSubdomainsContainer(
     repositories,
     (Repository, SubdomainName, EntityName) =>
-      new Repository({
+      Repository({
         Model: models[SubdomainName][EntityName],
         models,
         mapper: mappers.subdomains[SubdomainName][EntityName],
@@ -82,10 +79,7 @@ bottle.factory('repositories', ({ mappers }) =>
 );
 
 bottle.factory('serializers', () =>
-  getSubdomainsContainer(
-    subdomainsSerializers,
-    (Serializer) => new Serializer()
-  )
+  getSubdomainsContainer(subdomainsSerializers, (Serializer) => Serializer())
 );
 
 bottle.factory(

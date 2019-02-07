@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
 import { BaseEntity } from '../../_lib';
@@ -26,7 +27,7 @@ const transitions = {
   INACTIVATE: 'inactivate',
 };
 
-export class SeniorityType extends BaseEntity {
+export default class SeniorityType extends BaseEntity {
   static restore({ name, months, state, awards, ...props }) {
     const seniorityType = new SeniorityType({
       name,
@@ -40,7 +41,7 @@ export class SeniorityType extends BaseEntity {
   }
 
   static instanceAt(
-    { name, _awards, months, state, ...props },
+    { seniorityTypeId, name, _awards, months, state, ...props },
     day = new Day()
   ) {
     const seniorityType = new SeniorityType({

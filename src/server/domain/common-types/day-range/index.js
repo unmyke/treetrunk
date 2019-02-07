@@ -1,1 +1,3 @@
-export { DayRange } from './day-range';
+import DayRange from './day-range';
+
+export default DayRange;

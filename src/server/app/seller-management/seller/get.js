@@ -1,7 +1,7 @@
 import { Operation } from '../../_lib';
-import { equalErrors } from '../../../domain/errors';
+import { isEqualErrors } from '../../../domain/errors';
 
-equalErrors;
+isEqualErrors;
 
 export class GetSeller extends Operation {
   static constraints = {
@@ -48,11 +48,11 @@ export class GetSeller extends Operation {
       this.emit(SUCCESS, { seller: newSeller, posts, seniorityTypes });
     } catch (error) {
       switch (true) {
-        case equalErrors(error, errors.sellerNotFound()):
+        case isEqualErrors(error, errors.sellerNotFound()):
           this.emit(NOT_FOUND, error);
           break;
 
-        case equalErrors(error, errors.validationError()):
+        case isEqualErrors(error, errors.validationError()):
           this.emit(VALIDATION_ERROR, error);
           break;
 

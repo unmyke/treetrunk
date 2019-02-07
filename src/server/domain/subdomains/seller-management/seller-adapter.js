@@ -1,14 +1,14 @@
 import { BaseAdapter } from '../../_lib';
-import { Seller } from './seller';
-import { Post } from './post';
+import Seller from '../seller';
+import Post from '../post';
 
-export class SellerManagementAdapter extends BaseAdapter {
+export default class SellerManagementAdapter extends BaseAdapter {
   // Seller
   async getSellers(params) {
     return await params;
   }
 
-  createSeller(postId, name, pieceRateValue, pieceRateDay) {
+  createSeller(sellerId, name, pieceRateValue, pieceRateDay) {
     const seller = new Seller({ sellerId, name });
     if (pieceRateValue) {
       seller.addPieceRate(pieceRateValue, pieceRateDay);

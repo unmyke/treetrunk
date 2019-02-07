@@ -129,6 +129,7 @@
     "supertest": "^3.4.2",
     "swagger-ui-express": "^4.0.2",
     "typeface-roboto": "^0.0.54",
+    "uuid": "^3.3.2",
     "validate.js": "^0.12.0"
   }
 }

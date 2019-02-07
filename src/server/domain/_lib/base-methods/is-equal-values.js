@@ -1,9 +1,11 @@
-import { BaseValue } from '../base-value';
+import BaseValue from '../base-value';
 
-export const isEqualValues = (value1, value2) => {
+const isEqualValues = (value1, value2) => {
   if (value1 instanceof BaseValue) {
     return value1.equals(value2);
   }
 
   return value1 === value2;
 };
+
+export default isEqualValues;

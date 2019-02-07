@@ -1,4 +1,4 @@
-import { Day } from '.';
+import Day from '.';
 import { isEqualValues } from '../../_lib/base-methods';
 
 // const { errorNotADate, errorNotADay, errorNotANumber } = Day;

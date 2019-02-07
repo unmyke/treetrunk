@@ -1,6 +1,6 @@
 import { PostId, Day } from '../../common-types';
-import { Seller } from './seller';
-import { Post } from './post';
+import Seller from '../seller';
+import Post from '../post';
 // import { errors } from '../../errors';
 
 const states = {

@@ -1,8 +1,9 @@
+/* eslint-disable no-underscore-dangle */
 import { BaseValue } from '../../_lib';
-import { Day } from '../day';
+import Day from '../day';
 // import { addErrorDefinitionProperty } from '@infra/support/addErrorDefinition';
 
-export class DayRange extends BaseValue {
+export default class DayRange extends BaseValue {
   // Errors
 
   // static errorNotADay = Day.errorNotADay;
@@ -38,7 +39,7 @@ export class DayRange extends BaseValue {
     });
   }
 
-  //Validator
+  // Validator
 
   static isValid(dayRange) {
     return (
@@ -58,10 +59,7 @@ export class DayRange extends BaseValue {
     this._end = end;
   }
 
-  [Symbol.iterator] = function*() {
-    // if (!this.isValid()) {
-    //   return undefined;
-    // }
+  [Symbol.iterator] = function* iterator() {
     let curDay = this.start;
     do {
       yield curDay;
@@ -116,7 +114,7 @@ export class DayRange extends BaseValue {
   toJSON() {
     return {
       startDate: this.start.toJSON(),
-      startDate: this.end.toJSON(),
+      endDate: this.end.toJSON(),
     };
   }
 }

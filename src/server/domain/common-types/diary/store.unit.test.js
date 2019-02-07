@@ -1,6 +1,7 @@
-import { Day } from '../day';
-import { Store } from './store';
-import { Record } from './record';
+/* eslint-disable no-underscore-dangle */
+import Day from '../day';
+import Store from './store';
+import Record from './record';
 
 let store;
 

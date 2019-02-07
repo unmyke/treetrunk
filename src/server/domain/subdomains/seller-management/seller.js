@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
 import { BaseEntity } from '../../_lib';
@@ -37,7 +38,7 @@ const transitions = {
 };
 
 const stateTransitionFunctions = {
-  [transitions.DELETE_APPOINTMENT_AT]: function() {
+  [transitions.DELETE_APPOINTMENT_AT]() {
     if (this._appointments.length === 1) {
       if (this._appointments.archiveLength === 0) {
         return states.NEW;
@@ -49,7 +50,7 @@ const stateTransitionFunctions = {
     return states.RECRUITED;
   },
 
-  UNCHANGE_STATE: function() {
+  UNCHANGE_STATE() {
     return this.state;
   },
 };
@@ -67,7 +68,7 @@ const calculateState = ({ _appointments }) => {
   }
 };
 
-export class Seller extends BaseEntity {
+export default class Seller extends BaseEntity {
   // Factories
 
   static restore({
@@ -295,7 +296,7 @@ export class Seller extends BaseEntity {
 
   get seniority() {
     if (!this.is(states.RECRUITED)) {
-      return;
+      return undefined;
     }
 
     return new Day().differenceInMonths(this.recruitDay);

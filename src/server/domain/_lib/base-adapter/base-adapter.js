@@ -1,1 +1,1 @@
-export class BaseAdapter {}
+export default class BaseAdapter {}

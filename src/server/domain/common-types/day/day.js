@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   format as formatFNS,
   startOfWeek as startOfWeekFNS,
@@ -15,10 +16,10 @@ import {
   subMonths as subMonthsFNS,
 } from 'date-fns';
 
-const ru = require('date-fns/locale/ru');
-
-import { BaseValue } from '../../_lib';
 import { isValidDate, convertDate } from '@infra/support/date-helpers';
+import { BaseValue } from '../../_lib';
+
+const ru = require('date-fns/locale/ru');
 
 function isMinusZero(value) {
   if (value !== 0) {
@@ -28,7 +29,7 @@ function isMinusZero(value) {
   return 1 / value === -Infinity;
 }
 
-export class Day extends BaseValue {
+export default class Day extends BaseValue {
   // Factories
 
   static createStartOfWeek(date) {
@@ -109,7 +110,7 @@ export class Day extends BaseValue {
   }
 
   difference(day = new Day()) {
-    return parseInt((this - day) / 86400000);
+    return parseInt((this - day) / (24 * 60 * 60 * 1000), 10);
   }
 
   differenceInMonths(day = new Day()) {

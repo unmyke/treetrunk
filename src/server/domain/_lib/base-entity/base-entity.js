@@ -1,9 +1,8 @@
-import { upperFirst } from 'lodash';
+/* eslint-disable no-underscore-dangle */
 import { applyFSM, getIdPropName } from '../base-methods';
-// import commonTypes from '../../common-types';
-import { BaseClass } from '../base-class';
+import BaseClass from '../base-class';
 
-export class BaseEntity extends BaseClass {
+export default class BaseEntity extends BaseClass {
   constructor({ id, createdAt = new Date(), updatedAt }) {
     super();
     const idPropName = getIdPropName(id);

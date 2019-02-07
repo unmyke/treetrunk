@@ -1,6 +1,6 @@
 import { BaseValue } from '../../_lib';
-import { Diary } from './diary';
-import { Day } from '../day';
+import Diary from './diary';
+import Day from '../day';
 
 class MockRecord extends BaseValue {
   constructor({ value, day }) {

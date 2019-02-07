@@ -1,7 +1,7 @@
-import { BaseClass } from '../base-class';
+import BaseClass from '../base-class';
 import { isEqualValues } from '../base-methods';
 
-export class BaseValue extends BaseClass {
+export default class BaseValue extends BaseClass {
   equals(value) {
     if (this === value) {
       return true;

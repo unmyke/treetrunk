@@ -1,1 +1,3 @@
-export { BaseAdapter } from './base-adapter';
+import BaseAdapter from './base-adapter';
+
+export default BaseAdapter;

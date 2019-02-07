@@ -1,1 +1,3 @@
-export { BaseEntity } from './base-entity';
+import BaseEntity from './base-entity';
+
+export default BaseEntity;

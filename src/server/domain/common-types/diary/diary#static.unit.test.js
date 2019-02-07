@@ -1,5 +1,5 @@
-import { Diary } from './diary';
-import { Day } from '../day';
+import Diary from './diary';
+import Day from '../day';
 import { errors } from '../../errors';
 
 const states = {

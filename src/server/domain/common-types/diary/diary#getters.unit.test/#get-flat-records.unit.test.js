@@ -1,7 +1,7 @@
-import { PostId } from '../../post-id';
-import { Day } from '../../day';
+import PostId from '../../post-id';
+import Day from '../../day';
 
-import { Diary } from '../diary';
+import Diary from '../diary';
 
 const value1 = new PostId();
 const value2 = new PostId();

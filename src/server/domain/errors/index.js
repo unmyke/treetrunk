@@ -1,2 +1,2 @@
-export { errors } from './errors';
-export { equalErrors } from './equal-errors';
+export { default as errors } from './errors';
+export { default as isEqualErrors } from './is-equal-errors';

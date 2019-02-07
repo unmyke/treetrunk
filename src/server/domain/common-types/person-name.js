@@ -1,6 +1,7 @@
-import { BaseValue } from '../../_lib';
+/* eslint-disable no-underscore-dangle */
+import { BaseValue } from '../_lib';
 
-export class PersonName extends BaseValue {
+export default class PersonName extends BaseValue {
   constructor({ lastName, firstName, middleName }) {
     super();
     this._firstName = firstName;
@@ -20,9 +21,6 @@ export class PersonName extends BaseValue {
     return this._lastName;
   }
 
-  get fullName() {
-    return `${this.lastName} ${this.firstName} ${this.middleName}`;
-  }
   get fullName() {
     return `${this.lastName} ${this.firstName} ${this.middleName}`;
   }

@@ -1,1 +1,3 @@
-export { BaseId } from './base-id';
+import BaseId from './base-id';
+
+export default BaseId;

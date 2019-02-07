@@ -1,7 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import { BaseValue } from '../../_lib';
 import { isEqualValues } from '../../_lib/base-methods';
 
-export class Record extends BaseValue {
+export default class Record extends BaseValue {
   constructor({ value, day }) {
     super();
     this._value = value;

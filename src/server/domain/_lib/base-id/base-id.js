@@ -1,7 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import uuidv4 from 'uuid/v4';
-import { BaseValue } from '../base-value';
+import BaseValue from '../base-value';
 
-export class BaseId extends BaseValue {
+export default class BaseId extends BaseValue {
   constructor({ value } = { value: uuidv4() }) {
     super();
     this._value = value;

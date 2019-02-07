@@ -1,9 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { Post as states } from '../../states';
-import { Day, Diary } from '../../common-types';
+import { Day, Diary, PostId } from '../../common-types';
 import { loop } from '@domain/_lib/base-methods';
 
 const diaryErrorMessageMapper = {
@@ -26,7 +27,7 @@ const transitions = {
   INACTIVATE: 'inactivate',
 };
 
-export class Post extends BaseEntity {
+export default class Post extends BaseEntity {
   static restore({ name, pieceRates, state, ...props }) {
     const post = new Post({ name, state, ...props });
     post._pieceRates = Diary.restore(pieceRates);
@@ -92,7 +93,7 @@ export class Post extends BaseEntity {
     },
   };
 
-  constructor({ sellerId = new PostId(), name, ...props }) {
+  constructor({ postId = new PostId(), name, ...props }) {
     super({ id: postId, ...props });
     this.name = name;
     this._pieceRates = new Diary();

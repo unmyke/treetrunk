@@ -1,11 +1,13 @@
-import { Day } from '../day';
-import { Record } from './record';
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-underscore-dangle */
+import Day from '../day';
+import Record from './record';
 import { errors } from '../../errors';
 import { isEqualValues } from '../../_lib/base-methods';
 
 const { map, filter, reduce } = Array.prototype;
 
-export class Store {
+export default class Store {
   static clone({ _data }) {
     const store = new Store();
     store._data = new Map([..._data]);
@@ -29,7 +31,7 @@ export class Store {
   }
 
   get firstDay() {
-    const first = this.first;
+    const { first } = this;
     return first !== undefined ? first.day : undefined;
   }
 
@@ -38,7 +40,7 @@ export class Store {
   }
 
   get lastDay() {
-    const last = this.last;
+    const { last } = this;
     return last !== undefined ? last.day : undefined;
   }
 
@@ -88,7 +90,7 @@ export class Store {
 
     return {
       value: recordToDelete.value,
-      day: day,
+      day,
     };
   }
 
@@ -113,7 +115,7 @@ export class Store {
 
     const neighbors = {};
 
-    for (let currentKey of this._data.keys()) {
+    for (const currentKey of this._data.keys()) {
       if (excludeDay === undefined || excludeDay.valueOf() !== currentKey) {
         const diff = currentKey - key;
 
@@ -134,14 +136,14 @@ export class Store {
       }
     }
 
-    neighbors.equal = function(value) {
+    neighbors.equal = function equal(value) {
       return (
         (this.prev !== undefined && isEqualValues(this.prev.value, value)) ||
         (this.next !== undefined && isEqualValues(this.next.value, value))
       );
     };
 
-    neighbors.isExists = function() {
+    neighbors.isExists = function isExists() {
       return this.prev !== undefined && this.next !== undefined;
     };
 

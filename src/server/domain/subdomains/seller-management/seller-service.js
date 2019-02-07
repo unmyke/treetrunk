@@ -1,7 +1,8 @@
+/* eslint-disable no-shadow */
 import { BaseService } from '../../_lib';
 import { Day, SellerId } from '../../common-types';
 
-export class SellerService extends BaseService {
+export default class SellerService extends BaseService {
   getSellersByQuery(query) {
     return this.repositories.Seller.find(query).then((sellers) =>
       Promise.all([Promise.resolve(sellers), ...this.getIncluded(sellers)])

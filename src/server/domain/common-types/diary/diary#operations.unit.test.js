@@ -1,5 +1,5 @@
-import { Diary } from './diary';
-import { Day } from '../day';
+import Diary from './diary';
+import Day from '../day';
 
 const day1 = new Day({ value: new Date('2017.01.01 00:00:00.000+08:00') });
 const day2 = new Day({ value: new Date('2017.02.01 00:00:00.000+08:00') });

@@ -4,11 +4,11 @@ import { toState } from './fsm-helpers';
 
 const SET_STATE_TRANSITION = 'setState';
 
-export const applyFSM = (EntityClass) => {
+const applyFSM = (EntityClass) => {
   const { init, transitions, data, methods } = EntityClass.fsm;
 
   StateMachine.factory(EntityClass, {
-    init: init,
+    init,
     transitions: [
       {
         name: SET_STATE_TRANSITION,
@@ -17,7 +17,7 @@ export const applyFSM = (EntityClass) => {
       },
       ...transitions,
     ],
-    data: data,
+    data,
     methods: {
       onInvalidTransition() {
         throw errors.transitionNotAllowed();
@@ -30,3 +30,4 @@ export const applyFSM = (EntityClass) => {
     },
   });
 };
+export default applyFSM;

@@ -1,7 +1,7 @@
-export { BaseClass } from './base-class';
-export { BaseValue } from './base-value';
-export { BaseEntity } from './base-entity';
-export { BaseId } from './base-id';
-export { BaseService } from './base-service';
-export { BaseAdapter } from './base-adapter';
-export { BaseRepository } from './base-repository';
+export { default as BaseClass } from './base-class';
+export { default as BaseValue } from './base-value';
+export { default as BaseEntity } from './base-entity';
+export { default as BaseId } from './base-id';
+export { default as BaseService } from './base-service';
+export { default as BaseAdapter } from './base-adapter';
+export { default as BaseRepository } from './base-repository';

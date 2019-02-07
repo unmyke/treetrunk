@@ -1,7 +1,7 @@
 import { PostId, Day } from '../../../common-types';
 import { Seller as states } from '../../../states';
-import { Seller } from '../seller';
-import { Post } from '../post';
+import Seller from '../seller';
+import Post from '../post';
 
 const lastName = 'lastName';
 const firstName = 'Firstname';

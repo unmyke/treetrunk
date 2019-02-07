@@ -1,1 +1,3 @@
-export { BaseValue } from './base-value';
+import BaseValue from './base-value';
+
+export default BaseValue;

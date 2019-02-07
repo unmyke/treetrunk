@@ -1,1 +1,3 @@
-export { BaseService } from './base-service';
+import BaseService from './base-service';
+
+export default BaseService;

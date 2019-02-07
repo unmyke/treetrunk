@@ -3,7 +3,7 @@ import { startOfDay } from 'date-fns';
 import { Day, PostId } from '../../common-types';
 import { Post as states } from '../../states';
 
-import { Post } from './post';
+import Post from '../post';
 
 const getRawPost = ({ postId, name, state, pieceRates }) => ({
   postId,

@@ -1,4 +1,4 @@
-import { BaseValue } from '.';
+import BaseValue from '.';
 
 const attr1 = 10;
 const attr2 = 'ten';

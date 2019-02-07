@@ -1,7 +1,4 @@
-export const getDayComparator = (
-  orderBy = 'asc',
-  dayExtructor = (day) => day
-) => {
+const getDayComparator = (orderBy = 'asc', dayExtructor = (day) => day) => {
   return (a, b) => {
     const dayA = dayExtructor(a);
     const dayB = dayExtructor(b);
@@ -9,3 +6,5 @@ export const getDayComparator = (
     return orderBy === 'asc' ? dayA - dayB : dayB - dayA;
   };
 };
+
+export default getDayComparator;

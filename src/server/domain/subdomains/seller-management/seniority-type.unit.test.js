@@ -1,6 +1,6 @@
 import { startOfDay } from 'date-fns';
 import { SeniorityTypeId, Day } from '../../common-types';
-import { SeniorityType } from './seniority-type';
+import SeniorityType from './seniority-type';
 import { SeniorityType as states } from '../../states';
 
 const name = '3 месяца';

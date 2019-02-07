@@ -1,5 +1,5 @@
-import { DayRange } from '.';
-import { Day } from '../day';
+import DayRange from '.';
+import Day from '../day';
 
 const validStartDate = new Date(2018, 0, 1, 12, 3, 4, 4);
 const validEndDate1 = new Date(2018, 0, 2, 14, 5, 5, 2);

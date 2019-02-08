@@ -1,4 +1,4 @@
-export const LoggerStreamAdapter = {
+const LoggerStreamAdapter = {
   toStream(logger) {
     return {
       write(message) {
@@ -7,3 +7,5 @@ export const LoggerStreamAdapter = {
     };
   },
 };
+
+export default LoggerStreamAdapter;

@@ -1,4 +1,4 @@
-import { getRandomDay } from './get-random-day';
+import getRandomDay from './get-random-day';
 
 describe('infra :: support :: factories :: lib :: #getRandomDay', () => {
   test('should return day before now', () => {

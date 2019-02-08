@@ -1,10 +1,10 @@
 import pluralize from 'pluralize';
 import { snakeCase } from 'lodash';
 import { Serializer, Deserializer } from 'jsonapi-serializer';
-import { config } from 'config';
+import config from '@config';
 import { errors } from '@domain';
-import { mapperTypes } from '../mapper-types';
-import { Error as errorSerializer } from '../../common-types';
+import mapperTypes from './mapper-types';
+import { Error as errorSerializer } from '../common-types';
 
 const {
   IDENTITY,
@@ -15,7 +15,7 @@ const {
   INCLUDED,
 } = mapperTypes;
 
-export class BaseSerializer {
+export default class BaseSerializer {
   constructor({ resourceName, subdomainResourceName, attrs, entityOptions }) {
     const server = { ...config.web };
     this.server = server;

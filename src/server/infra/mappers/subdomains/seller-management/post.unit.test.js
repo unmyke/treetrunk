@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid/v4';
 
 import { PostMapper } from './post';
-import { container } from '@container';
+import container from '@container';
 
 const postToDTO = ({ postId, name, state, pieceRates }) => ({
   postId,

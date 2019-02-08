@@ -1,6 +1,6 @@
-import { Operation } from '../../_lib';
+import Operation from '../../operation';
 
-export class DeleteSeniorityType extends Operation {
+export default class DeleteSeniorityType extends Operation {
   static constraints = {
     seniorityTypeIdValue: {
       presence: {

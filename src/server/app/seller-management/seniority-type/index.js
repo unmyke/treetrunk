@@ -1,8 +1,8 @@
-export { GetAllSeniorityTypes } from './get-all';
-export { GetSeniorityType } from './get';
-export { CreateSeniorityType } from './create';
-export { UpdateSeniorityType } from './update';
-export { DeleteSeniorityType } from './delete';
-export { CreateSeniorityTypeAward } from './create-award';
-export { UpdateSeniorityTypeAward } from './update-award';
-export { DeleteSeniorityTypeAward } from './delete-award';
+export { default as GetAllSeniorityTypes } from './get-all';
+export { default as GetSeniorityType } from './get';
+export { default as CreateSeniorityType } from './create';
+export { default as UpdateSeniorityType } from './update';
+export { default as DeleteSeniorityType } from './delete';
+export { default as CreateSeniorityTypeAward } from './create-award';
+export { default as UpdateSeniorityTypeAward } from './update-award';
+export { default as DeleteSeniorityTypeAward } from './delete-award';

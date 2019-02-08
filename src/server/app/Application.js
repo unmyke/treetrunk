@@ -1,4 +1,4 @@
-export class Application {
+export default class Application {
   constructor({
     server,
     database,
@@ -16,6 +16,7 @@ export class Application {
       database.options.logging = logger.info.bind(logger);
     }
   }
+
   async start() {
     if (this.database) {
       await this.database.authenticate();

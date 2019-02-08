@@ -6,23 +6,22 @@ import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
 
 import config from '@config';
-import { InitializeApplication } from '@app/initializer';
-import { Application } from '@app/application';
-import * as services from '@app';
+import Application, * as services from '@app';
+import InitializeApplication from '@app/initialize-application';
 
 import { subdomains, commonTypes, states, errors } from '@domain';
 
 import * as repositories from '@infra/repositories';
-import { makeValidator } from '@infra/support/make-validator';
+import makeValidator from '@infra/support/make-validator';
 
-import { Server } from '@interfaces/http/server';
-import { router } from '@interfaces/http/router';
-import { logger } from '@infra/logging/logger';
+import Server from '@interfaces/http/server';
+import router from '@interfaces/http/router';
+import logger from '@infra/logging/logger';
 
-import { loggerMiddleware } from '@interfaces/http/logging/logger-middleware';
-import { errorHandler } from '@interfaces/http/errors/error-handler';
-import { devErrorHandler } from '@interfaces/http/errors/dev-error-handler';
-import { swaggerMiddleware } from '@interfaces/http/swagger/swagger-middleware';
+import loggerMiddleware from '@interfaces/http/logging/logger-middleware';
+import errorHandler from '@interfaces/http/errors/error-handler';
+import devErrorHandler from '@interfaces/http/errors/dev-error-handler';
+import swaggerMiddleware from '@interfaces/http/swagger/swagger-middleware';
 
 import { subdomains as subdomainsSerializers } from '@interfaces/http/serializers';
 
@@ -36,7 +35,7 @@ import { containerMiddleware } from '@interfaces/http/utils/bottle-express';
 import {
   getSubdomainsContainer,
   getCommonTypesContainer,
-} from './infra/support/container-helpers';
+} from '@infra/support/container-helpers';
 
 const bottle = new Bottle();
 

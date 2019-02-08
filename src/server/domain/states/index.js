@@ -1,5 +1,3 @@
-import Seller from './seller';
-import Post from './post';
-import SeniorityType from './seniority-type';
-
-export { Seller, Post, SeniorityType };
+export { default as Seller } from './seller';
+export { default as Post } from './post';
+export { default as SeniorityType } from './seniority-type';

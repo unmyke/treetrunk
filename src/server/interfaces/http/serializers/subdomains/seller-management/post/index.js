@@ -1,1 +1,1 @@
-export { PostSerializer } from './post';
+export { default } from './post';

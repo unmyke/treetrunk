@@ -1,4 +1,4 @@
-export const Seller = (factory, { Seller }, attrs) => {
+const Seller = (factory, { Seller }, attrs) => {
   factory.define(
     'seller',
     Seller,
@@ -11,7 +11,7 @@ export const Seller = (factory, { Seller }, attrs) => {
       state: 'recruited',
     }),
     {
-      afterCreate: async function(seller, attrs, { appointmentsCount } = {}) {
+      async afterCreate(seller, attrs, { appointmentsCount } = {}) {
         if (
           appointmentsCount === 0 &&
           attrs.appointments &&
@@ -53,3 +53,5 @@ export const Seller = (factory, { Seller }, attrs) => {
     }
   );
 };
+
+export default Seller;

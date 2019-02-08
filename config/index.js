@@ -19,10 +19,12 @@ const initConfig = {
 const getConfig = ({ configName, mode }) =>
   merge(configs({ configName, mode }), configs({ configName, mode: 'common' }));
 
-module.exports = configTypes[target].reduce(
+const config = configTypes[target].reduce(
   (configAcc, configName) => ({
     ...configAcc,
     [configName]: getConfig({ configName, mode }),
   }),
   initConfig
 );
+
+module.exports = config;

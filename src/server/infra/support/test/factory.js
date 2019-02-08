@@ -8,8 +8,10 @@ const { models } = db;
 const factoryGirl = new factoryG.FactoryGirl();
 factoryGirl.setAdapter(new SequelizeAdapter());
 
-export const factory = loadFactories({
+const factory = loadFactories({
   factoryGirl,
   models,
   factories,
 });
+
+export default factory;

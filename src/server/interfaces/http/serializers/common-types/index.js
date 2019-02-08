@@ -1,3 +1,3 @@
-export { idSerializer as Id } from './id';
-export { daySerializer as Day } from './day';
-// export { errorSerializer as Error } from './error';
+export { default as Id } from './id';
+export { default as Day } from './day';
+export { default as Error } from './error';

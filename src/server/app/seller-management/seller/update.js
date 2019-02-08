@@ -1,7 +1,7 @@
-import { Operation } from '../../_lib';
+import Operation from '../../operation';
 import { isEqualErrors } from '../../../domain/errors';
 
-export class UpdateSeller extends Operation {
+export default class UpdateSeller extends Operation {
   static constraints = {
     sellerIdValue: {
       presence: {

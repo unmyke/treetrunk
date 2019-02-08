@@ -1,4 +1,4 @@
-const getSubdomainsContainer = (subdomains, callback) => {
+export const getSubdomainsContainer = (subdomains, callback) => {
   return Object.keys(subdomains).reduce(
     (subdomainsContainer, SubdomainName) => {
       const subdomain = Object.keys(subdomains[SubdomainName]).reduce(
@@ -23,7 +23,7 @@ const getSubdomainsContainer = (subdomains, callback) => {
   );
 };
 
-const getCommonTypesContainer = (commonTypes, callback) => {
+export const getCommonTypesContainer = (commonTypes, callback) => {
   return Object.keys(commonTypes).reduce(
     (commonTypesContainer, CommonTypeName) => {
       return {
@@ -35,7 +35,7 @@ const getCommonTypesContainer = (commonTypes, callback) => {
   );
 };
 
-const forEachSubdomain = (subdomains, container, callback) => {
+export const forEachSubdomain = (subdomains, container, callback) => {
   Object.keys(subdomains).forEach((SubdomainName) => {
     Object.keys(subdomains[SubdomainName]).forEach((EntityName) => {
       callback(
@@ -47,5 +47,3 @@ const forEachSubdomain = (subdomains, container, callback) => {
     });
   });
 };
-
-export { getSubdomainsContainer, getCommonTypesContainer, forEachSubdomain };

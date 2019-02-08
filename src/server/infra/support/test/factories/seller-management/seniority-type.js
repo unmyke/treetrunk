@@ -1,4 +1,4 @@
-export const SeniorityType = (factory, { SeniorityType }) => {
+const SeniorityType = (factory, { SeniorityType }) => {
   factory.define(
     'seniorityType',
     SeniorityType,
@@ -9,7 +9,7 @@ export const SeniorityType = (factory, { SeniorityType }) => {
       state: factory.chance('pickone', ['active', 'deleted']),
     },
     {
-      afterCreate: async function(seniorityType, attrs, { awardsCount } = {}) {
+      async afterCreate(seniorityType, attrs, { awardsCount } = {}) {
         if (awardsCount === 0 && attrs.awards && attrs.awards.length === 0) {
           return seniorityType.reload({ include: ['awards'] });
         }
@@ -46,3 +46,5 @@ export const SeniorityType = (factory, { SeniorityType }) => {
     }
   );
 };
+
+export default SeniorityType;

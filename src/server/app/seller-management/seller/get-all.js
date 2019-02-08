@@ -1,7 +1,7 @@
-import { Operation } from '../../_lib';
+import Operation from '../../operation';
 import { Seller as states } from '../../../domain/states';
 
-export class GetAllSellers extends Operation {
+export default class GetAllSellers extends Operation {
   static constraints = {
     states: { inclusion: states },
     search: {

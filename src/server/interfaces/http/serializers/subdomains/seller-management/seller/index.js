@@ -1,1 +1,1 @@
-export { SellerSerializer } from './seller';
+export { default } from './seller';

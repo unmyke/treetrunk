@@ -1,4 +1,4 @@
-export const mapperTypes = {
+const mapperTypes = {
   IDENTITY: 'identity',
   ID_GENERATOR: 'igGenerator',
   CALLBACK: 'callback',
@@ -53,3 +53,5 @@ export const toDTO = (obj, { mapper, resourceName, config }) => {
     };
   }, {});
 };
+
+export default mapperTypes;

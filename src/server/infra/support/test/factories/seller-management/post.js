@@ -1,4 +1,4 @@
-export const Post = (factory, { Post }) => {
+const Post = (factory, { Post }) => {
   factory.define(
     'post',
     Post,
@@ -8,7 +8,7 @@ export const Post = (factory, { Post }) => {
       state: factory.chance('pickone', ['active', 'deleted']),
     },
     {
-      afterCreate: async function(post, attrs, { pieceRatesCount } = {}) {
+      async afterCreate(post, attrs, { pieceRatesCount } = {}) {
         if (
           pieceRatesCount === 0 &&
           attrs.piece_rates &&
@@ -49,3 +49,5 @@ export const Post = (factory, { Post }) => {
     }
   );
 };
+
+export default Post;

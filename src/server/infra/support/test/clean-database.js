@@ -1,7 +1,8 @@
-import { container } from '@container';
+import container from '@container';
+
 const { database } = container;
 
-export const cleanDatabase = () => {
+const cleanDatabase = () => {
   if (database) {
     return database
       .query('SET FOREIGN_KEY_CHECKS = 0')
@@ -16,3 +17,5 @@ export const cleanDatabase = () => {
       });
   }
 };
+
+export default cleanDatabase;

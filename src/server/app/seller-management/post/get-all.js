@@ -1,6 +1,6 @@
-import { Operation } from '../../_lib';
+import Operation from '../../operation';
 
-export class GetAllPosts extends Operation {
+export default class GetAllPosts extends Operation {
   async execute(query) {
     const { SUCCESS, ERROR, VALIDATION_ERROR } = this.outputs;
     const {

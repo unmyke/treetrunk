@@ -4,7 +4,7 @@ import {
   Id as idSerializer,
   Day as daySerializer,
 } from '../../../common-types';
-import { SellerManagementBaseSerializer } from '../seller-managementBase';
+import SellerManagementBaseSerializer from '../seller-management-base';
 
 const { IDENTITY, ARRAY, CALLBACK } = mapperTypes;
 
@@ -37,7 +37,7 @@ const entityOptions = {
   // transform: this,
 };
 
-export class PostSerializer extends SellerManagementBaseSerializer {
+export default class PostSerializer extends SellerManagementBaseSerializer {
   constructor() {
     super({
       resourceName: 'post',

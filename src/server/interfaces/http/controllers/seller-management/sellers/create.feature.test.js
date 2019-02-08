@@ -1,5 +1,5 @@
-import { container } from '@container';
-import { request } from '@infra/support/test/request';
+import container from '@container';
+import request from '@infra/support/test/request';
 
 const {
   subdomains: {

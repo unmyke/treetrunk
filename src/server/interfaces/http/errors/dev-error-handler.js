@@ -1,9 +1,7 @@
 import Status from 'http-status';
 import { Error as jsonapiErrorSerializer } from '../serializers/common-types';
 
-/* istanbul ignore next */
-export const devErrorHandler = (err, req, res, next) => {
-  // eslint-disable-line no-unused-vars
+const devErrorHandler = (err, req, res, _) => {
   const { logger } = req.container;
 
   logger.error(err);
@@ -19,3 +17,5 @@ export const devErrorHandler = (err, req, res, next) => {
     )
   );
 };
+
+export default devErrorHandler;

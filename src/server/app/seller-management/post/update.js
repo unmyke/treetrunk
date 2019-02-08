@@ -1,6 +1,6 @@
-import { Operation } from '../../_lib';
+import Operation from '../../operation';
 
-export class UpdatePost extends Operation {
+export default class UpdatePost extends Operation {
   static constraints = {
     postIdValue: {
       presence: {

@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid/v4';
 
 import { SeniorityTypeMapper } from './seniority-type';
-import { container } from '@container';
+import container from '@container';
 
 const seniorityTypeToDTO = ({ seniorityTypeId, name, months, awards }) => ({
   seniorityTypeId,

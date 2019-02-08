@@ -15,7 +15,7 @@ const testRegex = {
   _test: (regex, value) => regex.test(value),
 };
 
-export const makeValidator = (constraints, errors) => {
+const makeValidator = (constraints, errors) => {
   const validator = (entity, options = { exception: false }) => {
     const validationErrors = validate(
       entity,
@@ -155,3 +155,5 @@ export const makeValidator = (constraints, errors) => {
 
   return validator;
 };
+
+export default makeValidator;

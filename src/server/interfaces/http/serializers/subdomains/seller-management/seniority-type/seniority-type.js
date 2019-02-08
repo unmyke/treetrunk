@@ -1,4 +1,4 @@
-import { SellerManagementBaseSerializer } from '../seller-managementBase';
+import SellerManagementBaseSerializer from '../seller-management-base';
 import { mapperTypes } from '../../../_lib';
 import {
   Id as idSerializer,
@@ -37,7 +37,7 @@ const entityOptions = {
   // transform: this.toDTO,
 };
 
-export class SeniorityTypeSerializer extends SellerManagementBaseSerializer {
+export default class SeniorityTypeSerializer extends SellerManagementBaseSerializer {
   constructor() {
     super({
       resourceName: 'seniority_type',

@@ -2,10 +2,10 @@ import {
   Id as idSerializer,
   Day as daySerializer,
 } from '../../../common-types';
-import { PostSerializer } from '../post';
-import { SeniorityTypeSerializer } from '../seniority-type';
-import { SellerManagementBaseSerializer } from '../seller-managementBase';
-import { AppointmentSerializer } from './appointment';
+import PostSerializer from '../post';
+import SeniorityTypeSerializer from '../seniority-type';
+import SellerManagementBaseSerializer from '../seller-management-base';
+import AppointmentSerializer from './appointment';
 import { mapperTypes } from '../../../_lib';
 
 const { IDENTITY, ARRAY, CALLBACK, INCLUDED } = mapperTypes;
@@ -95,7 +95,7 @@ const entityOptions = {
   // transform: this,
 };
 
-export class SellerSerializer extends SellerManagementBaseSerializer {
+export default class SellerSerializer extends SellerManagementBaseSerializer {
   constructor() {
     super({
       resourceName: 'seller',

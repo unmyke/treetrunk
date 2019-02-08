@@ -7,7 +7,7 @@ import methodOverride from 'method-override';
 import { createControllerRoutes as controller } from './utils/create-controller-routes';
 import { getRoutes } from './utils/get-routes';
 
-export const router = ({
+const router = ({
   config,
   containerMiddleware,
   loggerMiddleware,
@@ -45,3 +45,5 @@ export const router = ({
   logger.info(JSON.stringify(getRoutes(router)));
   return router;
 };
+
+export default router;

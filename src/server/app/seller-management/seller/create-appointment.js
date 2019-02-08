@@ -1,6 +1,6 @@
-import { Operation } from '../../_lib';
+import Operation from '../../operation';
 
-export class CreateSellerAppointment extends Operation {
+export default class CreateSellerAppointment extends Operation {
   async execute({
     sellerIdValue,
     appointments: { postId: postIdValue, day: appointDate },

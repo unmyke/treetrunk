@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 
-export class Operation extends EventEmitter {
+export default class Operation extends EventEmitter {
   static setOutputs(outputs) {
     Object.defineProperty(this.prototype, 'outputs', {
       value: createOutputs(outputs),

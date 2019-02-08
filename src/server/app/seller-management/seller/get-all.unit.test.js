@@ -1,7 +1,7 @@
-import { factory } from '@infra/support/test/factory';
-import { cleanDatabase } from '@infra/support/test/clean-database';
+import factory from '@infra/support/test/factory';
+import cleanDatabase from '@infra/support/test/clean-database';
 
-import { container } from '@container';
+import container from '@container';
 
 const {
   services: {

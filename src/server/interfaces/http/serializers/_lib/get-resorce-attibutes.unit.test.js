@@ -1,7 +1,7 @@
 import { Serializer } from 'jsonapi-serializer';
 import { inspect } from 'util';
 import { getResorceAttibutes } from './get-resorce-attibutes';
-import { mapperTypes } from './mapper-types';
+import mapperTypes from './mapper-types';
 
 const { IDENTITY, CALLBACK, OBJECT, ARRAY } = mapperTypes;
 

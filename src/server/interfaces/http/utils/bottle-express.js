@@ -1,11 +1,11 @@
-export const containerMiddleware = (container) => (req, res, next) => {
+export const containerMiddleware = (container) => (req, _, next) => {
   req.container = container;
   next();
 };
 
 export const injectSerializer = (SubdomainName, EntityName) => (
   req,
-  res,
+  _,
   next
 ) => {
   req.serializer = req.container.serializers[SubdomainName][EntityName];
@@ -14,7 +14,7 @@ export const injectSerializer = (SubdomainName, EntityName) => (
 
 export const injectOperation = (SubdomainName, EntityName, serviceName) => (
   req,
-  res,
+  _,
   next
 ) => {
   req[serviceName] = req.container.services[SubdomainName][EntityName][

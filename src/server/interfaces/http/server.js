@@ -1,6 +1,6 @@
 import express from 'express';
 
-export class Server {
+export default class Server {
   constructor({ config, router, logger }) {
     this.config = config;
     this.logger = logger;

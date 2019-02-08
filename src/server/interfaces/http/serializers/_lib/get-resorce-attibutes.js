@@ -1,8 +1,9 @@
 import { snakeCase } from 'lodash';
-import { mapperTypes } from './mapper-types';
+import mapperTypes from './mapper-types';
+
 const { OBJECT, ARRAY } = mapperTypes;
 
-export const getResorceAttibutes = (mapper) => {
+const getResorceAttibutes = (mapper) => {
   const mapperAttrs = Object.keys(mapper);
 
   return mapperAttrs.reduce(
@@ -24,3 +25,5 @@ export const getResorceAttibutes = (mapper) => {
     { attributes: [] }
   );
 };
+
+export default getResorceAttibutes;

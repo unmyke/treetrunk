@@ -1,6 +1,6 @@
 import { Day as daySerializer } from '../../../common-types';
-import { PostSerializer } from '../post';
-import { SellerManagementBaseSerializer } from '../seller-managementBase';
+import PostSerializer from '../post';
+import SellerManagementBaseSerializer from '../seller-management-base';
 import { mapperTypes } from '../../../_lib';
 
 const { CALLBACK, ID_GENERATOR, INCLUDED } = mapperTypes;
@@ -38,7 +38,7 @@ const entityOptions = {
   // transform: this,
 };
 
-export class AppointmentSerializer extends SellerManagementBaseSerializer {
+export default class AppointmentSerializer extends SellerManagementBaseSerializer {
   constructor() {
     super({
       resourceName: 'appointment',

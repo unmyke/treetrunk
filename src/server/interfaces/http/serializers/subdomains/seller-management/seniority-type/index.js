@@ -1,1 +1,1 @@
-export { SeniorityTypeSerializer } from './seniority-type';
+export { default } from './seniority-type';

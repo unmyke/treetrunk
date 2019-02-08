@@ -1,9 +1,9 @@
-import { Operation } from '../../_lib';
+import Operation from '../../operation';
 import { isEqualErrors } from '../../../domain/errors';
 
 isEqualErrors;
 
-export class DeleteSeller extends Operation {
+export default class DeleteSeller extends Operation {
   static constraints = {
     sellerIdValue: {
       presence: {

@@ -1,7 +1,7 @@
-import { Operation } from '../_lib';
 import { lowerFirst } from 'lodash';
+import Operation from './operation';
 
-export class InitializeApplication extends Operation {
+export default class InitializeApplication extends Operation {
   constructor({ makeValidator, subdomains, commonTypes, repositories }) {
     super({ makeValidator, commonTypes });
 

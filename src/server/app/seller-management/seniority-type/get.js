@@ -1,6 +1,6 @@
-import { Operation } from '../../_lib';
+import Operation from '../../operation';
 
-export class GetSeniorityType extends Operation {
+export default class GetSeniorityType extends Operation {
   async execute(seniorityTypeIdValue) {
     const { SUCCESS, ERROR, NOT_FOUND } = this.outputs;
     const {

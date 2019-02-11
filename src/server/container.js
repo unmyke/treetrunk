@@ -4,38 +4,29 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
+import { getSubdomainsContainer } from '@infra/support/container-helpers';
 
 import config from '@config';
-import Application, * as services from '@app';
-import InitializeApplication from '@app/initialize-application';
-
 import { subdomains, commonTypes, states, errors } from '@domain';
 
-import * as repositories from '@infra/repositories';
+import Application, * as services from '@app';
+import InitializeApplication from '@app/initialize-application';
 import makeValidator from '@infra/support/make-validator';
 
 import Server from '@interfaces/http/server';
 import router from '@interfaces/http/router';
 import logger from '@infra/logging/logger';
-
-import loggerMiddleware from '@interfaces/http/logging/logger-middleware';
-import errorHandler from '@interfaces/http/errors/error-handler';
-import devErrorHandler from '@interfaces/http/errors/dev-error-handler';
-import swaggerMiddleware from '@interfaces/http/swagger/swagger-middleware';
-
 import { subdomains as subdomainsSerializers } from '@interfaces/http/serializers';
 
-import { database, models } from '@infra/database';
-import {
-  commonTypes as commonTypesMappers,
-  subdomains as subdomainsMappers,
-} from '@infra/mappers';
-
 import { containerMiddleware } from '@interfaces/http/utils/bottle-express';
-import {
-  getSubdomainsContainer,
-  getCommonTypesContainer,
-} from '@infra/support/container-helpers';
+import loggerMiddleware from '@interfaces/http/logging/logger-middleware';
+import swaggerMiddleware from '@interfaces/http/swagger/swagger-middleware';
+import errorHandler from '@interfaces/http/errors/error-handler';
+import devErrorHandler from '@interfaces/http/errors/dev-error-handler';
+
+import * as repositories from '@infra/repositories';
+import { database, models } from '@infra/database';
+import mappers from '@infra/mappers';
 
 const bottle = new Bottle();
 
@@ -43,35 +34,33 @@ bottle.constant('config', config);
 bottle.factory('initializeApplication', (container) => () =>
   new InitializeApplication(container)
 );
-bottle.factory('app', (container) => new Application(container));
+bottle.factory('app', (container) => Application(container));
 
 bottle.factory('subdomains', () => subdomains);
 bottle.factory('commonTypes', () => commonTypes);
 bottle.factory('states', () => states);
 bottle.constant('errors', errors);
 
-bottle.factory('mappers.commonTypes', ({ commonTypes }) =>
-  getCommonTypesContainer(commonTypesMappers, (Mapper) =>
-    Mapper({ commonTypes })
+// bottle.factory('mappers.commonTypes', ({ commonTypes }) =>
+//   getCommonTypesContainer(commonTypesMappers, (Mapper) =>
+//     Mapper({ commonTypes })
+//   )
+// );
+
+bottle.factory('mappers', ({ subdomains, commonTypes }) =>
+  getSubdomainsContainer(mappers, (Mapper, SubdomainName, EntityName) =>
+    Mapper({ commonTypes, Entity: subdomains[SubdomainName][EntityName] })
   )
 );
 
-bottle.factory('mappers.subdomains', ({ subdomains, commonTypes }) =>
-  getSubdomainsContainer(
-    subdomainsMappers,
-    (Mapper, SubdomainName, EntityName) =>
-      Mapper({ commonTypes, Entity: subdomains[SubdomainName][EntityName] })
-  )
-);
-
-bottle.factory('repositories', ({ mappers, models }) =>
+bottle.factory('repositories', ({ models, mappers }) =>
   getSubdomainsContainer(
     repositories,
     (Repository, SubdomainName, EntityName) =>
       Repository({
-        Model: models[SubdomainName][EntityName],
+        Model: models[EntityName],
         models,
-        mapper: mappers.subdomains[SubdomainName][EntityName],
+        mapper: mappers[SubdomainName][EntityName],
         mappers,
       })
   )

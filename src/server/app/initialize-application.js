@@ -54,6 +54,8 @@ export default class InitializeApplication extends Operation {
 
       this.emit(ERROR, error);
     }
+
+    return undefined;
   }
 }
 

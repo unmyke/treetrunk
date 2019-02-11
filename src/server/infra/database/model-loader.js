@@ -6,16 +6,13 @@ const embedToModel = (model, models) => {
   }
 };
 
-const modelLoader = (models, db) => {
-  const modelNames = Object.keys(models);
+const modelLoader = (models, database) => {
+  const modelsList = Object.values(models);
 
-  modelNames.forEach((modelName) => {
-    const model = models[modelName];
-    db.register(model);
+  return modelsList.map((model) => {
     embedToModel(model, models);
+    return database.register(model);
   });
-
-  return models;
 };
 
 export default modelLoader;

@@ -1,5 +1,5 @@
 import { BaseIdMapper } from '../_lib';
 
-export class SellerIdMapper extends BaseIdMapper {
-  static EntityIdName = 'SellerId';
-}
+const SellerIdMapper = BaseIdMapper('SellerId');
+
+export default SellerIdMapper;

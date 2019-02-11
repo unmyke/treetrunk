@@ -1,7 +1,6 @@
-const BaseIdMapper = ({ Entity, commonTypes }) => {
+const BaseIdMapper = (idName) => ({ commonTypes }) => {
   const toDatabase = ({ value }) => value;
-  const toEntity = ({ value }) =>
-    new commonTypes[Entity.constructor.EntityIdName]({ value });
+  const toEntity = ({ value }) => new commonTypes[idName]({ value });
 
   return Object.freeze({
     toDatabase,

@@ -1,7 +1,5 @@
 import { BaseIdMapper } from '../_lib';
 
-const PostIdMapper = ({ commonTypes }) => {
-  // static EntityIdName = 'PostId';
-};
+const PostIdMapper = BaseIdMapper('PostId');
 
 export default PostIdMapper;

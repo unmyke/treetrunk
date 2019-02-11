@@ -1,12 +1,14 @@
 import BaseRepository from './base';
 
-const SellerRepository = ({ models }) => {
-  const baseRepo = new BaseRepository({ models, modelName: 'Seller' });
+// const SellerRepository = ({ models }) => {
+//   const baseRepo = BaseRepository({ models, modelName: 'Seller' });
 
-  return Object.freeze({
-    getById: baseRepo.getById,
-    save: baseRepo.save,
-  });
-};
+//   return Object.freeze({
+//     getById: baseRepo.getById,
+//     save: baseRepo.save,
+//   });
+// };
+
+const SellerRepository = BaseRepository;
 
 export default SellerRepository;

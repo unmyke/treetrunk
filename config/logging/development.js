@@ -1,7 +1,6 @@
 const path = require('path');
 
 const root = process.env.PWD;
-console.log(process.env.PORT);
 const logPath = path.join(root, 'logs/development.log');
 
 module.exports = {

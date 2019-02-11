@@ -21,7 +21,7 @@ module.exports = (target, mode) => {
         DB_HOST: 'localhost',
         DB_PORT: '27017',
         DB_NAME: 'treetrunk-development',
-        DB_USER: 'treetrunk',
+        DB_USER: '',
         DB_PASS: '',
       }),
       new DefinePlugin({

@@ -1,9 +1,18 @@
-const BaseRepository = ({ models, modelName }) => {
-  const Model = models[modelName];
+const BaseRepository = ({ Model, mapper }) => {
+  const find = (query) => {
+    return Model.find(query).then(
+      (entity) => mapper.toEntity(entity),
+      (error) => {
+        throw error;
+      }
+    );
+  };
 
-  const getById = (id) => {
-    return Model.find({ id }).then(
-      (entity) => entity,
+  const getById = (id) => find({ _id: id });
+
+  const getOne = (_id) => {
+    return Model.findOne({ _id }).then(
+      (entity) => (entity ? mapper.toEntity(entity) : null),
       (error) => {
         throw error;
       }
@@ -11,8 +20,14 @@ const BaseRepository = ({ models, modelName }) => {
   };
 
   const save = (entity) => {
-    return Model.find({ id: entity.id }).then(
-      (entity) => entity,
+    const modelProps = mapper.toDatabase(entity);
+    const model = new Model(modelProps);
+    return model.save().then(
+      () => {
+        const entity = mapper.toEntity(model.get());
+        Model.find().then((res) => console.log(res));
+        return entity;
+      },
       (error) => {
         throw error;
       }
@@ -21,7 +36,9 @@ const BaseRepository = ({ models, modelName }) => {
 
   return Object.freeze({
     getById,
+    getOne,
     save,
+    add: save,
   });
 };
 export default BaseRepository;

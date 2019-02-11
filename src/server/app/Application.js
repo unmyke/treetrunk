@@ -1,44 +1,39 @@
-export default class Application {
-  constructor({
-    server,
-    database,
-    logger,
-    initializeApplication,
-    config: { app: appConfig },
-  }) {
-    this.server = server;
-    this.database = database;
-    this.logger = logger;
-    this.initializeApplication = initializeApplication();
-    this.appConfig = appConfig;
+const Application = ({
+  server,
+  database,
+  logger,
+  initializeApplication,
+  config: { app: appConfig },
+}) => {
+  const appInitializer = initializeApplication();
 
-    if (database && database.options.logging) {
-      database.options.logging = logger.info.bind(logger);
-    }
+  if (database && database.options.logging) {
+    // eslint-disable-next-line no-param-reassign
+    database.options.logging = logger.info.bind(logger);
   }
 
-  async start() {
-    if (this.database) {
-      await this.database.authenticate();
-    }
+  const start = async () => {
+    // if (database) await database.authenticate();
 
-    const {
-      SUCCESS,
-      INITIALIZE_ERROR,
-      ERROR,
-    } = this.initializeApplication.outputs;
+    const { SUCCESS, INITIALIZE_ERROR, ERROR } = appInitializer.outputs;
 
-    this.initializeApplication
+    appInitializer
       .on(SUCCESS, async () => {
-        await this.server.start();
+        await server.start();
       })
       .on(INITIALIZE_ERROR, (error) => {
-        console.log('Can not initialize');
+        console.log('Can not initialize. Error:', error);
       })
       .on(ERROR, (error) => {
         console.log(error);
       });
 
-    this.initializeApplication.execute({ config: this.appConfig });
-  }
-}
+    appInitializer.execute({ config: appConfig });
+  };
+
+  return Object.freeze({
+    start,
+  });
+};
+
+export default Application;

@@ -1,34 +1,37 @@
-import { BaseMapper } from '../../_lib';
 import { PostId as PostIdMapper, Day as DayMapper } from '../../common-types';
 
-export class PostMapper extends BaseMapper {
-  constructor({ commonTypes, Entity }) {
-    super({ commonTypes, Entity });
-    this.postIdMapper = new PostIdMapper({ commonTypes });
-    this.dayMapper = new DayMapper({ commonTypes });
-  }
+const PostMapper = ({ commonTypes, Entity }) => {
+  const postIdMapper = PostIdMapper({ Entity, commonTypes });
+  const dayMapper = DayMapper({ commonTypes });
 
-  toDatabase({ postId, name, state, pieceRates }) {
+  const toDatabase = ({ postId, name, state, pieceRates }) => {
     return {
-      post_id: this.postIdMapper.toDatabase(postId),
+      _id: postIdMapper.toDatabase(postId),
       name,
       state,
-      piece_rates: pieceRates.map(({ value, day }) => ({
+      pieceRates: pieceRates.map(({ value, day }) => ({
         value,
-        day: this.dayMapper.toDatabase(day),
+        day: dayMapper.toDatabase(day),
       })),
     };
-  }
+  };
 
-  toEntity({ post_id, name, state, piece_rates }) {
-    return this.Entity.restore({
-      postId: this.postIdMapper.toEntity({ value: post_id }),
+  const toEntity = ({ _id, name, state, pieceRates }) => {
+    return Entity.restore({
+      postId: postIdMapper.toEntity({ value: _id }),
       name,
       state,
-      pieceRates: piece_rates.map(({ value, day }) => ({
+      pieceRates: pieceRates.map(({ value, day }) => ({
         value,
-        day: this.dayMapper.toEntity({ value: day }),
+        day: dayMapper.toEntity({ value: day }),
       })),
     });
-  }
-}
+  };
+
+  return Object.freeze({
+    toEntity,
+    toDatabase,
+  });
+};
+
+export default PostMapper;

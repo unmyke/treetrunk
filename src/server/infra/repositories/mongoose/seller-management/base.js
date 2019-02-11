@@ -23,9 +23,8 @@ const BaseRepository = ({ Model, mapper }) => {
     const modelProps = mapper.toDatabase(entity);
     const model = new Model(modelProps);
     return model.save().then(
-      () => {
+      (res) => {
         const entity = mapper.toEntity(model.get());
-        Model.find().then((res) => console.log(res));
         return entity;
       },
       (error) => {

@@ -11,7 +11,7 @@ const SellerMapper = ({ commonTypes, Entity }) => {
   const dayMapper = DayMapper({ commonTypes });
 
   const toDatabase = ({
-    _id: sellerId,
+    sellerId,
     firstName,
     middleName,
     lastName,
@@ -19,24 +19,22 @@ const SellerMapper = ({ commonTypes, Entity }) => {
     state,
     flatAppointments,
   }) => {
-    const _id = sellerIdMapper.toDatabase(sellerId);
-
     return {
-      _id,
+      sellerId: sellerIdMapper.toDatabase(sellerId),
       firstName,
       middleName,
       lastName,
       phone,
       state,
       appointments: flatAppointments.map(({ postId, day }) => ({
-        post_id: postIdMapper.toDatabase(postId),
+        postId: postIdMapper.toDatabase(postId),
         day: dayMapper.toDatabase(day),
       })),
     };
   };
 
   const toEntity = ({
-    _id,
+    sellerId,
     firstName,
     middleName,
     lastName,
@@ -45,16 +43,16 @@ const SellerMapper = ({ commonTypes, Entity }) => {
     appointments = [],
   }) => {
     const sellerEntity = Entity.restore({
-      sellerId: sellerIdMapper.toEntity({ value: _id }),
+      sellerId: sellerIdMapper.toEntity(sellerId),
       firstName,
       middleName,
       lastName,
       phone,
       state,
       // eslint-disable-next-line camelcase
-      appointments: appointments.map(({ post_id, day }) => ({
-        postId: postIdMapper.toEntity({ value: post_id }),
-        day: dayMapper.toEntity({ value: day }),
+      appointments: appointments.map(({ postId, day }) => ({
+        postId: postIdMapper.toEntity(postId),
+        day: dayMapper.toEntity(day),
       })),
     });
 

@@ -1,5 +1,5 @@
-import { BaseIdMapper } from '../_lib';
+import { getIdMapper } from '../_lib';
 
-const SeniorityTypeIdMapper = BaseIdMapper('SeniorityTypeId');
+const SeniorityTypeIdMapper = getIdMapper('SeniorityTypeId');
 
 export default SeniorityTypeIdMapper;

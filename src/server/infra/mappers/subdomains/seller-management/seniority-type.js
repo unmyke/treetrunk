@@ -9,7 +9,7 @@ const SeniorityTypeMapper = ({ commonTypes, Entity }) => {
 
   const toDatabase = ({ seniorityTypeId, name, months, state, awards }) => {
     return {
-      _id: seniorityTypeIdMapper.toDatabase(seniorityTypeId),
+      seniorityTypeId: seniorityTypeIdMapper.toDatabase(seniorityTypeId),
       name,
       months,
       state,
@@ -20,11 +20,9 @@ const SeniorityTypeMapper = ({ commonTypes, Entity }) => {
     };
   };
 
-  const toEntity = ({ _id, name, months, state, awards }) => {
+  const toEntity = ({ seniorityTypeId, name, months, state, awards }) => {
     return Entity.restore({
-      seniorityTypeId: seniorityTypeIdMapper.toEntity({
-        value: _id,
-      }),
+      seniorityTypeId: seniorityTypeIdMapper.toEntity(seniorityTypeId),
       name,
       months,
       state,

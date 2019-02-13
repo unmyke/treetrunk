@@ -1,5 +1,5 @@
-import { BaseIdMapper } from '../_lib';
+import { getIdMapper } from '../_lib';
 
-const PostIdMapper = BaseIdMapper('PostId');
+const PostIdMapper = getIdMapper('PostId');
 
 export default PostIdMapper;

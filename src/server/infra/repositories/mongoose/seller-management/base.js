@@ -1,4 +1,6 @@
 const BaseRepository = ({ Model, mapper }) => {
+  const idPropName = `${Model.name.toLowerCase()}Id`;
+
   const find = (query) => {
     return Model.find(query).then(
       (entity) => mapper.toEntity(entity),
@@ -8,10 +10,10 @@ const BaseRepository = ({ Model, mapper }) => {
     );
   };
 
-  const getById = (id) => find({ _id: id });
+  const getById = (id) => find({ [idPropName]: id });
 
-  const getOne = (_id) => {
-    return Model.findOne({ _id }).then(
+  const getOne = (query) => {
+    return Model.findOne(query).then(
       (entity) => (entity ? mapper.toEntity(entity) : null),
       (error) => {
         throw error;
@@ -23,7 +25,7 @@ const BaseRepository = ({ Model, mapper }) => {
     const modelProps = mapper.toDatabase(entity);
     const model = new Model(modelProps);
     return model.save().then(
-      (res) => {
+      (action) => {
         const entity = mapper.toEntity(model.get());
         return entity;
       },

@@ -1,5 +1,5 @@
-import { BaseIdMapper } from '../_lib';
+import { getIdMapper } from '../_lib';
 
-const SellerIdMapper = BaseIdMapper('SellerId');
+const SellerIdMapper = getIdMapper('SellerId');
 
 export default SellerIdMapper;

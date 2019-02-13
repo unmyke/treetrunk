@@ -3,7 +3,7 @@ const DayMapper = ({ commonTypes }) => {
     return value;
   };
 
-  const toEntity = ({ value }) => {
+  const toEntity = (value) => {
     return new commonTypes.Day({ value: new Date(value) });
   };
 

@@ -35,12 +35,14 @@ export default class InitializeApplication extends Operation {
 
         let model;
 
-        model = await repo.getOne({ where: values });
+        model = await repo.getOne(values);
 
         if (model === null) {
           const newModel = new Entity(values);
           model = await repo.add(newModel);
         }
+
+        console.log(model);
 
         const id = model[`${lowerFirst(ModelName)}Id`];
 

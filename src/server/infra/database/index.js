@@ -21,15 +21,17 @@ if (dbConfig) {
   database = new Database(url, dbOptions);
   modelLoader(models, database);
 
-  database.connect().then(
-    () => {
-      console.error('Database connection successful');
-    },
-    ({ message }) => {
-      console.error(`Database connection error: ${message}`);
-    }
-  );
-  // .then(() => database.disconnect());
+  database
+    .connect()
+    .then(
+      () => {
+        console.error('Database connection successful');
+      },
+      ({ message }) => {
+        console.error(`Database connection error: ${message}`);
+      }
+    )
+    .then(() => database.disconnect());
 } else {
   /* eslint-disable no-console */
   console.error('Database config file found, disabling database.');

@@ -1,10 +1,10 @@
 import exec from '../exec';
 
-const BaseRepository = ({ Model, mapper }) => {
+const BaseRepository = ({ Model, mapper, database }) => {
   const idPropName = `${Model.name.toLowerCase()}Id`;
 
   const find = (query) => {
-    return exec(() =>
+    return exec(database, () =>
       Model.find(query).then(
         (entity) => mapper.toEntity(entity),
         (error) => {
@@ -17,7 +17,7 @@ const BaseRepository = ({ Model, mapper }) => {
   const getById = (id) => find({ [idPropName]: id });
 
   const getOne = (query) => {
-    return exec(() =>
+    return exec(database, () =>
       Model.findOne(query).then(
         (entity) => (entity ? mapper.toEntity(entity) : null),
         (error) => {
@@ -31,7 +31,7 @@ const BaseRepository = ({ Model, mapper }) => {
     const modelProps = mapper.toDatabase(entity);
     const model = new Model(modelProps);
     console.log(model.get());
-    return exec(() =>
+    return exec(database, () =>
       model.save().then(
         (action) => {
           console.log(action);

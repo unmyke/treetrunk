@@ -37,7 +37,7 @@ export default class InitializeApplication extends Operation {
 
         model = await repo.getOne(values);
 
-        if (model === null) {
+        if (!model) {
           const newModel = new Entity(values);
           model = await repo.add(newModel);
         }

@@ -62,6 +62,7 @@ bottle.factory('repositories', ({ models, mappers }) =>
         models,
         mapper: mappers[SubdomainName][EntityName],
         mappers,
+        database,
       })
   )
 );

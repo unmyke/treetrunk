@@ -67,6 +67,9 @@ const errors = {
   // factory
   inconsistentState: makeError('INCONSISTENT_STATE'),
 
+  // app
+  appInitializeFailure: makeError('APP_INITIALIZE_FAILURE'),
+
   // repository
   modelNotFound: makeError('MODEL_NOT_FOUND'),
   modelAlreadyExists: makeError('MODEL_ALREADY_EXISTS'),

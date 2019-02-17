@@ -4,4 +4,3 @@ export { default as BaseEntity } from './base-entity';
 export { default as BaseId } from './base-id';
 export { default as BaseService } from './base-service';
 export { default as BaseAdapter } from './base-adapter';
-export { default as BaseRepository } from './base-repository';

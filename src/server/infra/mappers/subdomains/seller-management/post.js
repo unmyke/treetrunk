@@ -4,7 +4,7 @@ const PostMapper = ({ commonTypes, Entity }) => {
   const postIdMapper = PostIdMapper({ Entity, commonTypes });
   const dayMapper = DayMapper({ commonTypes });
 
-  const toDatabase = ({ postId, name, state, pieceRates }) => {
+  const toDatabase = ({ postId, name, state, pieceRates = [] }) => {
     return {
       postId: postIdMapper.toDatabase(postId),
       name,
@@ -16,8 +16,8 @@ const PostMapper = ({ commonTypes, Entity }) => {
     };
   };
 
-  const toEntity = ({ postId, name, state, pieceRates }) => {
-    return Entity.restore({
+  const toEntity = ({ postId, name, state, pieceRates = [] }) =>
+    Entity.restore({
       postId: postIdMapper.toEntity(postId),
       name,
       state,
@@ -26,7 +26,6 @@ const PostMapper = ({ commonTypes, Entity }) => {
         day: dayMapper.toEntity(day),
       })),
     });
-  };
 
   return Object.freeze({
     toEntity,

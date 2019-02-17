@@ -1,6 +1,6 @@
 import BaseRepository from './base';
 
-const SellerRepository = ({ Model, mapper }) => {
+const SeniorityTypeRepository = ({ Model, mapper }) => {
   const baseRepo = BaseRepository({ Model, mapper });
 
   return Object.freeze({
@@ -8,4 +8,4 @@ const SellerRepository = ({ Model, mapper }) => {
   });
 };
 
-export default SellerRepository;
+export default SeniorityTypeRepository;

@@ -1,47 +1,37 @@
-import exec from '../exec';
-
-const BaseRepository = ({ Model, mapper, database }) => {
+const BaseRepository = ({ Model, mapper }) => {
   const idPropName = `${Model.name.toLowerCase()}Id`;
 
   const find = (query) => {
-    return exec(database, () =>
-      Model.find(query).then(
-        (entity) => mapper.toEntity(entity),
-        (error) => {
-          throw error;
-        }
-      )
+    return Model.find(query).then(
+      (model) => mapper.toEntity(model),
+      (error) => {
+        throw error;
+      }
     );
   };
 
   const getById = (id) => find({ [idPropName]: id });
 
   const getOne = (query) => {
-    return exec(database, () =>
-      Model.findOne(query).then(
-        (entity) => (entity ? mapper.toEntity(entity) : null),
-        (error) => {
-          throw error;
-        }
-      )
+    return Model.findOne(query).then(
+      (model) => {
+        console.log(model);
+        return model ? mapper.toEntity(model.get()) : null;
+      },
+      (error) => {
+        throw error;
+      }
     );
   };
 
   const save = (entity) => {
     const modelProps = mapper.toDatabase(entity);
     const model = new Model(modelProps);
-    console.log(model.get());
-    return exec(database, () =>
-      model.save().then(
-        (action) => {
-          console.log(action);
-          const entity = mapper.toEntity(model.get());
-          return entity;
-        },
-        (error) => {
-          throw error;
-        }
-      )
+    return model.save().then(
+      () => mapper.toEntity(model.get()),
+      (error) => {
+        throw error;
+      }
     );
   };
 

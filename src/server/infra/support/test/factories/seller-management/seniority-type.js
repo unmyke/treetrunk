@@ -3,7 +3,7 @@ const SeniorityType = (factory, { SeniorityType }) => {
     'seniorityType',
     SeniorityType,
     {
-      seniority_type_id: factory.chance('guid', { version: 4 }),
+      seniorityTypeId: factory.chance('guid', { version: 4 }),
       name: factory.chance('word'),
       months: factory.chance('integer', { min: 1, max: 65535 }),
       state: factory.chance('pickone', ['active', 'deleted']),
@@ -15,7 +15,7 @@ const SeniorityType = (factory, { SeniorityType }) => {
         }
 
         const awardAttrs = {
-          seniority_type_id: seniorityType.seniority_type_id,
+          seniorityTypeId: seniorityType.seniorityTypeId,
         };
 
         const awardFactoryArgs = ['seniorityTypeAward'];

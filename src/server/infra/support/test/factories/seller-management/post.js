@@ -3,7 +3,7 @@ const Post = (factory, { Post }) => {
     'post',
     Post,
     {
-      post_id: factory.chance('guid', { version: 4 }),
+      postId: factory.chance('guid', { version: 4 }),
       name: factory.chance('word', { length: 40 }),
       state: factory.chance('pickone', ['active', 'deleted']),
     },
@@ -11,14 +11,14 @@ const Post = (factory, { Post }) => {
       async afterCreate(post, attrs, { pieceRatesCount } = {}) {
         if (
           pieceRatesCount === 0 &&
-          attrs.piece_rates &&
-          attrs.piece_rates.length === 0
+          attrs.pieceRates &&
+          attrs.pieceRates.length === 0
         ) {
-          return post.reload({ include: ['piece_rates'] });
+          return post.reload({ include: ['pieceRates'] });
         }
 
         const pieceRateAttrs = {
-          post_id: post.post_id,
+          postId: post.postId,
         };
 
         const pieceRateFactoryArgs = ['postPieceRate'];
@@ -28,9 +28,9 @@ const Post = (factory, { Post }) => {
             pieceRateFactoryArgs.push(pieceRatesCount, pieceRateAttrs);
             break;
 
-          case attrs.piece_rates !== undefined && attrs.piece_rates.length > 0:
+          case attrs.pieceRates !== undefined && attrs.pieceRates.length > 0:
             pieceRateFactoryArgs.push(
-              attrs.piece_rates.map((attr) => ({
+              attrs.pieceRates.map((attr) => ({
                 ...attr,
                 ...pieceRateAttrs,
               }))
@@ -44,7 +44,7 @@ const Post = (factory, { Post }) => {
 
         return factory
           .createMany(...pieceRateFactoryArgs)
-          .then(() => post.reload({ include: ['piece_rates'] }));
+          .then(() => post.reload({ include: ['pieceRates'] }));
       },
     }
   );

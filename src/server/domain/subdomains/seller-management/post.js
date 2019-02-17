@@ -29,6 +29,7 @@ const transitions = {
 
 export default class Post extends BaseEntity {
   static restore({ name, pieceRates, state, ...props }) {
+    // console.log({ name, pieceRates, state, ...props });
     const post = new Post({ name, state, ...props });
     post._pieceRates = Diary.restore(pieceRates);
     post.setState(state);

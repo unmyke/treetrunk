@@ -1,19 +1,17 @@
+import { EventEmitter } from 'events';
+
 const Application = ({
+  errors,
   server,
   database,
   logger,
   initializeApplication,
   config: { app: appConfig },
 }) => {
-  const appInitializer = initializeApplication();
+  const app = new EventEmitter();
 
-  if (database && database.options.logging) {
-    // eslint-disable-next-line no-param-reassign
-    database.options.logging = logger.info.bind(logger);
-  }
-
-  const start = async () => {
-    // if (database) await database.authenticate();
+  const initApp = async () => {
+    const appInitializer = initializeApplication();
 
     const { SUCCESS, INITIALIZE_ERROR, ERROR } = appInitializer.outputs;
 
@@ -21,18 +19,57 @@ const Application = ({
       .on(SUCCESS, async () => {
         await server.start();
       })
-      .on(INITIALIZE_ERROR, (error) => {
-        console.log('Can not initialize. Error:', error);
+      .on(INITIALIZE_ERROR, ({ details }) => {
+        app.emit('error', () =>
+          errors.appInitializeFailure('Can not initialize. Error:', details)
+        );
       })
-      .on(ERROR, (error) => {
-        console.log(error);
+      .on(ERROR, ({ message }) => {
+        app.emit('error', () =>
+          errors.appInitializeFailure('Can not initialize. Error:', message)
+        );
       });
 
     appInitializer.execute({ config: appConfig });
   };
 
+  const connectDatabase = () => {
+    if (database && database.options.logging) {
+      // eslint-disable-next-line no-param-reassign
+      database.options.logging = logger.info.bind(logger);
+    }
+
+    return database.connect().then(
+      () => {
+        console.log('Database connection successful');
+      },
+      ({ message }) => {
+        console.error(`Database connection error: ${message}`);
+      }
+    );
+  };
+
+  const disconnectDatabase = () =>
+    database.disconnect().then(() => {
+      console.log('Database connection closed');
+    });
+
+  const onStart = () => connectDatabase().then(initApp);
+  const onStop = () => disconnectDatabase();
+  const onError = (e) => {
+    logger.log(e);
+    app.emit('stop');
+  };
+
+  app.once('start', onStart);
+  app.on('stop', onStop);
+  app.on('error', onError);
+
   return Object.freeze({
-    start,
+    start: () => app.emit('start'),
+    error: () => app.emit('error'),
+    stop: () => app.emit('stop'),
+    on: app.on.bind(app),
   });
 };
 

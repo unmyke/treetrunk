@@ -1,6 +1,8 @@
-function define(Class, id) {
-  Object.defineProperty(Class, this.name, { value: id });
-}
+const { states } = require('@domain');
+
+const define = ({ Class, name, id }) => {
+  Object.defineProperty(Class, name, { value: id });
+};
 
 module.exports = {
   seeds: [
@@ -8,7 +10,7 @@ module.exports = {
       name: 'dismissPostId',
       SubdomainName: 'SellerManagement',
       ModelName: 'Post',
-      values: { name: 'уволен(а)', state: 'ACTIVE' },
+      values: { name: 'уволен(а)', state: states.Post.ACTIVE },
       callback: define,
     },
   ],

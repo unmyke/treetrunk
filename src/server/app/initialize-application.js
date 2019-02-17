@@ -25,7 +25,7 @@ export default class InitializeApplication extends Operation {
 
     try {
       config.seeds.forEach(async (seed) => {
-        const { SubdomainName, ModelName, values } = seed;
+        const { name, SubdomainName, ModelName, values, callback } = seed;
         const {
           repositories: { [ModelName]: repo },
           entities: {
@@ -42,11 +42,9 @@ export default class InitializeApplication extends Operation {
           model = await repo.add(newModel);
         }
 
-        console.log(model);
-
         const id = model[`${lowerFirst(ModelName)}Id`];
 
-        seed.callback(Entity, id);
+        callback({ Class: Entity, name, id });
       });
       this.emit(SUCCESS, true);
     } catch (error) {

@@ -1,12 +1,13 @@
-const Seller = (factory, { Seller }, attrs) => {
+/* eslint-disable no-shadow */
+const Seller = (factory, { Seller }) => {
   factory.define(
     'seller',
     Seller,
-    (buildOptions) => ({
-      seller_id: factory.chance('guid', { version: 4 }),
-      last_name: factory.chance('last'),
-      first_name: factory.chance('name'),
-      middle_name: factory.chance('name', { middle: true }),
+    () => ({
+      sellerId: factory.chance('guid', { version: 4 }),
+      lastName: factory.chance('last'),
+      firstName: factory.chance('name'),
+      middleName: factory.chance('name', { middle: true }),
       phone: factory.chance('phone'),
       state: 'recruited',
     }),
@@ -21,7 +22,7 @@ const Seller = (factory, { Seller }, attrs) => {
         }
 
         const appointmentAttrs = {
-          seller_id: seller.seller_id,
+          sellerId: seller.sellerId,
         };
 
         const appointmentFactoryArgs = ['sellerAppointment'];

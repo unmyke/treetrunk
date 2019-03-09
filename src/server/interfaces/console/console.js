@@ -1,7 +1,7 @@
 import REPL from 'repl';
 import vm from 'vm';
 
-const Console = {
+export default {
   start(options = {}) {
     const { expose } = options;
 
@@ -30,5 +30,3 @@ function isPromise(value) {
     typeof value.catch === 'function'
   );
 }
-
-export default Console;

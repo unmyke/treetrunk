@@ -8,6 +8,7 @@ const mode = process.env.NODE_ENV;
 const target = process.env.TARGET;
 
 const configTypes = {
+  console: ['api', 'web', 'db', 'app', 'logging'],
   server: ['api', 'web', 'db', 'app', 'logging'],
   client: ['web', 'api'],
 };

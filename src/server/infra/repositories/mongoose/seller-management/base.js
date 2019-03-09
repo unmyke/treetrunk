@@ -1,27 +1,22 @@
 const BaseRepository = ({ Model, mapper }) => {
-  const idPropName = `${Model.name.toLowerCase()}Id`;
-
-  const find = (query) => {
-    return Model.find(query).then(
-      (model) => mapper.toEntity(model),
-      (error) => {
-        throw error;
-      }
-    );
+  const mapToEntity = (model) => (model ? mapper.toEntity(model.get()) : null);
+  const throwError = (error) => {
+    throw error;
   };
 
-  const getById = (id) => find({ [idPropName]: id });
+  const idPropName = `${Model.name.toLowerCase()}Id`;
+
+  const findModel = (id) =>
+    Model.findOne({ [idPropName]: id }).then((model) =>
+      model ? mapToEntity(model) : null
+    );
+
+  const getlist = Model.getList.bind(Model);
+
+  const getById = (id) => findModel(id).then(mapToEntity, throwError);
 
   const getOne = (query) => {
-    return Model.findOne(query).then(
-      (model) => {
-        console.log(model);
-        return model ? mapper.toEntity(model.get()) : null;
-      },
-      (error) => {
-        throw error;
-      }
-    );
+    return Model.findOne(query).then(mapToEntity, throwError);
   };
 
   const save = (entity) => {
@@ -36,6 +31,7 @@ const BaseRepository = ({ Model, mapper }) => {
   };
 
   return Object.freeze({
+    getlist,
     getById,
     getOne,
     save,

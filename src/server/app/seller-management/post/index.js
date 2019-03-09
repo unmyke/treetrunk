@@ -1,4 +1,4 @@
-export { default as GetAllPosts } from './get-all';
+export { default as Find } from './find';
 export { default as GetPost } from './get';
 export { default as CreatePost } from './create';
 export { default as UpdatePost } from './update';

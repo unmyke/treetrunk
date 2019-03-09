@@ -13,16 +13,16 @@ import Application, * as services from '@app';
 import InitializeApplication from '@app/initialize-application';
 import makeValidator from '@infra/support/make-validator';
 
-import Server from '@interfaces/http/server';
-import router from '@interfaces/http/router';
-import logger from '@infra/logging/logger';
-import { subdomains as subdomainsSerializers } from '@interfaces/http/serializers';
+import Server from '@interfaces/graphql';
+// import router from '@interfaces/http/router';
+import Logger from '@infra/logging';
+// import { subdomains as subdomainsSerializers } from '@interfaces/http/serializers';
 
-import { containerMiddleware } from '@interfaces/http/utils/bottle-express';
-import loggerMiddleware from '@interfaces/http/logging/logger-middleware';
-import swaggerMiddleware from '@interfaces/http/swagger/swagger-middleware';
-import errorHandler from '@interfaces/http/errors/error-handler';
-import devErrorHandler from '@interfaces/http/errors/dev-error-handler';
+// import { containerMiddleware } from '@interfaces/http/utils/bottle-express';
+// import loggerMiddleware from '@interfaces/http/logging/logger-middleware';
+// import swaggerMiddleware from '@interfaces/http/swagger/swagger-middleware';
+// import errorHandler from '@interfaces/http/errors/error-handler';
+// import devErrorHandler from '@interfaces/http/errors/dev-error-handler';
 
 import * as repositories from '@infra/repositories';
 import { database, models } from '@infra/database';
@@ -67,9 +67,9 @@ bottle.factory('repositories', ({ models, mappers }) =>
   )
 );
 
-bottle.factory('serializers', () =>
-  getSubdomainsContainer(subdomainsSerializers, (Serializer) => Serializer())
-);
+// bottle.factory('serializers', () =>
+//   getSubdomainsContainer(subdomainsSerializers, (Serializer) => Serializer())
+// );
 
 bottle.factory(
   'services',
@@ -97,20 +97,20 @@ bottle.factory(
 
 bottle.constant('makeValidator', makeValidator);
 
-bottle.factory('server', (container) => new Server(container));
+bottle.factory('server', (container) => Server(container));
 bottle.factory('logger', (container) => logger(container));
-bottle.factory('router', (container) => router(container));
-bottle.factory('containerMiddleware', (container) =>
-  containerMiddleware(container)
-);
-// bottle.constant('serializers', serializers);
+// bottle.factory('router', (container) => router(container));
+// bottle.factory('containerMiddleware', (container) =>
+//   containerMiddleware(container)
+// );
+// // bottle.constant('serializers', serializers);
 
-bottle.factory('loggerMiddleware', (container) => loggerMiddleware(container));
-bottle.constant(
-  'errorHandler',
-  config.production ? errorHandler : devErrorHandler
-);
-bottle.constant('swaggerMiddleware', swaggerMiddleware);
+// bottle.factory('loggerMiddleware', (container) => loggerMiddleware(container));
+// bottle.constant(
+//   'errorHandler',
+//   config.production ? errorHandler : devErrorHandler
+// );
+// bottle.constant('swaggerMiddleware', swaggerMiddleware);
 
 bottle.constant('database', database);
 bottle.constant('models', models);

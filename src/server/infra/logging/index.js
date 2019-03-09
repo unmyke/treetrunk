@@ -1,9 +1,7 @@
 import Log4js from 'log4js';
 
-const logger = ({ config }) => {
+export default ({ config }) => {
   Log4js.configure(config.logging);
 
   return Log4js.getLogger();
 };
-
-export default logger;

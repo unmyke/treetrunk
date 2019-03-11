@@ -1,8 +1,8 @@
-const buildTarget = require('./build-target');
+const { client, server, all } = require('./build');
 // const watch = require('./watch');
 
 module.exports = {
-  'build:server': buildTarget('server'),
-  'build:client': buildTarget('client'),
-  build: buildTarget(),
+  'build:server': server,
+  'build:client': client,
+  build: all,
 };

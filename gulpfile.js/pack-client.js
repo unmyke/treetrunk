@@ -1,7 +1,9 @@
+const { PROD, DEV } = require('./envs');
+
 const packProdution = () => Promise.resolve();
 const packDevelopment = () => Promise.resolve();
 
 module.exports = {
-  production: packProdution,
-  development: packDevelopment,
+  [PROD]: packProdution,
+  [DEV]: packDevelopment,
 };

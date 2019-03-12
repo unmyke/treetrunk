@@ -1,9 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const { parallel, series } = require('gulp');
 
-const { server: cleanServer } = require('../clean');
-const { production: transpileServer } = require('./transpile-server');
-const { production: packClient } = require('./pack-client');
+const { PROD } = require('./envs');
+
+const { server: cleanServer } = require('./clean');
+const { [PROD]: transpileServer } = require('./transpile-server');
+const { [PROD]: packClient } = require('./pack-client');
 
 const server = series(cleanServer, transpileServer);
 const client = packClient;

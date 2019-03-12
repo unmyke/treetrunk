@@ -1,20 +1,7 @@
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
-// eslint-disable-next-line import/no-extraneous-dependencies
-const merge = require('babel-merge');
-const { inspect } = require('util');
+const client = require('./client');
+const server = require('./server');
 
-module.exports = ({ env = 'development', target = 'server' }) => {
-  const commonConfig = require('./common.config');
-  const targetConfig = require(`./${target}.config`);
-  const envConfig = require(`./${env}.config`);
+const configs = { client, server };
 
-  console.log(
-    inspect(merge(commonConfig, targetConfig, envConfig), {
-      depth: null,
-      colors: true,
-    })
-  );
-
-  return merge(commonConfig, targetConfig, envConfig);
-};
+module.exports = ({ env = 'development', target = 'server' }) =>
+  configs[target](env);

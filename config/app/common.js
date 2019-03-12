@@ -1,10 +1,10 @@
-const { states } = require('@domain');
+import { states } from '@domain';
 
 const define = ({ Class, name, id }) => {
   Object.defineProperty(Class, name, { value: id });
 };
 
-module.exports = {
+export default {
   seeds: [
     {
       name: 'dismissPostId',

@@ -3,7 +3,7 @@
 // const root = process.env.PWD;
 // const logPath = path.join(root, 'logs/development.log');
 
-module.exports = {
+export default {
   appenders: {
     out: { type: 'console' },
     // app: { type: 'file', filename: logPath },

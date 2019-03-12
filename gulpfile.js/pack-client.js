@@ -1,9 +1,9 @@
-const { PROD, DEV } = require('./envs');
-
-const packProdution = () => Promise.resolve();
-const packDevelopment = () => Promise.resolve();
+const { PROD, DEV } = require('./_lib/envs');
+const getTaskName = require('./_lib/get-task-name');
 
 module.exports = {
-  [PROD]: packProdution,
-  [DEV]: packDevelopment,
+  [getTaskName({ name: 'pack', target: 'client', env: PROD })]: () =>
+    Promise.resolve(),
+  [getTaskName({ name: 'pack', target: 'client', env: DEV })]: () =>
+    Promise.resolve(),
 };

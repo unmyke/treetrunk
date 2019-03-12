@@ -1,9 +1,20 @@
+const getTaskName = require('./_lib/get-task-name');
+
 const {
-  server: buildServer,
-  client: buildClient,
-  all: build,
+  [getTaskName({ name: 'build', target: 'server' })]: buildServer,
+  [getTaskName({ name: 'build', target: 'client' })]: buildClient,
+  [getTaskName({ name: 'build' })]: build,
 } = require('./build');
-const { server: devServer, client: devClient, all: dev } = require('./dev');
+const {
+  [getTaskName({ name: 'dev', target: 'server' })]: devServer,
+  [getTaskName({ name: 'dev', target: 'client' })]: devClient,
+  [getTaskName({ name: 'dev' })]: dev,
+} = require('./dev');
+
+const {
+  [getTaskName({ name: 'start', target: 'server' })]: startServer,
+  [getTaskName({ name: 'start' })]: start,
+} = require('./start');
 // const watch = require('./watch');
 
 module.exports = {
@@ -13,4 +24,6 @@ module.exports = {
   'dev:server': devServer,
   'dev:client': devClient,
   dev,
+  'start:server': startServer,
+  start,
 };

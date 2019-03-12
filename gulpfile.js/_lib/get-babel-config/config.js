@@ -1,7 +1,5 @@
-const path = require('path');
-
 const root = process.env.PWD;
-const rootServer = './src/server';
+const rootServer = './dist/server';
 
 module.exports = (env) => ({
   presets: [
@@ -11,7 +9,6 @@ module.exports = (env) => ({
         targets: { node: true },
         useBuiltIns: 'usage',
         forceAllTransforms: env === 'production',
-        // forceAllTransforms: false,
         debug: env === 'development',
         modules: 'auto',
       },
@@ -25,12 +22,7 @@ module.exports = (env) => ({
       {
         root,
         alias: {
-          '@config': './config',
-          '@container': `${rootServer}/container`,
-          '@app': `${rootServer}/app`,
           '@domain': `${rootServer}/domain`,
-          '@infra': `${rootServer}/infra`,
-          '@interfaces': `${rootServer}/interfaces`,
         },
       },
     ],

@@ -21,7 +21,6 @@
     "test:features": "yarn run jest 'src/.*\\.feature\\.test\\.js'",
     "lint": "eslint {src,config}/**/*.js",
     "pm2": "pm2",
-    "precommit": "lint-staged",
     "prettier": "prettier",
     "debug": "node --debug-brk node_modules/jest/bin/jest --runInBand --no-cache link"
   },
@@ -134,5 +133,10 @@
     "typeface-roboto": "^0.0.54",
     "uuid": "^3.3.2",
     "validate.js": "^0.12.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

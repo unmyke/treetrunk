@@ -1,7 +1,7 @@
 const getTaskName = require('./_lib/get-task-name');
 
 const {
-  [getTaskName({ name: 'build', target: 'config' })]: buildConfig,
+  [getTaskName({ name: 'build', target: 'common' })]: buildCommon,
   [getTaskName({ name: 'build', target: 'server' })]: buildServer,
   [getTaskName({ name: 'build', target: 'client' })]: buildClient,
   [getTaskName({ name: 'build' })]: build,
@@ -19,7 +19,7 @@ const {
 // const watch = require('./watch');
 
 module.exports = {
-  'build:config': buildConfig,
+  'build:common': buildCommon,
   'build:server': buildServer,
   'build:client': buildClient,
   build,

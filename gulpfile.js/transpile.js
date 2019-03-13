@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const { src, dest } = require('gulp');
 const babel = require('gulp-babel');
+const sourcemaps = require('gulp-sourcemaps');
 
 const envs = require('./_lib/envs');
 const targets = require('./_lib/target-globs');
@@ -10,7 +11,9 @@ const getTaskName = require('./_lib/get-task-name');
 
 const getTranspileTask = ({ env, target }) =>
   src(targets[target].src)
+    .pipe(sourcemaps.init())
     .pipe(babel(getBabelConfig({ env, target })))
+    .pipe(sourcemaps.write('.'))
     .pipe(dest(targets[target].dest));
 
 module.exports = Object.keys(targets).reduce(

@@ -5,16 +5,16 @@ const { PROD } = require('./_lib/envs');
 const getTaskName = require('./_lib/get-task-name');
 
 const {
-  [getTaskName({ name: 'clean', target: 'config' })]: cleanConfig,
+  [getTaskName({ name: 'clean', target: 'common' })]: cleanCommon,
   [getTaskName({ name: 'clean', target: 'server' })]: cleanServer,
-  [getTaskName({ name: 'clean', target: 'client' })]: cleanClient,
+  // [getTaskName({ name: 'clean', target: 'client' })]: cleanClient,
 } = require('./clean');
 const {
   [getTaskName({
     name: 'transpile',
-    target: 'config',
+    target: 'common',
     env: 'production',
-  })]: transpileConfig,
+  })]: transpileCommon,
   [getTaskName({
     name: 'transpile',
     target: 'server',
@@ -25,16 +25,16 @@ const {
   [getTaskName({ name: 'pack', target: 'client', env: PROD })]: packClient,
 } = require('./pack-client');
 
-const buildConfig = series(cleanConfig, transpileConfig);
+const buildCommon = series(cleanCommon, transpileCommon);
 const buildServer = series(
-  parallel(cleanConfig, cleanServer),
-  parallel(transpileConfig, transpileServer)
+  parallel(cleanCommon, cleanServer),
+  parallel(transpileCommon, transpileServer)
 );
 const buildClient = packClient;
 const build = parallel(buildServer, buildClient);
 
 module.exports = {
-  [getTaskName({ name: 'build', target: 'config' })]: buildConfig,
+  [getTaskName({ name: 'build', target: 'common' })]: buildCommon,
   [getTaskName({ name: 'build', target: 'server' })]: buildServer,
   [getTaskName({ name: 'build', target: 'client' })]: buildClient,
   [getTaskName({ name: 'build' })]: build,

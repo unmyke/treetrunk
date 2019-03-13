@@ -10,9 +10,9 @@ const {
   })]: transpileServer,
   [getTaskName({
     name: 'transpile',
-    target: 'config',
+    target: 'common',
     env: DEV,
-  })]: transpileConfig,
+  })]: transpileCommon,
 } = require('./transpile');
 const {
   [getTaskName({ name: 'pack', target: 'client', env: DEV })]: packClient,
@@ -22,14 +22,14 @@ const {
     name: 'nodemon',
     target: 'server',
   })]: nodemonServer,
-  [getTaskName({
-    name: 'nodemon',
-    target: 'config',
-  })]: nodemonConfig,
+  // [getTaskName({
+  //   name: 'nodemon',
+  //   target: 'common',
+  // })]: nodemonCommon,
 } = require('./nodemon');
 
 const devServer = series(
-  parallel(transpileConfig, transpileServer),
+  parallel(transpileCommon, transpileServer),
   nodemonServer
 );
 const devClient = series(packClient);

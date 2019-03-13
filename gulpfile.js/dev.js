@@ -21,12 +21,10 @@ const {
   [getTaskName({
     name: 'nodemon',
     target: 'server',
-    env: DEV,
   })]: nodemonServer,
   [getTaskName({
     name: 'nodemon',
     target: 'config',
-    env: DEV,
   })]: nodemonConfig,
 } = require('./nodemon');
 

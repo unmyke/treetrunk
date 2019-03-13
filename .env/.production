@@ -3,6 +3,7 @@ HOST=treetrunk.ru
 PORT=80
 API_HOST=api.treetrunk.ru
 API_PORT=4000
+API_URI=/graphql
 DB_HOST=db.treetrunk.ru
 DB_NAME=treetrunk
 DB_USER=treetrunk

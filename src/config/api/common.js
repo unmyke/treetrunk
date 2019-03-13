@@ -1,5 +1,5 @@
 export default {
   host: process.env.API_HOST || 'localhost',
   port: process.env.API_PORT || 4000,
-  uri: '/graphql',
+  uri: process.env.API_URI || '/graphql',
 };

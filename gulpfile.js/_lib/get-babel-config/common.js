@@ -15,16 +15,5 @@ module.exports = (env) => ({
     ],
   ],
 
-  plugins: [
-    ['@babel/plugin-proposal-class-properties', { loose: false }],
-    // [
-    //   'module-resolver',
-    //   {
-    //     root,
-    //     alias: {
-    //       '@domain': `${rootServer}/domain`,
-    //     },
-    //   },
-    // ],
-  ],
+  plugins: [['@babel/plugin-proposal-class-properties', { loose: false }]],
 });

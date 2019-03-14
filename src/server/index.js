@@ -5,7 +5,7 @@ const { app } = container;
 
 app.on('error', (error) => {
   console.log(error);
-  container.app.logger.error(error.stack);
+  app.logger.error(error.stack);
   process.exit();
 });
 

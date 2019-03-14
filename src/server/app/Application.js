@@ -1,17 +1,26 @@
 import { EventEmitter } from 'events';
+import InitializeApplication from './initialize-application';
 
 const Application = ({
   errors,
   server,
   database,
   logger,
-  initializeApplication,
   config: { app: appConfig },
+  makeValidator,
+  subdomains,
+  commonTypes,
+  repositories,
 }) => {
   const app = new EventEmitter();
 
   const initApp = async () => {
-    const appInitializer = initializeApplication();
+    const appInitializer = new InitializeApplication({
+      makeValidator,
+      subdomains,
+      commonTypes,
+      repositories,
+    });
 
     const { SUCCESS, INITIALIZE_ERROR, ERROR } = appInitializer.outputs;
 

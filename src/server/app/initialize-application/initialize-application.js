@@ -1,5 +1,6 @@
 import { lowerFirst } from 'lodash';
-import Operation from './operation';
+import Operation from '../operation';
+import seeds from './app-seeds';
 
 export default class InitializeApplication extends Operation {
   constructor({ makeValidator, subdomains, commonTypes, repositories }) {
@@ -20,11 +21,11 @@ export default class InitializeApplication extends Operation {
     );
   }
 
-  async execute({ config }) {
+  async execute() {
     const { SUCCESS, ERROR, INITIALIZE_ERROR } = this.outputs;
 
     try {
-      config.seeds.forEach(async (seed) => {
+      seeds.forEach(async (seed) => {
         const { name, SubdomainName, ModelName, values, callback } = seed;
         const {
           repositories: { [ModelName]: repo },

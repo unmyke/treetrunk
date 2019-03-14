@@ -6,11 +6,10 @@ import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
 import { getSubdomainsContainer } from '@infra/support/container-helpers';
 
-import config from '@config';
+import { getConfig } from '@common';
 import { subdomains, commonTypes, states, errors } from '@domain';
 
 import Application, * as services from '@app';
-import InitializeApplication from '@app/initialize-application';
 import makeValidator from '@infra/support/make-validator';
 
 import Server from '@interfaces/graphql';
@@ -28,12 +27,11 @@ import * as repositories from '@infra/repositories';
 import { database, models } from '@infra/database';
 import mappers from '@infra/mappers';
 
+const config = getConfig({ env: process.env.NODE_ENV, target: 'server' });
+
 const bottle = new Bottle();
 
 bottle.constant('config', config);
-bottle.factory('initializeApplication', (container) => () =>
-  new InitializeApplication(container)
-);
 bottle.factory('app', (container) => Application(container));
 
 bottle.factory('subdomains', () => subdomains);

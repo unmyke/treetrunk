@@ -1,4 +1,4 @@
 export default {
-  server: ['api', 'web', 'db', 'app', 'logging'],
-  client: ['web', 'api'],
+  server: ['api', 'web', 'db', 'logging'],
+  client: ['api', 'web'],
 };

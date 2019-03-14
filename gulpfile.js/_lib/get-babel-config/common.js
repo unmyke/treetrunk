@@ -1,5 +1,5 @@
-const root = process.env.PWD;
-const rootServer = './dist/server';
+// const root = process.env.PWD;
+// const rootServer = './dist/server';
 
 module.exports = (env) => ({
   presets: [
@@ -17,14 +17,14 @@ module.exports = (env) => ({
 
   plugins: [
     ['@babel/plugin-proposal-class-properties', { loose: false }],
-    [
-      'module-resolver',
-      {
-        root,
-        alias: {
-          '@domain': `${rootServer}/domain`,
-        },
-      },
-    ],
+    // [
+    //   'module-resolver',
+    //   {
+    //     root,
+    //     alias: {
+    //       '@domain': `${rootServer}/domain`,
+    //     },
+    //   },
+    // ],
   ],
 });

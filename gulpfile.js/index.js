@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 const getTaskName = require('./_lib/get-task-name');
 
 const {

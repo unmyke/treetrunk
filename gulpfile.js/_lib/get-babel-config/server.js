@@ -1,5 +1,8 @@
+const path = require('path');
+
 const root = process.env.PWD;
-const rootServer = './src/server';
+const rootServer = path.resolve(root, 'dist/server');
+console.log(rootServer);
 
 module.exports = (env) => ({
   presets: [
@@ -9,7 +12,6 @@ module.exports = (env) => ({
         targets: { node: true },
         useBuiltIns: 'usage',
         forceAllTransforms: env === 'production',
-        // forceAllTransforms: false,
         debug: env === 'development',
         modules: 'auto',
       },
@@ -18,19 +20,19 @@ module.exports = (env) => ({
 
   plugins: [
     ['@babel/plugin-proposal-class-properties', { loose: false }],
-    [
-      'module-resolver',
-      {
-        root,
-        alias: {
-          '@config': './config',
-          '@container': `${rootServer}/container`,
-          '@app': `${rootServer}/app`,
-          '@domain': `${rootServer}/domain`,
-          '@infra': `${rootServer}/infra`,
-          '@interfaces': `${rootServer}/interfaces`,
-        },
-      },
-    ],
+    // [
+    //   'module-resolver',
+    //   {
+    //     rootServer,
+    //     alias: {
+    //       '@common': path.resolve(rootServer, '../common'),
+    //       '@container': path.resolve(rootServer, 'container'),
+    //       '@app': path.resolve(rootServer, 'app'),
+    //       '@domain': path.resolve(rootServer, 'domain'),
+    //       '@infra': path.resolve(rootServer, 'infra'),
+    //       '@interfaces': path.resolve(rootServer, 'interfaces'),
+    //     },
+    //   },
+    // ],
   ],
 });

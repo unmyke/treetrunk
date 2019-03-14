@@ -24,11 +24,15 @@ const {
 const {
   [getTaskName({ name: 'pack', target: 'client', env: PROD })]: packClient,
 } = require('./pack-client');
+const {
+  [getTaskName({ name: 'set-env', env: PROD })]: setProdEnv,
+} = require('./set-env');
 
 const buildCommon = series(cleanCommon, transpileCommon);
 const buildServer = series(
   parallel(cleanCommon, cleanServer),
-  parallel(transpileCommon, transpileServer)
+  transpileCommon,
+  transpileServer
 );
 const buildClient = packClient;
 const build = parallel(buildServer, buildClient);

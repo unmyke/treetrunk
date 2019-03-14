@@ -2,7 +2,7 @@ import { subMonths, startOfDay } from 'date-fns';
 
 import * as commonTypes from '../../../common-types';
 import { SeniorityTypeSerializer as Serializer } from './seniority-type';
-import { SeniorityType } from '@domain/subdomains/SellerManagement';
+import { SeniorityType } from '@domain/subdomains/seller-management';
 import { SeniorityTypeId, Day } from '@domain/common-types';
 import { SeniorityType as states } from '@domain/states';
 

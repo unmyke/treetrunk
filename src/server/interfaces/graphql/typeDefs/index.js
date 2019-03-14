@@ -153,17 +153,27 @@ export default gql`
     message: String!
   }
 
-  type PageInfo {
+  type Connection {
     edges: Edge!
     pageInfo: PageInfo!
   }
 
   type Edge {
-    
+    node: Node!
+    cursor: Cursor!
   }
 
-  type PageInfo {
+  type Node {
+    id: ID!
+  }
 
+  scalar Cursor
+
+  type PageInfo {
+    after: Cursor
+    before: Cursor
+    hasPreviousPage: Boolean!
+    hasNextPage: Boolean!
   }
 
   type Seller {

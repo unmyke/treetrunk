@@ -7,7 +7,7 @@ import {
   Seller,
   Post,
   SeniorityType,
-} from '@domain/subdomains/SellerManagement';
+} from '@domain/subdomains/seller-management';
 import { SellerId, Day, PostId, SeniorityTypeId } from '@domain/common-types';
 import { Seller as states } from '@domain/states';
 

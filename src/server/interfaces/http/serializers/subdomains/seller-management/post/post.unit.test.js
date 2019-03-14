@@ -2,7 +2,7 @@ import { subMonths, startOfDay } from 'date-fns';
 
 import * as commonTypes from '../../../common-types';
 import { PostSerializer as Serializer } from './post';
-import { Post } from '@domain/subdomains/SellerManagement';
+import { Post } from '@domain/subdomains/seller-management';
 import { PostId, Day } from '@domain/common-types';
 import { Post as states } from '@domain/states';
 

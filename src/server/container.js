@@ -27,11 +27,12 @@ import * as repositories from '@infra/repositories';
 import { database, models } from '@infra/database';
 import mappers from '@infra/mappers';
 
-const config = getConfig({ env: process.env.NODE_ENV, target: 'server' });
-
 const bottle = new Bottle();
 
-bottle.constant('config', config);
+bottle.constant(
+  'config',
+  getConfig({ env: process.env.NODE_ENV, target: 'server' })
+);
 bottle.factory('app', (container) => Application(container));
 
 bottle.factory('subdomains', () => subdomains);

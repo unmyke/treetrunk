@@ -1,16 +1,11 @@
-const dotenv = require('dotenv');
-const fs = require('fs');
+const { src } = require('gulp');
+const dotenv = require('gulp-dotenv');
+const setEnv = require('gulp-env');
 const path = require('path');
 
-const envsPath = '../../.env';
+const envsPath = '.env';
 
 module.exports = (env) =>
-  new Promise((resolve, reject) =>
-    fs.readFile(path.resolve(envsPath, env), (err, data) => {
-      if (err) {
-        reject(new Error(err));
-      }
-
-      resolve(dotenv.parse(data));
-    })
-  );
+  src(path.resolve(envsPath, `.${env}`))
+    .pipe(dotenv())
+    .pipe(setEnv());

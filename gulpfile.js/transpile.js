@@ -10,11 +10,11 @@ const getBabelConfig = require('./_lib/get-babel-config');
 const getTaskName = require('./_lib/get-task-name');
 
 const getTranspileTask = ({ env, target }) =>
-  src(targets[target].src)
-    .pipe(sourcemaps.init())
+  src(targets[target].src, { sourcemaps: true })
+    // .pipe(sourcemaps.init())
     .pipe(babel(getBabelConfig({ env, target })))
     .pipe(sourcemaps.write('.'))
-    .pipe(dest(targets[target].dest));
+    .pipe(dest(targets[target].dest, { sourcemaps: '.' }));
 
 module.exports = Object.keys(targets).reduce(
   (transpileTargetTasks, target) => ({

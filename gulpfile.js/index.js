@@ -21,7 +21,6 @@ const {
 // const watch = require('./watch');
 
 module.exports = {
-  'build:common': buildCommon,
   'build:server': buildServer,
   'build:client': buildClient,
   build,

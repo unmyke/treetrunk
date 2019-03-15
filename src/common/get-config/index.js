@@ -4,8 +4,10 @@ import merge from 'deepmerge';
 
 import configTypes from './config-types';
 
-export default ({ target, mode }) =>
-  configTypes[target].reduce(
+export default (target) => {
+  const mode = process.env.NODE_ENV;
+
+  return configTypes[target].reduce(
     (configAcc, configName) => ({
       ...configAcc,
       [configName]: merge(
@@ -18,3 +20,4 @@ export default ({ target, mode }) =>
       env: mode,
     }
   );
+};

@@ -29,10 +29,7 @@ import mappers from '@infra/mappers';
 
 const bottle = new Bottle();
 
-bottle.constant(
-  'config',
-  getConfig({ env: process.env.NODE_ENV, target: 'server' })
-);
+bottle.constant('config', getConfig('server'));
 bottle.factory('app', (container) => Application(container));
 
 bottle.factory('subdomains', () => subdomains);

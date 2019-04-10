@@ -1,9 +1,6 @@
-dist
 node_modules
 *.log
 db
-config
+config/*.json
 build
-.env
 **/.DS_Store
-.env

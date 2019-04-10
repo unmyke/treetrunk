@@ -6,7 +6,7 @@ import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
 import { getSubdomainsContainer } from '@infra/support/container-helpers';
 
-import { getConfig } from '@common';
+import config from '@config';
 import { subdomains, commonTypes, states, errors } from '@domain';
 
 import Application, * as services from '@app';
@@ -24,12 +24,14 @@ import Logger from '@infra/logging';
 // import devErrorHandler from '@interfaces/http/errors/dev-error-handler';
 
 import * as repositories from '@infra/repositories';
-import { database, models } from '@infra/database';
+import getDatabase from '@infra/database';
 import mappers from '@infra/mappers';
+
+const { database, models } = getDatabase({ config, errors });
 
 const bottle = new Bottle();
 
-bottle.constant('config', getConfig('server'));
+bottle.constant('config', config);
 bottle.factory('app', (container) => Application(container));
 
 bottle.factory('subdomains', () => subdomains);

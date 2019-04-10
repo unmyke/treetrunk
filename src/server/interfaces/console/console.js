@@ -8,12 +8,11 @@ export default {
     const repl = REPL.start({
       eval: promisableEval,
     });
-
     Object.assign(repl.context, expose);
   },
 };
 
-function promisableEval(cmd, context, filename, callback) {
+function promisableEval(cmd, context, _, callback) {
   const result = vm.runInContext(cmd, context);
 
   if (isPromise(result)) {

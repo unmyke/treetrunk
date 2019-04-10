@@ -2,4 +2,7 @@ dist
 node_modules
 *.log
 db
+config
+build
+.env
 **/.DS_Store

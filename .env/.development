@@ -1,8 +1,0 @@
-NODE_ENV=development
-HOST=localhost
-PORT=8080
-API_HOST=localhost
-API_PORT=4000
-API_URI=/graphql
-DB_HOST=localhost
-DB_NAME=treetrunk-development

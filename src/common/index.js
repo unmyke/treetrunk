@@ -1,1 +1,1 @@
-export { default as getConfig } from './get-config';
+export { default as graphql } from './graphql';

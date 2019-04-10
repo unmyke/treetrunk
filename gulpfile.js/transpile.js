@@ -1,32 +1,37 @@
-/* eslint-disable import/no-extraneous-dependencies */
-const { src, dest } = require('gulp');
-const babel = require('gulp-babel');
-const sourcemaps = require('gulp-sourcemaps');
+const { series, parallel } = require('gulp');
 
-const envs = require('./_lib/envs');
-const targets = require('./_lib/target-globs');
-const getBabelConfig = require('./_lib/get-babel-config');
+const { cleanServer, cleanCommon } = require('./clean');
+const {
+  types: {
+    envs: { DEV, PROD },
+    targets: { SERVER, COMMON },
+  },
+} = require('./constants');
+const getTranspileTask = require('./lib/get-transpile-task');
 
-const getTaskName = require('./_lib/get-task-name');
+const transpileOnlyProdServer = () =>
+  getTranspileTask({ target: SERVER, env: PROD });
+const transpileOnlyProdCommon = () =>
+  getTranspileTask({ target: COMMON, env: PROD });
 
-const getTranspileTask = ({ env, target }) =>
-  src(targets[target].src, { sourcemaps: true })
-    // .pipe(sourcemaps.init())
-    .pipe(babel(getBabelConfig({ env, target })))
-    .pipe(sourcemaps.write('.'))
-    .pipe(dest(targets[target].dest, { sourcemaps: '.' }));
+const transpileOnlyDevServer = () =>
+  getTranspileTask({ target: SERVER, env: DEV });
+const transpileOnlyDevCommon = () =>
+  getTranspileTask({ target: COMMON, env: DEV });
 
-module.exports = Object.keys(targets).reduce(
-  (transpileTargetTasks, target) => ({
-    ...transpileTargetTasks,
-    ...Object.values(envs).reduce(
-      (transpileEnvTasks, env) => ({
-        ...transpileEnvTasks,
-        [getTaskName({ name: 'transpile', target, env })]: () =>
-          getTranspileTask({ env, target }),
-      }),
-      {}
-    ),
-  }),
-  {}
-);
+const transpileServer = series(cleanServer, transpileOnlyProdServer);
+const transpileCommon = series(cleanCommon, transpileOnlyProdCommon);
+const transpile = parallel(transpileServer, transpileCommon);
+
+const transpileDevServer = series(cleanServer, transpileOnlyDevServer);
+const transpileDevCommon = series(cleanCommon, transpileOnlyDevCommon);
+const transpileDev = parallel(transpileDevServer, transpileDevCommon);
+
+module.exports = {
+  transpileServer,
+  transpileCommon,
+  transpile,
+  transpileDevServer,
+  transpileDevCommon,
+  transpileDev,
+};

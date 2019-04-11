@@ -1,4 +1,4 @@
-module.exports = cb => {
+module.exports = (cb) => {
   process.on('SIGINT', () => {
     cb();
   });

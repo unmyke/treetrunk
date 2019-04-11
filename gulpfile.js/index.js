@@ -5,7 +5,7 @@ const {
   transpile,
   transpileDevServer,
   transpileDevClient,
-  transpileDev
+  transpileDev,
 } = require('./transpile');
 const {
   bundleServer,
@@ -13,7 +13,7 @@ const {
   bundle,
   bundleDevServer,
   bundleDevClient,
-  bundleDev
+  bundleDev,
 } = require('./bundle');
 const { devServer, devConsole, devClient, dev } = require('./dev');
 const start = require('./start');
@@ -39,5 +39,5 @@ module.exports = {
   devConsole,
   devClient,
   dev,
-  start
+  start,
 };

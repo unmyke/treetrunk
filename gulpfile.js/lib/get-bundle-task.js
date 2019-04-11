@@ -1,7 +1,7 @@
 const {
   types: {
-    webpackStatsOptions: { LOG, WARN, ERROR }
-  }
+    webpackStatsOptions: { LOG, WARN, ERROR },
+  },
 } = require('../constants');
 const getCompiler = require('./get-compiler');
 const consoleStats = require('./console-stats');

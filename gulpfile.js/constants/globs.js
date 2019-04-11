@@ -1,8 +1,8 @@
 const {
-  globs: { NODE, REACT }
-} = require("./types");
+  globs: { NODE, REACT },
+} = require('./types');
 
 module.exports = {
-  [NODE]: "**/*.js",
-  [REACT]: "**/*.js?x"
+  [NODE]: '**/*.js',
+  [REACT]: '**/*.js?x',
 };

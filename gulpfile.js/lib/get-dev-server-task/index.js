@@ -1,17 +1,17 @@
 const {
   types: {
-    envs: { DEV }
+    envs: { DEV },
   },
-  webpackOptions
+  webpackOptions,
 } = require('../../constants');
 
 const handleSIGINT = require('../handle-sigint');
 const getDevServer = require('./get-dev-server');
 
-module.exports = traget =>
+module.exports = (traget) =>
   getDevServer(webpackOptions[traget](DEV))
     .then(({ server, host, port }) =>
-      server.listen(port, host, err => {
+      server.listen(port, host, (err) => {
         if (err) throw err;
         else {
           console.log(`Client started at http://${host}:${port}`);
@@ -19,8 +19,8 @@ module.exports = traget =>
       })
     )
     .then(
-      server =>
-        new Promise(resolve => {
+      (server) =>
+        new Promise((resolve) => {
           server.on('close', () => {
             resolve();
           });

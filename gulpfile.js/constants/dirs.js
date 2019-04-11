@@ -1,8 +1,8 @@
 const {
-  dirs: { SRC, DST }
-} = require("./types");
+  dirs: { SRC, DST },
+} = require('./types');
 
 module.exports = {
-  [SRC]: "./src",
-  [DST]: "./build"
+  [SRC]: './src',
+  [DST]: './build',
 };

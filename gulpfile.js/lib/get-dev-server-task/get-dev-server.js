@@ -6,16 +6,16 @@ const getOptions = require('./get-options');
 const {
   types: {
     envs: { DEV },
-    targets: { CLIENT }
-  }
+    targets: { CLIENT },
+  },
 } = require('../../constants');
 const getTargetConfig = require('../get-target-config');
 
-module.exports = options =>
-  getTargetConfig({ target: CLIENT, env: DEV }).then(config => {
+module.exports = (options) =>
+  getTargetConfig({ target: CLIENT, env: DEV }).then((config) => {
     const { webpackOptions, devServerOptions } = getOptions({
       options,
-      config
+      config,
     });
     WebpackDevServer.addDevServerEntrypoints(webpackOptions, devServerOptions);
 
@@ -24,6 +24,6 @@ module.exports = options =>
     return {
       server,
       host: config.web.host,
-      port: config.web.port
+      port: config.web.port,
     };
   });

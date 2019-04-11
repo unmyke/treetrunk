@@ -1,8 +1,8 @@
 const { parallel } = require('gulp');
 const {
   types: {
-    targets: { SERVER, CLIENT, COMMON }
-  }
+    targets: { SERVER, CLIENT, COMMON },
+  },
 } = require('./constants');
 
 const getCleanTask = require('./lib/get-clean-task');

@@ -2,31 +2,31 @@ module.exports = {
   envs: {
     DEV: 'development',
     PROD: 'production',
-    TEST: 'test'
+    TEST: 'test',
   },
   targets: {
     COMMON: 'common',
     SERVER: 'server',
     CONSOLE: 'console',
-    CLIENT: 'client'
+    CLIENT: 'client',
   },
   globs: {
     NODE: 'node',
-    REACT: 'react'
+    REACT: 'react',
   },
   dirs: {
     SRC: 'srcDir',
-    DST: 'dstDir'
+    DST: 'dstDir',
   },
   configs: {
     API: 'api',
     WEB: 'web',
     DATABASE: 'database',
-    LOGGING: 'logging'
+    LOGGING: 'logging',
   },
   webpackStatsOptions: {
     LOG: 'log',
     WARN: 'warn',
-    ERROR: 'error'
-  }
+    ERROR: 'error',
+  },
 };

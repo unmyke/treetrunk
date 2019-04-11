@@ -5,14 +5,12 @@ export default (Model) => {
   Model.getList = (query = {}) => {
     const { options, type } = getPaginationOptions(query);
 
-    console.log(options, type);
-
     switch (type) {
       case types.CURSOR:
-        return getCursorPaginagtion(options);
+        return getCursorPaginagtion(Model, options);
 
       case types.OFFSET:
-        return getOffsetPaginagtion(options);
+        return getOffsetPaginagtion(Model, options);
 
       default:
         throw new Error('Invalid query');

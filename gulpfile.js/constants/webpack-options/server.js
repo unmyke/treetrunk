@@ -52,9 +52,6 @@ module.exports = (env) => ({
       },
     ],
   },
-  optimization: {
-    splitChunks: { chunks: 'all' },
-  },
   plugins: [new CleanWebpackPlugin()],
   resolve: {
     alias,

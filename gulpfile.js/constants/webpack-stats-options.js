@@ -1,5 +1,5 @@
 const {
-  webpackStatsOptions: { WARN, ERROR, LOG },
+  webpackStatsOptions: { WARN, ERROR, LOG }
 } = require('./types');
 
 const colors = true;
@@ -12,12 +12,12 @@ module.exports = {
     maxModules: 0,
     errors: true,
     warnings: true,
-    colors,
+    colors
   },
   [ERROR]: {
     all: false,
     errors: true,
     moduleTrace: true,
-    colors,
-  },
+    colors
+  }
 };

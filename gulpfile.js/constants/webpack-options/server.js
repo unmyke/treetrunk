@@ -3,32 +3,32 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const {
   envs: { DEV, PROD },
-  targets: { SERVER, COMMON, CONSOLE },
+  targets: { SERVER, COMMON, CONSOLE }
 } = require('../types');
 const { [SERVER]: babelOptions } = require('../babel-options');
 const {
   [SERVER]: serverEntry,
   [COMMON]: commonEntry,
-  [CONSOLE]: consoleEntry,
+  [CONSOLE]: consoleEntry
 } = require('../entries');
 const { [SERVER]: alias } = require('../alias');
 const { getSrcPath, getDstPath } = require('../../lib/path-utils');
 
-module.exports = (env) => ({
+module.exports = env => ({
   mode: env === PROD ? PROD : DEV,
   target: 'node',
   entry: {
     [SERVER]: getSrcPath(SERVER, serverEntry),
     [CONSOLE]: getSrcPath(SERVER, consoleEntry),
-    [COMMON]: getSrcPath(COMMON, commonEntry),
+    [COMMON]: getSrcPath(COMMON, commonEntry)
   },
   output: {
     path: getDstPath(SERVER),
-    filename: env === PROD ? '[name].[chunkhash:8].js' : '[name].js',
+    filename: env === PROD ? '[name].[chunkhash:8].js' : '[name].js'
   },
   node: {
     __dirname: true,
-    __filename: true,
+    __filename: true
   },
   devtool: env === PROD ? 'source-map' : 'eval-source-map',
   module: {
@@ -38,28 +38,26 @@ module.exports = (env) => ({
         use: {
           loader: 'app-json-config-loader',
           options: {
-            env,
-          },
-        },
-      },
-      {
-        test: /\.(graphql|gql)$/,
-        exclude: /node_modules/,
-        loader: 'graphql-tag/loader',
+            env
+          }
+        }
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          options: babelOptions[env],
-        },
-      },
-    ],
+          options: babelOptions[env]
+        }
+      }
+    ]
+  },
+  optimization: {
+    splitChunks: { chunks: 'all' }
   },
   plugins: [new CleanWebpackPlugin()],
   resolve: {
-    alias,
+    alias
   },
-  externals: [nodeExternals()],
+  externals: [nodeExternals()]
 });

@@ -21,5 +21,5 @@ module.exports = {
   webpackOptions,
   targetConfigs,
   configDir,
-  webpackStatsOptions,
+  webpackStatsOptions
 };

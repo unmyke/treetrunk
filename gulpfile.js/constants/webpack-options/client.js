@@ -8,7 +8,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const {
   envs: { PROD, DEV },
-  targets: { CLIENT, COMMON },
+  targets: { CLIENT, COMMON }
 } = require('../types');
 const { [CLIENT]: alias } = require('../alias');
 const { [CLIENT]: babelOptions } = require('../babel-options');
@@ -18,17 +18,17 @@ const srcPath = getSrcPath(CLIENT);
 const srcCommonPath = getSrcPath(COMMON);
 const dstPath = getDstPath(CLIENT);
 
-module.exports = (env) => ({
+module.exports = env => ({
   mode: env === PROD ? PROD : DEV,
   target: 'web',
   entry: {
     main: srcPath,
-    common: srcCommonPath,
+    common: srcCommonPath
   },
   output: {
     path: dstPath,
-    filename: env === PROD ? 'js/[name].[chunkhash:8].js"' : 'js/[name].js',
-    publicPath: '/',
+    filename: env === PROD ? `js/[name].[chunkhash:8].js"` : `js/[name].js`,
+    publicPath: `/`
   },
   devtool: env === PROD ? false : 'cheap-module-eval-source-map',
   module: {
@@ -38,44 +38,39 @@ module.exports = (env) => ({
         use: {
           loader: 'app-json-config-loader',
           options: {
-            env,
-          },
-        },
-      },
-      {
-        test: /\.(graphql|gql)$/,
-        exclude: /node_modules/,
-        loader: 'graphql-tag/loader',
+            env
+          }
+        }
       },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          options: babelOptions[env],
-        },
+          options: babelOptions[env]
+        }
       },
       {
         test: /\.scss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
       },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg|ico)$/,
-        use: ['url-loader'],
-      },
-    ],
+        use: ['url-loader']
+      }
+    ]
   },
   resolve: {
     extensions: ['.js', '.jsx'],
-    alias,
+    alias
   },
   optimization: {
     splitChunks: {
       chunks: 'all',
       maxInitialRequests: 20,
       maxAsyncRequests: 20,
-      name: env !== PROD,
-    },
+      name: env !== PROD
+    }
   },
   plugins: [
     new LodashModuleReplacementPlugin(),
@@ -84,13 +79,13 @@ module.exports = (env) => ({
       template: getSrcPath(CLIENT, 'public/index.html'),
       templateParameters: {},
       favicon: getSrcPath(CLIENT, 'public/favicon.ico'),
-      filename: './index.html',
+      filename: './index.html'
     }),
     new InterpolateHtmlPlugin({
-      PUBLIC_URL: '',
+      PUBLIC_URL: ''
     }),
     new ManifestPlugin(),
     new BabelMinifyWebpackPlugin(),
-    new MiniCssExtractPlugin({ filename: '[name]-[contenthash:8].css' }),
-  ],
+    new MiniCssExtractPlugin({ filename: '[name]-[contenthash:8].css' })
+  ]
 });

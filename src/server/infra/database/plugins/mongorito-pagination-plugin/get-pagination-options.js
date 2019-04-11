@@ -37,7 +37,7 @@ export default (
     };
   }
 
-  const order = sortOrder === 'desc' ? -1 : 1;
+  const order = sortOrder === 'desc' || sortOrder === -1 ? -1 : 1;
   return {
     type: types.OFFSET,
     options: { pageSize, page, filters, search, sort, order },

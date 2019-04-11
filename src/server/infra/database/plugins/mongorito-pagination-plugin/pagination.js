@@ -7,7 +7,7 @@ const getResults = (error, data) => {
   return data;
 };
 
-const getIdPropName = (Model) => `${Model.name}Id`;
+const getIdPropName = (Model) => `${Model.name.toLowerCase()}Id`;
 
 const getQuery = ({ query, search, filters }) => {
   const searchedQuery =
@@ -28,7 +28,15 @@ const getQuery = ({ query, search, filters }) => {
     : searchedQuery;
 };
 
-const getPaginagtion = ({ resultPlusOne, pageSize, filters, search, sort }) => {
+const getPaginagtion = ({
+  Model,
+  resultPlusOne,
+  pageSize,
+  filters,
+  search,
+  sort,
+  order,
+}) => {
   const hasMore = resultPlusOne.length > pageSize;
   const result = hasMore ? resultPlusOne.slice(0, -1) : resultPlusOne;
   const id = result[result.length - 1][getIdPropName(Model)];
@@ -48,23 +56,23 @@ const getPaginagtion = ({ resultPlusOne, pageSize, filters, search, sort }) => {
   };
 };
 
-export const getCursorPaginagtion = async ({
+export const getCursorPaginagtion = async (
   Model,
-  options: {
+  {
     id: prevId,
     pageSize = 10,
     filters = [],
     search = {},
     sort = 'createdAt',
-    order = -1,
+    order = 'desc',
   } = {
     pageSize: 10,
     filters: [],
     search: {},
     sort: 'createdAt',
     order: -1,
-  },
-}) => {
+  }
+) => {
   const cursorModel = await Model.findOne({ [getIdPropName(Model)]: prevId });
   const cursorModelSortValue = cursorModel.get(sort);
   const cursorModelIdValue = cursorModel.get('_id');
@@ -77,23 +85,25 @@ export const getCursorPaginagtion = async ({
     .limit(pageSize + 1);
 
   return getPaginagtion({
+    Model,
     resultPlusOne,
     pageSize,
     filters,
     search,
     sort,
+    order,
   });
 };
 
-export const getOffsetPaginagtion = async ({
+export const getOffsetPaginagtion = async (
   Model,
-  options: {
+  {
     pageSize = 10,
     page = 0,
     filters = [],
     search = {},
     sort = 'createdAt',
-    order = -1,
+    order = 'desc',
   } = {
     pageSize: 10,
     page: 0,
@@ -101,18 +111,20 @@ export const getOffsetPaginagtion = async ({
     search: {},
     sort: 'createdAt',
     order: -1,
-  },
-}) => {
+  }
+) => {
   const resultPlusOne = await getQuery({ query: Model, search, filters })
     .sort({ [sort]: order })
     .skip(page * pageSize)
     .limit(pageSize + 1);
 
   return getPaginagtion({
+    Model,
     resultPlusOne,
     pageSize,
     filters,
     search,
     sort,
+    order,
   });
 };

@@ -1,4 +1,4 @@
-module.exports = callback => {
+module.exports = (callback) => {
   let process = false;
 
   return (...options) => {

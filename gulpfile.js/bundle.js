@@ -3,8 +3,8 @@ const { parallel } = require('gulp');
 const {
   types: {
     envs: { PROD, DEV },
-    targets: { SERVER, CLIENT }
-  }
+    targets: { SERVER, CLIENT },
+  },
 } = require('./constants');
 const getBundleTask = require('./lib/get-bundle-task');
 
@@ -22,5 +22,5 @@ module.exports = {
   bundle,
   bundleDevServer,
   bundleDevClient,
-  bundleDev
+  bundleDev,
 };

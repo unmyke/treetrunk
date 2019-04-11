@@ -1,7 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable no-shadow */
-/* eslint-disable import/namespace */
-/* eslint-disable import/no-extraneous-dependencies */
 import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
 import { getSubdomainsContainer } from '@infra/support/container-helpers';
@@ -23,7 +19,7 @@ import Logger from '@infra/logging';
 // import errorHandler from '@interfaces/http/errors/error-handler';
 // import devErrorHandler from '@interfaces/http/errors/dev-error-handler';
 
-import * as repositories from '@infra/repositories';
+import repositories from '@infra/repositories';
 import getDatabase from '@infra/database';
 import mappers from '@infra/mappers';
 
@@ -96,7 +92,7 @@ bottle.factory(
 bottle.constant('makeValidator', makeValidator);
 
 bottle.factory('server', (container) => Server(container));
-bottle.factory('logger', (container) => logger(container));
+bottle.factory('logger', (container) => Logger(container));
 // bottle.factory('router', (container) => router(container));
 // bottle.factory('containerMiddleware', (container) =>
 //   containerMiddleware(container)

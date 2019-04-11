@@ -1,6 +1,6 @@
 import Console from './console';
 import container from '@container';
 
-Console.start({
+Console({
   expose: { container },
 });

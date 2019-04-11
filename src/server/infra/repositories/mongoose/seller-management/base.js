@@ -11,7 +11,7 @@ const BaseRepository = ({ Model, mapper }) => {
       model ? mapToEntity(model) : null
     );
 
-  const getlist = Model.getList.bind(Model);
+  const getList = Model.getList.bind(Model);
 
   const getById = (id) => findModel(id).then(mapToEntity, throwError);
 
@@ -31,7 +31,7 @@ const BaseRepository = ({ Model, mapper }) => {
   };
 
   return Object.freeze({
-    getlist,
+    getList,
     getById,
     getOne,
     save,

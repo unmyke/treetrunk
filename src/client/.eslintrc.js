@@ -8,8 +8,10 @@ module.exports = {
   settings: {
     'import/resolver': {
       webpack: {
-        config: path.resolve(__dirname, '../../webpack.config.js'),
-        'config-index': 2,
+        config: path.resolve(
+          process.cwd(),
+          'gulpfile.js/constants/webpack-options/client'
+        ),
       },
     },
   },

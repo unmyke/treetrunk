@@ -1,1 +1,3 @@
-export { SellerManagement } from './mongoose';
+import * as mongoose from './mongoose';
+
+export default mongoose;

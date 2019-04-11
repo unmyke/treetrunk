@@ -2,18 +2,18 @@ const {
   types: {
     targets: { SERVER },
     envs: { DEV },
-    webpackStatsOptions: { WARN, ERROR }
-  }
-} = require('../../constants');
-const getOutputPath = require('../get-output-path');
-const getCompiler = require('../get-compiler');
-const consoleStats = require('../console-stats');
-const handleSIGINT = require('../handle-sigint');
-const getChildProcess = require('../get-child-process');
+    webpackStatsOptions: { WARN, ERROR },
+  },
+} = require('../constants');
+const getOutputPath = require('./get-output-path');
+const getCompiler = require('./get-compiler');
+const consoleStats = require('./console-stats');
+const handleSIGINT = require('./handle-sigint');
+const getChildProcess = require('./get-child-process');
 
 // const getNodemon = require('./get-nodemon');
 
-const shutdownSubprocess = subprocess => {
+const shutdownSubprocess = (subprocess) => {
   if (subprocess && subprocess.kill) subprocess.kill('SIGUSR2');
   else console.log('process is not exited', subprocess);
 };
@@ -24,8 +24,8 @@ const watchOptions = {
   // ignored: []
 };
 
-module.exports = entry =>
-  new Promise(resolve => {
+module.exports = (entry) =>
+  new Promise((resolve) => {
     let subprocess;
 
     const compiler = getCompiler({ target: SERVER, env: DEV });
@@ -37,16 +37,18 @@ module.exports = entry =>
         case stats.hasWarnings():
           consoleStats(stats, WARN);
 
+        // eslint-disable-next-line no-fallthrough
         default:
           if (subprocess) shutdownSubprocess(subprocess);
-          subprocess = getChildProcess(
-            getOutputPath({ stats, entry: entry })
-          ).on('message', message => {
-            if (message === 'SIGINT') {
-              process.emit(message);
-              subprocess = undefined;
+          subprocess = getChildProcess(getOutputPath({ stats, entry })).on(
+            'message',
+            (message) => {
+              if (message === 'SIGINT') {
+                process.emit(message);
+                subprocess = undefined;
+              }
             }
-          });
+          );
 
           break;
       }

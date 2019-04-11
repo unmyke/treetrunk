@@ -2,7 +2,7 @@ const merge = require('./babel-merge');
 
 const {
   envs: { DEV, PROD, TEST },
-  targets: { SERVER, CLIENT, COMMON },
+  targets: { SERVER, CLIENT, COMMON }
 } = require('../types');
 
 const commonOpts = {
@@ -12,15 +12,15 @@ const commonOpts = {
       {
         loose: true,
         useBuiltIns: 'usage',
-        corejs: { version: 3, proposals: true },
-      },
-    ],
+        corejs: { version: 3, proposals: true }
+      }
+    ]
   ],
-  plugins: ['@babel/plugin-proposal-class-properties'],
+  plugins: ['@babel/plugin-proposal-class-properties']
 };
 
 const prodOpts = {
-  presets: [['@babel/preset-env', { forceAllTransforms: true }]],
+  presets: [['@babel/preset-env', { forceAllTransforms: true }]]
 };
 
 const devOpts = {
@@ -29,7 +29,7 @@ const devOpts = {
 };
 
 const devClientOpts = {
-  plugins: ['react-hot-loader/babel'],
+  plugins: ['react-hot-loader/babel']
 };
 
 const clientOpts = {
@@ -37,12 +37,12 @@ const clientOpts = {
     [
       '@babel/preset-env',
       {
-        targets: { browsers: '> 0.25%, not dead' },
-      },
+        targets: { browsers: '> 0.25%, not dead' }
+      }
     ],
-    '@babel/preset-react',
+    '@babel/preset-react'
   ],
-  plugins: ['lodash', '@babel/plugin-transform-modules-commonjs'],
+  plugins: ['lodash', '@babel/plugin-transform-modules-commonjs']
 };
 
 const serverOpts = {
@@ -51,10 +51,10 @@ const serverOpts = {
       '@babel/preset-env',
       {
         targets: { node: true },
-        modules: 'auto',
-      },
-    ],
-  ],
+        modules: 'auto'
+      }
+    ]
+  ]
 };
 
 const serverProd = merge(commonOpts, prodOpts, serverOpts);
@@ -62,18 +62,18 @@ const serverDev = merge(commonOpts, devOpts, serverOpts);
 const server = {
   [PROD]: serverProd,
   [DEV]: serverDev,
-  [TEST]: serverDev,
+  [TEST]: serverDev
 };
 const clientProd = merge(commonOpts, prodOpts, clientOpts);
 const clientDev = merge(commonOpts, devOpts, devClientOpts, clientOpts);
 const client = {
   [PROD]: clientProd,
   [DEV]: clientDev,
-  [TEST]: clientDev,
+  [TEST]: clientDev
 };
 
 module.exports = {
   [SERVER]: server,
   [COMMON]: server,
-  [CLIENT]: client,
+  [CLIENT]: client
 };

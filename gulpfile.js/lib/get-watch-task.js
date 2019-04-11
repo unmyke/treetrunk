@@ -2,16 +2,21 @@ const {
   types: {
     targets: { SERVER },
     envs: { DEV },
-    webpackStatsOptions: { WARN, ERROR },
-  },
+    webpackStatsOptions: { WARN, ERROR }
+  }
 } = require('../../constants');
 const getOutputPath = require('../get-output-path');
 const getCompiler = require('../get-compiler');
 const consoleStats = require('../console-stats');
-const once = require('../once');
 const handleSIGINT = require('../handle-sigint');
+const getChildProcess = require('../get-child-process');
 
-const getNodemon = require('./get-nodemon');
+// const getNodemon = require('./get-nodemon');
+
+const shutdownSubprocess = subprocess => {
+  if (subprocess && subprocess.kill) subprocess.kill('SIGUSR2');
+  else console.log('process is not exited', subprocess);
+};
 
 const watchOptions = {
   // aggregateTimeout: 600,
@@ -19,10 +24,10 @@ const watchOptions = {
   // ignored: []
 };
 
-let nodemon;
+module.exports = entry =>
+  new Promise(resolve => {
+    let subprocess;
 
-module.exports = (entry) =>
-  new Promise((resolve) => {
     const compiler = getCompiler({ target: SERVER, env: DEV });
     const watcher = compiler.watch(watchOptions, (err, stats) => {
       switch (true) {
@@ -33,15 +38,22 @@ module.exports = (entry) =>
           consoleStats(stats, WARN);
 
         default:
-          nodemon = getNodemon(getOutputPath({ stats, entry }));
+          if (subprocess) shutdownSubprocess(subprocess);
+          subprocess = getChildProcess(
+            getOutputPath({ stats, entry: entry })
+          ).on('message', message => {
+            if (message === 'SIGINT') {
+              process.emit(message);
+              subprocess = undefined;
+            }
+          });
 
-          nodemon.restart();
           break;
       }
     });
     handleSIGINT(() => {
       watcher.close();
-      nodemon.emit('quit');
+      shutdownSubprocess(subprocess);
       console.log(
         `${entry.slice(0, 1).toUpperCase()}${entry.slice(1)} stopped. 👋`
       );

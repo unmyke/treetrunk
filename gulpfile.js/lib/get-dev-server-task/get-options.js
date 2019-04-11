@@ -2,8 +2,8 @@ const { HotModuleReplacementPlugin } = require('webpack');
 
 const {
   types: {
-    targets: { CLIENT },
-  },
+    targets: { CLIENT }
+  }
 } = require('../../constants');
 const { getDstPath } = require('../path-utils');
 
@@ -13,27 +13,27 @@ const defaultOptions = {
   hot: true,
   historyApiFallback: true,
   stats: {
-    colors: true,
+    colors: true
   },
   noInfo: true,
   disableHostCheck: true,
   open: true,
-  compress: true,
+  compress: true
 };
 
 module.exports = ({
   options,
   config: {
     api: { port: apiPort, uri: apiUri },
-    web: { host, port },
-  },
+    web: { host, port }
+  }
 }) => {
   const { plugins: pluginsOption } = options;
 
   const plugins = [...pluginsOption, new HotModuleReplacementPlugin()];
   const webpackOptions = {
     ...options,
-    plugins,
+    plugins
   };
 
   const devServerOptions = {
@@ -45,13 +45,13 @@ module.exports = ({
         target: {
           host: '0.0.0.0',
           protocol: 'http:',
-          port: apiPort,
-        },
+          port: apiPort
+        }
         // pathRewrite: {
         //   "^/api": ""
         // }
-      },
-    },
+      }
+    }
   };
   return { webpackOptions, devServerOptions };
 };

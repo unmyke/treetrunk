@@ -1,12 +1,10 @@
-const { fork } = require('child_process');
+const getChildProcess = require('./get-child-process');
 
 const handleSIGINT = require('./handle-sigint');
 
-module.exports = (script) =>
+module.exports = script =>
   new Promise((resolve, reject) => {
-    const child = fork(script, {
-      execArgv: ['-r', 'source-map-support/register'],
-    }).on('error', (err) => {
+    const child = getChildProcess(script).on('error', err => {
       reject(err);
     });
 

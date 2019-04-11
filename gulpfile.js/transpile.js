@@ -4,8 +4,8 @@ const { cleanServer, cleanCommon } = require('./clean');
 const {
   types: {
     envs: { DEV, PROD },
-    targets: { SERVER, COMMON },
-  },
+    targets: { SERVER, COMMON }
+  }
 } = require('./constants');
 const getTranspileTask = require('./lib/get-transpile-task');
 
@@ -33,5 +33,5 @@ module.exports = {
   transpile,
   transpileDevServer,
   transpileDevCommon,
-  transpileDev,
+  transpileDev
 };

@@ -7,28 +7,25 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "nodemon",
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
-      "runtimeArgs": ["--exec", "yarn", "babel-node"],
-      "program": "${workspaceFolder}/dist/client.bundle.index.js",
+      "name": "server",
+      "program": "${workspaceFolder}/node_modules/.bin/gulp",
+      "args": ["devServer"],
       "cwd": "${workspaceFolder}",
-      "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "sourceMaps": true,
-      "outFiles": ["dst/***.js*"],
-      "env": {
-        "NODE_PATH": "."
-      }
+      "sourceMaps": true
+      // "outFiles": ["dst/***.js*"],
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "build",
-      "program": "${workspaceFolder}/node_modules/.bin/webpack-cli",
-      "args": ["--config", "webpack.config.js", "2"],
-      "autoAttachChildProcesses": true,
-      "stopOnEntry": true
+      "name": "client",
+      "program": "${workspaceFolder}/node_modules/.bin/gulp",
+      "args": ["devClient"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true
     }
   ]
 }

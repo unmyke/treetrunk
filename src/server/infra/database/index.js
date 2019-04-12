@@ -3,10 +3,10 @@ import * as models from './models';
 import modelLoader from './model-loader';
 
 export default ({ config: { database: config }, errors }) => {
-  const getUrl = ({ db, host, port }) => {
+  const getUrl = ({ name, host, port }) => {
     const protocol = 'mongodb';
 
-    return `${protocol}://${host}:${port}/${db}`;
+    return `${protocol}://${host}${port && `:${port}`}/${name}`;
   };
 
   if (!config) {
@@ -15,9 +15,9 @@ export default ({ config: { database: config }, errors }) => {
     );
   }
 
-  const { host, port, db, user, pass, ...options } = config;
+  const { host, port, name, user, pass, ...options } = config;
   const auth = user ? { user, password: pass } : undefined;
-  const url = getUrl({ host, port, db });
+  const url = getUrl({ host, port, name });
   const dbOptions = { auth, ...options };
 
   const database = new Database(url, dbOptions);

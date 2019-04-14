@@ -1,4 +1,5 @@
 const merge = require('./babel-merge');
+const getModuleResolvers = require('./get-module-resolvers');
 
 const {
   envs: { DEV, PROD, TEST },
@@ -16,7 +17,10 @@ const commonOpts = {
       },
     ],
   ],
-  plugins: ['@babel/plugin-proposal-class-properties'],
+  plugins: [
+    '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-transform-modules-commonjs',
+  ],
 };
 
 const prodOpts = {
@@ -42,7 +46,7 @@ const clientOpts = {
     ],
     '@babel/preset-react',
   ],
-  plugins: ['lodash', '@babel/plugin-transform-modules-commonjs'],
+  plugins: ['lodash', getModuleResolvers(CLIENT)],
 };
 
 const serverOpts = {
@@ -55,6 +59,7 @@ const serverOpts = {
       },
     ],
   ],
+  plugins: [getModuleResolvers(SERVER)],
 };
 
 const serverProd = merge(commonOpts, prodOpts, serverOpts);

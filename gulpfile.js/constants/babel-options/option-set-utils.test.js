@@ -3,14 +3,20 @@ const { parse, pack, merge } = require('./option-set-utils');
 const optionSet1 = {
   test1: 'optionSet1 test1',
   test2: 'optionSet1 test2',
-  presets: [['@babel/preset-env', { loose: true, useBuiltIns: 'usage' }]],
-  plugins: ['@babel/plugin-proposal-class-properties'],
+  presets: [
+    [
+      'preset1',
+      { preset1Key1: 'preset1Key1Value', preset1Key2: 'preset1Key2Value' },
+    ],
+  ],
+  plugins: [['plugin1', { plugin1Key1: 'plugin1Key1Value' }]],
 };
 
 const optionSet2 = {
   test1: 'optionSet2 test1',
   test3: 'optionSet2 test3',
-  presets: [['@babel/preset-env', { forceAllTransforms: true }]],
+  presets: [['preset1', { preset1Key3: 'preset1Key3Value' }], 'preset2'],
+  plugins: [['plugin2', { plugin2Key1: 'plugin2Key1Value' }]],
 };
 
 const optionSet3 = {
@@ -18,12 +24,23 @@ const optionSet3 = {
   test4: 'optionSet3 test4',
   presets: [
     [
-      '@babel/preset-env',
+      'preset1',
       {
-        targets: { node: true },
-        modules: 'auto',
+        preset1Key4: 'preset1Key4Value',
+        preset1Key5: 'preset1Key5Value',
       },
     ],
+    [
+      'preset2',
+      {
+        preset2Key1: 'preset2Key1Value',
+        preset2Key2: 'preset2Key2Value',
+      },
+    ],
+  ],
+  plugins: [
+    ['plugin2', { plugin2Key2: 'plugin2Key2Value' }],
+    ['plugin3', { plugin3Key1: 'plugin3Key1Value' }],
   ],
 };
 
@@ -34,14 +51,17 @@ const parsedOptionSet1 = {
     name: 'presets',
     items: [
       {
-        name: '@babel/preset-env',
-        options: { loose: true, useBuiltIns: 'usage' },
+        name: 'preset1',
+        options: {
+          preset1Key1: 'preset1Key1Value',
+          preset1Key2: 'preset1Key2Value',
+        },
       },
     ],
   },
   plugins: {
     name: 'plugins',
-    items: [{ name: '@babel/plugin-proposal-class-properties', options: {} }],
+    items: [{ name: 'plugin1', options: { plugin1Key1: 'plugin1Key1Value' } }],
   },
 };
 
@@ -51,10 +71,14 @@ const parsedOptionSet2 = {
   presets: {
     name: 'presets',
     items: [
-      { name: '@babel/preset-env', options: { forceAllTransforms: true } },
+      { name: 'preset1', options: { preset1Key3: 'preset1Key3Value' } },
+      { name: 'preset2', options: {} },
     ],
   },
-  plugins: { name: 'plugins', items: [] },
+  plugins: {
+    name: 'plugins',
+    items: [{ name: 'plugin2', options: { plugin2Key1: 'plugin2Key1Value' } }],
+  },
 };
 
 const parsedOptionSet3 = {
@@ -64,17 +88,27 @@ const parsedOptionSet3 = {
     name: 'presets',
     items: [
       {
-        name: '@babel/preset-env',
+        name: 'preset1',
         options: {
-          targets: { node: true },
-          modules: 'auto',
+          preset1Key4: 'preset1Key4Value',
+          preset1Key5: 'preset1Key5Value',
+        },
+      },
+      {
+        name: 'preset2',
+        options: {
+          preset2Key1: 'preset2Key1Value',
+          preset2Key2: 'preset2Key2Value',
         },
       },
     ],
   },
   plugins: {
     name: 'plugins',
-    items: [],
+    items: [
+      { name: 'plugin2', options: { plugin2Key2: 'plugin2Key2Value' } },
+      { name: 'plugin3', options: { plugin3Key1: 'plugin3Key1Value' } },
+    ],
   },
 };
 
@@ -85,17 +119,31 @@ const mergedOptionSet = {
   test4: 'optionSet3 test4',
   presets: [
     [
-      '@babel/preset-env',
+      'preset1',
       {
-        loose: true,
-        useBuiltIns: 'usage',
-        targets: { node: true },
-        forceAllTransforms: true,
-        modules: 'auto',
+        preset1Key1: 'preset1Key1Value',
+        preset1Key2: 'preset1Key2Value',
+        preset1Key4: 'preset1Key4Value',
+        preset1Key3: 'preset1Key3Value',
+        preset1Key5: 'preset1Key5Value',
+      },
+    ],
+    [
+      'preset2',
+      {
+        preset2Key1: 'preset2Key1Value',
+        preset2Key2: 'preset2Key2Value',
       },
     ],
   ],
-  plugins: ['@babel/plugin-proposal-class-properties'],
+  plugins: [
+    ['plugin1', { plugin1Key1: 'plugin1Key1Value' }],
+    [
+      'plugin2',
+      { plugin2Key1: 'plugin2Key1Value', plugin2Key2: 'plugin2Key2Value' },
+    ],
+    ['plugin3', { plugin3Key1: 'plugin3Key1Value' }],
+  ],
 };
 
 const mergedParsedOptionSet = {
@@ -107,13 +155,20 @@ const mergedParsedOptionSet = {
     name: 'presets',
     items: [
       {
-        name: '@babel/preset-env',
+        name: 'preset1',
         options: {
-          loose: true,
-          useBuiltIns: 'usage',
-          targets: { node: true },
-          forceAllTransforms: true,
-          modules: 'auto',
+          preset1Key1: 'preset1Key1Value',
+          preset1Key2: 'preset1Key2Value',
+          preset1Key4: 'preset1Key4Value',
+          preset1Key3: 'preset1Key3Value',
+          preset1Key5: 'preset1Key5Value',
+        },
+      },
+      {
+        name: 'preset2',
+        options: {
+          preset2Key1: 'preset2Key1Value',
+          preset2Key2: 'preset2Key2Value',
         },
       },
     ],
@@ -121,10 +176,15 @@ const mergedParsedOptionSet = {
   plugins: {
     name: 'plugins',
     items: [
+      { name: 'plugin1', options: { plugin1Key1: 'plugin1Key1Value' } },
       {
-        name: '@babel/plugin-proposal-class-properties',
-        options: {},
+        name: 'plugin2',
+        options: {
+          plugin2Key1: 'plugin2Key1Value',
+          plugin2Key2: 'plugin2Key2Value',
+        },
       },
+      { name: 'plugin3', options: { plugin3Key1: 'plugin3Key1Value' } },
     ],
   },
 };
@@ -174,18 +234,43 @@ describe('#parse and pack', () => {
   });
   test('merged option set', () => {
     expect(pack(parse(mergedOptionSet))).toEqual(mergedOptionSet);
+    expect(pack(parse(mergedOptionSet))).not.toBe(mergedOptionSet);
+  });
+});
+
+describe('#pack and parse', () => {
+  test('option set 1', () => {
+    expect(parse(pack(parsedOptionSet1))).toEqual(parsedOptionSet1);
+    expect(parse(pack(parsedOptionSet1))).not.toBe(parsedOptionSet1);
+  });
+  test('option set 2', () => {
+    expect(parse(pack(parsedOptionSet2))).toEqual(parsedOptionSet2);
+    expect(parse(pack(parsedOptionSet2))).not.toBe(parsedOptionSet2);
+  });
+  test('option set 3', () => {
+    expect(parse(pack(parsedOptionSet3))).toEqual(parsedOptionSet3);
+    expect(parse(pack(parsedOptionSet3))).not.toBe(parsedOptionSet3);
+  });
+  test('merged option set', () => {
+    expect(parse(pack(mergedParsedOptionSet))).toEqual(mergedParsedOptionSet);
+    expect(parse(pack(mergedParsedOptionSet))).not.toBe(mergedParsedOptionSet);
   });
 });
 
 describe('#merge', () => {
-  test('option set', () => {
-    expect(merge(optionSet1, optionSet2, optionSet3)).toEqual(
+  test('all', () => {
+    expect(merge(parsedOptionSet1, parsedOptionSet2, parsedOptionSet3)).toEqual(
       mergedParsedOptionSet
     );
   });
-  test('option set', () => {
-    expect(pack(merge(optionSet1, optionSet2, optionSet3))).toEqual(
-      mergedOptionSet
-    );
+  test('presets', () => {
+    expect(
+      merge(parsedOptionSet1, parsedOptionSet2, parsedOptionSet3).presets
+    ).toEqual(mergedParsedOptionSet.presets);
+  });
+  test('plugins', () => {
+    expect(
+      merge(parsedOptionSet1, parsedOptionSet2, parsedOptionSet3).plugins
+    ).toEqual(mergedParsedOptionSet.plugins);
   });
 });

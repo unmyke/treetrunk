@@ -15,6 +15,8 @@ const parse = ({
       !(options instanceof Object) ||
       (Array.isArray(item) && item.length > 2)
     ) {
+      console.log('name', name);
+      console.log('item', item.length);
       throw new Error(
         `Option ${item} has incorrect format. Must be 'string' or ['string', { ...option }]`
       );
@@ -60,22 +62,24 @@ const pack = ({
 };
 
 const merge = (...rawOptionSets) => {
-  const mergeList = (traget, source) =>
-    Array.isArray(traget)
+  const mergeList = (target, source) =>
+    Array.isArray(target)
       ? _.unionBy(_.property('name'))(
           _.map(({ name, options }) => {
             const sourceItem = _.find(
               ({ name: sourceName }) => sourceName === name
             )(source);
             return sourceItem
-              ? { name, options: { ...options, ...sourceItem.options } }
+              ? { name, options: _.merge(options, sourceItem.options) }
               : { name, options };
-          })(traget),
+          })(target),
           source
         )
       : undefined;
 
-  return _.mergeAllWith(mergeList)({}, ...rawOptionSets);
+  return _.reduce((prevOptionSet, currentOptionSet) =>
+    _.mergeWith(mergeList)(prevOptionSet, currentOptionSet)
+  )({}, rawOptionSets);
 };
 
 module.exports = {

@@ -1,9 +1,10 @@
-import { getSubdomainsContainer } from './container-helpers';
+import { forEachSubdomain } from './container-helpers';
 
 export const loadFactories = ({ factoryGirl, models, factories }) => {
-  const factoryContainer = getSubdomainsContainer(
+  forEachSubdomain(
     factories,
-    (factory, SubdomainName) => {
+    factoryGirl,
+    (factory, factoryGirl, SubdomainName) => {
       factory(factoryGirl, models[SubdomainName]);
     }
   );

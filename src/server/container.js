@@ -1,3 +1,5 @@
+/* eslint-disable import/namespace */
+/* eslint-disable no-shadow */
 import Bottle from 'bottlejs';
 import { lowerFirst } from 'lodash';
 import { getSubdomainsContainer } from '@infra/support/container-helpers';

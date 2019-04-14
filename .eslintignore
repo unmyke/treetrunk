@@ -1,2 +1,2 @@
-src/**/*.test.md
-dist/**/*.*
+src/**/*.test.js
+build/**/*.*

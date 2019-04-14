@@ -17,10 +17,7 @@ const commonOpts = {
       },
     ],
   ],
-  plugins: [
-    '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-transform-modules-commonjs',
-  ],
+  plugins: ['@babel/plugin-proposal-class-properties'],
 };
 
 const prodOpts = {
@@ -46,7 +43,11 @@ const clientOpts = {
     ],
     '@babel/preset-react',
   ],
-  plugins: ['lodash', getModuleResolvers(CLIENT)],
+  plugins: [
+    'lodash',
+    '@babel/plugin-transform-modules-commonjs',
+    getModuleResolvers(CLIENT),
+  ],
 };
 
 const serverOpts = {
@@ -59,7 +60,13 @@ const serverOpts = {
       },
     ],
   ],
-  plugins: [getModuleResolvers(SERVER)],
+  plugins: [
+    '@babel/plugin-proposal-export-default-from',
+    '@babel/plugin-transform-runtime',
+    '@babel/plugin-syntax-dynamic-import',
+    '@babel/plugin-transform-modules-commonjs',
+    getModuleResolvers(SERVER),
+  ],
 };
 
 const serverProd = merge(commonOpts, prodOpts, serverOpts);

@@ -3,8 +3,6 @@
     "target": "ES6",
     "baseUrl": ".",
     "paths": {
-      "@config": ["./config"],
-      "@config/*": ["./config/*"],
       "@features": ["./src/client/features"],
       "@features/*": ["./src/client/features/*"],
       "@ui": ["./src/client/ui"],
@@ -13,6 +11,7 @@
       "@constants/*": ["./src/client/constants/*"],
       "@lib": ["./src/client/lib"],
       "@lib/*": ["./src/client/lib/*"],
+      "@container": ["./src/server/container"],
       "@app": ["./src/server/app"],
       "@app/*": ["./src/server/app/*"],
       "@domain": ["./src/server/domain"],
@@ -20,9 +19,10 @@
       "@infra": ["./src/server/infra"],
       "@infra/*": ["./src/server/infra/*"],
       "@interfaces": ["./src/server/interfaces"],
-      "@interfaces/*": ["./src/server/interfaces/*"]
+      "@interfaces/*": ["./src/server/interfaces/*"],
+      "@common": ["./src/common"]
     },
     "moduleResolution": "node"
   },
-  "exclude": ["node_modules", "**/node_modules/*"]
+  "exclude": ["node_modules", "build"]
 }

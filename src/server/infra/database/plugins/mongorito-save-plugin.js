@@ -7,8 +7,6 @@ export default () => {
       const { model, modelClass } = store;
       const idPropName = `${modelClass.name.toLowerCase()}Id`;
       const id = model ? model[idPropName] : null;
-      console.log(store.getState());
-      console.log(action);
 
       if (id) {
         modelClass.find({ [idPropName]: id }).then((existingModel) => {

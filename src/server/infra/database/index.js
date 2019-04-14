@@ -6,7 +6,7 @@ export default ({ config: { database: config }, errors }) => {
   const getUrl = ({ name, host, port }) => {
     const protocol = 'mongodb';
 
-    return `${protocol}://${host}${port && `:${port}`}/${name}`;
+    return `${protocol}://${host}${port ? `:${port}` : ''}/${name}`;
   };
 
   if (!config) {

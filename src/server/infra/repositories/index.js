@@ -1,3 +1,3 @@
-import * as mongoose from './mongoose';
+import * as mongorito from './mongorito';
 
-export default mongoose;
+export default mongorito;

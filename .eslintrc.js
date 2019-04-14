@@ -22,5 +22,15 @@ module.exports = {
     quotes: ['error', 'single', { avoidEscape: true }],
     semi: ['error', 'always'],
     'prettier/prettier': ['error'],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: [
+          '**/*.test.js',
+          'src/server/infra/support/test/**/*.js',
+        ],
+      },
+    ],
+    'no-shadow': false,
   },
 };

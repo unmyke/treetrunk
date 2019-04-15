@@ -2,11 +2,11 @@ const {
   targets: { SERVER },
 } = require('../types');
 
-const commonAlias = require('./common');
+const commonAliases = require('./common');
 const { getSrcPath } = require('../../lib/path-utils');
 
 module.exports = {
-  ...commonAlias,
+  ...commonAliases,
   '@config': getSrcPath(SERVER, 'scopes.json'),
   '@container': getSrcPath(SERVER, 'container'),
   '@app': getSrcPath(SERVER, 'app'),

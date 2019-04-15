@@ -1,7 +1,7 @@
 const { resolve } = require('path');
 
 const types = require('./types');
-const alias = require('./alias');
+const aliases = require('./aliases');
 const dirs = require('./dirs');
 const entries = require('./entries');
 const globs = require('./globs');
@@ -13,7 +13,7 @@ const webpackStatsOptions = require('./webpack-stats-options');
 
 module.exports = {
   types,
-  alias,
+  aliases,
   dirs,
   entries,
   globs,

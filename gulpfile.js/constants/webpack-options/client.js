@@ -10,7 +10,7 @@ const {
   envs: { PROD, DEV },
   targets: { CLIENT, COMMON },
 } = require('../types');
-const { [CLIENT]: alias } = require('../alias');
+const { [CLIENT]: aliases } = require('../aliases');
 const { [CLIENT]: babelOptions } = require('../babel-options');
 const { getSrcPath, getDstPath } = require('../../lib/path-utils');
 
@@ -34,7 +34,7 @@ module.exports = (env) => ({
   module: {
     rules: [
       {
-        test: alias['@config'],
+        test: aliases['@config'],
         use: {
           loader: 'app-json-config-loader',
           options: {
@@ -62,7 +62,7 @@ module.exports = (env) => ({
   },
   resolve: {
     extensions: ['.js', '.jsx'],
-    alias,
+    alias: aliases,
   },
   optimization: {
     splitChunks: {

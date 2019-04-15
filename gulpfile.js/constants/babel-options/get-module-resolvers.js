@@ -1,25 +1,41 @@
-const { resolve } = require('path');
-const aliases = require('../alias');
+const { resolve, relative, normalize } = require('path');
 
-const getPlugin = (alias) => ['module-resolver', { alias }];
-const getAlias = ({ target, aliases, aliasKey }) => {
-  if (aliasKey === '@config') {
-    return { [aliasKey]: () => resolve(__dirname, 'config', target) };
-  }
-  const alias = aliases[target][aliasKey];
-  const key = `^${aliasKey}(.*)$`;
-  const value = `${alias}\\1`;
+const {
+  dirs: { SRC },
+} = require('../types');
+const { [SRC]: srcDir } = require('../dirs');
+const aliases = require('../aliases');
 
-  return { [key]: value };
-};
+module.exports = (target) => {
+  const root = `./${resolve(srcDir, target)}`;
+  const targetAliases = aliases[target];
+  const config = resolve(__dirname, 'config', target);
 
-module.exports = (target) =>
-  getPlugin(
-    Object.keys(aliases[target]).reduce(
-      (prevAlias, aliasKey) => ({
-        ...prevAlias,
-        ...getAlias({ target, aliases, aliasKey }),
+  const getPlugin = ({ alias, root }) => [
+    'module-resolver',
+    { root: `./${relative(process.cwd(), root)}`, alias },
+  ];
+
+  const getAlias = ({ root, targetAliases, aliasKey }) => {
+    if (aliasKey === '@config') {
+      return { [aliasKey]: () => config };
+    }
+    const alias = normalize(relative(root, targetAliases[aliasKey]));
+
+    const key = `^${aliasKey}(.*)$`;
+    const value = `./${alias}\\1`;
+
+    return { [key]: value };
+  };
+
+  return getPlugin({
+    alias: Object.keys(targetAliases).reduce(
+      (prevAliases, aliasKey) => ({
+        ...prevAliases,
+        ...getAlias({ root, targetAliases, aliasKey }),
       }),
       {}
-    )
-  );
+    ),
+    root,
+  });
+};

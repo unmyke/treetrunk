@@ -11,7 +11,7 @@ const {
   [COMMON]: commonEntry,
   [CONSOLE]: consoleEntry,
 } = require('../entries');
-const { [SERVER]: alias } = require('../alias');
+const { [SERVER]: aliases } = require('../aliases');
 const { getSrcPath, getDstPath } = require('../../lib/path-utils');
 
 module.exports = (env) => ({
@@ -34,7 +34,7 @@ module.exports = (env) => ({
   module: {
     rules: [
       {
-        test: alias['@config'],
+        test: aliases['@config'],
         use: {
           loader: 'app-json-config-loader',
           options: {
@@ -54,7 +54,7 @@ module.exports = (env) => ({
   },
   plugins: [new CleanWebpackPlugin()],
   resolve: {
-    alias,
+    alias: aliases,
   },
   externals: [nodeExternals()],
 });

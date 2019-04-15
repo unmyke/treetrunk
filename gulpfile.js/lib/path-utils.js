@@ -1,4 +1,4 @@
-const { resolve, relative, normalize } = require('path');
+const { resolve, relative, sep } = require('path');
 const {
   dirs: { DST, SRC },
 } = require('../constants/types');
@@ -20,8 +20,9 @@ const parseArgs = (args) => {
 
 const getPath = (dir) => (...args) => {
   const { paths, absolute } = parseArgs(args);
-  const relativePath = `./${normalize(
-    relative(rootDir, resolve(dir || '.', ...paths))
+  const relativePath = `.${sep}${relative(
+    rootDir,
+    resolve(dir || '', ...paths)
   )}`;
   if (absolute) return resolve(relativePath);
   return relativePath;
@@ -30,5 +31,5 @@ const getPath = (dir) => (...args) => {
 module.exports = {
   getDstPath: getPath(dstDir),
   getSrcPath: getPath(srcDir),
-  getRoot: getPath(),
+  getRootPath: getPath(),
 };

@@ -23,7 +23,7 @@ module.exports = (env) => ({
     [COMMON]: getSrcPath(COMMON, commonEntry),
   },
   output: {
-    path: getDstPath(SERVER),
+    path: getDstPath(SERVER, { absolute: true }),
     filename: env === PROD ? '[name].[chunkhash:8].js' : '[name].js',
   },
   node: {
@@ -34,7 +34,7 @@ module.exports = (env) => ({
   module: {
     rules: [
       {
-        test: aliases['@config'],
+        test: /^@config$/,
         use: {
           loader: 'app-json-config-loader',
           options: {

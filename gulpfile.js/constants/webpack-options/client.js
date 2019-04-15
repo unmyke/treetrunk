@@ -16,7 +16,7 @@ const { getSrcPath, getDstPath } = require('../../lib/path-utils');
 
 const srcPath = getSrcPath(CLIENT);
 const srcCommonPath = getSrcPath(COMMON);
-const dstPath = getDstPath(CLIENT);
+const dstPath = getDstPath(CLIENT, { absolute: true });
 
 module.exports = (env) => ({
   mode: env === PROD ? PROD : DEV,
@@ -27,14 +27,14 @@ module.exports = (env) => ({
   },
   output: {
     path: dstPath,
-    filename: env === PROD ? `js/[name].[chunkhash:8].js"` : `js/[name].js`,
-    publicPath: `/`,
+    filename: env === PROD ? 'js/[name].[chunkhash:8].js"' : 'js/[name].js',
+    publicPath: '/',
   },
   devtool: env === PROD ? false : 'cheap-module-eval-source-map',
   module: {
     rules: [
       {
-        test: aliases['@config'],
+        test: /^@config$/,
         use: {
           loader: 'app-json-config-loader',
           options: {

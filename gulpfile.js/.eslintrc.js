@@ -9,7 +9,7 @@ module.exports = {
     'no-console': 'off',
     'comma-dangle': 'off',
     'comma-spacing': ['error', { before: false, after: true }],
-    indent: false,
+    indent: 'off',
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single', { avoidEscape: true }],
     semi: ['error', 'always'],

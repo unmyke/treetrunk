@@ -1,5 +1,5 @@
 import { factory as factoryG, MongooseAdapter } from 'factory-girl';
-import { loadFactories } from '@infra/support/load-factories';
+import loadFactories from '@infra/support/load-factories';
 import container from '@container';
 import * as factories from './factories';
 

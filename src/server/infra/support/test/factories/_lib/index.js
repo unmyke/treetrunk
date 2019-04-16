@@ -1,1 +1,1 @@
-export { default as getRandomDay } from './get-random-day';
+export { default as dayUtils } from './day-utils';

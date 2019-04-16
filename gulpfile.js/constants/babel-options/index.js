@@ -7,6 +7,7 @@ const {
 } = require('../types');
 
 const commonOpts = {
+  exclude: /.*\.test\.js/,
   presets: [
     [
       '@babel/preset-env',
@@ -17,7 +18,10 @@ const commonOpts = {
       },
     ],
   ],
-  plugins: ['@babel/plugin-proposal-class-properties'],
+  plugins: [
+    '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-transform-modules-commonjs',
+  ],
 };
 
 const prodOpts = {
@@ -25,7 +29,8 @@ const prodOpts = {
 };
 
 const devOpts = {
-  // presets: [["@babel/preset-env", { debug: true }]],
+  exclude: [],
+  presets: [['@babel/preset-env', { debug: true }]],
   // plugins: []
 };
 
@@ -60,13 +65,7 @@ const serverOpts = {
       },
     ],
   ],
-  plugins: [
-    // '@babel/plugin-proposal-export-default-from',
-    // '@babel/plugin-transform-runtime',
-    // '@babel/plugin-syntax-dynamic-import',
-    // '@babel/plugin-transform-modules-commonjs',
-    getModuleResolvers(SERVER),
-  ],
+  plugins: [getModuleResolvers(SERVER)],
 };
 
 const serverProd = merge(commonOpts, prodOpts, serverOpts);

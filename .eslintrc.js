@@ -31,6 +31,6 @@ module.exports = {
         ],
       },
     ],
-    'no-shadow': false,
+    'no-shadow': 'off',
   },
 };

@@ -14,7 +14,7 @@ const commonOpts = {
       {
         loose: true,
         useBuiltIns: 'usage',
-        corejs: { version: 3, proposals: true },
+        corejs: { version: 3, proposals: true, debug: false },
       },
     ],
   ],

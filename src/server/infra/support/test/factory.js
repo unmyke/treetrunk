@@ -1,6 +1,7 @@
 import { factory as factoryG, MongooseAdapter } from 'factory-girl';
-import loadFactories from '@infra/support/load-factories';
 import container from '@container';
+
+import loadFactories from './load-factories';
 import * as factories from './factories';
 
 const { models } = container;

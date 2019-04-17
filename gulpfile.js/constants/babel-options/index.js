@@ -30,8 +30,6 @@ const prodOpts = {
 
 const devOpts = {
   exclude: [],
-  presets: [['@babel/preset-env', { debug: true }]],
-  // plugins: []
 };
 
 const devClientOpts = {

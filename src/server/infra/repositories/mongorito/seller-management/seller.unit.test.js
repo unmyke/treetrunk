@@ -1,17 +1,16 @@
-import container from '@container';
+import config from '@config';
+console.log(config);
+import { Seller } from '@domain/subdomains/seller-management';
+import { Seller as sellerRepo } from '@infra/repositories/seller-management';
+import getDatabase from 'src/server/infra/database';
+
 import cleanDatabase from '@infra/support/test/clean-database';
 import factory from '@infra/support/test/factory';
 
 const {
-  subdomains: {
-    SellerManagement: { Seller },
-  },
-  repositories: {
-    SellerManagement: { Seller: sellerRepo },
-  },
   models: { Seller: SellerModel },
   database,
-} = container;
+} = getDatabase(config);
 
 describe('SellerRepository', () => {
   beforeAll(() => database.connect());
@@ -50,8 +49,23 @@ describe('SellerRepository', () => {
   });
 
   describe('#getList', () => {
-    beforeEach(() => {
-      const sellers = [];
+    let sellers;
+
+    beforeEach(() =>
+      factory
+        .createMany('seller', 10, {}, { appointmentsCount: 10 })
+        .then((models) => {
+          sellers = models;
+        })
+    );
+
+    // afterEach(() => factory.cleanUp());
+
+    context('if passed no options', () => {
+      test('should return paged portion of list', () =>
+        sellerRepo.getList().then((list) => {
+          expect(list).toBeInstanceOf(Object);
+        }));
     });
   });
 });

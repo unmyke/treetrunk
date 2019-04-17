@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import {
   SellerId as SellerIdMapper,
   PostId as PostIdMapper,
@@ -49,7 +48,6 @@ const SellerMapper = ({ commonTypes, Entity }) => {
       lastName,
       phone,
       state,
-      // eslint-disable-next-line camelcase
       appointments: appointments.map(({ postId, day }) => ({
         postId: postIdMapper.toEntity(postId),
         day: dayMapper.toEntity(day),

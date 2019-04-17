@@ -1,18 +1,19 @@
-import config from '@config';
-console.log(config);
-import { Seller } from '@domain/subdomains/seller-management';
-import { Seller as sellerRepo } from '@infra/repositories/seller-management';
-import getDatabase from 'src/server/infra/database';
-
+import container from '@container';
 import cleanDatabase from '@infra/support/test/clean-database';
 import factory from '@infra/support/test/factory';
 
 const {
+  subdomains: {
+    SellerManagement: { Seller },
+  },
+  repositories: {
+    SellerManagement: { Seller: sellerRepo },
+  },
   models: { Seller: SellerModel },
   database,
-} = getDatabase(config);
+} = container;
 
-describe('SellerRepository', () => {
+describe('#SellerRepository', () => {
   beforeAll(() => database.connect());
   afterAll(() => database.disconnect());
 
@@ -53,19 +54,40 @@ describe('SellerRepository', () => {
 
     beforeEach(() =>
       factory
-        .createMany('seller', 10, {}, { appointmentsCount: 10 })
+        .createMany('seller', 11, {}, { appointmentsCount: 2 })
         .then((models) => {
           sellers = models;
         })
     );
 
-    // afterEach(() => factory.cleanUp());
+    afterEach(() => factory.cleanUp());
 
     context('if passed no options', () => {
       test('should return paged portion of list', () =>
         sellerRepo.getList().then((list) => {
           expect(list).toBeInstanceOf(Object);
+          expect(list).toHaveProperty('result');
+          expect(list).toHaveProperty('hasMore');
+          expect(list).toHaveProperty('cursor');
+          expect(list.result).toHaveLength(10);
+          expect(list.hasMore).toBeTruthy();
+          expect(typeof list.cursor).toBe('string');
         }));
+    });
+
+    context('if passed cursor only', () => {
+      test('should return paged portion of list', () =>
+        sellerRepo.getList().then(({ cursor }) =>
+          sellerRepo.getList({ after: cursor }).then((list) => {
+            expect(list).toBeInstanceOf(Object);
+            expect(list).toHaveProperty('result');
+            expect(list).toHaveProperty('hasMore');
+            expect(list).toHaveProperty('cursor');
+            expect(list.result).toHaveLength(1);
+            expect(list.hasMore).toBeFalsy();
+            expect(typeof list.cursor).toBe('string');
+          })
+        ));
     });
   });
 });

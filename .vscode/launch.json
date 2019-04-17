@@ -7,45 +7,54 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "server",
+      "name": "server (run)",
       "program": "${workspaceFolder}/node_modules/.bin/gulp",
       "args": ["devServer"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "sourceMaps": true,
-      "runtimeExecutable": "/Users/uudumn/.nodenv/shims/node"
+      "runtimeExecutable": "~/.nodenv/shims/node"
       // "outFiles": ["dst/***.js*"],
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "client",
+      "name": "console (run)",
+      "program": "${workspaceFolder}/node_modules/.bin/gulp",
+      "args": ["devConcole"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "runtimeExecutable": "~/.nodenv/shims/node"
+      // "outFiles": ["dst/***.js*"],
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "client (run)",
       "program": "${workspaceFolder}/node_modules/.bin/gulp",
       "args": ["devClient"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "sourceMaps": true,
-      "runtimeExecutable": "/Users/uudumn/.nodenv/shims/node"
+      "runtimeExecutable": "~/.nodenv/shims/node"
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Jest Current File",
+      "name": "jest (current file)",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": [
-        "${fileBasenameNoExtension}",
-        "--config",
-        "./jest.config/index.js"
-      ],
+      "args": ["${relativeFile}", "--config", "./jest.config/index.js"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/node_modules/jest/bin/jest"
       },
-      "runtimeExecutable": "/Users/uudumn/.nodenv/shims/node"
+      "runtimeExecutable": "~/.nodenv/shims/node"
     }
   ]
 }

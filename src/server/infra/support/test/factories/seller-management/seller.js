@@ -1,4 +1,4 @@
-import { getDaysSequence } from '../_lib/day-utils';
+import { getDaysSequence, getRandomDay } from '../_lib/day-utils';
 
 const Seller = (factory, { Seller }) => {
   factory.define('seller', Seller, ({ appointmentsCount = 1 }) => {
@@ -9,15 +9,12 @@ const Seller = (factory, { Seller }) => {
       middleName: factory.chance('name', { middle: true }),
       phone: factory.chance('phone'),
       state: 'recruited',
-      appointments: () => {
-        const days = getDaysSequence({ count: appointmentsCount });
-        console.log(days);
-
-        return days.map((day) => ({
+      appointments: () =>
+        getDaysSequence({ count: appointmentsCount }).map((day) => ({
           postId: factory.assoc('post', 'postId'),
           day,
-        }));
-      },
+        })),
+      createdAt: () => getRandomDay(),
     };
   });
 };

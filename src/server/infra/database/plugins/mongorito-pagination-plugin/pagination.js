@@ -1,12 +1,5 @@
 import { encode } from './base64';
 
-const getResults = (error, data) => {
-  if (error) {
-    throw error;
-  }
-  return data;
-};
-
 const getIdPropName = (Model) => `${Model.name.toLowerCase()}Id`;
 
 const getQuery = ({ query, search, filters }) => {
@@ -38,10 +31,14 @@ const getPaginagtion = ({
   order,
 }) => {
   const hasMore = resultPlusOne.length > pageSize;
-  const result = hasMore ? resultPlusOne.slice(0, -1) : resultPlusOne;
-  const id = result[result.length - 1][getIdPropName(Model)];
+  const result = (hasMore ? resultPlusOne.slice(0, -1) : resultPlusOne).map(
+    (item) => item.get()
+  );
+  const id = result.length
+    ? result[result.length - 1][getIdPropName(Model)]
+    : null;
   const cursor = encode({
-    id,
+    ...(id ? { id } : {}),
     pageSize,
     filters,
     search,
@@ -74,15 +71,19 @@ export const getCursorPaginagtion = async (
   }
 ) => {
   const cursorModel = await Model.findOne({ [getIdPropName(Model)]: prevId });
-  const cursorModelSortValue = cursorModel.get(sort);
-  const cursorModelIdValue = cursorModel.get('_id');
+  const {
+    [sort]: cursorModelSortValue,
+    _id: cursorModelIdValue,
+  } = cursorModel.get();
 
-  const resultPlusOne = getQuery({ query: Model, search, filters })
-    .where({ [sort]: { [order === 1 ? 'gt' : 'lt']: cursorModelSortValue } })
-    .or([{ [sort]: { eq: cursorModelSortValue } }])
-    .and({ _id: { gte: cursorModelIdValue } })
+  const resultPlusOne = await getQuery({ query: Model, search, filters })
+    .where(sort)
+    [order === 1 ? 'gte' : 'lte'](cursorModelSortValue)
+    .where('_id')
+    .ne(cursorModelIdValue)
+    .limit(pageSize + 1)
     .sort({ [sort]: order })
-    .limit(pageSize + 1);
+    .find();
 
   return getPaginagtion({
     Model,
@@ -116,7 +117,8 @@ export const getOffsetPaginagtion = async (
   const resultPlusOne = await getQuery({ query: Model, search, filters })
     .sort({ [sort]: order })
     .skip(page * pageSize)
-    .limit(pageSize + 1);
+    .limit(pageSize + 1)
+    .find();
 
   return getPaginagtion({
     Model,

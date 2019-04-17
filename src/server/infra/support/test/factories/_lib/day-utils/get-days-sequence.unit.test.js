@@ -1,6 +1,5 @@
-import { subYears } from 'date-fns/fp';
+import { addDays, subYears, startOfDay } from 'date-fns/fp';
 import getDaysSequence from './get-days-sequence';
-import { addDays, subDays } from 'date-fns';
 
 describe('#getDaysSequence', () => {
   context('if passed no options', () => {
@@ -11,7 +10,7 @@ describe('#getDaysSequence', () => {
       expect(days).toHaveLength(1);
       expect(days[0]).toBeInstanceOf(Date);
       expect(days[0].valueOf()).toBeGreaterThanOrEqual(
-        subYears(new Date()).valueOf()
+        subYears(10)(new Date()).valueOf()
       );
       expect(days[0].valueOf()).toBeLessThanOrEqual(new Date().valueOf());
     });
@@ -41,11 +40,11 @@ describe('#getDaysSequence', () => {
 
         expect(days).toBeInstanceOf(Array);
         expect(days).toHaveLength(count);
-        days.days.forEach((day) => {
+        days.forEach((day) => {
           expect(day).toBeInstanceOf(Date);
         });
         expect(days[0].valueOf()).toBeGreaterThanOrEqual(
-          subYears(new Date()).valueOf()
+          subYears(10)(new Date()).valueOf()
         );
         expect(days[count - 1].valueOf()).toBeLessThanOrEqual(
           new Date().valueOf()
@@ -64,21 +63,18 @@ describe('#getDaysSequence', () => {
     });
 
     context('if passed after is today', () => {
-      test('return array with today', () =>
-        Promise.all(
-          new Array(2097150).map(() => {
-            const count = 1;
-            const after = new Date();
-            const days = getDaysSequence({ after });
+      test('return array with today', () => {
+        const count = 1;
+        const after = new Date();
+        const days = getDaysSequence({ after });
 
-            expect(days).toBeInstanceOf(Array);
-            expect(days).toHaveLength(count);
-            expect(days[0]).toBeInstanceOf(Date);
-            expect(days[0].valueOf()).toBeGreaterThanOrEqual(
-              startOfDay(after).valueOf()
-            );
-          })
-        ));
+        expect(days).toBeInstanceOf(Array);
+        expect(days).toHaveLength(count);
+        expect(days[0]).toBeInstanceOf(Date);
+        expect(days[0].valueOf()).toBeGreaterThanOrEqual(
+          startOfDay(after).valueOf()
+        );
+      });
     });
 
     context('if passed after later than today', () => {

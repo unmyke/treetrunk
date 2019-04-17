@@ -10,7 +10,7 @@ const getRandomDay = ({
   switch (true) {
     case before.valueOf() < after.valueOf():
       throw new Error(
-        `Day "before" (${rawBefore}) must be early day "after" (${rawAfter})`
+        `Day "before" (${rawBefore.toLocaleDateString()}) must be early day "after" (${rawAfter.toLocaleDateString()})`
       );
 
     case before.valueOf() === after.valueOf():

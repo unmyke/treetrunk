@@ -7,8 +7,8 @@ function* DaysSequenceIterator({ after, before, count }) {
   let current;
   let sequenceCount = 0;
 
-  while (sequenceCount === count) {
-    const daysBetween = differenceInDays(currentAfter, before) + 1;
+  while (count > sequenceCount) {
+    const daysBetween = differenceInDays(currentAfter, before);
     const daysRangeCount = Math.floor(daysBetween / (count - sequenceCount));
 
     current = getRandomDay({
@@ -16,7 +16,7 @@ function* DaysSequenceIterator({ after, before, count }) {
       before: addDays(daysRangeCount)(currentAfter),
     });
     currentAfter = addDays(1)(current);
-    sequenceCount += sequenceCount;
+    sequenceCount += 1;
 
     yield current;
   }
@@ -36,10 +36,10 @@ const getDaysSequence = ({
 
     case before.valueOf() < after.valueOf():
       throw new Error(
-        `Day "before" (${rawBefore}) must be early day "after" (${rawAfter})`
+        `Day "before" (${rawBefore.toLocaleDateString()}) must be early day "after" (${rawAfter.toLocaleDateString()})`
       );
 
-    case differenceInDays(after, before) < count:
+    case differenceInDays(after, before) + 1 < count:
       throw new Error(
         `Days between (${rawAfter.toLocaleDateString()}) and (${rawBefore.toLocaleDateString()}) less than passed count (${count})`
       );

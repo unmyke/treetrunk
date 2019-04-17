@@ -1,6 +1,6 @@
 import validate from 'validate.js';
 import { Day, DayRange } from '@domain/common-types';
-import isValidDate from 'date-fns/is_valid';
+import { isValid as isValidDate } from 'date-fns/fp';
 
 const testRegex = {
   uuidv4(value) {

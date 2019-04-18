@@ -1,17 +1,15 @@
 import container from '@container';
 
-const { database } = container;
+const { database, models } = container;
 
-const cleanDatabase = () => {
-  if (database) {
-    return database
-      .connect()
-      .then(() => Promise.all(database.models.map((Model) => Model.remove())))
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  throw Error("Database doesn't exists");
-};
+const cleanDatabase = () =>
+  database
+    .connect()
+    .then(() =>
+      Promise.all(Object.values(models).map((Model) => Model.remove()))
+    )
+    .catch((err) => {
+      console.log(err);
+    });
 
 export default cleanDatabase;

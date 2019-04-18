@@ -31,12 +31,8 @@ const getPagination = ({
   order,
 }) => {
   const hasMore = resultPlusOne.length > pageSize;
-  const result = (hasMore ? resultPlusOne.slice(0, -1) : resultPlusOne).map(
-    (item) => item.get()
-  );
-  const id = result.length
-    ? result[result.length - 1][getIdPropName(Model)]
-    : null;
+  const result = hasMore ? resultPlusOne.slice(0, -1) : resultPlusOne;
+  const id = result[result.length - 1].get(getIdPropName(Model));
   const cursor = encode({
     ...(id ? { id } : {}),
     pageSize,

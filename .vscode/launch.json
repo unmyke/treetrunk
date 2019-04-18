@@ -47,7 +47,12 @@
       "request": "launch",
       "name": "jest (current file)",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["${relativeFile}", "--config", "./jest.config/index.js"],
+      "args": [
+        "${relativeFile}",
+        "--config",
+        "./jest.config/index.js",
+        "--runInBand"
+      ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,

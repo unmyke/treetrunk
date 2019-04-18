@@ -1,5 +1,5 @@
 import getPaginationOptions, { types } from './get-pagination-options';
-import { getCursorPaginagtion, getOffsetPaginagtion } from './pagination';
+import { getCursorPagination, getOffsetPagination } from './pagination';
 
 export default (Model) => {
   Model.getList = (query = {}) => {
@@ -7,10 +7,10 @@ export default (Model) => {
 
     switch (type) {
       case types.CURSOR:
-        return getCursorPaginagtion(Model, options);
+        return getCursorPagination(Model, options);
 
       case types.OFFSET:
-        return getOffsetPaginagtion(Model, options);
+        return getOffsetPagination(Model, options);
 
       default:
         throw new Error('Invalid query');

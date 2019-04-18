@@ -21,7 +21,7 @@ const getQuery = ({ query, search, filters }) => {
     : searchedQuery;
 };
 
-const getPaginagtion = ({
+const getPagination = ({
   Model,
   resultPlusOne,
   pageSize,
@@ -53,7 +53,7 @@ const getPaginagtion = ({
   };
 };
 
-export const getCursorPaginagtion = async (
+export const getCursorPagination = async (
   Model,
   {
     id: prevId,
@@ -85,7 +85,7 @@ export const getCursorPaginagtion = async (
     .sort({ [sort]: order })
     .find();
 
-  return getPaginagtion({
+  return getPagination({
     Model,
     resultPlusOne,
     pageSize,
@@ -96,7 +96,7 @@ export const getCursorPaginagtion = async (
   });
 };
 
-export const getOffsetPaginagtion = async (
+export const getOffsetPagination = async (
   Model,
   {
     pageSize = 10,
@@ -120,7 +120,7 @@ export const getOffsetPaginagtion = async (
     .limit(pageSize + 1)
     .find();
 
-  return getPaginagtion({
+  return getPagination({
     Model,
     resultPlusOne,
     pageSize,

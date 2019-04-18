@@ -57,12 +57,14 @@ export const getCursorPagination = async (
   Model,
   {
     id: prevId,
+    page = 0,
     pageSize = 10,
     filters = [],
     search = {},
     sort = 'createdAt',
     order = 'desc',
   } = {
+    page: 0,
     pageSize: 10,
     filters: [],
     search: {},
@@ -77,10 +79,15 @@ export const getCursorPagination = async (
   } = cursorModel.get();
 
   const resultPlusOne = await getQuery({ query: Model, search, filters })
-    .where(sort)
-    [order === 1 ? 'gte' : 'lte'](cursorModelSortValue)
-    .where('_id')
-    .ne(cursorModelIdValue)
+    .or([
+      { [sort]: { [order === 1 ? '$gt' : '$lt']: cursorModelSortValue } },
+      {
+        $and: [
+          { [sort]: { $eq: cursorModelSortValue } },
+          { _id: { $gt: cursorModelIdValue } },
+        ],
+      },
+    ])
     .limit(pageSize + 1)
     .sort({ [sort]: order })
     .find();
@@ -89,6 +96,7 @@ export const getCursorPagination = async (
     Model,
     resultPlusOne,
     pageSize,
+    page,
     filters,
     search,
     sort,

@@ -63,7 +63,7 @@ describe('#SellerRepository', () => {
           })
       );
 
-      test('should return paged portion of list', () =>
+      test('should return paged list', () =>
         sellerRepo.getList().then((list) => {
           expect(list).toBeInstanceOf(Object);
           expect(list).toHaveProperty('result');
@@ -84,7 +84,7 @@ describe('#SellerRepository', () => {
           })
       );
 
-      test('should return paged portion of list', () =>
+      test('should return paged list', () =>
         sellerRepo
           .getList({ pageSize: 15 })
           .then((list) => {

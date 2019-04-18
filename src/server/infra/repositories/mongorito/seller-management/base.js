@@ -11,23 +11,20 @@ const BaseRepository = ({ Model, mapper }) => {
       model ? mapToEntity(model) : null
     );
 
-  const getList = Model.getList.bind(Model);
-
-  const getById = (id) => findModel(id).then(mapToEntity, throwError);
-
-  const getOne = (query) => {
-    return Model.findOne(query).then(mapToEntity, throwError);
-  };
-
-  const save = (entity) => {
-    const modelProps = mapper.toDatabase(entity);
-    const model = new Model(modelProps);
-    return model.save().then(
-      () => mapper.toEntity(model.get()),
-      (error) => {
-        throw error;
-      }
+  const getList = (query) =>
+    Model.getList(query).then(
+      ({ result, cursor, hasMore }) => ({
+        result: result.map(mapToEntity),
+        cursor,
+        hasMore,
+      }),
+      throwError
     );
+  const getById = (id) => findModel(id).then(mapToEntity, throwError);
+  const getOne = (query) => Model.findOne(query).then(mapToEntity, throwError);
+  const save = (entity) => {
+    const model = new Model(mapper.toDatabase(entity));
+    return model.save().then(() => mapToEntity(model), throwError);
   };
 
   return Object.freeze({

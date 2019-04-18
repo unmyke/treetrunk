@@ -6,6 +6,7 @@ const {
   subdomains: {
     SellerManagement: { Seller },
   },
+  commonTypes: { SellerId },
   repositories: {
     SellerManagement: { Seller: sellerRepo },
   },
@@ -14,8 +15,9 @@ const {
 } = container;
 
 describe('#SellerRepository', () => {
-  beforeAll(() => database.connect());
-  afterAll(() => database.disconnect());
+  beforeAll(() => database.connect().then(cleanDatabase));
+  afterAll(() => cleanDatabase().then(database.disconnect));
+  afterEach(cleanDatabase);
 
   describe('#add', () => {
     let seller;
@@ -34,8 +36,6 @@ describe('#SellerRepository', () => {
       });
     });
 
-    afterEach(() => cleanDatabase());
-
     context('if passed correct entity', () => {
       test('should save entity', () =>
         sellerRepo.add(seller).then((entity) => {
@@ -49,10 +49,51 @@ describe('#SellerRepository', () => {
     });
   });
 
+  describe('#update', () => {
+    let prevSeller;
+    let countBefore;
+
+    beforeEach(() =>
+      factory
+        .create('seller')
+        .then((s) => {
+          prevSeller = s.get();
+        })
+        .then(() => SellerModel.count())
+        .then((c) => {
+          countBefore = c;
+        })
+    );
+
+    context('if passed correct entity', () => {
+      test('should save entity', () => {
+        const seller = new Seller({
+          sellerId: new SellerId({ value: prevSeller.sellerId }),
+          firstName: 'firstName',
+          middleName: 'middleName',
+          lastName: 'lastName',
+          phone: '11-11-11',
+        });
+
+        return sellerRepo.save(seller).then((entity) => {
+          expect(entity).toBeInstanceOf(Seller);
+          expect(entity).not.toBe(seller);
+          expect(entity.sellerId).toEqual(seller.sellerId);
+          expect(entity.sellerId.valueOf()).toBe(prevSeller.sellerId);
+          expect(entity.firstName).toBe(seller.firstName);
+          expect(entity.firstName).not.toBe(prevSeller.firstName);
+          expect(entity.middleName).toBe(seller.middleName);
+          expect(entity.middleName).not.toBe(prevSeller.middleName);
+          expect(entity.lastName).toBe(seller.lastName);
+          expect(entity.lastName).not.toBe(prevSeller.lastName);
+          expect(SellerModel.count()).resolves.toBe(countBefore);
+        });
+      });
+    });
+  });
+
   describe('#getList', () => {
     let sellers;
-
-    afterEach(() => factory.cleanUp());
 
     context('if passed no options', () => {
       beforeEach(() =>
@@ -70,6 +111,9 @@ describe('#SellerRepository', () => {
           expect(list).toHaveProperty('hasMore');
           expect(list).toHaveProperty('cursor');
           expect(list.result).toHaveLength(10);
+          list.result.forEach((seller) => {
+            expect(seller).toBeInstanceOf(Seller);
+          });
           expect(list.hasMore).toBeTruthy();
           expect(typeof list.cursor).toBe('string');
         }));
@@ -93,6 +137,9 @@ describe('#SellerRepository', () => {
             expect(list).toHaveProperty('hasMore');
             expect(list).toHaveProperty('cursor');
             expect(list.result).toHaveLength(15);
+            list.result.forEach((seller) => {
+              expect(seller).toBeInstanceOf(Seller);
+            });
             expect(list.hasMore).toBeTruthy();
             expect(typeof list.cursor).toBe('string');
 
@@ -105,6 +152,9 @@ describe('#SellerRepository', () => {
             expect(list).toHaveProperty('hasMore');
             expect(list).toHaveProperty('cursor');
             expect(list.result).toHaveLength(4);
+            list.result.forEach((seller) => {
+              expect(seller).toBeInstanceOf(Seller);
+            });
             expect(list.hasMore).toBeFalsy();
             expect(typeof list.cursor).toBe('string');
           }));
@@ -130,6 +180,9 @@ describe('#SellerRepository', () => {
               expect(list).toHaveProperty('hasMore');
               expect(list).toHaveProperty('cursor');
               expect(list.result).toHaveLength(9);
+              list.result.forEach((seller) => {
+                expect(seller).toBeInstanceOf(Seller);
+              });
               expect(list.hasMore).toBeTruthy();
               expect(typeof list.cursor).toBe('string');
 
@@ -150,6 +203,9 @@ describe('#SellerRepository', () => {
                 expect(prevResult).not.toContainEqual(seller);
               });
               expect(list.result).toHaveLength(9);
+              list.result.forEach((seller) => {
+                expect(seller).toBeInstanceOf(Seller);
+              });
               expect(list.hasMore).toBeTruthy();
               expect(typeof list.cursor).toBe('string');
 
@@ -167,6 +223,9 @@ describe('#SellerRepository', () => {
                 expect(prevResult).not.toContainEqual(seller);
               });
               expect(list.result).toHaveLength(1);
+              list.result.forEach((seller) => {
+                expect(seller).toBeInstanceOf(Seller);
+              });
               expect(list.hasMore).toBeFalsy();
               expect(typeof list.cursor).toBe('string');
             }));
@@ -192,6 +251,9 @@ describe('#SellerRepository', () => {
             expect(list).toHaveProperty('hasMore');
             expect(list).toHaveProperty('cursor');
             expect(list.result).toHaveLength(4);
+            list.result.forEach((seller) => {
+              expect(seller).toBeInstanceOf(Seller);
+            });
             expect(list.hasMore).toBeFalsy();
             expect(typeof list.cursor).toBe('string');
           }));

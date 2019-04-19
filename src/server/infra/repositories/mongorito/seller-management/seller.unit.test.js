@@ -15,9 +15,9 @@ const {
 } = container;
 
 describe('#SellerRepository', () => {
-  beforeAll(() => database.connect().then(cleanDatabase));
-  afterAll(() => cleanDatabase().then(database.disconnect));
-  afterEach(cleanDatabase);
+  beforeAll(() => database.connect());
+  afterAll(() => database.disconnect());
+  beforeEach(cleanDatabase);
 
   describe('#add', () => {
     let seller;

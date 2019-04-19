@@ -53,14 +53,12 @@ export const getCursorPagination = async (
   Model,
   {
     id: prevId,
-    page = 0,
     pageSize = 10,
     filters = [],
     search = {},
     sort = 'createdAt',
     order = 'desc',
   } = {
-    page: 0,
     pageSize: 10,
     filters: [],
     search: {},
@@ -71,28 +69,32 @@ export const getCursorPagination = async (
   const cursorModel = await Model.findOne({ [getIdPropName(Model)]: prevId });
   const {
     [sort]: cursorModelSortValue,
-    _id: cursorModelIdValue,
+    _id: cursorModelId,
   } = cursorModel.get();
 
-  const resultPlusOne = await getQuery({ query: Model, search, filters })
+  const resultWithCursor = await getQuery({ query: Model, search, filters })
     .or([
       { [sort]: { [order === 1 ? '$gt' : '$lt']: cursorModelSortValue } },
       {
         $and: [
           { [sort]: { $eq: cursorModelSortValue } },
-          { _id: { $gt: cursorModelIdValue } },
+          { _id: { $gt: cursorModelId } },
         ],
       },
     ])
+    .sort(sort, order)
+    .sort('_id', 1)
     .limit(pageSize + 1)
-    .sort({ [sort]: order })
     .find();
+  const index = resultWithCursor.findIndex((model) =>
+    model.get('_id').equals(cursorModelId)
+  );
+  const resultPlusOne = resultWithCursor.slice(index + 1, index + pageSize + 2);
 
   return getPagination({
     Model,
     resultPlusOne,
     pageSize,
-    page,
     filters,
     search,
     sort,
@@ -119,8 +121,9 @@ export const getOffsetPagination = async (
   }
 ) => {
   const resultPlusOne = await getQuery({ query: Model, search, filters })
-    .sort({ [sort]: order })
-    .skip(page * pageSize)
+    .sort(sort, order)
+    .sort('_id', 1)
+    .skip((page >= 0 ? page : 0) * pageSize)
     .limit(pageSize + 1)
     .find();
 

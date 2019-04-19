@@ -6,7 +6,7 @@ import getIdPropName from './get-id-prop-name';
 const { SAVE, CREATE, UPDATE } = ActionTypes;
 
 export default () => {
-  return ({ modelClass, dispatch, getState }) => (next) => (action) => {
+  return ({ model, modelClass, dispatch, getState }) => (next) => (action) => {
     if (action.type !== SAVE) {
       return next(action);
     }
@@ -16,12 +16,12 @@ export default () => {
 
     return modelClass.findOne({ [idPropName]: id }).then((existingModel) => {
       if (existingModel) {
-        const { _id, ...existingModelFields } = existingModel.get();
+        const _id = existingModel.get('_id');
         const newModelFields = {
-          ...existingModelFields,
           ...modelFields,
           _id,
         };
+        model.set({ _id });
 
         return dispatch({ type: UPDATE, fields: newModelFields });
       }

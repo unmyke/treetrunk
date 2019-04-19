@@ -69,19 +69,38 @@ describe('#SellerRepository', () => {
           phone: '11-11-11',
         });
 
-        return sellerRepo.save(seller).then((entity) => {
-          expect(entity).toBeInstanceOf(Seller);
-          expect(entity).not.toBe(seller);
-          expect(entity.sellerId).toEqual(seller.sellerId);
-          expect(entity.sellerId.valueOf()).toBe(prevSeller.sellerId);
-          expect(entity.firstName).toBe(seller.firstName);
-          expect(entity.firstName).not.toBe(prevSeller.firstName);
-          expect(entity.middleName).toBe(seller.middleName);
-          expect(entity.middleName).not.toBe(prevSeller.middleName);
-          expect(entity.lastName).toBe(seller.lastName);
-          expect(entity.lastName).not.toBe(prevSeller.lastName);
-          expect(SellerModel.count()).resolves.toBe(countBefore);
-        });
+        return sellerRepo
+          .save(seller)
+          .then((entity) =>
+            Promise.all([
+              SellerModel.findOne({ sellerId: prevSeller.sellerId }),
+              Promise.resolve(entity),
+            ])
+          )
+          .then(([model, entity]) => {
+            const persistedSeller = model.get();
+
+            expect(entity).toBeInstanceOf(Seller);
+            expect(entity).not.toBe(seller);
+            expect(entity.sellerId).toEqual(seller.sellerId);
+            expect(entity.sellerId.valueOf()).toBe(prevSeller.sellerId);
+            expect(entity.firstName).toBe(seller.firstName);
+            expect(entity.firstName).not.toBe(prevSeller.firstName);
+            expect(entity.middleName).toBe(seller.middleName);
+            expect(entity.middleName).not.toBe(prevSeller.middleName);
+            expect(entity.lastName).toBe(seller.lastName);
+            expect(entity.lastName).not.toBe(prevSeller.lastName);
+            expect(entity.state).toBe(seller.state);
+            expect(entity.state).not.toBe(prevSeller.state);
+            expect(SellerModel.count()).resolves.toBe(countBefore);
+
+            expect(persistedSeller.sellerId).toBe(entity.sellerId.value);
+            expect(persistedSeller.firstName).toBe(entity.firstName);
+            expect(persistedSeller.middleName).toBe(entity.middleName);
+            expect(persistedSeller.lastName).toBe(entity.lastName);
+            expect(persistedSeller.phone).toBe(entity.phone);
+            expect(persistedSeller.state).toBe(entity.state);
+          });
       });
     });
   });

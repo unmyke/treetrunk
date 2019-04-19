@@ -31,9 +31,7 @@ describe('#SellerRepository', () => {
         phone: '11-11-11',
       });
 
-      return SellerModel.count().then((c) => {
-        countBefore = c;
-      });
+      return SellerModel.count().then((c) => (countBefore = c));
     });
 
     context('if passed correct entity', () => {
@@ -56,13 +54,9 @@ describe('#SellerRepository', () => {
     beforeEach(() =>
       factory
         .create('seller')
-        .then((s) => {
-          prevSeller = s.get();
-        })
+        .then((s) => (prevSeller = s.get()))
         .then(() => SellerModel.count())
-        .then((c) => {
-          countBefore = c;
-        })
+        .then((c) => (countBefore = c))
     );
 
     context('if passed correct entity', () => {
@@ -99,9 +93,7 @@ describe('#SellerRepository', () => {
       beforeEach(() =>
         factory
           .createMany('seller', 12, {}, { appointmentsCount: 0 })
-          .then((models) => {
-            sellers = models.map((seller) => seller.get());
-          })
+          .then((models) => (sellers = models.map((seller) => seller.get())))
       );
 
       test('should return paged list', () =>
@@ -123,9 +115,7 @@ describe('#SellerRepository', () => {
       beforeEach(() =>
         factory
           .createMany('seller', 19, {}, { appointmentsCount: 0 })
-          .then((models) => {
-            sellers = models.map((seller) => seller.get());
-          })
+          .then((models) => (sellers = models.map((seller) => seller.get())))
       );
 
       test('should return paged list', () =>
@@ -166,9 +156,7 @@ describe('#SellerRepository', () => {
         beforeEach(() =>
           factory
             .createMany('seller', 19, {}, { appointmentsCount: 0 })
-            .then((models) => {
-              sellers = models.map((seller) => seller.get());
-            })
+            .then((models) => (sellers = models.map((seller) => seller.get())))
         );
 
         test('should return paged portion of list', () =>
@@ -236,9 +224,7 @@ describe('#SellerRepository', () => {
       beforeEach(() =>
         factory
           .createMany('seller', 19, {}, { appointmentsCount: 0 })
-          .then((models) => {
-            sellers = models.map((seller) => seller.get());
-          })
+          .then((models) => (sellers = models.map((seller) => seller.get())))
       );
 
       test('should return paged portion of list', () =>

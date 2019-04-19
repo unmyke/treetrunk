@@ -30,12 +30,13 @@ const { database, models } = getDatabase({ config, errors });
 const bottle = new Bottle();
 
 bottle.constant('config', config);
-bottle.factory('app', (container) => Application(container));
 
-bottle.factory('subdomains', () => subdomains);
-bottle.factory('commonTypes', () => commonTypes);
-bottle.factory('states', () => states);
+bottle.constant('subdomains', subdomains);
+bottle.constant('commonTypes', commonTypes);
+bottle.constant('states', states);
 bottle.constant('errors', errors);
+
+bottle.factory('app', Application);
 
 // bottle.factory('mappers.commonTypes', ({ commonTypes }) =>
 //   getCommonTypesContainer(commonTypesMappers, (Mapper) =>
@@ -93,8 +94,8 @@ bottle.factory(
 
 bottle.constant('makeValidator', makeValidator);
 
-bottle.factory('server', (container) => Server(container));
-bottle.factory('logger', (container) => Logger(container));
+bottle.factory('server', Server);
+bottle.factory('logger', Logger);
 // bottle.factory('router', (container) => router(container));
 // bottle.factory('containerMiddleware', (container) =>
 //   containerMiddleware(container)

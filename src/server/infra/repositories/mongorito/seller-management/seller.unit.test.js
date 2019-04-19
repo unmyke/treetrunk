@@ -156,6 +156,7 @@ describe('#SellerRepository', () => {
         beforeEach(() =>
           factory
             .createMany('seller', 19, {}, { appointmentsCount: 0 })
+            .then(() => SellerModel.find())
             .then((models) => (sellers = models.map((seller) => seller.get())))
         );
 

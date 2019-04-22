@@ -8,7 +8,7 @@ const Post = (factory, { Post }) => {
       state: factory.chance('pickone', ['active', 'deleted']),
       pieceRates: () =>
         getDaysSequence({ count: pieceRatesCount }).map((day) => ({
-          value: factory.chance('floating', { fixed: 1, min: 0, max: 20 }),
+          value: factory.chance('floating', { fixed: 1, min: 0, max: 20 })(),
           day,
         })),
     };

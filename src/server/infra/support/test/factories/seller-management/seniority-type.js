@@ -9,7 +9,7 @@ const SeniorityType = (factory, { SeniorityType }) => {
       state: factory.chance('pickone', ['active', 'deleted']),
       awards: () =>
         getDaysSequence({ count: awardsCount }).map((day) => ({
-          value: factory.chance('floating', { fixed: 2, min: 0 }),
+          value: factory.chance('floating', { fixed: 2, min: 0 })(),
           day,
         })),
     };

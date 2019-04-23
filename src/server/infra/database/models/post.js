@@ -1,3 +1,3 @@
-import { Model } from 'mongorito';
+import BaseModel from './base-model';
 
-export default class Post extends Model {}
+export default class Post extends BaseModel {}

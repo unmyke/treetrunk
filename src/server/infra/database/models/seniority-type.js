@@ -1,3 +1,3 @@
-import { Model } from 'mongorito';
+import BaseModel from './base-model';
 
-export default class SeniorityType extends Model {}
+export default class SeniorityType extends BaseModel {}

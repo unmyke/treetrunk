@@ -1,10 +1,10 @@
-import { Model } from 'mongorito';
+import BaseModel from './base-model';
 
-export default class Seller extends Model {}
-
-Seller.toEmbed = [
-  {
-    path: 'appointments.post',
-    modelName: 'Post',
-  },
-];
+export default class Seller extends BaseModel {
+  static toEmbed = [
+    {
+      path: 'appointments.post',
+      modelName: 'Post',
+    },
+  ];
+}

@@ -32,7 +32,9 @@ const getPagination = ({
 }) => {
   const hasMore = resultPlusOne.length > pageSize;
   const result = hasMore ? resultPlusOne.slice(0, -1) : resultPlusOne;
-  const id = result[result.length - 1].get(getIdPropName(Model));
+  const id = result.length
+    ? result[result.length - 1].get(getIdPropName(Model))
+    : null;
   const cursor = encode({
     ...(id ? { id } : {}),
     pageSize,
@@ -66,7 +68,15 @@ export const getCursorPagination = async (
     order: -1,
   }
 ) => {
-  const cursorModel = await Model.findOne({ [getIdPropName(Model)]: prevId });
+  const idPropName = getIdPropName(Model);
+  const cursorModel = await Model.findOne({ [idPropName]: prevId });
+
+  if (!cursorModel) {
+    throw Model.errors.modelNotFound(
+      `Model with ${idPropName}: ${prevId} not found`
+    );
+  }
+
   const {
     [sort]: cursorModelSortValue,
     _id: cursorModelId,

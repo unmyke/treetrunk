@@ -325,5 +325,15 @@ describe('#SellerRepository', () => {
           expect(typeof list2.cursor).toBe('string');
         }));
     });
+
+    context('if passed unexistent curosor', () => {
+      beforeEach(() =>
+        factory.createMany('seller', 2, {}, { appointmentsCount: 1 })
+      );
+
+      test('should throw error', () => {
+        expect(() => sellerRepo.getList({ after: 1 })).toThrow();
+      });
+    });
   });
 });

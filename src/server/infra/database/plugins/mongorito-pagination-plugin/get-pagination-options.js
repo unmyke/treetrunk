@@ -82,7 +82,7 @@ const normalizeOptions = ({
   const after = getOption({
     type: types.STRING,
     value: rawAfter,
-    defaultValue: 'error',
+    defaultValue: null,
   });
   const sort = getOption({
     type: types.STRING,

@@ -6,6 +6,10 @@ import { Node, Timestamps } from '../../interfaces';
 import { Day } from '../../scalars';
 import Post from '../post';
 import SeniorityType from '../seniority-type';
+import {
+  Post as postResolver,
+  SeniorityType as seniorityTypeResolver,
+} from '../../resolvers';
 
 const Seller = objectType({
   name: 'Seller',
@@ -14,12 +18,25 @@ const Seller = objectType({
     t.string('firstName');
     t.string('middleName');
     t.string('lastName');
-    t.phone('phone');
-    t.field('post', Post);
-    t.field('seniorityType', SeniorityType);
-    t.field('dismissAt', Day);
-    t.field('recruitedAt', Day);
-    t.field('deletedAt', Day);
+    t.phone('phone', { nullable: true });
+    t.field('post', {
+      type: Post,
+      nullable: true,
+      resolve: postResolver,
+    });
+    t.field('seniorityType', {
+      type: SeniorityType,
+      nullable: true,
+      resolve: seniorityTypeResolver,
+    });
+    t.field('dismissAt', {
+      type: Day,
+      nullable: true,
+    });
+    t.field('recruitedAt', {
+      type: Day,
+      nullable: true,
+    });
     t.field('state', SellerStateEnum);
     t.list.field('appointments', SellerAppointment);
   },

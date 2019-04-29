@@ -5,6 +5,7 @@ const Timestamps = interfaceType({
   definition(t) {
     t.date('createdAt', () => new Date());
     t.date('updatedAt', () => new Date());
+    t.date('deletedAt', () => new Date());
     t.resolveType(() => null);
   },
 });

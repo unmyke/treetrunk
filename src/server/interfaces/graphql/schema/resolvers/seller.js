@@ -1,20 +1,16 @@
-const sellerResolver = (
-  _,
-  { id },
-  { getSeller, mappers: { Seller: sellerMapper } }
-) =>
-  getSeller
-    .execute(id)
-    .then(
-      ({
-        seller: sellerEntity,
-        posts: postEntities,
-        seniorityTypes: seniorityTypeEntities,
-      }) => {
-        // const seller =
-        seller.post = posts[seller.postId];
-        // seller.appointments =
-      }
-    );
+const sellerResolver = (_, { id }, { getSeller }) =>
+  new Promise((resolve, reject) => {
+    if (!id) {
+      return resolve(null);
+    }
+
+    const { SUCCESS, ERROR, NOT_FOUND } = getSeller.outputs;
+
+    getSeller.on(SUCCESS, (seller) => resolve(seller));
+    getSeller.on(NOT_FOUND, (error) => reject(error));
+    getSeller.on(ERROR, (error) => reject(error));
+
+    getSeller.execute(id);
+  });
 
 export default sellerResolver;

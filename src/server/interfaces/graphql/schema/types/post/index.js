@@ -9,7 +9,7 @@ const Post = objectType({
   definition(t) {
     t.implements(Node, Timestamps);
     t.string('name');
-    t.float('pieceRate');
+    t.float('pieceRate', { nullable: true });
     t.field('state', DeletableEntityState);
     t.list.field('pieceRates', PieceRate);
   },

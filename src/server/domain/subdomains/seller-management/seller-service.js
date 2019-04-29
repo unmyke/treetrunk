@@ -1,6 +1,5 @@
-/* eslint-disable no-shadow */
 import { BaseService } from '../../_lib';
-import { Day, SellerId } from '../../common-types';
+import { SellerId } from '../../common-types';
 
 export default class SellerService extends BaseService {
   getSellersByQuery(query) {
@@ -17,7 +16,7 @@ export default class SellerService extends BaseService {
     );
   }
 
-  getIncluded(sellers) {
+  getIncluded(...sellers) {
     const { allPostIds, monthsBetween } = sellers.reduce(
       ({ allPostIds, monthsBetween: { min, max } }, { months, postIds }) => {
         const newPostIds = [...allPostIds, ...postIds];

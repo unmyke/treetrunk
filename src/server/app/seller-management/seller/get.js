@@ -1,8 +1,6 @@
 import Operation from '../../operation';
 import { isEqualErrors } from '../../../domain/errors';
 
-isEqualErrors;
-
 export default class GetSeller extends Operation {
   static constraints = {
     sellerIdValue: {
@@ -41,9 +39,9 @@ export default class GetSeller extends Operation {
       const sellerId = new SellerId({ value: sellerIdValue });
       const newSeller = await sellerRepo.getById(sellerId);
 
-      const { posts, seniorityTypes } = await sellerService.getIncluded([
-        newSeller,
-      ]);
+      const { posts, seniorityTypes } = await sellerService.getIncluded(
+        newSeller
+      );
 
       this.emit(SUCCESS, { seller: newSeller, posts, seniorityTypes });
     } catch (error) {

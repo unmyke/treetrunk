@@ -34,18 +34,16 @@ export default class GetAllSellers extends Operation {
 
       const sellers = await sellerRepo.find(query);
       const { posts, seniorityTypes } = await sellerService.getIncluded(
-        sellers
+        ...sellers
       );
 
-      console.log({ sellers, posts, seniorityTypes });
-
-      this.emit(SUCCESS, { sellers, posts, seniorityTypes });
+      return this.emit(SUCCESS, { sellers, posts, seniorityTypes });
     } catch (error) {
       if (error.message === 'ValidationError') {
         return this.emit(VALIDATION_ERROR, error);
       }
 
-      this.emit(ERROR, error);
+      return this.emit(ERROR, error);
     }
   }
 }

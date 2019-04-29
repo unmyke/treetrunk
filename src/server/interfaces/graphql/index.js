@@ -1,10 +1,11 @@
 import { ApolloServer } from 'apollo-server';
-import typeDefs from './typeDefs';
+
+import schema from './schema';
 import resolvers from './resolvers';
 
 export default ({ config, logger, services }) => {
   const server = new ApolloServer({
-    typeDefs,
+    schema,
     resolvers,
     context: {
       services,

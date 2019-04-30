@@ -6,7 +6,7 @@ const Node = interfaceType({
   name: 'Node',
   definition(t) {
     t.id('id', {
-      resolve: (o) => getId(o),
+      resolve: getId,
       description: 'Unique identifier for the resource',
     });
     t.resolveType(() => null);

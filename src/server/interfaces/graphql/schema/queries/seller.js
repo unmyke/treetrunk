@@ -1,7 +1,7 @@
 import { queryField, stringArg } from 'nexus';
 
 import { Seller } from '../types';
-import { sellerResolver } from '../resolvers';
+import { Seller as sellerResolver } from '../resolvers';
 
 const sellersQueryField = queryField('seller', {
   type: Seller,

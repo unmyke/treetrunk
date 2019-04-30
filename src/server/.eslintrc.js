@@ -19,4 +19,7 @@ module.exports = {
       alias,
     },
   },
+  rules: {
+    'consistent-return': 'off',
+  },
 };

@@ -11,8 +11,8 @@ const SeniorityType = objectType({
     t.string('name');
     t.int('months', { nullable: true });
     t.float('award', { nullable: true });
-    t.field('state', DeletableEntityState);
-    t.list.field('awards', Award);
+    t.field('state', { type: DeletableEntityState });
+    t.list.field('awards', { type: Award });
   },
 });
 

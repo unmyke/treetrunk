@@ -34,8 +34,8 @@ const Seller = objectType({
     });
     t.day('dismissAt', { nullable: true });
     t.day('recruitedAt', { nullable: true });
-    t.field('state', SellerStateEnum);
-    t.list.field('appointments', SellerAppointment);
+    t.field('state', { type: SellerStateEnum });
+    t.list.field('appointments', { type: SellerAppointment });
   },
 });
 

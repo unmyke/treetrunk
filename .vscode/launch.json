@@ -22,7 +22,7 @@
       "request": "launch",
       "name": "console (run)",
       "program": "${workspaceFolder}/node_modules/.bin/gulp",
-      "args": ["devConcole"],
+      "args": ["devConsole"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",

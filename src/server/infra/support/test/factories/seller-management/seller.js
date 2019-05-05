@@ -18,6 +18,8 @@ const Seller = (factory, { Seller }) => {
           }))
         ),
     createdAt: () => getRandomDay(),
+    deletedAt: () => getRandomDay(),
+    updatedAt: () => getRandomDay(),
   }));
 };
 

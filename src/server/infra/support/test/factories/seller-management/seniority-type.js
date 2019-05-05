@@ -1,4 +1,4 @@
-import { getDaysSequence } from '../_lib/day-utils';
+import { getRandomDay, getDaysSequence } from '../_lib/day-utils';
 
 const SeniorityType = (factory, { SeniorityType }) => {
   factory.define('seniorityType', SeniorityType, ({ awardsCount = 1 }) => {
@@ -12,6 +12,9 @@ const SeniorityType = (factory, { SeniorityType }) => {
           value: factory.chance('floating', { fixed: 2, min: 0 })(),
           day,
         })),
+      createdAt: () => getRandomDay(),
+      deletedAt: () => getRandomDay(),
+      updatedAt: () => getRandomDay(),
     };
   });
 };

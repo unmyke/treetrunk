@@ -1,4 +1,4 @@
-import { getDaysSequence } from '../_lib/day-utils';
+import { getRandomDay, getDaysSequence } from '../_lib/day-utils';
 
 const Post = (factory, { Post }) => {
   factory.define('post', Post, ({ pieceRatesCount = 1 }) => {
@@ -11,6 +11,9 @@ const Post = (factory, { Post }) => {
           value: factory.chance('floating', { fixed: 1, min: 0, max: 20 })(),
           day,
         })),
+      createdAt: () => getRandomDay(),
+      deletedAt: () => getRandomDay(),
+      updatedAt: () => getRandomDay(),
     };
   });
 };

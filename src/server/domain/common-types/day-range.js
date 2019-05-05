@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-import { BaseValue } from '../../_lib';
-import Day from '../day';
+import { BaseValue } from '../_lib';
+import Day from './day';
 // import { addErrorDefinitionProperty } from '@infra/support/addErrorDefinition';
 
 export default class DayRange extends BaseValue {

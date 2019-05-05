@@ -17,7 +17,7 @@ import {
 } from 'date-fns';
 
 import { isValidDate, convertDate } from '@infra/support/date-helpers';
-import { BaseValue } from '../../_lib';
+import { BaseValue } from '../_lib';
 
 const ru = require('date-fns/locale/ru');
 

@@ -22,9 +22,8 @@ const applyFSM = (EntityClass) => {
       onInvalidTransition() {
         throw errors.transitionNotAllowed();
       },
-
       onAfterTransition() {
-        this.updatedAt = new Date();
+        if (this.state !== init) this.updatedAt = new Date();
       },
       ...methods,
     },

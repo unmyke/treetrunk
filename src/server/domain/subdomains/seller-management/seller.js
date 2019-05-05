@@ -7,7 +7,7 @@ import { errors } from '../../errors';
 import { Seller as states } from '../../states';
 import { SellerId, PostId, PersonName, Day, Diary } from '../../common-types';
 
-// Hadnle errors throw inside Diary class
+// Hadnle errors threw inside Diary class
 
 const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.appointmentAlreadyExists(),
@@ -35,6 +35,7 @@ const transitions = {
   DELETE_DISMISS: 'deleteDismiss',
   UPDATE_DISMISS_TO: 'updateDismissTo',
   DELETE: 'delete',
+  RESTORE: 'restore',
 };
 
 const stateTransitionFunctions = {
@@ -164,29 +165,38 @@ export default class Seller extends BaseEntity {
         from: states.DISMISSED,
         to: states.DELETED,
       },
+      {
+        name: transitions.RESTORE,
+        from: states.DELETED,
+        to: states.DISMISSED,
+      },
     ],
 
     methods: {
-      onBeforeInvalidTransition(transition, from) {
-        switch (from) {
-          case states.DELETED:
+      onInvalidTransition(transition, from) {
+        switch (true) {
+          case from === states.DELETED:
             throw errors.sellerDeleted();
-        }
 
-        switch (transition) {
-          case transitions.DELETE_APPOINTMENT_AT:
-            throw errors.sellerNotRecruited();
-
-          case transitions.UPDATE_APPOINTMENT_TO:
-            throw errors.sellerNotRecruited();
-
-          case transitions.DISMISS_AT:
-            throw errors.sellerNotRecruited();
-
-          case transitions.DELETE_DISMISS:
+          case transition === transitions.DELETE:
             throw errors.sellerNotDismissed();
 
-          case transitions.UPDATE_DISMISS_TO:
+          case transition === transitions.RESTORE:
+            throw errors.sellerNotDeleted();
+
+          case transition === transitions.DELETE_APPOINTMENT_AT:
+            throw errors.sellerNotRecruited();
+
+          case transition === transitions.UPDATE_APPOINTMENT_TO:
+            throw errors.sellerNotRecruited();
+
+          case transition === transitions.DISMISS_AT:
+            throw errors.sellerNotRecruited();
+
+          case transition === transitions.DELETE_DISMISS:
+            throw errors.sellerNotDismissed();
+
+          case transition === transitions.UPDATE_DISMISS_TO:
             throw errors.sellerNotDismissed();
 
           default:
@@ -194,7 +204,10 @@ export default class Seller extends BaseEntity {
         }
       },
 
-      onBeforeUpdate(_, { lastName, firstName, middleName, phone }) {
+      [`onBefore${transitions.UPDATE}`](
+        _,
+        { lastName, firstName, middleName, phone }
+      ) {
         this._personName = new PersonName({
           lastName: lastName || this.lastName,
           firstName: firstName || this.firstName,
@@ -204,32 +217,44 @@ export default class Seller extends BaseEntity {
         this.phone = phone || this.phone;
       },
 
-      onBeforeAddAppointment(_, postId, day = new Day()) {
+      [`onBefore${transitions.AddAppointment}`](_, postId, day = new Day()) {
         return diaryOperationRunner(() => this._appointments.add(postId, day));
       },
 
-      onBeforeDeleteAppointmentAt(_, day = new Day()) {
+      [`onBefore${transitions.DELETE_APPOINTMENT_AT}`](_, day = new Day()) {
         return diaryOperationRunner(() => this._appointments.deleteAt(day));
       },
 
-      onBeforeUpdateAppointmentTo(_, day, newPostId, newDay = new Day()) {
+      [`onBefore${transitions.UPDATE_APPOINTMENT_TO}`](
+        _,
+        day,
+        newPostId,
+        newDay = new Day()
+      ) {
         return diaryOperationRunner(() =>
           this._appointments.updateTo(day, newPostId, newDay)
         );
       },
 
-      onBeforeDismissAt(_, day = new Day()) {
+      [`onBefore${transitions.DISMISS_AT}`](_, day = new Day()) {
         return diaryOperationRunner(() => this._appointments.addCloseAt(day));
       },
 
-      onBeforeDeleteDismiss() {
+      [`onBefore${transitions.DELETE_DISMISS}`]() {
         return diaryOperationRunner(() => this._appointments.deleteClose());
       },
 
-      onBeforeUpdateDismissTo(_, day = new Day()) {
+      [`onBefore${transitions.UPDATE_DISMISS_TO}`](_, day = new Day()) {
         return diaryOperationRunner(() =>
           this._appointments.updateCloseTo(day)
         );
+      },
+
+      [`onAfter${transitions.DELETE}`]() {
+        this.deletedAt = new Date();
+      },
+      [`onAfter${transitions.RESTORE}`]() {
+        this.deletedAt = null;
       },
     },
   };
@@ -242,7 +267,7 @@ export default class Seller extends BaseEntity {
     phone,
     ...props
   }) {
-    super({ id: sellerId, props });
+    super({ id: sellerId, ...props });
     this._personName = new PersonName({
       lastName,
       firstName,

@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
+import { loop } from '@domain/_lib/base-methods';
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { SeniorityType as states } from '../../states';
 import { SeniorityTypeId, Day, Diary } from '../../common-types';
-import { loop } from '@domain/_lib/base-methods';
 
 const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.awardAlreadyExists(),
@@ -20,9 +20,9 @@ const diaryOperationRunner = getSyncOperationRunner(diaryErrorMessageMapper);
 
 const transitions = {
   UPDATE: 'update',
-  ADD_PIECE_RATE: 'addAward',
-  DELETE_PIECE_RATE_AT: 'deleteAwardAt',
-  UPDATE_PIECE_RATE_TO: 'updateAwardTo',
+  ADD_AWARD: 'addAward',
+  DELETE_AWARD_AT: 'deleteAwardAt',
+  UPDATE_AWARD_TO: 'updateAwardTo',
   ACTIVATE: 'activate',
   INACTIVATE: 'inactivate',
 };
@@ -61,17 +61,17 @@ export default class SeniorityType extends BaseEntity {
     transitions: [
       { name: transitions.UPDATE, from: '*', to: loop },
       {
-        name: transitions.ADD_PIECE_RATE,
+        name: transitions.ADD_AWARD,
         from: states.ACTIVE,
         to: states.ACTIVE,
       },
       {
-        name: transitions.DELETE_PIECE_RATE_AT,
+        name: transitions.DELETE_AWARD_AT,
         from: states.ACTIVE,
         to: states.ACTIVE,
       },
       {
-        name: transitions.UPDATE_PIECE_RATE_TO,
+        name: transitions.UPDATE_AWARD_TO,
         from: states.ACTIVE,
         to: states.ACTIVE,
       },
@@ -84,27 +84,49 @@ export default class SeniorityType extends BaseEntity {
     ],
 
     methods: {
-      onUpdate(_, { name }) {
+      onInvalidTransition(from) {
+        switch (from) {
+          case states.DELETED:
+            throw errors.seniorityTypeDeleted();
+
+          default:
+            throw errors.seniorityTypeActive();
+        }
+      },
+
+      [`onBefore${transitions.UPDATE}`](_, { name }) {
         this.name = name || this.name;
       },
 
-      onAddAward(_, value, day = new Day()) {
+      [`onBefore${transitions.ADD_AWARD}`](_, value, day = new Day()) {
         return diaryOperationRunner(() => this._awards.add(value, day));
       },
 
-      onDeleteAwardAt(_, day = new Day()) {
+      [`onBefore${transitions.DELETE_AWARD_AT}`](_, day = new Day()) {
         return diaryOperationRunner(() => this._awards.deleteAt(day));
       },
 
-      onUpdateAwardTo(_, day, newValue, newDay) {
+      [`onBefore${transitions.UPDATE_AWARD_TO}`](_, day, newValue, newDay) {
         return diaryOperationRunner(() =>
           this._awards.updateTo(day, newValue, newDay)
         );
       },
+      [`onAfter${transitions.INACTIVATE}`]() {
+        this.deletedAt = new Date();
+      },
+
+      [`onAfter${transitions.ACTIVATE}`]() {
+        this.deletedAt = null;
+      },
     },
   };
 
-  constructor({ seniorityTypeId = SeniorityTypeId(), name, months, ...props }) {
+  constructor({
+    seniorityTypeId = new SeniorityTypeId(),
+    name,
+    months,
+    ...props
+  }) {
     super({ id: seniorityTypeId, ...props });
     this.name = name;
     this.months = months;

@@ -1,7 +1,7 @@
 import BaseRepository from './base';
 
-const PostRepository = ({ Model, mapper }) => {
-  const baseRepo = BaseRepository({ Model, mapper });
+const PostRepository = ({ Model, mapper, errors }) => {
+  const baseRepo = BaseRepository({ Model, mapper, errors });
 
   return Object.freeze({
     ...baseRepo,

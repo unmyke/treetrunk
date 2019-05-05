@@ -125,7 +125,7 @@ describe('Domain :: entities :: SeniorityType', () => {
         seniorityType.updateAwardTo(award1day, award2value, award1day);
 
         expect(seniorityType.awards[0].day).toEqual(
-          new Day({ value: startOfDay(award1day) })
+          new Day({ value: startOfDay(award1day.value) })
         );
       });
     });

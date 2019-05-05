@@ -3,7 +3,7 @@ import { startOfDay } from 'date-fns';
 import { Day, PostId } from '../../common-types';
 import { Post as states } from '../../states';
 
-import Post from '../post';
+import Post from './post';
 
 const getRawPost = ({ postId, name, state, pieceRates }) => ({
   postId,
@@ -222,7 +222,7 @@ describe('Domain :: entities :: Post', () => {
         post.updatePieceRateTo(pieceRate1day, pieceRate3value, pieceRate1day);
 
         expect(post.pieceRates[0].day).toEqual(
-          new Day({ value: startOfDay(pieceRate1day) })
+          new Day({ value: startOfDay(pieceRate1day.value) })
         );
       });
     });

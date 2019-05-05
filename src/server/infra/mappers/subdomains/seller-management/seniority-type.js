@@ -1,3 +1,5 @@
+import { addTimestamp } from '../../_lib';
+
 import {
   SeniorityTypeId as SeniorityTypeIdMapper,
   Day as DayMapper,
@@ -20,7 +22,14 @@ const SeniorityTypeMapper = ({ commonTypes, Entity }) => {
     };
   };
 
-  const toEntity = ({ seniorityTypeId, name, months, state, awards }) => {
+  const toEntity = ({
+    seniorityTypeId,
+    name,
+    months,
+    state,
+    awards,
+    ...props
+  }) => {
     return Entity.restore({
       seniorityTypeId: seniorityTypeIdMapper.toEntity(seniorityTypeId),
       name,
@@ -30,6 +39,7 @@ const SeniorityTypeMapper = ({ commonTypes, Entity }) => {
         value,
         day: dayMapper.toEntity({ value: day }),
       })),
+      ...props,
     });
   };
 
@@ -39,4 +49,4 @@ const SeniorityTypeMapper = ({ commonTypes, Entity }) => {
   });
 };
 
-export default SeniorityTypeMapper;
+export default addTimestamp(SeniorityTypeMapper);

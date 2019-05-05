@@ -1,3 +1,5 @@
+import { addTimestamp } from '../../_lib';
+
 import {
   SellerId as SellerIdMapper,
   PostId as PostIdMapper,
@@ -40,6 +42,7 @@ const SellerMapper = ({ commonTypes, Entity }) => {
     phone,
     state,
     appointments = [],
+    ...props
   }) => {
     const sellerEntity = Entity.restore({
       sellerId: sellerIdMapper.toEntity(sellerId),
@@ -52,6 +55,7 @@ const SellerMapper = ({ commonTypes, Entity }) => {
         postId: postIdMapper.toEntity(postId),
         day: dayMapper.toEntity(day),
       })),
+      ...props,
     });
 
     return sellerEntity;
@@ -63,4 +67,4 @@ const SellerMapper = ({ commonTypes, Entity }) => {
   });
 };
 
-export default SellerMapper;
+export default addTimestamp(SellerMapper);

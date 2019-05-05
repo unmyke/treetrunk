@@ -1,12 +1,12 @@
 import { queryField, idArg } from 'nexus';
 
-import { Seller } from '../types';
-import { Seller as sellerResolver } from '../resolvers';
+import { SellerConnection } from '../connections';
+import { getSellers } from '../resolvers';
 
 const sellerQueryField = queryField('seller', {
-  type: Seller,
+  type: SellerConnection,
   args: { id: idArg({ required: true }) },
-  resolve: sellerResolver,
+  resolve: getSellers,
 });
 
 export default sellerQueryField;

@@ -1,14 +1,11 @@
 import id from './id';
 import post from './post';
-import seniorityType from './seniority-type';
 import day from './day';
+import timestamp from './timestamp';
 
-const serializers = { id, post, seniorityType, day };
+const serializers = { id, post, day };
 
-const sellerSerializer = ({ seller, posts, seniorityType }) => {
-  const getPostById = (postId) =>
-    serializers.post(posts[serializers.id(postId)]);
-
+const sellerSerializer = (seller) => {
   const {
     sellerId,
     fullName,
@@ -24,11 +21,6 @@ const sellerSerializer = ({ seller, posts, seniorityType }) => {
     state,
   } = seller;
 
-  const serializedAppointments = appointments.map(({ postId, day }) => ({
-    post: getPostById(postId),
-    day: serializers.day(day),
-  }));
-
   return {
     id: serializers.id(sellerId),
     fullName,
@@ -36,14 +28,16 @@ const sellerSerializer = ({ seller, posts, seniorityType }) => {
     middleName,
     lastName,
     phone,
-    post: getPostById(postId),
-    posts: postIds.map(getPostById),
-    seniorityType: serializers.seniorityType(seniorityType),
+    postId: serializers.id(postId),
+    postIds: postIds.map(serializers.id),
     recruitDay: serializers.day(recruitDay),
     dismissDay: serializers.day(dismissDay),
-    appointments: serializedAppointments,
+    appointments: appointments.map(({ postId, day }) => ({
+      postId: serializers.id(postId),
+      day: serializers.day(day),
+    })),
     state,
   };
 };
 
-export default sellerSerializer;
+export default timestamp(sellerSerializer);

@@ -14,4 +14,14 @@ export default class BaseEntity extends BaseClass {
     applyFSM(this.constructor);
     this._fsm();
   }
+
+  equals(entity) {
+    const idPropName = `${this.constuctor.name.toLowerCase()}Id`;
+    const isInstanceOfSameClass = this.constuctor === entity.constructor;
+    const isIdinstanceOfSameClass =
+      this[idPropName].constuctor === entity[idPropName].constructor;
+    const isIdEqual = this[idPropName].equals(entity[idPropName]);
+
+    return isInstanceOfSameClass && isIdinstanceOfSameClass && isIdEqual;
+  }
 }

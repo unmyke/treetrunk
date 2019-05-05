@@ -1,4 +1,4 @@
-const identity = (value) => (value !== undefined ? value : null);
+import { identity } from '@common';
 
 export const actionTypes = {
   CREATE: 'CREATE',

@@ -1,4 +1,4 @@
-const postResolver = (_, { id }, { getPost }) =>
+const getPost = (_, { id }, { getPost }) =>
   new Promise((resolve, reject) => {
     const { SUCCESS, ERROR, NOT_FOUND } = getPost.outputs;
 
@@ -9,4 +9,4 @@ const postResolver = (_, { id }, { getPost }) =>
     getPost.execute(id);
   });
 
-export default postResolver;
+export default getPost;

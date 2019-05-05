@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server';
 
 import schema from './schema';
-// import resolvers from './resolvers';
+import * as serializers from './serializers';
 
 export default ({ config, logger, services }) => {
   const server = new ApolloServer({
@@ -9,9 +9,9 @@ export default ({ config, logger, services }) => {
     // resolvers,
     context: {
       services,
+      serializers,
     },
   });
-  console.log(services.SellerManagement.Post.getPost.toString());
 
   const start = () =>
     new Promise((resolve, reject) =>

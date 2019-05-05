@@ -1,9 +1,9 @@
 import { enumType } from 'nexus';
 
-const SellerStateEnum = enumType({
-  name: 'SellerStateEnum',
+const SellerState = enumType({
+  name: 'SellerState',
   description: 'Seller states',
   members: ['NEW', 'RECRUITED', 'DISMISS', 'DELETED'],
 });
 
-export default SellerStateEnum;
+export default SellerState;

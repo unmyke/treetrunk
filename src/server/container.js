@@ -75,17 +75,16 @@ bottle.factory(
       Object.keys(EntityOperations).reduce(
         (acc, operationName) => ({
           ...acc,
-          [lowerFirst(operationName)]: () =>
-            new EntityOperations[operationName]({
-              entities: subdomains[SubdomainName],
-              commonTypes,
-              repositories: repositories[SubdomainName],
-              validate: makeValidator(
-                EntityOperations[operationName].constraints,
-                errors
-              ),
-              errors,
-            }),
+          [lowerFirst(operationName)]: new EntityOperations[operationName]({
+            entities: subdomains[SubdomainName],
+            commonTypes,
+            repositories: repositories[SubdomainName],
+            validate: makeValidator(
+              EntityOperations[operationName].constraints,
+              errors
+            ),
+            errors,
+          }),
         }),
         {}
       )

@@ -39,11 +39,16 @@ export default class GetSeller extends Operation {
       const sellerId = new SellerId({ value: sellerIdValue });
       const newSeller = await sellerRepo.getById(sellerId);
 
-      const { posts, seniorityTypes } = await sellerService.getIncluded(
-        newSeller
-      );
+      // const { posts, seniorityTypes } = await sellerService.getIncluded(
+      //   newSeller
+      // );
 
-      this.emit(SUCCESS, { seller: newSeller, posts, seniorityTypes });
+      this.emit(SUCCESS, newSeller);
+      // this.emit(SUCCESS, {
+      //   seller: newSeller,
+      //   posts,
+      //   seniorityType: seniorityTypes[0],
+      // });
     } catch (error) {
       switch (true) {
         case isEqualErrors(error, errors.sellerNotFound()):

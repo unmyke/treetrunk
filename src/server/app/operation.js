@@ -1,5 +1,8 @@
 import EventEmitter from 'events';
 
+const createOutputs = (outputsArray) =>
+  outputsArray.reduce((obj, output) => ({ ...obj, [output]: output }), {});
+
 export default class Operation extends EventEmitter {
   static setOutputs(outputs) {
     Object.defineProperty(this.prototype, 'outputs', {
@@ -26,6 +29,3 @@ export default class Operation extends EventEmitter {
     );
   }
 }
-
-const createOutputs = (outputsArray) =>
-  outputsArray.reduce((obj, output) => ({ ...obj, [output]: output }), {});

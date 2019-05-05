@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
+import { loop } from '@domain/_lib/base-methods';
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { Post as states } from '../../states';
 import { Day, Diary, PostId } from '../../common-types';
-import { loop } from '@domain/_lib/base-methods';
 
 const diaryErrorMessageMapper = {
   RECORD_ALREADY_EXISTS: errors.pieceRateAlreadyExists(),
@@ -23,13 +23,12 @@ const transitions = {
   ADD_PIECE_RATE: 'addPieceRate',
   DELETE_PIECE_RATE_AT: 'deletePieceRateAt',
   UPDATE_PIECE_RATE_TO: 'updatePieceRateTo',
-  ACTIVATE: 'activate',
-  INACTIVATE: 'inactivate',
+  RESTORE: 'restore',
+  DELETE: 'delete',
 };
 
 export default class Post extends BaseEntity {
   static restore({ name, pieceRates, state, ...props }) {
-    // console.log({ name, pieceRates, state, ...props });
     const post = new Post({ name, state, ...props });
     post._pieceRates = Diary.restore(pieceRates);
     post.setState(state);
@@ -48,48 +47,70 @@ export default class Post extends BaseEntity {
   static fsm = {
     init: states.ACTIVE,
     transitions: [
-      { name: transitions.UPDATE, from: '*', to: loop },
+      { name: transitions.UPDATE, from: states.ACTIVE, to: loop },
       {
         name: transitions.ADD_PIECE_RATE,
         from: states.ACTIVE,
-        to: states.ACTIVE,
+        to: loop,
       },
       {
         name: transitions.DELETE_PIECE_RATE_AT,
         from: states.ACTIVE,
-        to: states.ACTIVE,
+        to: loop,
       },
       {
         name: transitions.UPDATE_PIECE_RATE_TO,
         from: states.ACTIVE,
-        to: states.ACTIVE,
+        to: loop,
       },
       {
-        name: transitions.INACTIVATE,
+        name: transitions.DELETE,
         from: states.ACTIVE,
         to: states.DELETED,
       },
-      { name: transitions.ACTIVATE, from: states.DELETED, to: states.ACTIVE },
+      { name: transitions.RESTORE, from: states.DELETED, to: states.ACTIVE },
     ],
 
     methods: {
-      // update({ name })
-      onBeforeUpdate(lifecycle, { name }) {
-        this.name = name;
+      onInvalidTransition(from) {
+        switch (from) {
+          case states.DELETED:
+            throw errors.postDeleted();
+
+          default:
+            throw errors.postActive();
+        }
       },
 
-      onBeforeAddPieceRate(lifecycle, value, day = new Day()) {
+      [`onBefore${transitions.UPDATE}`](_, { name }) {
+        this.name = name || this.name;
+      },
+
+      [`onBefore${transitions.ADD_PIECE_RATE}`](_, value, day = new Day()) {
         return diaryOperationRunner(() => this._pieceRates.add(value, day));
       },
 
-      onBeforeDeletePieceRateAt(lifecycle, day = new Day()) {
+      [`onBefore${transitions.DELETE_PIECE_RATE_AT}`](_, day = new Day()) {
         return diaryOperationRunner(() => this._pieceRates.deleteAt(day));
       },
 
-      onBeforeUpdatePieceRateTo(lifecycle, day, newValue, newDay) {
+      [`onBefore${transitions.UPDATE_PIECE_RATE_TO}`](
+        _,
+        day,
+        newValue,
+        newDay
+      ) {
         return diaryOperationRunner(() =>
           this._pieceRates.updateTo(day, newValue, newDay)
         );
+      },
+
+      [`onAfter${transitions.DELETE}`]() {
+        this.deletedAt = new Date();
+      },
+
+      [`onAfter${transitions.RESTORE}`]() {
+        this.deletedAt = null;
       },
     },
   };

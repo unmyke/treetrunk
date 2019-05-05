@@ -1,6 +1,15 @@
 import { BaseService } from '../../_lib';
 import { SellerId } from '../../common-types';
 
+const listToObject = ({ key, list }) =>
+  list.reduce(
+    (prevList, item) => ({
+      ...prevList,
+      [item[key]]: item,
+    }),
+    {}
+  );
+
 export default class SellerService extends BaseService {
   getSellersByQuery(query) {
     return this.repositories.Seller.find(query).then((sellers) =>
@@ -18,11 +27,11 @@ export default class SellerService extends BaseService {
 
   getIncluded(...sellers) {
     const { allPostIds, monthsBetween } = sellers.reduce(
-      ({ allPostIds, monthsBetween: { min, max } }, { months, postIds }) => {
+      ({ allPostIds, monthsBetween: { min, max } }, { seniority, postIds }) => {
         const newPostIds = [...allPostIds, ...postIds];
 
-        const newMin = min === undefined || months < min ? months : min;
-        const newMax = max === undefined || months > max ? months : max;
+        const newMin = min === undefined || seniority < min ? seniority : min;
+        const newMax = max === undefined || seniority > max ? seniority : max;
 
         const newMonthsBetween = {
           min: newMin,
@@ -35,8 +44,14 @@ export default class SellerService extends BaseService {
     );
 
     return Promise.all([
-      this.repositories.Post.find({ postIds: [...new Set(allPostIds)] }),
-      this.repositories.SeniorityType.find({ monthsBetween }),
-    ]).then(([posts, seniorityTypes]) => ({ posts, seniorityTypes }));
+      this.repositories.Post.getByIds([...new Set(allPostIds)]),
+      this.repositories.SeniorityType.getAllBetweenMonths(monthsBetween),
+    ]).then(([posts, seniorityTypes]) => ({
+      posts: listToObject({ key: 'postId', list: posts }),
+      seniorityTypes: listToObject({
+        key: 'seniorityTypeId',
+        list: seniorityTypes,
+      }),
+    }));
   }
 }

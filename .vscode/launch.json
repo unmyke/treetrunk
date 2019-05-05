@@ -14,7 +14,8 @@
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "sourceMaps": true,
-      "runtimeExecutable": "~/.nodenv/shims/node"
+      "runtimeExecutable": "~/.nodenv/shims/node",
+      "autoAttachChildProcesses": true
       // "outFiles": ["dst/***.js*"],
     },
     {
@@ -22,7 +23,7 @@
       "request": "launch",
       "name": "console (run)",
       "program": "${workspaceFolder}/node_modules/.bin/gulp",
-      "args": ["devConsole"],
+      "args": ["devConsole", "--nolazy"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
@@ -60,6 +61,13 @@
         "program": "${workspaceFolder}/node_modules/jest/bin/jest"
       },
       "runtimeExecutable": "~/.nodenv/shims/node"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Gulp task: devServer",
+      "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+      "args": ["devServer"]
     }
   ]
 }

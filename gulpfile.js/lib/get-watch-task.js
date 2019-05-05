@@ -40,15 +40,15 @@ module.exports = (entry) =>
         // eslint-disable-next-line no-fallthrough
         default:
           if (subprocess) shutdownSubprocess(subprocess);
-          subprocess = getChildProcess(getOutputPath({ stats, entry })).on(
-            'message',
-            (message) => {
-              if (message === 'SIGINT') {
-                process.emit(message);
-                subprocess = undefined;
-              }
+          subprocess = getChildProcess(
+            getOutputPath({ stats, entry }),
+            '--inspect-brk'
+          ).on('message', (message) => {
+            if (message === 'SIGINT') {
+              process.emit(message);
+              subprocess = undefined;
             }
-          );
+          });
 
           break;
       }

@@ -5,3 +5,4 @@ config/*.json
 build
 **/.DS_Store
 report.*.json
+**/schema.graphql

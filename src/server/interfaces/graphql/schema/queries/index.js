@@ -1,9 +1,22 @@
 import { queryType } from 'nexus';
+import pluralize from 'pluralize';
 
-export { default as seller } from './seller';
-export { default as post } from './post';
-// export { default as sellers } from './sellers';
+import types from '../types';
+import { getTypeQueryField, getConnectionQueryField } from './_lib';
 
-export const rootQuery = queryType({
+const rootQuery = queryType({
   definition() {},
 });
+
+const typeQueries = Object.keys(types).reduce(
+  (prevTypeQueries, typeName) => ({
+    ...prevTypeQueries,
+    [typeName]: getTypeQueryField(typeName),
+    [pluralize(typeName)]: getConnectionQueryField(typeName),
+  }),
+  {}
+);
+
+export default typeQueries;
+
+export const contains = [rootQuery];

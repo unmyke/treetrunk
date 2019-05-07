@@ -1,8 +1,8 @@
 import { objectType } from 'nexus';
 
-import PieceRate from './post-piece-rate';
-import { Node, Timestamps } from '../interfaces';
-import { DeletableEntityState } from '../enums';
+import PieceRate from './piece-rate';
+import { Node, Timestamps } from '../../interfaces';
+import { DeletableEntityState } from '../../enums';
 
 const Post = objectType({
   name: 'Post',

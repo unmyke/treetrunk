@@ -1,6 +1,6 @@
 import { objectType } from 'nexus';
 
-import Post from './post';
+import Post from '../post';
 
 const SellerAppontment = objectType({
   name: 'SellerAppontment',

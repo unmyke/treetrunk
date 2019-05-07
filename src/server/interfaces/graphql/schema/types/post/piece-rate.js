@@ -1,7 +1,7 @@
 import { objectType } from 'nexus';
 
-const PieceRate = objectType({
-  name: 'PieceRate',
+const PostPieceRate = objectType({
+  name: 'PostPieceRate',
   description: 'Piece rate of post',
   definition(t) {
     t.float('value');
@@ -9,4 +9,4 @@ const PieceRate = objectType({
   },
 });
 
-export default PieceRate;
+export default PostPieceRate;

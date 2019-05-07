@@ -1,11 +1,13 @@
 import { objectType, arg, intArg } from 'nexus';
 
+import * as resolvers from '../resolvers';
+
 import PageInfo from './page-info';
 // import { Edge } from '../interfaces';
 import { Filter as FilterInput, Sort as SortInput } from '../inputs';
 import { Cursor } from '../scalars';
 
-export default (name, resolver) => {
+export default (name) => {
   const Edge = objectType({
     name: `${name}Edge`,
     definition(t) {
@@ -25,7 +27,7 @@ export default (name, resolver) => {
       filter: FilterInput,
       sort: SortInput,
     },
-    resolver,
+    resolver: resolvers[name],
     definition(t) {
       t.list.field('edges', { type: `${name}Edge` });
       t.field('pageInfo', { type: PageInfo });

@@ -1,6 +1,5 @@
 export { default as Find } from './find';
 export { default as GetPost } from './get';
-export { default as GetPostsByIds } from './get-by-ids';
 export { default as CreatePost } from './create';
 export { default as UpdatePost } from './update';
 export { default as DeletePost } from './delete';

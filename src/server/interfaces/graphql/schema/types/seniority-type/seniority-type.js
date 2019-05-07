@@ -1,8 +1,8 @@
 import { objectType } from 'nexus';
 
-import Award from './seniority-type-award';
-import { Node, Timestamps } from '../interfaces';
-import { DeletableEntityState } from '../enums';
+import Award from './award';
+import { Node, Timestamps } from '../../interfaces';
+import { DeletableEntityState } from '../../enums';
 
 const SeniorityType = objectType({
   name: 'SeniorityType',
@@ -17,5 +17,3 @@ const SeniorityType = objectType({
 });
 
 export default SeniorityType;
-
-export { Award };

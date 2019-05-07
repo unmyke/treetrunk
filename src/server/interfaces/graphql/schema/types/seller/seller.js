@@ -1,11 +1,17 @@
 import { objectType } from 'nexus';
 
-import SellerAppointment from './seller-appontment';
-import SeniorityType from './seniority-type';
-import { Node, Timestamps } from '../interfaces';
-import { PostConnection } from '../connections';
-import { SellerState } from '../enums';
-import { getSeller, getPostsByPostIds } from '../resolvers';
+import Appointment from './appontment';
+import StateEnum from './state-enum';
+
+import SeniorityType from '../seniority-type';
+import { Node, Timestamps } from '../../interfaces';
+import connections from '../../connections';
+
+import {
+  getSeller,
+  getPostsByPostIds,
+  getSeniorityTypeByMonths,
+} from '../../resolvers';
 
 const Seller = objectType({
   name: 'Seller',
@@ -17,18 +23,19 @@ const Seller = objectType({
     t.string('lastName');
     t.phone('phone', { nullable: true });
     t.field('post', {
-      type: PostConnection,
+      type: connections.Post,
       nullable: true,
       resolve: getPostsByPostIds,
     });
     t.field('seniorityType', {
       type: SeniorityType,
       nullable: true,
+      resolve: getSeniorityTypeByMonths,
     });
     t.day('dismissAt', { nullable: true });
     t.day('recruitedAt', { nullable: true });
-    t.field('state', { type: SellerState });
-    t.list.field('appointments', { type: SellerAppointment });
+    t.field('state', { type: StateEnum });
+    t.list.field('appointments', { type: Appointment });
   },
 });
 

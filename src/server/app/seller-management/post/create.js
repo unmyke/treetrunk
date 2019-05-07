@@ -15,22 +15,21 @@ export default class CreatePost extends Operation {
       repositories: { Post: postRepo },
       entities: { Post },
       validate,
+      errors,
     } = this;
 
     try {
       validate({ name }, { exception: true });
 
       const post = new Post({ name });
-
       const newPost = await postRepo.add(post);
-
       this.emit(SUCCESS, newPost.toJSON());
     } catch (error) {
-      switch (error.code) {
-        case 'ALREADY_EXISTS':
+      switch (true) {
+        case isEqualErrors(error, errors.postAlreadyExists()):
           this.emit(ALREADY_EXISTS, error);
           break;
-        case 'INVALID_VALUE':
+        case isEqualErrors(error, errors.validationError()):
           this.emit(VALIDATION_ERROR, error);
           break;
         default:

@@ -16,9 +16,13 @@ const SeniorityTypeRepository = ({ Model, mapper, errors }) => {
       }
     );
 
+  const getByMonths = (months) =>
+    getAllBetweenMonths({ min: months, max: months });
+
   return Object.freeze({
     ...baseRepo,
     getAllBetweenMonths,
+    getByMonths,
   });
 };
 

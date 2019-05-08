@@ -7,7 +7,7 @@ const sellerResolver = (
         Seller: { getSeller },
       },
     },
-    serializers,
+    serializers: { Seller: sellerSerializer },
   }
 ) =>
   new Promise((resolve, reject) => {
@@ -15,7 +15,7 @@ const sellerResolver = (
 
     getSeller
       .on(SUCCESS, (seller) => {
-        const serializedSeller = serializers.seller(seller);
+        const serializedSeller = sellerSerializer(seller);
         // const serializedPosts = Object.keys(posts).reduce(
         //   ((prevPosts, postId) => {
         //     const serializedPostId = serializers.id(postId);

@@ -1,2 +1,3 @@
-export { default as seller } from './seller';
-export { default as post } from './post';
+export { default as Seller } from './seller';
+export { default as Post } from './post';
+export { default as SeniorityType } from './seniority-type';

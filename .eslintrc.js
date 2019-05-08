@@ -33,5 +33,6 @@ module.exports = {
     //   },
     // ],
     'no-shadow': 'off',
+    'import/namespace': ['error', { allowComputed: true }],
   },
 };

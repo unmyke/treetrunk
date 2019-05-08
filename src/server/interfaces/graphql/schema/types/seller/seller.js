@@ -3,12 +3,14 @@ import { objectType } from 'nexus';
 import Appointment from './appontment';
 import StateEnum from './state-enum';
 
+import Post from '../post';
 import SeniorityType from '../seniority-type';
 import { Node, Timestamps } from '../../interfaces';
 import connections from '../../connections';
 
 import {
   getSeller,
+  getPost,
   getPostsByPostIds,
   getSeniorityTypeByMonths,
 } from '../../resolvers';
@@ -23,6 +25,11 @@ const Seller = objectType({
     t.string('lastName');
     t.phone('phone', { nullable: true });
     t.field('post', {
+      type: Post,
+      nullable: true,
+      resolve: ({ postId }, _, ctx) => getPost(undefined, { id: postId }, ctx),
+    });
+    t.field('posts', {
       type: connections.Post,
       nullable: true,
       resolve: getPostsByPostIds,

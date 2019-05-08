@@ -1,5 +1,6 @@
 export { default as GetAllSeniorityTypes } from './get-all';
 export { default as GetSeniorityType } from './get';
+export { default as getSeniorityTypeByMonths } from './get-by-months';
 export { default as CreateSeniorityType } from './create';
 export { default as UpdateSeniorityType } from './update';
 export { default as DeleteSeniorityType } from './delete';

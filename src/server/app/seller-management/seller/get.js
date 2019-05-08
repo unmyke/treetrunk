@@ -15,23 +15,10 @@ export default class GetSeller extends Operation {
     const { SUCCESS, ERROR, NOT_FOUND, VALIDATION_ERROR } = this.outputs;
     const {
       commonTypes: { SellerId },
-      repositories: {
-        Seller: sellerRepo,
-        Post: postRepo,
-        SeniorityType: seniorityTypeRepo,
-      },
-      entities: { SellerService },
+      repositories: { Seller: sellerRepo },
       validate,
       errors,
     } = this;
-
-    const sellerService = new SellerService({
-      repositories: {
-        Seller: sellerRepo,
-        Post: postRepo,
-        SeniorityType: seniorityTypeRepo,
-      },
-    });
 
     try {
       validate({ sellerIdValue }, { exception: true });

@@ -2,7 +2,7 @@ import { enumType } from 'nexus';
 
 const DeletableEntityState = enumType({
   name: 'DeletableEntityState',
-  members: ['ACTIVE', 'DELETED'],
+  members: ['active', 'deleted'],
   description: 'States of deletable entities',
 });
 

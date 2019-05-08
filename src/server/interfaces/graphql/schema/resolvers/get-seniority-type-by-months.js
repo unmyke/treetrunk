@@ -1,16 +1,25 @@
 const getSeniorityTypebyMonthsResolver = (
   { seniority },
   _,
-  { getSeniorityByMonths }
+  {
+    services: {
+      SellerManagement: {
+        SeniorityType: { getSeniorityTypeByMonths },
+      },
+    },
+    serializers: { SeniorityType: seniorityTypeSerializer },
+  }
 ) =>
   new Promise((resolve, reject) => {
-    const { SUCCESS, NOT_FOUND, ERROR } = getSeniorityByMonths.outputs;
+    const { SUCCESS, NOT_FOUND, ERROR } = getSeniorityTypeByMonths.outputs;
 
-    getSeniorityByMonths.on(SUCCESS, (seniorityType) => resolve(seniorityType));
-    getSeniorityByMonths.on(NOT_FOUND, (error) => reject(error));
-    getSeniorityByMonths.on(ERROR, (error) => reject(error));
+    getSeniorityTypeByMonths.on(SUCCESS, (seniorityType) =>
+      resolve(seniorityTypeSerializer(seniorityType))
+    );
+    getSeniorityTypeByMonths.on(NOT_FOUND, (error) => reject(error));
+    getSeniorityTypeByMonths.on(ERROR, (error) => reject(error));
 
-    getSeniorityByMonths.execute(seniority);
+    getSeniorityTypeByMonths.execute(seniority);
   });
 
 export default getSeniorityTypebyMonthsResolver;

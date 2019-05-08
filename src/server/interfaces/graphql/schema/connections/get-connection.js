@@ -11,7 +11,7 @@ export default (name) => {
   const Edge = objectType({
     name: `${name}Edge`,
     definition(t) {
-      t.id('cursor', ({ id }) => `${name}:${id}`);
+      t.cursor('cursor', ({ id }) => `${name}:${id}`);
       t.field('node', { type: name });
     },
   });

@@ -1,11 +1,11 @@
 const addTimpestamp = (Mapper) => (opts) => {
   const mapper = Mapper(opts);
 
-  const toDatabase = ({ createdAt, updatedAt, deletedAt, ...entity }) => ({
+  const toDatabase = (entity) => ({
     ...mapper.toDatabase(entity),
-    createdAt,
-    updatedAt,
-    deletedAt,
+    createdAt: entity.createdAt,
+    updatedAt: entity.updatedAt,
+    deletedAt: entity.deletedAt,
   });
 
   const toEntity = ({ createdAt, updatedAt, deletedAt, ...data }) =>

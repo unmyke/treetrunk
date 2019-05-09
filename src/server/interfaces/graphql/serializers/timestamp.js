@@ -1,8 +1,8 @@
-import dateSerializer from './date';
+import dateTimeSerializer from './date-time';
 
 export default (serializer) => (entity) => ({
   ...serializer(entity),
-  createdAt: dateSerializer(entity.createdAt),
-  updatedAt: dateSerializer(entity.updatedAt),
-  deletedAt: dateSerializer(entity.deletedAt),
+  createdAt: dateTimeSerializer(entity.createdAt),
+  updatedAt: dateTimeSerializer(entity.updatedAt),
+  deletedAt: dateTimeSerializer(entity.deletedAt),
 });

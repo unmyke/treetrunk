@@ -1,12 +1,18 @@
 import { scalarType } from 'nexus';
-import { identity } from '@common';
+import { Cursor as cursorSerializer } from '../../serializers';
 
-const Cursor = scalarType({
-  name: 'Cursor',
+const CursorScalar = scalarType({
+  name: 'CursorScalar',
   asNexusMethod: 'cursor',
-  serialize: identity,
-  parseValue: identity,
-  parseLiteral: (ast) => (ast.kind === 'StringValue' ? ast.value : null),
+  serialize: cursorSerializer.serialize,
+  parseValue: (value) => {
+    // TODO Validation
+    return cursorSerializer.parse(value);
+  },
+  parseLiteral: (ast) => {
+    // TODO Validation
+    return cursorSerializer.parse(ast.value);
+  },
 });
 
-export default Cursor;
+export default CursorScalar;

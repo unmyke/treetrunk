@@ -1,1 +1,4 @@
-export { default as DeletableEntityState } from './deletable-entity-state';
+import DeletableEntityState from './deletable-entity-state';
+
+export default { DeletableEntityState };
+export const contains = [];

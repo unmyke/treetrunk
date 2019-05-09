@@ -1,13 +1,12 @@
 import { interfaceType } from 'nexus';
 
-import Node from './node';
+import NodeInterface from './node';
 
 const Edge = interfaceType({
-  name: 'Edge',
+  name: 'EdgeInterface',
   definition(t) {
     t.cursor('cursor');
-    t.node('node', Node);
-    t.resolveType(() => null);
+    t.node('node', { type: NodeInterface });
   },
 });
 

@@ -1,27 +1,45 @@
-import { makeSchema } from 'nexus';
+import { makeSchema, queryType, mutationType } from 'nexus';
 import { resolve } from 'path';
 
-import connections, { contains as connectionsContains } from './connections';
-import * as enums from './enums';
-import * as inputs from './inputs';
-import * as interfaces from './interfaces';
-import queries, { contains as queriesContains } from './queries';
-import * as scalars from './scalars';
-import typesContains, * as types from './types';
+// import { contains as connectionsContains } from './connections';
+import { contains as argsContains } from './args';
+import enums, { contains as enumsContains } from './enums';
+import inputs, { contains as inputsContains } from './inputs';
+import interfaces, { contains as interfacesContains } from './interfaces';
+import scalars, { contains as scalarsContains } from './scalars';
+import types, {
+  contains as typesContains,
+  connections as typeConnections,
+  queries as typeQueries,
+} from './types';
 // import * as mutations from './mutations';
+
+const Query = queryType({
+  definition() {},
+});
+
+const Mutation = mutationType({
+  definition() {},
+});
 
 const schema = makeSchema({
   types: [
-    enums,
-    inputs,
-    interfaces,
+    ...argsContains,
+    ...typesContains,
+    Query,
+    // Mutation,
+    ...scalarsContains,
     scalars,
-    connectionsContains,
-    connections,
-    typesContains,
+    ...enumsContains,
+    enums,
+    ...inputsContains,
+    inputs,
+    ...interfacesContains,
+    interfaces,
+    ...typesContains,
     types,
-    queriesContains,
-    queries,
+    typeConnections,
+    typeQueries,
   ],
   outputs: { schema: resolve(__dirname, 'schema.graphql') },
 });

@@ -1,3 +1,6 @@
-export { default as Node } from './node';
-// export { default as Edge } from './edge';
-export { default as Timestamps } from './timestamps';
+import Node from './node';
+// import Edge from './edge';
+import Timestamps from './timestamps';
+
+export default { Node, Timestamps };
+export const contains = [];

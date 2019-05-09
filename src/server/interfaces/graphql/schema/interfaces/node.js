@@ -2,8 +2,8 @@ import { interfaceType } from 'nexus';
 
 import getId from './get-id';
 
-const Node = interfaceType({
-  name: 'Node',
+const NodeInterface = interfaceType({
+  name: 'NodeInterface',
   definition(t) {
     t.id('id', {
       description: 'Unique identifier for the resource',
@@ -12,4 +12,4 @@ const Node = interfaceType({
   },
 });
 
-export default Node;
+export default NodeInterface;

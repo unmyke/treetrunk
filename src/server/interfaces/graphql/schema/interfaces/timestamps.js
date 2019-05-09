@@ -1,20 +1,13 @@
 import { interfaceType } from 'nexus';
+import { identity } from '@common';
 
 const Timestamps = interfaceType({
-  name: 'Timestamps',
+  name: 'TimestampsInterface',
   definition(t) {
-    t.date('createdAt', {
-      resolve: (value) => new Date(value),
-    });
-    t.date('updatedAt', {
-      nullable: true,
-      resolve: (value) => new Date(value),
-    });
-    t.date('deletedAt', {
-      nullable: true,
-      resolve: (value) => new Date(value),
-    });
-    t.resolveType(() => null);
+    t.dateTime('createdAt');
+    t.dateTime('updatedAt', { nullable: true });
+    t.dateTime('deletedAt', { nullable: true });
+    t.resolveType(identity);
   },
 });
 

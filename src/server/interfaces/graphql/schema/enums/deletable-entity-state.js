@@ -1,9 +1,9 @@
 import { enumType } from 'nexus';
 
-const DeletableEntityState = enumType({
-  name: 'DeletableEntityState',
-  members: ['active', 'deleted'],
+const DeletableEntityStateEnum = enumType({
+  name: 'DeletableEntityStateEnum',
   description: 'States of deletable entities',
+  members: ['active', 'deleted'],
 });
 
-export default DeletableEntityState;
+export default DeletableEntityStateEnum;

@@ -1,12 +1,19 @@
 import { scalarType } from 'nexus';
+import { Day as daySerializer } from '../../serializers';
 
-const Day = scalarType({
-  name: 'Day',
+const DayScalar = scalarType({
+  name: 'DayScalar',
   asNexusMethod: 'day',
   description: 'Day custom scalar type',
-  parseValue: (value) => new Date(value),
-  serialize: (value) => value.getTime(),
-  parseLiteral: (ast) => (ast.kind === 'IntValue' ? new Date(ast.value) : null),
+  serialize: daySerializer.serialize,
+  parseValue: (value) => {
+    // TODO vaildation
+    return daySerializer.parse(value);
+  },
+  parseLiteral: (ast) => {
+    // TODO vaildation
+    return daySerializer.parse(ast.value);
+  },
 });
 
-export default Day;
+export default DayScalar;

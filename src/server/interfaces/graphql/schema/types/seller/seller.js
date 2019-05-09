@@ -3,21 +3,16 @@ import { objectType } from 'nexus';
 import Appointment from './appontment';
 import StateEnum from './state-enum';
 
-import Post from '../post';
+import Post, { connection as PostConnection } from '../post';
 import SeniorityType from '../seniority-type';
-import { Node, Timestamps } from '../../interfaces';
-import connections from '../../connections';
+import interfaces from '../../interfaces';
+import args from '../../args';
 
-import {
-  getSeller,
-  getPost,
-  getPostsByPostIds,
-  getSeniorityTypeByMonths,
-} from '../../resolvers';
+const { Node, Timestamps } = interfaces;
+const { Connection: ConnectionArgs } = args;
 
 const Seller = objectType({
   name: 'Seller',
-  resolve: getSeller,
   definition(t) {
     t.implements(Node, Timestamps);
     t.string('firstName');
@@ -27,17 +22,19 @@ const Seller = objectType({
     t.field('post', {
       type: Post,
       nullable: true,
-      resolve: ({ postId }, _, ctx) => getPost(undefined, { id: postId }, ctx),
+      // resolve: ({ postId }, _, ctx) =>
+      //   postResolvers.getPost(undefined, { id: postId }, ctx),
     });
     t.field('posts', {
-      type: connections.Post,
+      type: PostConnection,
+      args: ConnectionArgs,
       nullable: true,
-      resolve: getPostsByPostIds,
+      // resolve: postResolvers.getByPostIds,
     });
     t.field('seniorityType', {
       type: SeniorityType,
       nullable: true,
-      resolve: getSeniorityTypeByMonths,
+      // resolve: seniorityTypeResolvers.getByMonths,
     });
     t.day('dismissAt', { nullable: true });
     t.day('recruitedAt', { nullable: true });

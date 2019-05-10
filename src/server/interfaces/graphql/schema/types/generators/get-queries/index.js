@@ -1,9 +1,9 @@
 import getTypeQueryField from './get-type-query-field';
 import getConnectionQueryField from './get-connection-query-field';
 
-const getQueries = ({ name }) => ({
-  ...getTypeQueryField(name),
-  ...getConnectionQueryField(name),
+const getQueries = (type) => ({
+  ...getTypeQueryField(type),
+  ...getConnectionQueryField(type),
 });
 
 export default getQueries;

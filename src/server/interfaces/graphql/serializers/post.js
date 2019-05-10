@@ -1,22 +1,22 @@
-import id from './id';
-import day from './day';
 import timestamp from './timestamp';
+import { identity } from '@common';
 
-const serializers = { id, day };
+const postSerializer = {
+  serialize: ({ postId, name, pieceRate, pieceRates, state }) => {
+    const serializedPieceRates = pieceRates.map(({ value, day }) => ({
+      value,
+      day,
+    }));
 
-const postSerializer = ({ postId, name, pieceRate, pieceRates, state }) => {
-  const serializedPieceRates = pieceRates.map(({ value, day }) => ({
-    value,
-    day: serializers.day(day),
-  }));
-
-  return {
-    id: serializers.id(postId),
-    name,
-    pieceRate,
-    pieceRates: serializedPieceRates,
-    state,
-  };
+    return {
+      id: postId,
+      name,
+      pieceRate,
+      pieceRates: serializedPieceRates,
+      state,
+    };
+  },
+  parse: identity,
 };
 
 export default timestamp(postSerializer);

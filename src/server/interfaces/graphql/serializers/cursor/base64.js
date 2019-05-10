@@ -7,6 +7,6 @@ export const decode = (str) => {
   try {
     return JSON.parse(Buffer.from(str, 'base64').toString());
   } catch (error) {
-    throw errors.invalidQuery('Passed invalid query');
+    throw errors.gqlInvalidInput('Invalid cursor');
   }
 };

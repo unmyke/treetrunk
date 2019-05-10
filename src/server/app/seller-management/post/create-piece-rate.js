@@ -1,4 +1,7 @@
-import Operation from '../../operation';
+const createPieceRate = ({
+  repositories: { [EntityName]: entityRepo },
+  entities: { [EntityName]: Entity },
+}) => (fields) => entityRepo.add(new Entity(fields));
 
 export default class CreatePostPieceRate extends Operation {
   static constraints = {

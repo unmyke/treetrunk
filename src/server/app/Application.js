@@ -7,39 +7,20 @@ const Application = ({
   database,
   logger,
   config: { app: appConfig },
-  makeValidator,
   subdomains,
-  commonTypes,
   repositories,
 }) => {
   const app = new EventEmitter();
 
   const initApp = async () => {
-    const appInitializer = new InitializeApplication({
-      makeValidator,
+    const appInitializer = InitializeApplication({
       subdomains,
-      commonTypes,
       repositories,
     });
 
-    const { SUCCESS, INITIALIZE_ERROR, ERROR } = appInitializer.outputs;
-
-    appInitializer
-      .on(SUCCESS, async () => {
-        await server.start();
-      })
-      .on(INITIALIZE_ERROR, ({ details }) => {
-        app.emit('error', () =>
-          errors.appInitializeFailure('Can not initialize. Error:', details)
-        );
-      })
-      .on(ERROR, ({ message }) => {
-        app.emit('error', () =>
-          errors.appInitializeFailure('Can not initialize. Error:', message)
-        );
-      });
-
-    appInitializer.execute({ config: appConfig });
+    appInitializer().then(server.start, ({ details }) => {
+      throw errors.appInitializeFailure('Can not initialize. Error:', details);
+    });
   };
 
   const connectDatabase = () => {

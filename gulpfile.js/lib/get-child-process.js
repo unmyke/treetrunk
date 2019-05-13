@@ -8,4 +8,7 @@ module.exports = (script, ...args) =>
       ...getChildInspectBrkOption(),
       ...args,
     ],
+    env: {
+      NODE_ENV: process.env.NODE_ENV,
+    },
   });

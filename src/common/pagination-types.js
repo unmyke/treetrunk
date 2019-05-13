@@ -1,0 +1,6 @@
+const PAGINATION_TYPES = {
+  FORWARD: 'FORWARD',
+  BACKWARD: 'BACKWARD',
+};
+
+export default PAGINATION_TYPES;

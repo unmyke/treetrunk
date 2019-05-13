@@ -10,6 +10,10 @@ const extendSeniorityType = (SeniorityType) => {
       .findOne();
   };
 
+  SeniorityType.textFilterFields = function textFilterFields() {
+    return ['name'];
+  };
+
   SeniorityType.getAllBetweenMonths = function getAllBetweenMonths({
     min,
     max,

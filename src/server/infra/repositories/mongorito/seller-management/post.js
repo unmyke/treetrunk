@@ -1,10 +1,19 @@
-import BaseRepository from './base';
+import BaseRepository from '../base';
 
-const PostRepository = ({ Model, mapper, errors }) => {
-  const baseRepo = BaseRepository({ Model, mapper, errors });
+const PostRepository = ({ Entity, Model, mapper, errors }) => {
+  const baseRepo = BaseRepository({ Entity, Model, mapper, errors });
+
+  const getList = (opts) =>
+    baseRepo.getList(opts).then(({ entities, ...meta }) => ({
+      entities: entities.filter(
+        ({ postId }) => !postId.equals(Entity.dismissPostId)
+      ),
+      ...meta,
+    }));
 
   return Object.freeze({
     ...baseRepo,
+    getList,
   });
 };
 

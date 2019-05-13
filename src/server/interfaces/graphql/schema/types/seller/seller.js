@@ -2,6 +2,11 @@ import { objectType } from 'nexus';
 
 import Appointment from './appontment';
 import StateEnum from './state-enum';
+import {
+  getPostByPostId,
+  getPostsByPostIds,
+  getSeniorityTypeByMonths,
+} from './resolvers';
 
 import Post, { connection as PostConnection } from '../post';
 import SeniorityType from '../seniority-type';
@@ -22,22 +27,21 @@ const Seller = objectType({
     t.field('post', {
       type: Post,
       nullable: true,
-      // resolve: ({ postId }, _, ctx) =>
-      //   postResolvers.getPost(undefined, { id: postId }, ctx),
+      resolve: getPostByPostId,
     });
     t.field('posts', {
       type: PostConnection,
       args: ConnectionArgs,
       nullable: true,
-      // resolve: postResolvers.getByPostIds,
+      resolve: getPostsByPostIds,
     });
     t.field('seniorityType', {
       type: SeniorityType,
       nullable: true,
-      // resolve: seniorityTypeResolvers.getByMonths,
+      resolve: getSeniorityTypeByMonths,
     });
-    t.day('dismissAt', { nullable: true });
-    t.day('recruitedAt', { nullable: true });
+    t.day('dismissDay', { nullable: true });
+    t.day('recruitDay', { nullable: true });
     t.field('state', { type: StateEnum });
     t.list.field('appointments', { type: Appointment });
   },

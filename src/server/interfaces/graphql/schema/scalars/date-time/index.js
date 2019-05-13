@@ -1,18 +1,18 @@
 import { scalarType } from 'nexus';
 
-import { DateTime as dateTimeSerializer } from '../../serializers';
+import { serialize, parse } from './utils';
 
 const DateScalar = scalarType({
   name: 'DateTimeScalar',
   asNexusMethod: 'dateTime',
-  serialize: dateTimeSerializer.serialize,
+  serialize,
   parseValue: (value) => {
     // TODO vaildation
-    return dateTimeSerializer.parse(value);
+    return parse(value);
   },
   parseLiteral: (ast) => {
     // TODO vaildation
-    return dateTimeSerializer.parse(ast.value);
+    return parse(ast.value);
   },
 });
 

@@ -1,4 +1,4 @@
-import { errors } from '@domain/errors';
+import { errors } from '@domain';
 
 export const encode = (obj) =>
   Buffer.from(JSON.stringify(obj)).toString('base64');

@@ -1,21 +1,19 @@
-// import { GraphQLError } from 'graphql/error';
-// import { Kind } from 'graphql/language';
 import { scalarType } from 'nexus';
-import { identity } from '@common';
-import roundTo from './round-to';
+
+import { serialize, parse } from './utils';
 
 const PositiveFloatScalar = scalarType({
   name: 'PositiveFloatScalar',
   asNexusMethod: 'positiveFloat',
   description: 'Positive float with two digit after point custom scalar type',
-  serialize: identity,
+  serialize,
   parseValue: (value) => {
     // TODO validation
-    return roundTo(value);
+    return parse(value);
   },
   parseLiteral: (ast) => {
     // TODO validation
-    return roundTo(ast.value);
+    return parse(ast.value);
   },
 });
 

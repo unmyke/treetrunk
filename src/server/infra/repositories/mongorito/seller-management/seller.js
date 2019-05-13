@@ -1,4 +1,4 @@
-import BaseRepository from './base';
+import BaseRepository from '../base';
 
 const SellerRepository = ({ Model, mapper, errors }) => {
   const baseRepo = BaseRepository({ Model, mapper, errors });

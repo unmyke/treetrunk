@@ -1,16 +1,18 @@
 import { ApolloServer } from 'apollo-server';
 
-import schema from './schema';
 import * as serializers from './serializers';
+import schema from './schema';
 
-export default ({ config, logger, services }) => {
+export default ({ config, logger, services, errors }) => {
   const server = new ApolloServer({
     schema,
     // resolvers,
     context: {
       services,
       serializers,
+      errors,
     },
+    debug: config.mode !== 'production',
   });
 
   const start = () =>

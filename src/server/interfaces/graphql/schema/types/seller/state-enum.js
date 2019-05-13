@@ -3,7 +3,7 @@ import { enumType } from 'nexus';
 const SellerStateEnum = enumType({
   name: 'SellerStateEnum',
   description: 'Seller states',
-  members: ['new', 'recruited', 'dismiss', 'deleted'],
+  members: ['new', 'recruited', 'dismissed', 'deleted'],
 });
 
 export default SellerStateEnum;

@@ -159,7 +159,6 @@ export default class Day extends BaseValue {
   }
 
   format(formatString) {
-    console.log(this.value);
     return formatFNS({ locale: ru }, formatString)(this.value);
   }
 

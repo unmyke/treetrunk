@@ -19,6 +19,8 @@ const states = {
 };
 
 const transitions = {
+  ADD_ON_RESTORE: 'addOnRestore',
+  ADD_CLOSE_AT_ON_RESTORE: 'addCloseAtOnRestore',
   ADD: 'add',
   DELETE_AT: 'deleteAt',
   UPDATE_TO: 'updateTo',
@@ -63,9 +65,9 @@ export default class Diary extends BaseClass {
         .sort(getDayComparator('asc', ({ day }) => day))
         .forEach(({ value, day }) => {
           if (isEqualValues(value, closeValue)) {
-            diary.addCloseAt(day);
+            diary.addCloseAtOnRestore(day);
           } else {
-            diary.add(value, day);
+            diary.addOnRestore(value, day);
           }
         });
 
@@ -126,9 +128,19 @@ export default class Diary extends BaseClass {
   static fsm = {
     init: states.NEW,
 
+    ignoreUpdateTrasitions: [
+      transitions.ADD_ON_RESTORE,
+      transitions.ADD_CLOSE_AT_ON_RESTORE,
+    ],
+
     transitions: [
       {
         name: transitions.ADD,
+        from: [states.NEW, states.STARTED, states.CLOSED],
+        to: states.STARTED,
+      },
+      {
+        name: transitions.ADD_ON_RESTORE,
         from: [states.NEW, states.STARTED, states.CLOSED],
         to: states.STARTED,
       },
@@ -144,6 +156,11 @@ export default class Diary extends BaseClass {
       },
       {
         name: transitions.ADD_CLOSE_AT,
+        from: states.STARTED,
+        to: states.CLOSED,
+      },
+      {
+        name: transitions.ADD_CLOSE_AT_ON_RESTORE,
         from: states.STARTED,
         to: states.CLOSED,
       },
@@ -187,6 +204,10 @@ export default class Diary extends BaseClass {
         this._checkAdd(value, day);
       },
 
+      onBeforeAddOnRestore(_, value, day) {
+        this._checkAdd(value, day);
+      },
+
       onBeforeDeleteAt(_, day) {
         this._checkDeleteAt(day);
       },
@@ -199,12 +220,20 @@ export default class Diary extends BaseClass {
         this._checkAddCloseAt(day);
       },
 
+      onBeforeAddCloseAtOnRestore(_, day) {
+        this._checkAddCloseAt(day);
+      },
+
       onBeforeUpdateCloseTo(_, day) {
         this._checkUpdateCloseTo(day);
       },
 
       // operatons
       onAdd(_, value, day) {
+        return this._store.add(value, day);
+      },
+
+      onAddOnRestore(_, value, day) {
         return this._store.add(value, day);
       },
 
@@ -217,6 +246,12 @@ export default class Diary extends BaseClass {
       },
 
       onAddCloseAt(_, day) {
+        this._archive.add(this._store, day);
+
+        this._store = new Store();
+      },
+
+      onAddCloseAtOnRestore(_, day) {
         this._archive.add(this._store, day);
 
         this._store = new Store();

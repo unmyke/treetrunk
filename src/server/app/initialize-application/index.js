@@ -1,29 +1,33 @@
 import { lowerFirst } from 'lodash';
 import seeds from './app-seeds';
 
-const InitializeApplication = ({ subdomains, repositories }) => () => {
-  seeds.forEach(async (seed) => {
-    const { name, SubdomainName, ModelName, values, callback } = seed;
-    const {
-      repositories: { [ModelName]: repo },
-      subdomains: {
-        [SubdomainName]: { [ModelName]: Entity },
-      },
-    } = { subdomains, repositories };
+const InitializeApplication = ({ subdomains, repositories }) => () =>
+  Promise.all(
+    seeds.map((seed) => {
+      const { name, SubdomainName, ModelName, values, callback } = seed;
+      const {
+        repositories: {
+          [SubdomainName]: { [ModelName]: repo },
+        },
+        subdomains: {
+          [SubdomainName]: { [ModelName]: Entity },
+        },
+      } = { subdomains, repositories };
 
-    let entity;
-
-    entity = await repo.getOne(values);
-
-    if (!entity) {
-      const newModel = new Entity(values);
-      entity = await repo.add(newModel);
-    }
-
-    const id = model[`${lowerFirst(ModelName)}Id`];
-
-    callback({ Class: Entity, name, id });
-  });
-};
+      return repo
+        .getOne(values)
+        .then((entity) => {
+          if (!entity) {
+            const newEntity = new Entity(values);
+            return repo.add(newEntity);
+          }
+          return entity;
+        })
+        .then((entity) => {
+          const id = entity[`${lowerFirst(ModelName)}Id`];
+          callback({ Class: Entity, name, id });
+        });
+    })
+  );
 
 export default InitializeApplication;

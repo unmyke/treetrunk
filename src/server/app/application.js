@@ -6,7 +6,6 @@ const Application = ({
   server,
   database,
   logger,
-  config: { app: appConfig },
   subdomains,
   repositories,
 }) => {

@@ -83,6 +83,7 @@ const errors = {
 
   // GraphQL
   gqlInvalidInput: makeError('GQL_INVALID_INPUT'),
+  gqlServerError: makeError('GQL_SERVER_ERROR'),
 
   // serializer
   invalidMapperType: makeError('INVALID_MAPPER_TYPE'),

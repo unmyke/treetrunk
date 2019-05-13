@@ -1,5 +1,5 @@
 import savePlugin from './mongorito-save-plugin';
-import paginationPlugin from './mongorito-pagination-plugin';
+import listPlugin from './mongorito-list-plugin';
 import entityIdIndexesPlugin from './mongorito-entity-id-indexes-plugin';
 
-export default [savePlugin, paginationPlugin, entityIdIndexesPlugin];
+export default [savePlugin, listPlugin, entityIdIndexesPlugin];

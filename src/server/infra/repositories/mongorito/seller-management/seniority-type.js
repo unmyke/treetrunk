@@ -1,4 +1,4 @@
-import BaseRepository from './base';
+import BaseRepository from '../base';
 
 const SeniorityTypeRepository = ({ Model, mapper, errors }) => {
   const baseRepo = BaseRepository({ Model, mapper, errors });

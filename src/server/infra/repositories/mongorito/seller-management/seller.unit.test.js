@@ -118,19 +118,19 @@ describe('#SellerRepository', () => {
       test('should return paged list', () =>
         sellerRepo.getList().then((list) => {
           expect(list).toBeInstanceOf(Object);
-          expect(list).toHaveProperty('result');
-          expect(list).toHaveProperty('hasMore');
-          expect(list).toHaveProperty('cursor');
-          expect(list.result).toHaveLength(10);
-          list.result.forEach((seller) => {
+          expect(list).toHaveProperty('entities');
+          expect(list).toHaveProperty('hasAfter');
+          expect(list).toHaveProperty('hasBefore');
+          expect(list.entities).toHaveLength(10);
+          list.entities.forEach((seller) => {
             expect(seller).toBeInstanceOf(Seller);
           });
-          expect(list.hasMore).toBeTruthy();
-          expect(typeof list.cursor).toBe('string');
+          expect(list.hasBefore).toBeFalsy();
+          expect(list.hasAfter).toBeTruthy();
         }));
     });
 
-    context('if passed cursor only', () => {
+    context('if passed id only', () => {
       beforeEach(() =>
         factory
           .createMany('seller', 19, {}, { appointmentsCount: 0 })
@@ -139,128 +139,109 @@ describe('#SellerRepository', () => {
 
       test('should return paged list', () =>
         sellerRepo
-          .getList({ pageSize: 15 })
+          .getList({ count: 15 })
           .then((list) => {
             expect(list).toBeInstanceOf(Object);
-            expect(list).toHaveProperty('result');
-            expect(list).toHaveProperty('hasMore');
-            expect(list).toHaveProperty('cursor');
-            expect(list.result).toHaveLength(15);
-            list.result.forEach((seller) => {
+            expect(list).toHaveProperty('entities');
+            expect(list).toHaveProperty('hasAfter');
+            expect(list).toHaveProperty('hasBefore');
+            expect(list.entities).toHaveLength(15);
+            list.entities.forEach((seller) => {
               expect(seller).toBeInstanceOf(Seller);
             });
-            expect(list.hasMore).toBeTruthy();
-            expect(typeof list.cursor).toBe('string');
+            expect(list.hasAfter).toBeTruthy();
 
-            return list.cursor;
+            const lastId = list.entities[list.entities.length - 1].sellerId;
+            return lastId;
           })
-          .then((cursor) => sellerRepo.getList({ after: cursor }))
+          .then((id) => sellerRepo.getList({ id }))
           .then((list) => {
             expect(list).toBeInstanceOf(Object);
-            expect(list).toHaveProperty('result');
-            expect(list).toHaveProperty('hasMore');
-            expect(list).toHaveProperty('cursor');
-            expect(list.result).toHaveLength(4);
-            list.result.forEach((seller) => {
+            expect(list).toHaveProperty('entities');
+            expect(list).toHaveProperty('hasAfter');
+            expect(list).toHaveProperty('hasBefore');
+            expect(list.entities).toHaveLength(4);
+            list.entities.forEach((seller) => {
               expect(seller).toBeInstanceOf(Seller);
             });
-            expect(list.hasMore).toBeFalsy();
-            expect(typeof list.cursor).toBe('string');
+            expect(list.hasAfter).toBeFalsy();
           }));
     });
 
-    context(
-      'if passed cursor and persisted entities with same sort value',
-      () => {
-        beforeEach(() =>
-          factory
-            .createMany('seller', 19, {}, { appointmentsCount: 0 })
-            .then(() => SellerModel.find())
-            .then((models) => (sellers = models.map((seller) => seller.get())))
-        );
-
-        test('should return paged portion of list', () =>
-          sellerRepo
-            .getList({ pageSize: 9, sort: 'state' })
-            .then((list) => {
-              expect(list).toBeInstanceOf(Object);
-              expect(list).toHaveProperty('result');
-              expect(list).toHaveProperty('hasMore');
-              expect(list).toHaveProperty('cursor');
-              expect(list.result).toHaveLength(9);
-              list.result.forEach((seller) => {
-                expect(seller).toBeInstanceOf(Seller);
-              });
-              expect(list.hasMore).toBeTruthy();
-              expect(typeof list.cursor).toBe('string');
-
-              return { cursor: list.cursor, prevResult: list.result };
-            })
-            .then(({ cursor, prevResult }) =>
-              Promise.all([
-                sellerRepo.getList({ after: cursor }),
-                Promise.resolve(prevResult),
-              ])
-            )
-            .then(([list, prevResult]) => {
-              expect(list).toBeInstanceOf(Object);
-              expect(list).toHaveProperty('result');
-              expect(list).toHaveProperty('hasMore');
-              expect(list).toHaveProperty('cursor');
-              list.result.forEach((seller) => {
-                expect(prevResult).not.toContainEqual(seller);
-              });
-              expect(list.result).toHaveLength(9);
-              list.result.forEach((seller) => {
-                expect(seller).toBeInstanceOf(Seller);
-              });
-              expect(list.hasMore).toBeTruthy();
-              expect(typeof list.cursor).toBe('string');
-
-              return Promise.all([
-                sellerRepo.getList({ after: list.cursor }),
-                Promise.resolve([...prevResult, ...list.result]),
-              ]);
-            })
-            .then(([list, prevResult]) => {
-              expect(list).toBeInstanceOf(Object);
-              expect(list).toHaveProperty('result');
-              expect(list).toHaveProperty('hasMore');
-              expect(list).toHaveProperty('cursor');
-              list.result.forEach((seller) => {
-                expect(prevResult).not.toContainEqual(seller);
-              });
-              expect(list.result).toHaveLength(1);
-              list.result.forEach((seller) => {
-                expect(seller).toBeInstanceOf(Seller);
-              });
-              expect(list.hasMore).toBeFalsy();
-              expect(typeof list.cursor).toBe('string');
-            }));
-      }
-    );
-
-    context('if passed offset options', () => {
+    context('if passed id and persisted entities with same sort value', () => {
       beforeEach(() =>
         factory
           .createMany('seller', 19, {}, { appointmentsCount: 0 })
+          .then(() => SellerModel.find())
           .then((models) => (sellers = models.map((seller) => seller.get())))
       );
 
       test('should return paged portion of list', () =>
         sellerRepo
-          .getList({ pageSize: 15, page: 1, order: 'asc' })
+          .getList({ count: 9, sort: { field: 'state' } })
           .then((list) => {
             expect(list).toBeInstanceOf(Object);
-            expect(list).toHaveProperty('result');
-            expect(list).toHaveProperty('hasMore');
-            expect(list).toHaveProperty('cursor');
-            expect(list.result).toHaveLength(4);
-            list.result.forEach((seller) => {
+            expect(list).toHaveProperty('entities');
+            expect(list).toHaveProperty('hasAfter');
+            expect(list).toHaveProperty('hasBefore');
+            expect(list.entities).toHaveLength(9);
+            list.entities.forEach((seller) => {
               expect(seller).toBeInstanceOf(Seller);
             });
-            expect(list.hasMore).toBeFalsy();
-            expect(typeof list.cursor).toBe('string');
+            expect(list.hasAfter).toBeTruthy();
+
+            const lastId = list.entities[list.entities.length - 1].sellerId;
+            return {
+              id: lastId,
+              prevIds: list.entities.map(({ sellerId: { value } }) => value),
+            };
+          })
+          .then(({ id, prevIds }) =>
+            Promise.all([
+              sellerRepo.getList({ id, count: 9, sort: { field: 'state' } }),
+              Promise.resolve(prevIds),
+            ])
+          )
+          .then(([list, prevIds]) => {
+            expect(list).toBeInstanceOf(Object);
+            expect(list).toHaveProperty('entities');
+            expect(list).toHaveProperty('hasAfter');
+            expect(list).toHaveProperty('hasBefore');
+            list.entities.forEach(({ sellerId: { value } }) => {
+              expect(prevIds).not.toContainEqual(value);
+            });
+            expect(list.entities).toHaveLength(9);
+            list.entities.forEach((seller) => {
+              expect(seller).toBeInstanceOf(Seller);
+            });
+            expect(list.hasAfter).toBeTruthy();
+
+            const lastId = list.entities[list.entities.length - 1].sellerId;
+            return Promise.all([
+              sellerRepo.getList({
+                id: lastId,
+                count: 9,
+                sort: { field: 'state' },
+              }),
+              Promise.resolve([
+                ...prevIds,
+                ...list.entities.map(({ sellerId: { value } }) => value),
+              ]),
+            ]);
+          })
+          .then(([list, prevIds]) => {
+            expect(list).toBeInstanceOf(Object);
+            expect(list).toHaveProperty('entities');
+            expect(list).toHaveProperty('hasAfter');
+            expect(list).toHaveProperty('hasBefore');
+            list.entities.forEach(({ sellerId: { value } }) => {
+              expect(prevIds).not.toContainEqual(value);
+            });
+            expect(list.entities).toHaveLength(1);
+            list.entities.forEach((seller) => {
+              expect(seller).toBeInstanceOf(Seller);
+            });
+            expect(list.hasAfter).toBeFalsy();
           }));
     });
 
@@ -270,19 +251,19 @@ describe('#SellerRepository', () => {
           .createMany(
             'seller',
             [
-              { firstName: 'first0' },
-              { middleName: 'first1' },
-              { lastName: 'first2' },
-              { phone: 'first3' },
-              { firstName: 'first4' },
-              { firstName: 'first5' },
-              { firstName: 'name0' },
-              { middleName: 'name1' },
-              { lastName: 'name2' },
-              { phone: 'name3' },
-              { firstName: 'name4' },
+              { firstName: 'filter1_0' },
+              { middleName: 'filter1_1' },
+              { lastName: 'filter1_2' },
+              { phone: 'filter1_3' },
+              { firstName: 'filter1_4' },
+              { firstName: 'filter1_5' },
+              { firstName: 'filter2_0' },
+              { middleName: 'filter2_1' },
+              { lastName: 'filter2_2' },
+              { phone: 'filter2_3' },
+              { firstName: 'filter2_4' },
             ],
-            { appointmentsCount: 1 }
+            { appointmentsCount: 0 }
           )
           .then((models) => (sellers = models.map((seller) => seller.get())))
       );
@@ -290,50 +271,58 @@ describe('#SellerRepository', () => {
       test('should return paged portion of list', () =>
         Promise.all([
           sellerRepo.getList({
-            search: {
-              text: 'name',
-              fields: ['firstName', 'middleName', 'lastName', 'phone'],
+            filter: {
+              text: 'filter1',
             },
           }),
           sellerRepo.getList({
-            search: {
-              text: 'first',
-              fields: ['firstName', 'middleName', 'lastName', 'phone'],
+            filter: {
+              text: 'filter2',
             },
           }),
         ]).then(([list1, list2]) => {
           expect(list1).toBeInstanceOf(Object);
-          expect(list1).toHaveProperty('result');
-          expect(list1).toHaveProperty('hasMore');
-          expect(list1).toHaveProperty('cursor');
-          expect(list1.result).toHaveLength(5);
-          list1.result.forEach((seller) => {
+          expect(list1).toHaveProperty('entities');
+          expect(list1).toHaveProperty('hasAfter');
+          expect(list1).toHaveProperty('hasBefore');
+          expect(list1.entities).toHaveLength(6);
+          list1.entities.forEach((seller) => {
             expect(seller).toBeInstanceOf(Seller);
           });
-          expect(list1.hasMore).toBeFalsy();
-          expect(typeof list1.cursor).toBe('string');
+          expect(list1.hasBefore).toBeFalsy();
+          expect(list1.hasAfter).toBeFalsy();
 
           expect(list2).toBeInstanceOf(Object);
-          expect(list2).toHaveProperty('result');
-          expect(list2).toHaveProperty('hasMore');
-          expect(list2).toHaveProperty('cursor');
-          expect(list2.result).toHaveLength(6);
-          list2.result.forEach((seller) => {
+          expect(list2).toHaveProperty('entities');
+          expect(list2).toHaveProperty('hasAfter');
+          expect(list2).toHaveProperty('hasBefore');
+          expect(list2.entities).toHaveLength(5);
+          list2.entities.forEach((seller) => {
             expect(seller).toBeInstanceOf(Seller);
           });
-          expect(list2.hasMore).toBeFalsy();
-          expect(typeof list2.cursor).toBe('string');
+          expect(list1.hasBefore).toBeFalsy();
+          expect(list2.hasAfter).toBeFalsy();
         }));
     });
 
     context('if passed unexistent curosor', () => {
       beforeEach(() =>
-        factory.createMany('seller', 2, {}, { appointmentsCount: 1 })
+        factory.createMany('seller', 19, {}, { appointmentsCount: 1 })
       );
 
-      test('should throw error', () => {
-        expect(() => sellerRepo.getList({ after: 1 })).toThrow();
-      });
+      test('should return paged list', () =>
+        sellerRepo.getList({ id: 1 }).then((list) => {
+          expect(list).toBeInstanceOf(Object);
+          expect(list).toHaveProperty('entities');
+          expect(list).toHaveProperty('hasAfter');
+          expect(list).toHaveProperty('hasBefore');
+          expect(list.entities).toHaveLength(10);
+          list.entities.forEach((seller) => {
+            expect(seller).toBeInstanceOf(Seller);
+          });
+          expect(list.hasBefore).toBeFalsy();
+          expect(list.hasAfter).toBeTruthy();
+        }));
     });
   });
 });

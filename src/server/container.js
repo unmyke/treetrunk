@@ -7,7 +7,7 @@ import { getSubdomainsContainer } from '@infra/support/container-helpers';
 import config from '@config';
 import { subdomains, commonTypes, states, errors } from '@domain';
 
-import Application, * as services from '@app';
+import { Application, services, getCrudOperations } from '@app';
 import makeValidator from '@infra/support/make-validator';
 
 import Server from '@interfaces/graphql';
@@ -50,16 +50,18 @@ bottle.factory('mappers', ({ subdomains, commonTypes }) =>
   )
 );
 
-bottle.factory('repositories', ({ models, mappers }) =>
+bottle.factory('repositories', ({ subdomains, models, mappers }) =>
   getSubdomainsContainer(
     repositories,
     (Repository, SubdomainName, EntityName) =>
       Repository({
+        Entity: subdomains[SubdomainName][EntityName],
         Model: models[EntityName],
         models,
         mapper: mappers[SubdomainName][EntityName],
         mappers,
         database,
+        errors,
       })
   )
 );
@@ -70,25 +72,59 @@ bottle.factory('repositories', ({ models, mappers }) =>
 
 bottle.factory(
   'services',
-  ({ makeValidator, subdomains, commonTypes, errors, repositories }) =>
-    getSubdomainsContainer(services, (EntityOperations, SubdomainName) =>
-      Object.keys(EntityOperations).reduce(
-        (acc, operationName) => ({
-          ...acc,
-          [lowerFirst(operationName)]: new EntityOperations[operationName]({
-            entities: subdomains[SubdomainName],
-            commonTypes,
-            repositories: repositories[SubdomainName],
-            validate: makeValidator(
-              EntityOperations[operationName].constraints,
-              errors
-            ),
-            errors,
-          }),
-        }),
-        {}
-      )
-    )
+  ({ subdomains, commonTypes, repositories }) =>
+    Object.keys(services).reduce((prevSubdomainOperations, SubdomainName) => {
+      const SubdomainOperations = services[SubdomainName];
+      const SubdomainEntities = subdomains[SubdomainName];
+      const SubdomainRepos = repositories[SubdomainName];
+
+      return {
+        ...prevSubdomainOperations,
+        ...Object.keys(SubdomainOperations).reduce(
+          (prevEntitiesOperations, EntityName) => {
+            const EntityOperations = SubdomainOperations[EntityName];
+
+            return {
+              ...prevEntitiesOperations,
+              ...Object.keys(EntityOperations).reduce(
+                (prevEntityOperations, OperationName) => {
+                  const EntityOperation = EntityOperations[OperationName];
+
+                  return {
+                    ...prevEntityOperations,
+                    [lowerFirst(OperationName)]: EntityOperation({
+                      entities: SubdomainEntities,
+                      commonTypes,
+                      repositories: SubdomainRepos,
+                    }),
+                  };
+                },
+                {}
+              ),
+              ...getCrudOperations(EntityName, {
+                entities: SubdomainEntities,
+                commonTypes,
+                repositories: SubdomainRepos,
+              }),
+            };
+          },
+          {}
+        ),
+      };
+    }, {})
+  // getSubdomainsContainer(services, (EntityOperations, SubdomainName) =>
+  //   Object.keys(EntityOperations).reduce(
+  //     (acc, operationName) => ({
+  //       ...acc,
+  //       [lowerFirst(operationName)]: EntityOperations[operationName]({
+  //         entities: subdomains[SubdomainName],
+  //         commonTypes,
+  //         repositories: repositories[SubdomainName],
+  //       }),
+  //     }),
+  //     {}
+  //   )
+  // )
 );
 
 bottle.constant('makeValidator', makeValidator);

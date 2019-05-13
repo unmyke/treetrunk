@@ -1,17 +1,17 @@
 import { scalarType } from 'nexus';
-import { Cursor as cursorSerializer } from '../../serializers';
+import { serialize, parse } from './utils';
 
 const CursorScalar = scalarType({
   name: 'CursorScalar',
   asNexusMethod: 'cursor',
-  serialize: cursorSerializer.serialize,
+  serialize,
   parseValue: (value) => {
     // TODO Validation
-    return cursorSerializer.parse(value);
+    return parse(value);
   },
   parseLiteral: (ast) => {
     // TODO Validation
-    return cursorSerializer.parse(ast.value);
+    return parse(ast.value);
   },
 });
 

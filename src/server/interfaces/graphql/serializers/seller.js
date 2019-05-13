@@ -1,7 +1,7 @@
+import timestamp from './timestamp';
 import id from './id';
 import post from './post';
 import day from './day';
-import timestamp from './timestamp';
 
 const serializers = { id, post, day };
 
@@ -22,6 +22,7 @@ const sellerSerializer = (seller) => {
   } = seller;
 
   return {
+    __type: 'Seller',
     id: serializers.id(sellerId),
     fullName,
     firstName,

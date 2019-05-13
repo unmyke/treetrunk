@@ -12,17 +12,16 @@ const seniorityTypeSerializer = ({
   awards,
   state,
 }) => {
-  const serializedAward = awards.map(({ value, day }) => ({
-    value,
-    day: serializers.day(day),
-  }));
-
   return {
+    __type: 'SeniorityType',
     id: serializers.id(seniorityTypeId),
     name,
     months,
     award,
-    awards: serializedAward,
+    awards: awards.map(({ value, day }) => ({
+      value,
+      day: serializers.day(day),
+    })),
     state,
   };
 };

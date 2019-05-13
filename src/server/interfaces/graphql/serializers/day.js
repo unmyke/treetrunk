@@ -1,6 +1,3 @@
-const daySerializer = {
-  serialize: ({ value = null } = { value: null }) => value,
-  parse: (value) => new Date(value),
-};
+const daySerializer = ({ value = null } = { value: null }) => value;
 
 export default daySerializer;

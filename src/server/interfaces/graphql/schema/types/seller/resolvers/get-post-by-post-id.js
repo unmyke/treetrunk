@@ -1,7 +1,7 @@
 const getPostByPostId = (
   { postId },
   _,
-  { services: { getPost }, serializers: { Id: idSerializer } }
-) => getPost(idSerializer.serialize(postId));
+  { services: { getPost }, serializers: { Post: postSerializer } }
+) => getPost(postId).then(postSerializer);
 
 export default getPostByPostId;

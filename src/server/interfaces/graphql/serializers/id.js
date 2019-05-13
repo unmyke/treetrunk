@@ -1,8 +1,3 @@
-import { identity } from '@common';
-
-const idSerializer = {
-  serialize: ({ value }) => value,
-  parse: identity,
-};
+const idSerializer = ({ value }) => value;
 
 export default idSerializer;

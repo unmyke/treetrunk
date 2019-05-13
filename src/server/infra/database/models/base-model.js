@@ -1,6 +1,6 @@
 import { Model } from 'mongorito';
-import errorsFactory from '@domain/errors';
+import { errors } from '@domain';
 
 export default class BaseModel extends Model {
-  static errors = errorsFactory;
+  static errors = errors;
 }

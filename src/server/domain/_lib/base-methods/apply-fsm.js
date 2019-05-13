@@ -3,9 +3,18 @@ import { errors } from '../../errors';
 import { toState } from './fsm-helpers';
 
 const SET_STATE_TRANSITION = 'setState';
+const INIT_TRANSITION = 'init';
+
+const defaultIgnoreUpdateTrasitions = [SET_STATE_TRANSITION, INIT_TRANSITION];
 
 const applyFSM = (EntityClass) => {
-  const { init, transitions, data, methods } = EntityClass.fsm;
+  const {
+    init,
+    transitions,
+    data,
+    methods,
+    ignoreUpdateTrasitions = [],
+  } = EntityClass.fsm;
 
   StateMachine.factory(EntityClass, {
     init,
@@ -22,8 +31,15 @@ const applyFSM = (EntityClass) => {
       onInvalidTransition() {
         throw errors.transitionNotAllowed();
       },
-      onAfterTransition() {
-        if (this.state !== init) this.updatedAt = new Date();
+      onAfterTransition({ transition }) {
+        console.log(transition, this.state);
+        if (
+          ![
+            ...defaultIgnoreUpdateTrasitions,
+            ...ignoreUpdateTrasitions,
+          ].includes(transition)
+        )
+          this.updatedAt = new Date();
       },
       ...methods,
     },

@@ -19,7 +19,7 @@ const shutdownSubprocess = (subprocess) => {
 };
 
 const watchOptions = {
-  // aggregateTimeout: 600,
+  aggregateTimeout: 1000,
   // poll: 1000,
   // ignored: []
 };

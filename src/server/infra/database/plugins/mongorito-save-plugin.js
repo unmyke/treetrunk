@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { ActionTypes } from 'mongorito';
-
-import getIdPropName from './get-id-prop-name';
+import { getIdPropNameByModel } from '../../_lib';
 
 const { SAVE, CREATE, UPDATE } = ActionTypes;
 
@@ -11,7 +10,7 @@ export default () => {
       return next(action);
     }
 
-    const idPropName = getIdPropName(modelClass);
+    const idPropName = getIdPropNameByModel(modelClass);
     const { [idPropName]: id, ...modelFields } = getState().fields;
 
     return modelClass.findOne({ [idPropName]: id }).then((existingModel) => {

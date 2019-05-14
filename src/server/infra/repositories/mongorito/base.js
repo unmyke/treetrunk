@@ -1,4 +1,4 @@
-const getIdValue = ({ value }) => value;
+import { getIdPropNameByModel, getIdValue } from '../../_lib';
 
 const BaseRepository = ({ Model, mapper, errors }) => {
   const mapToEntity = (model) => (model ? mapper.toEntity(model.get()) : null);
@@ -6,7 +6,7 @@ const BaseRepository = ({ Model, mapper, errors }) => {
     throw error;
   };
 
-  const idPropName = `${Model.name.toLowerCase()}Id`;
+  const idPropName = getIdPropNameByModel(Model);
 
   const findModel = (id) =>
     Model.where(idPropName)

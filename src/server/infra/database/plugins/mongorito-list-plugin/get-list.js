@@ -1,7 +1,7 @@
 import { PAGINATION_TYPES } from '@common';
+import { getIdPropNameByModel } from '../../../_lib';
 
 const emptyModel = { get: () => ({}) };
-const getIdPropName = (Model) => `${Model.name.toLowerCase()}Id`;
 
 const getSortOrder = (type, rawOrder) => {
   const orderValue = rawOrder === 'asc' ? 1 : -1;
@@ -33,7 +33,7 @@ const getFilteredQuery = (
   const fieldsFilterQuery = filterFields.length
     ? textFilterQuery.and(
         filterFields.map(({ name, value }) => ({
-          [name]: value,
+          [name]: Array.isArray(value) ? { $in: value } : value,
         }))
       )
     : textFilterQuery;
@@ -51,7 +51,7 @@ const getResultAfterId = async ({
   count,
 }) => {
   const prevModel = prevId
-    ? await Model.findOne({ [getIdPropName(Model)]: prevId }).then(
+    ? await Model.findOne({ [getIdPropNameByModel(Model)]: prevId }).then(
         (model) => model || emptyModel
       )
     : emptyModel;

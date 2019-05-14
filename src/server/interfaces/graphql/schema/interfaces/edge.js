@@ -6,7 +6,11 @@ const Edge = interfaceType({
   name: 'EdgeInterface',
   definition(t) {
     t.cursor('cursor');
-    t.node('node', { type: NodeInterface });
+    t.field('node', {
+      type: NodeInterface,
+      resolve: (root) => root,
+    });
+    t.resolveType(({ __type }) => __type);
   },
 });
 

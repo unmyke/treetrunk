@@ -1,6 +1,7 @@
 import Node from './node';
-// import Edge from './edge';
 import Timestamps from './timestamps';
+import Edge from './edge';
+import Connection, { contains as connectionContains } from './connection';
 
-export default { Node, Timestamps };
-export const contains = [];
+export default { Node, Timestamps, Connection, Edge };
+export const contains = [connectionContains];

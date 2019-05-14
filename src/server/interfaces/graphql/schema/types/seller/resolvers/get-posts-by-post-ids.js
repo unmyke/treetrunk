@@ -1,19 +1,17 @@
 import { argsParsers } from '../../generators';
 
 const argsParser = (postIds, args, errors) => {
-  const serviceArgs = argsParsers.getList(args, errors);
+  const [{ filter, ...origArgs }] = argsParsers.getList(args, errors);
+  const { fields, text } = filter || {};
 
   return {
-    ...serviceArgs,
+    ...origArgs,
     filter: {
-      ...(serviceArgs.filter ? serviceArgs.filter : {}),
+      ...(filter ? filter : {}),
+      ...(text ? { text } : {}),
       fields: [
-        ...[
-          serviceArgs.filter && serviceArgs.filter.fields
-            ? serviceArgs.filter.fields
-            : [],
-        ],
-        { postId: postIds },
+        ...(fields && Array.isArray(fields) ? fields : []),
+        { name: 'postId', value: postIds },
       ],
     },
   };
@@ -27,6 +25,10 @@ const getPostsByPostIds = (
     errors,
     serializers: { Posts: postsSerializer },
   }
-) => getPostsList(argsParser(postIds, args, errors)).then(postsSerializer);
+) => {
+  const postListArgs = argsParser(postIds, args, errors);
+
+  return getPostsList(postListArgs).then(postsSerializer);
+};
 
 export default getPostsByPostIds;

@@ -1,11 +1,13 @@
-import SeniorityType from '../../seniority-type';
-import { serializedResolver } from '../../generators';
-
 const getSeniorityTypeByMonths = (
   { seniority },
   _,
-  { services: { getSeniorityTypeByMonths } }
+  {
+    services: { getSeniorityTypeByMonths },
+    serializers: { SeniorityType: seniorityTypeSerializer },
+  }
 ) =>
-  serializedResolver.entity(SeniorityType)(getSeniorityTypeByMonths(seniority));
+  getSeniorityTypeByMonths(seniority).then((seniorityType) => {
+    return seniorityType ? seniorityTypeSerializer(seniorityType) : null;
+  });
 
 export default getSeniorityTypeByMonths;

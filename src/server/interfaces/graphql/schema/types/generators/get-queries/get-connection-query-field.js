@@ -10,7 +10,7 @@ const { Connection: ConnectionArgs } = args;
 
 const getConnectionQueryField = (type) => {
   const { name: typeName } = type;
-  const typesName = pluralize(typeName).toLowerCase();
+  const typesName = lowerFirst(pluralize(typeName));
 
   return {
     [typesName]: queryField(lowerFirst(typesName), {

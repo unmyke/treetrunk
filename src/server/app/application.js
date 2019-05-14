@@ -7,6 +7,7 @@ const Application = ({
   database,
   logger,
   subdomains,
+  commonTypes,
   repositories,
 }) => {
   const app = new EventEmitter();
@@ -15,6 +16,7 @@ const Application = ({
     const appInitializer = InitializeApplication({
       subdomains,
       repositories,
+      commonTypes,
     });
 
     appInitializer().then(server.start, ({ details }) => {

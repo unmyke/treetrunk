@@ -1,11 +1,12 @@
 import timestamp from './timestamp';
+import list from './list';
 import id from './id';
 import post from './post';
 import day from './day';
 
 const serializers = { id, post, day };
 
-const sellerSerializer = (seller) => {
+const Seller = timestamp((seller) => {
   const {
     sellerId,
     fullName,
@@ -39,6 +40,7 @@ const sellerSerializer = (seller) => {
     })),
     state,
   };
-};
+});
 
-export default timestamp(sellerSerializer);
+export default Seller;
+export const Sellers = list(Seller);

@@ -32,7 +32,6 @@ const applyFSM = (EntityClass) => {
         throw errors.transitionNotAllowed();
       },
       onAfterTransition({ transition }) {
-        console.log(transition, this.state);
         if (
           ![
             ...defaultIgnoreUpdateTrasitions,

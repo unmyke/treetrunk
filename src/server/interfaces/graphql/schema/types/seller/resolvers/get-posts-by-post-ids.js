@@ -22,7 +22,11 @@ const argsParser = (postIds, args, errors) => {
 const getPostsByPostIds = (
   { postIds },
   args,
-  { services: { getPostsList }, errors }
-) => getPostsList(argsParser(postIds, args, errors));
+  {
+    services: { getPostsList },
+    errors,
+    serializers: { Posts: postsSerializer },
+  }
+) => getPostsList(argsParser(postIds, args, errors)).then(postsSerializer);
 
 export default getPostsByPostIds;

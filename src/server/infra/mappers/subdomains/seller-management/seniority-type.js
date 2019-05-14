@@ -37,7 +37,7 @@ const SeniorityTypeMapper = ({ commonTypes, Entity }) => {
       state,
       awards: awards.map(({ value, day }) => ({
         value,
-        day: dayMapper.toEntity({ value: day }),
+        day: dayMapper.toEntity(day),
       })),
       ...props,
     });

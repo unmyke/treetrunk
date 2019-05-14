@@ -1,5 +1,3 @@
-import PageInfo from './page-info';
-
 import Seller, {
   contains as SellerContains,
   connection as SellerConnection,
@@ -18,7 +16,6 @@ import SeniorityType, {
 
 export default { Seller, Post, SeniorityType };
 export const contains = [
-  PageInfo,
   ...SellerContains,
   ...PostContains,
   ...SeniorityTypeContains,

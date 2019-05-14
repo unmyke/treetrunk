@@ -1,5 +1,5 @@
 import { errors } from '@domain/errors';
-import { SequelizeRepository } from '../../_lib';
+import SequelizeRepository from '../sequelize-repository';
 import { getAsyncOperationRunner } from '@infra/support/operation-runner';
 
 const repoErrorMessageMapper = {

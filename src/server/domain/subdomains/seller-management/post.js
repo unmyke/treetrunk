@@ -121,6 +121,10 @@ export default class Post extends BaseEntity {
     this._pieceRates = new Diary();
   }
 
+  isDismissPost() {
+    return this.postId.isDismissPostId();
+  }
+
   get pieceRates() {
     return this._pieceRates.records;
   }

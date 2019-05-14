@@ -1,7 +1,11 @@
 import { lowerFirst } from 'lodash';
 import seeds from './app-seeds';
 
-const InitializeApplication = ({ subdomains, repositories }) => () =>
+const InitializeApplication = ({
+  subdomains,
+  repositories,
+  commonTypes,
+}) => () =>
   Promise.all(
     seeds.map((seed) => {
       const { name, SubdomainName, ModelName, values, callback } = seed;
@@ -12,7 +16,8 @@ const InitializeApplication = ({ subdomains, repositories }) => () =>
         subdomains: {
           [SubdomainName]: { [ModelName]: Entity },
         },
-      } = { subdomains, repositories };
+        commonTypes: { [`${ModelName}Id`]: EntityId },
+      } = { subdomains, repositories, commonTypes };
 
       return repo
         .getOne(values)
@@ -25,7 +30,7 @@ const InitializeApplication = ({ subdomains, repositories }) => () =>
         })
         .then((entity) => {
           const id = entity[`${lowerFirst(ModelName)}Id`];
-          callback({ Class: Entity, name, id });
+          callback({ Class: EntityId, name, id });
         });
     })
   );

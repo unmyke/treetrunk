@@ -17,7 +17,9 @@ const SeniorityTypeRepository = ({ Model, mapper, errors }) => {
     );
 
   const getByMonths = (months) =>
-    getAllBetweenMonths({ min: months, max: months });
+    Model.getByMonths(months).then((seniorityType) =>
+      seniorityType ? mapper.toEntity(seniorityType.get()) : null
+    );
 
   return Object.freeze({
     ...baseRepo,

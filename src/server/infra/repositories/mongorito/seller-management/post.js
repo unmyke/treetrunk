@@ -5,9 +5,7 @@ const PostRepository = ({ Entity, Model, mapper, errors }) => {
 
   const getList = (opts) =>
     baseRepo.getList(opts).then(({ entities, ...meta }) => ({
-      entities: entities.filter(
-        ({ postId }) => !postId.equals(Entity.dismissPostId)
-      ),
+      entities: entities.filter((post) => !post.isDismissPost()),
       ...meta,
     }));
 

@@ -1,12 +1,13 @@
 import { CRUDS } from '@common';
 import * as crudOperations from './crud-operations';
+import getOperationName from './get-operation-name';
 
 const getCrudOperations = (
   EntityName,
   { entities, commonTypes, repositories }
 ) =>
-  Object.values(CRUDS).reduce((prevOperations, { name, getOperationName }) => {
-    const crudOperationGererator = crudOperations[name];
+  Object.values(CRUDS).reduce((prevOperations, crudName) => {
+    const crudOperationGererator = crudOperations[crudName];
     const crudOperation =
       crudOperationGererator &&
       crudOperationGererator(EntityName)({
@@ -17,7 +18,7 @@ const getCrudOperations = (
 
     return {
       ...prevOperations,
-      [getOperationName(EntityName)]: crudOperation,
+      [getOperationName({ EntityName, crudName })]: crudOperation,
     };
   }, {});
 

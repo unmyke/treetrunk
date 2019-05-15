@@ -1,3 +1,5 @@
+import PageInfo from './page-info';
+
 import Seller, {
   contains as SellerContains,
   connection as SellerConnection,
@@ -21,6 +23,7 @@ export const contains = [
   ...SeniorityTypeContains,
 ];
 export const connections = [
+  PageInfo,
   PostConnection,
   SeniorityTypeConnection,
   SellerConnection,

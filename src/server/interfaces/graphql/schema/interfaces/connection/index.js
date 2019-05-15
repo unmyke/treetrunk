@@ -1,4 +1,4 @@
 import PageInfo from './page-info';
 
-export { default as Connection } from './connection';
+export { default } from './connection';
 export const contains = [PageInfo];

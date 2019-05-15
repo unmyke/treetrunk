@@ -10,7 +10,9 @@ const ConnectionInterface = interfaceType({
     t.field('pageInfo', {
       type: PageInfo,
     });
-    t.resolveType(({ __type }) => __type);
+    t.resolveType(({ __type }) => {
+      return __type;
+    });
   },
 });
 

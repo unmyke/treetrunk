@@ -11,6 +11,7 @@ import types, {
   contains as typesContains,
   connections as typeConnections,
   queries as typeQueries,
+  mutations as typeMutations,
 } from './types';
 // import * as mutations from './mutations';
 
@@ -27,7 +28,7 @@ const schema = makeSchema({
     ...argsContains,
     ...typesContains,
     Query,
-    // Mutation,
+    Mutation,
     ...scalarsContains,
     scalars,
     ...enumsContains,
@@ -40,6 +41,7 @@ const schema = makeSchema({
     types,
     typeConnections,
     typeQueries,
+    typeMutations,
   ],
   outputs: { schema: resolve(__dirname, 'schema.graphql') },
 });

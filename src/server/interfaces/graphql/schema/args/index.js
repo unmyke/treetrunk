@@ -1,5 +1,5 @@
-import Connection, { contains as connectionContains } from './connection';
-import Type, { contains as typeContains } from './type';
+import getList, { contains as getListContains } from './get-list';
+import get, { contains as getContains } from './get';
 
-export default { Connection, Type };
-export const contains = [...connectionContains, ...typeContains];
+export default { getList, get };
+export const contains = [...getListContains, ...getContains];

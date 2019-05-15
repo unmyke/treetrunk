@@ -1,7 +1,9 @@
 import { objectType } from 'nexus';
 
 import getEdge from './get-edge';
-import PageInfo from '../../page-info';
+import interfaces from '../../../interfaces';
+
+const { Connection: ConnectionInterface } = interfaces;
 
 const getConnection = (type) => {
   const { name } = type;
@@ -11,8 +13,8 @@ const getConnection = (type) => {
   const Connection = objectType({
     name: `${name}Connection`,
     definition(t) {
+      t.implements(ConnectionInterface);
       t.list.field('edges', { type: Edge });
-      t.field('pageInfo', { type: PageInfo });
     },
   });
 

@@ -2,13 +2,12 @@ import { argsParsers } from '../../generators';
 
 const argsParser = (postIds, args, errors) => {
   const [{ filter, ...origArgs }] = argsParsers.getList(args, errors);
-  const { fields, text } = filter || {};
+  const { fields } = filter || {};
 
   return {
     ...origArgs,
     filter: {
-      ...(filter ? filter : {}),
-      ...(text ? { text } : {}),
+      ...(filter || {}),
       fields: [
         ...(fields && Array.isArray(fields) ? fields : []),
         { name: 'postId', value: postIds },

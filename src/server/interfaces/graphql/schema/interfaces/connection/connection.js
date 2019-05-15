@@ -7,12 +7,9 @@ const ConnectionInterface = interfaceType({
   name: 'ConnectionInterface',
   definition(t) {
     t.list.field('edges', { type: EdgeInterface });
-    t.field('pageInfo', {
-      type: PageInfo,
-    });
-    t.resolveType(({ __type }) => {
-      return __type;
-    });
+    t.field('pageInfo', { type: PageInfo });
+    // t.resolveType(() => null);
+    t.resolveType(({ __type }) => __type);
   },
 });
 

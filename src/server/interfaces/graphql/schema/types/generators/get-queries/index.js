@@ -1,9 +1,12 @@
-import getTypeQueryField from './get-type-query-field';
-import getConnectionQueryField from './get-connection-query-field';
+import * as queryFields from './query-fields';
 
-const getQueries = (type) => ({
-  ...getTypeQueryField(type),
-  ...getConnectionQueryField(type),
-});
+const getQueries = (type) =>
+  Object.keys(queryFields).reduce(
+    (prevQueryFields, operationName) => ({
+      ...prevQueryFields,
+      ...queryFields[operationName](type),
+    }),
+    {}
+  );
 
 export default getQueries;

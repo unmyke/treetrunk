@@ -5,7 +5,7 @@ export default (serializer) => ({ entities, hasBefore, hasAfter }) => {
     __type: `${serializer.name}Connection`,
     edges,
     pageInfo: {
-      PreviousPage: hasBefore,
+      hasPreviousPage: hasBefore,
       hasNextPage: hasAfter,
       count: edges.length,
     },

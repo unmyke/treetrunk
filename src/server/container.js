@@ -7,7 +7,12 @@ import { getSubdomainsContainer } from '@infra/support/container-helpers';
 import config from '@config';
 import { subdomains, commonTypes, states, errors } from '@domain';
 
-import { Application, services, getCrudOperations } from '@app';
+import {
+  Application,
+  services,
+  getCrudServices,
+  getCrudServiceName,
+} from '@app';
 import makeValidator from '@infra/support/make-validator';
 
 import Server from '@interfaces/graphql';
@@ -37,6 +42,7 @@ bottle.constant('states', states);
 bottle.constant('errors', errors);
 
 bottle.factory('app', Application);
+bottle.factory('getCrudServiceName', getCrudServiceName);
 
 // bottle.factory('mappers.commonTypes', ({ commonTypes }) =>
 //   getCommonTypesContainer(commonTypesMappers, (Mapper) =>
@@ -101,7 +107,7 @@ bottle.factory(
                 },
                 {}
               ),
-              ...getCrudOperations(EntityName, {
+              ...getCrudServices(EntityName, {
                 entities: SubdomainEntities,
                 commonTypes,
                 repositories: SubdomainRepos,

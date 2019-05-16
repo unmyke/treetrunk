@@ -10,8 +10,7 @@ import scalars, { contains as scalarsContains } from './scalars';
 import types, {
   contains as typesContains,
   connections as typeConnections,
-  queries as typeQueries,
-  mutations as typeMutations,
+  operations as typeOperations,
 } from './types';
 // import * as mutations from './mutations';
 
@@ -23,27 +22,30 @@ const Mutation = mutationType({
   definition() {},
 });
 
-const schema = makeSchema({
-  types: [
-    ...argsContains,
-    ...typesContains,
-    Query,
-    Mutation,
-    ...scalarsContains,
-    scalars,
-    ...enumsContains,
-    enums,
-    ...inputsContains,
-    inputs,
-    ...interfacesContains,
-    interfaces,
-    ...typesContains,
-    types,
-    typeConnections,
-    typeQueries,
-    typeMutations,
-  ],
-  outputs: { schema: resolve(__dirname, 'schema.graphql') },
-});
+const schema = (getServiceName) => {
+  // refactor
+  const getResolver = getResolver;
+  return makeSchema({
+    types: [
+      ...argsContains,
+      ...typesContains,
+      Query,
+      Mutation,
+      ...scalarsContains,
+      scalars,
+      ...enumsContains,
+      enums,
+      ...inputsContains,
+      inputs,
+      ...interfacesContains,
+      interfaces,
+      ...typesContains,
+      types,
+      typeConnections,
+      typeOperations,
+    ],
+    outputs: { schema: resolve(__dirname, 'schema.graphql') },
+  });
+};
 
 export default schema;

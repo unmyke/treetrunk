@@ -1,7 +1,7 @@
 import Award from './award';
 import connection, { contains as connectionContains } from './connection';
-import queries, { contains as queriesContains } from './queries';
+import operations, { contains as operationsContains } from './operations';
 
 export { default } from './seniority-type';
-export const contains = [Award, ...connectionContains, ...queriesContains];
-export { connection, queries };
+export const contains = [Award, ...connectionContains, ...operationsContains];
+export { connection, operations };

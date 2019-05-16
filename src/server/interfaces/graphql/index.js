@@ -3,7 +3,13 @@ import { ApolloServer } from 'apollo-server';
 import * as serializers from './serializers';
 import schema from './schema';
 
-export default ({ config, logger, services, errors }) => {
+export default ({
+  config,
+  logger,
+  services,
+  errors,
+  getCrudServiceName: getServiceName,
+}) => {
   const server = new ApolloServer({
     schema,
     // resolvers,

@@ -1,13 +1,14 @@
 import PieceRate from './piece-rate';
 import connection, { contains as connectionContains } from './connection';
-import queries, { contains as queriesContains } from './queries';
-import mutations, { contains as mutationsContains } from './mutations';
+import operations, { contains as operationsContains } from './operations';
+import args, { contains as typeArgsContains } from './args';
 
-export { default } from './post';
-export const contains = [
+const contains = [
   PieceRate,
   ...connectionContains,
-  ...queriesContains,
-  ...mutationsContains,
+  ...operationsContains,
+  ...typeArgsContains,
 ];
-export { connection, queries, mutations };
+
+export { default } from './post';
+export { contains, args, connection, operations };

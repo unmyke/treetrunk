@@ -1,7 +1,7 @@
 import Appontment from './appontment';
 import StateEnum from './state-enum';
 import connection, { contains as connectionContains } from './connection';
-import queries, { contains as queriesContains } from './queries';
+import operations, { contains as operationsContains } from './operations';
 
 // import * as resolvers from './resolvers';
 // import * as queries from './queries';
@@ -11,6 +11,6 @@ export const contains = [
   StateEnum,
   Appontment,
   ...connectionContains,
-  ...queriesContains,
+  ...operationsContains,
 ];
-export { connection, queries };
+export { connection, operations };

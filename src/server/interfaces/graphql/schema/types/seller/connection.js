@@ -1,5 +1,5 @@
 import Seller from './seller';
-import { getConnection } from '../generators';
+import { getConnection } from '../../generators';
 
 const { Connection: SellerConnection, Edge: SellerEdge } = getConnection(
   Seller

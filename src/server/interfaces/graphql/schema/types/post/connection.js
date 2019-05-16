@@ -1,5 +1,5 @@
 import Post from './post';
-import { getConnection } from '../generators';
+import { getConnection } from '../../generators';
 
 const { Connection: PostConnection, Edge: PostEdge } = getConnection(Post);
 

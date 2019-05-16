@@ -1,5 +1,5 @@
 import SeniorityType from './seniority-type';
-import { getConnection } from '../generators';
+import { getConnection } from '../../generators';
 
 const {
   Connection: SeniorityTypeConnection,

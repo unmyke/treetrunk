@@ -551,7 +551,7 @@ describe('Domain :: lib :: valueObjects :: Day', () => {
     context('when pass correct day with format', () => {
       test('return formated date', () => {
         const value = new Date('2015-12-21 00:00:00 GMT+0800');
-        const formatString = 'DD MMMM YYYY';
+        const formatString = 'dd MMMM yyyy';
         const day = new Day({ value });
 
         expect(day.format(formatString)).toBe('21 декабря 2015');

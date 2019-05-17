@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server';
 
 import * as serializers from './serializers';
-import schema from './schema';
+import makeSchema from './make-schema';
 
 export default ({
   config,
@@ -11,7 +11,7 @@ export default ({
   getCrudServiceName: getServiceName,
 }) => {
   const server = new ApolloServer({
-    schema,
+    schema: makeSchema(getServiceName),
     // resolvers,
     context: {
       services,

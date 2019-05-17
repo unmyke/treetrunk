@@ -1,8 +1,9 @@
 import { arg } from 'nexus';
+
 import {
   Seller as SellerInput,
   Appointment as AppointmentInput,
-} from './inputs';
+} from '../inputs';
 
 const createArgs = {
   seller: arg({ type: SellerInput, required: true }),

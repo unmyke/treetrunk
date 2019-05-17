@@ -1,14 +1,10 @@
 import PieceRate from './piece-rate';
 import connection, { contains as connectionContains } from './connection';
-import operations, { contains as operationsContains } from './operations';
-import args, { contains as argsContains } from './args';
-
-const contains = [
-  PieceRate,
-  ...connectionContains,
-  ...argsContains,
-  ...operationsContains,
-];
+import * as operations from './operations';
+import * as inputs from './inputs';
+import * as args from './args';
 
 export { default } from './post';
-export { contains, args, connection, operations };
+
+const contains = [PieceRate, inputs, ...connectionContains];
+export { contains, connection, operations, args };

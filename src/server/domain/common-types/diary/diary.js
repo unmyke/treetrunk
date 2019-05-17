@@ -334,8 +334,8 @@ export default class Diary extends BaseClass {
     return this._store.map(fn);
   }
 
-  reduce(fn) {
-    return this._store.reduce(fn);
+  reduce(fn, initValue) {
+    return this._store.reduce(fn, initValue);
   }
 
   filter(fn) {

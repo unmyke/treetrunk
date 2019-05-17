@@ -1,5 +1,5 @@
 import { arg, idArg } from 'nexus';
-import { SeniorityType as SeniorityTypeInput } from './inputs';
+import { SeniorityType as SeniorityTypeInput } from '../inputs';
 
 const updateArgs = {
   id: idArg({ required: true }),

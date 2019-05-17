@@ -1,5 +1,5 @@
 import { arg } from 'nexus';
-import { Post as PostInput, PieceRate as PieceRateInput } from './inputs';
+import { Post as PostInput, PieceRate as PieceRateInput } from '../inputs';
 
 const createArgs = {
   post: arg({ type: PostInput, required: true }),

@@ -1,5 +1,6 @@
 import { arg, idArg } from 'nexus';
-import { Seller as SellerInput } from './inputs';
+
+import { Seller as SellerInput } from '../inputs';
 
 const updateArgs = {
   id: idArg({ required: true }),

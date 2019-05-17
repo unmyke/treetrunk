@@ -6,3 +6,7 @@ export const UPDATE = 'update';
 // export const UPDATE_MANY = 'updateMany';
 export const DELETE = 'delete';
 // export const DELETE_MANY ='deleteMany';
+export const RESTORE = 'restore';
+// export const RESTORE_MANY ='restoreMany';
+export const DESTROY = 'destroy';
+// export const DESTROY_MANY ='destroyMany';

@@ -217,7 +217,7 @@ export default class Seller extends BaseEntity {
         this.phone = phone || this.phone;
       },
 
-      [`onBefore${transitions.AddAppointment}`](_, postId, day = new Day()) {
+      [`onBefore${transitions.ADD_APPOINTMENT}`](_, postId, day = new Day()) {
         return diaryOperationRunner(() => this._appointments.add(postId, day));
       },
 

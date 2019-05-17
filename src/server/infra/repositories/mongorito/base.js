@@ -41,13 +41,20 @@ const BaseRepository = ({ Model, mapper, errors }) => {
     return model.save().then(() => mapToEntity(model), throwError);
   };
 
+  const destroy = (id) => {
+    return Model.where(id)
+      .equals(getIdValue(id))
+      .remove();
+  };
+
   return Object.freeze({
     getByIds,
     getList,
     getById,
     getOne,
-    save,
     add: save,
+    save,
+    destroy,
   });
 };
 export default BaseRepository;

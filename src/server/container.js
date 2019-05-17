@@ -42,7 +42,7 @@ bottle.constant('states', states);
 bottle.constant('errors', errors);
 
 bottle.factory('app', Application);
-bottle.factory('getCrudServiceName', getCrudServiceName);
+bottle.constant('getCrudServiceName', getCrudServiceName);
 
 // bottle.factory('mappers.commonTypes', ({ commonTypes }) =>
 //   getCommonTypesContainer(commonTypesMappers, (Mapper) =>
@@ -92,6 +92,11 @@ bottle.factory(
 
             return {
               ...prevEntitiesOperations,
+              ...getCrudServices(EntityName, {
+                entities: SubdomainEntities,
+                commonTypes,
+                repositories: SubdomainRepos,
+              }),
               ...Object.keys(EntityOperations).reduce(
                 (prevEntityOperations, OperationName) => {
                   const EntityOperation = EntityOperations[OperationName];
@@ -107,11 +112,6 @@ bottle.factory(
                 },
                 {}
               ),
-              ...getCrudServices(EntityName, {
-                entities: SubdomainEntities,
-                commonTypes,
-                repositories: SubdomainRepos,
-              }),
             };
           },
           {}

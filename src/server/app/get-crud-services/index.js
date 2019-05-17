@@ -15,7 +15,7 @@ const getCrudServices = (EntityName, { entities, commonTypes, repositories }) =>
 
     return {
       ...prevServices,
-      [getServiceName({ EntityName, crudName })]: crudService,
+      [getServiceName(EntityName, crudName)]: crudService,
     };
   }, {});
 

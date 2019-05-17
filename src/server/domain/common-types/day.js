@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {
-  formatWithOptions as formatFNS,
+  format as formatFNS,
   startOfWeek as startOfWeekFNS,
   endOfWeek as endOfWeekFNS,
   startOfMonth as startOfMonthFNS,
@@ -14,8 +14,7 @@ import {
   subDays as subDaysFNS,
   addMonths as addMonthsFNS,
   subMonths as subMonthsFNS,
-  parseISO,
-} from 'date-fns/fp';
+} from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 import { isValidDate, convertDate } from '@infra/support/date-helpers';
@@ -69,7 +68,9 @@ export default class Day extends BaseValue {
   }
 
   static _dayFactory(date = new Date(), dateGetter, dateGetterProps) {
-    return new Day({ value: dateGetter(dateGetterProps)(date) });
+    return new Day({
+      value: dateGetter(date, dateGetterProps),
+    });
   }
 
   // Validator
@@ -94,19 +95,19 @@ export default class Day extends BaseValue {
   }
 
   addDays(num = 0) {
-    return new Day({ value: addDaysFNS(num)(this.value) });
+    return new Day({ value: addDaysFNS(this.value, num) });
   }
 
   subDays(num = 0) {
-    return new Day({ value: subDaysFNS(num)(this.value) });
+    return new Day({ value: subDaysFNS(this.value, num) });
   }
 
   addMonths(num = 0) {
-    return new Day({ value: addMonthsFNS(num)(this.value) });
+    return new Day({ value: addMonthsFNS(this.value, num) });
   }
 
   subMonths(num = 0) {
-    return new Day({ value: subMonthsFNS(num)(this.value) });
+    return new Day({ value: subMonthsFNS(this.value, num) });
   }
 
   difference(day = new Day()) {
@@ -114,7 +115,7 @@ export default class Day extends BaseValue {
   }
 
   differenceInMonths(day = new Day()) {
-    const result = differenceInMonthsFNS(day.value)(this.value);
+    const result = differenceInMonthsFNS(this.value, day.value);
     return isMinusZero(result) ? -result : result;
   }
 
@@ -158,8 +159,8 @@ export default class Day extends BaseValue {
     return this.subDays(1);
   }
 
-  format(formatString) {
-    return formatFNS({ locale: ru }, formatString)(this.value);
+  format(formatString = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx") {
+    return formatFNS(this.value, formatString, { locale: ru });
   }
 
   toString() {

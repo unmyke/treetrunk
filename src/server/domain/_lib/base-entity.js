@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-import { applyFSM, getIdPropName } from '../base-methods';
-import BaseClass from '../base-class';
+import { applyFSM, getIdPropName } from './base-methods';
+import BaseClass from './base-class';
 
 export default class BaseEntity extends BaseClass {
   constructor({ id, createdAt = new Date(), updatedAt, deletedAt }) {

@@ -1,5 +1,5 @@
-import BaseClass from '../base-class';
-import { isEqualValues } from '../base-methods';
+import BaseClass from './base-class';
+import { isEqualValues } from './base-methods';
 
 export default class BaseValue extends BaseClass {
   equals(value) {

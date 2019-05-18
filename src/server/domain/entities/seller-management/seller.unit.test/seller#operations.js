@@ -66,7 +66,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.deleteAppointmentAt(newAppoint.day);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
 
           expect(seller._appointments.length).toBe(0);
           expect(seller._appointments.archiveLength).toBe(0);
@@ -83,7 +83,7 @@ describe('Domain :: commonTypes :: Seller', () => {
               newAppoint.postId,
               newAppoint.day
             );
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
 
           expect(seller._appointments.length).toBe(0);
           expect(seller._appointments.archiveLength).toBe(0);
@@ -96,7 +96,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.dismissAt(day1);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
 
           expect(seller._appointments.length).toBe(0);
           expect(seller._appointments.archiveLength).toBe(0);
@@ -108,7 +108,7 @@ describe('Domain :: commonTypes :: Seller', () => {
       test('should throw exception and leave appoints unchanged', () => {
         expect(() => {
           seller.deleteDismiss();
-        }).toThrowError('SELLER_NOT_DISMISSED');
+        }).toThrowError('SELLER_IS_NOT_DISMISSED');
 
         expect(seller._appointments.length).toBe(0);
         expect(seller._appointments.archiveLength).toBe(0);
@@ -120,7 +120,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.updateDismissTo(day1);
-          }).toThrowError('SELLER_NOT_DISMISSED');
+          }).toThrowError('SELLER_IS_NOT_DISMISSED');
 
           expect(seller._appointments.length).toBe(0);
           expect(seller._appointments.archiveLength).toBe(0);
@@ -198,7 +198,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.addAppointment(newPastAppoint.postId, newPastAppoint.day);
-          }).toThrowError('CARRER_CLOSED');
+          }).toThrowError('CARRER_IS_CLOSED');
 
           expect(seller.appointments).toEqual([appoint1, appoint2, appoint3]);
           expect(seller._appointments._archive.map(({ day }) => day)).toEqual([
@@ -239,7 +239,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.deleteAppointmentAt(newPastAppoint.day);
-          }).toThrowError('CARRER_CLOSED');
+          }).toThrowError('CARRER_IS_CLOSED');
 
           expect(seller.appointments).toEqual([appoint1, appoint2, appoint3]);
           expect(seller._appointments._archive.map(({ day }) => day)).toEqual([
@@ -384,7 +384,7 @@ describe('Domain :: commonTypes :: Seller', () => {
               newAppoint.postId,
               newAppoint.day
             );
-          }).toThrowError('CARRER_CLOSED');
+          }).toThrowError('CARRER_IS_CLOSED');
 
           expect(seller.appointments).toEqual([appoint1, appoint2, appoint3]);
           expect(seller._appointments._archive.map(({ day }) => day)).toEqual([
@@ -461,7 +461,7 @@ describe('Domain :: commonTypes :: Seller', () => {
       test('should throw exception and leave appoints unchanged', () => {
         expect(() => {
           seller.deleteDismiss();
-        }).toThrowError('SELLER_NOT_DISMISSED');
+        }).toThrowError('SELLER_IS_NOT_DISMISSED');
 
         expect(seller.appointments).toEqual([appoint1, appoint2, appoint3]);
         expect(seller._appointments._archive.get(day3).value.records).toEqual(
@@ -475,7 +475,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.updateDismissTo(day1);
-          }).toThrowError('SELLER_NOT_DISMISSED');
+          }).toThrowError('SELLER_IS_NOT_DISMISSED');
 
           expect(seller.appointments).toEqual([appoint1, appoint2, appoint3]);
           expect(seller._appointments._archive.get(day3).value.records).toEqual(
@@ -511,7 +511,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.addAppointment(newPastAppoint.postId, newPastAppoint.day);
-          }).toThrowError('CARRER_CLOSED');
+          }).toThrowError('CARRER_IS_CLOSED');
 
           expect(seller.appointments).toHaveLength(0);
           expect(seller._appointments._archive.get(day3).value.records).toEqual(
@@ -526,7 +526,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.deleteAppointmentAt(newAppoint.day);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
 
           expect(seller.appointments).toHaveLength(0);
           expect(seller._appointments._archive.get(day3).value.records).toEqual(
@@ -539,7 +539,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.deleteAppointmentAt(newPastAppoint.day);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
 
           expect(seller.appointments).toHaveLength(0);
           expect(seller._appointments._archive.get(day3).value.records).toEqual(
@@ -558,7 +558,7 @@ describe('Domain :: commonTypes :: Seller', () => {
               newAppoint.postId,
               newAppoint.day
             );
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
 
           expect(seller.appointments).toHaveLength(0);
           expect(seller._appointments._archive.get(day3).value.records).toEqual(
@@ -575,7 +575,7 @@ describe('Domain :: commonTypes :: Seller', () => {
               newAppoint.postId,
               newAppoint.day
             );
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
 
           expect(seller.appointments).toHaveLength(0);
           expect(seller._appointments._archive.get(day3).value.records).toEqual(
@@ -590,7 +590,7 @@ describe('Domain :: commonTypes :: Seller', () => {
         test('should throw exception and leave appoints unchanged', () => {
           expect(() => {
             seller.dismissAt(day1);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
 
           expect(seller.appointments).toHaveLength(0);
           expect(seller._appointments._archive.get(day3).value.records).toEqual(

@@ -2,7 +2,7 @@ import container from '@container';
 import request from '@infra/support/test/request';
 
 const {
-  subdomains: {
+  entities: {
     SellerManagement: {
       entities: { Post },
     },

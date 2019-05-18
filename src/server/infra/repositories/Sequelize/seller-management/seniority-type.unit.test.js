@@ -12,7 +12,7 @@ const getRawSeniorityType = ({ seniorityTypeId, name, phone, awards }) => ({
 });
 
 const {
-  subdomains: {
+  entities: {
     SellerManagement: { SeniorityType },
   },
   commonTypes: { Day, SeniorityTypeId },
@@ -26,7 +26,7 @@ const {
     },
   },
   mappers: {
-    subdomains: {
+    entities: {
       SellerManagement: { SeniorityType: seniorityTypeMapper },
     },
   },

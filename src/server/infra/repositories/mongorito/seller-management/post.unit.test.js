@@ -13,7 +13,7 @@ const getRawPost = ({ postId, name, phone, pieceRates }) => ({
 });
 
 const {
-  subdomains: {
+  entities: {
     SellerManagement: { Post },
   },
   commonTypes: { Day, PostId },
@@ -24,7 +24,7 @@ const {
     SellerManagement: { Post: PostModel, PostPieceRate: PostPieceRateModel },
   },
   mappers: {
-    subdomains: {
+    entities: {
       SellerManagement: { Post: postMapper },
     },
   },

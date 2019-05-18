@@ -2,7 +2,7 @@
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
 import { BaseEntity } from '../../_lib';
-import { loop } from '../../_lib/base-methods';
+import { loop, getLifecycleEvenName } from '../../_lib/base-methods';
 import { errors } from '../../errors';
 import { Seller as states } from '../../states';
 import { SellerId, PostId, PersonName, Day, Diary } from '../../common-types';
@@ -17,10 +17,10 @@ const diaryErrorMessageMapper = {
   RECORD_HAS_LIMITED_SCOPE: errors.appointmentHasLimitedScope(),
   NEW_RECORD_ALREADY_EXISTS: errors.newAppointmentAlreadyExists(),
   NEW_RECORD_DUPLICATE: errors.newAppointmentDuplicate(),
-  DIARY_CLOSED: errors.carrerClosed(),
-  DIARY_NOT_STARTED: errors.sellerNotRecruited(),
+  DIARY_IS_CLOSED: errors.carrerIsClosed(),
+  DIARY_IS_NOT_STARTED: errors.sellerIsNotRecruited(),
   DIARY_HAS_RECORDS_LATER: errors.sellerHasAppointmentsLater(),
-  DIARY_NOT_CLOSED: errors.sellerNotDismissed(),
+  DIARY_IS_NOT_CLOSED: errors.sellerIsNotDismissed(),
 };
 const diaryOperationRunner = getSyncOperationRunner(diaryErrorMessageMapper);
 
@@ -176,35 +176,35 @@ export default class Seller extends BaseEntity {
       onInvalidTransition(transition, from) {
         switch (true) {
           case from === states.DELETED:
-            throw errors.sellerDeleted();
+            throw errors.sellerIsDeleted();
 
           case transition === transitions.DELETE:
-            throw errors.sellerNotDismissed();
+            throw errors.sellerIsNotDismissed();
 
           case transition === transitions.RESTORE:
-            throw errors.sellerNotDeleted();
+            throw errors.sellerIsNotDeleted();
 
           case transition === transitions.DELETE_APPOINTMENT_AT:
-            throw errors.sellerNotRecruited();
+            throw errors.sellerIsNotRecruited();
 
           case transition === transitions.UPDATE_APPOINTMENT_TO:
-            throw errors.sellerNotRecruited();
+            throw errors.sellerIsNotRecruited();
 
           case transition === transitions.DISMISS_AT:
-            throw errors.sellerNotRecruited();
+            throw errors.sellerIsNotRecruited();
 
           case transition === transitions.DELETE_DISMISS:
-            throw errors.sellerNotDismissed();
+            throw errors.sellerIsNotDismissed();
 
           case transition === transitions.UPDATE_DISMISS_TO:
-            throw errors.sellerNotDismissed();
+            throw errors.sellerIsNotDismissed();
 
           default:
             throw errors.transitionNotAllowed();
         }
       },
 
-      [`onBefore${transitions.UPDATE}`](
+      [getLifecycleEvenName('before', transitions.UPDATE)](
         _,
         { lastName, firstName, middleName, phone }
       ) {
@@ -217,15 +217,22 @@ export default class Seller extends BaseEntity {
         this.phone = phone || this.phone;
       },
 
-      [`onBefore${transitions.ADD_APPOINTMENT}`](_, postId, day = new Day()) {
+      [getLifecycleEvenName('before', transitions.ADD_APPOINTMENT)](
+        _,
+        postId,
+        day = new Day()
+      ) {
         return diaryOperationRunner(() => this._appointments.add(postId, day));
       },
 
-      [`onBefore${transitions.DELETE_APPOINTMENT_AT}`](_, day = new Day()) {
+      [getLifecycleEvenName('before', transitions.DELETE_APPOINTMENT_AT)](
+        _,
+        day = new Day()
+      ) {
         return diaryOperationRunner(() => this._appointments.deleteAt(day));
       },
 
-      [`onBefore${transitions.UPDATE_APPOINTMENT_TO}`](
+      [getLifecycleEvenName('before', transitions.UPDATE_APPOINTMENT_TO)](
         _,
         day,
         newPostId,
@@ -236,24 +243,30 @@ export default class Seller extends BaseEntity {
         );
       },
 
-      [`onBefore${transitions.DISMISS_AT}`](_, day = new Day()) {
+      [getLifecycleEvenName('before', transitions.DISMISS_AT)](
+        _,
+        day = new Day()
+      ) {
         return diaryOperationRunner(() => this._appointments.addCloseAt(day));
       },
 
-      [`onBefore${transitions.DELETE_DISMISS}`]() {
+      [getLifecycleEvenName('before', transitions.DELETE_DISMISS)]() {
         return diaryOperationRunner(() => this._appointments.deleteClose());
       },
 
-      [`onBefore${transitions.UPDATE_DISMISS_TO}`](_, day = new Day()) {
+      [getLifecycleEvenName('before', transitions.UPDATE_DISMISS_TO)](
+        _,
+        day = new Day()
+      ) {
         return diaryOperationRunner(() =>
           this._appointments.updateCloseTo(day)
         );
       },
 
-      [`onAfter${transitions.DELETE}`]() {
+      [getLifecycleEvenName('after', transitions.DELETE)]() {
         this.deletedAt = new Date();
       },
-      [`onAfter${transitions.RESTORE}`]() {
+      [getLifecycleEvenName('after', transitions.RESTORE)]() {
         this.deletedAt = null;
       },
     },

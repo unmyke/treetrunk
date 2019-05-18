@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4';
-import BaseId from '.';
+import BaseId from './base-id';
 
 const value = uuidv4();
 const { constructor: idConstructor } = value;

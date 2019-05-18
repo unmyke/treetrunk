@@ -1,3 +1,5 @@
+import { upperFirst } from 'lodash';
+
 export function loop() {
   return this.state;
 }
@@ -5,3 +7,6 @@ export function loop() {
 export function toState(state) {
   return state;
 }
+
+export const getLifecycleEvenName = (lifecycle, target) =>
+  `on${upperFirst(lifecycle)}${upperFirst(target)}`;

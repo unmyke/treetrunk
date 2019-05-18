@@ -3,7 +3,7 @@ import cleanDatabase from '@infra/support/test/clean-database';
 import factory from '@infra/support/test/factory';
 
 const {
-  subdomains: {
+  entities: {
     SellerManagement: { Seller },
   },
   commonTypes: { SellerId },

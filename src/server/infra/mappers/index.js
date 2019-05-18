@@ -1,3 +1,3 @@
-import * as subdomains from './subdomains';
+import * as entities from './entities';
 
-export default subdomains;
+export default entities;

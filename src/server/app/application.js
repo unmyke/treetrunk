@@ -6,7 +6,7 @@ const Application = ({
   server,
   database,
   logger,
-  subdomains,
+  entities,
   commonTypes,
   repositories,
 }) => {
@@ -14,7 +14,7 @@ const Application = ({
 
   const initApp = async () => {
     const appInitializer = InitializeApplication({
-      subdomains,
+      entities,
       repositories,
       commonTypes,
     });

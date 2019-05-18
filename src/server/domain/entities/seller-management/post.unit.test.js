@@ -234,29 +234,29 @@ describe('Domain :: entities :: Post', () => {
       });
     });
   });
-  describe('#inactivate', () => {
+  describe('#delete', () => {
     context('when post\'s state is "active"', () => {
       beforeEach(() => {
         expect(post.state).toBe('active');
       });
 
       test('should change state to "deleted"', () => {
-        post.inactivate();
+        post.delete();
         expect(post.state).toBe('deleted');
       });
     });
 
     context('when post\'s state is "deleted"', () => {
       beforeEach(() => {
-        post.inactivate();
+        post.delete();
         expect(post.state).toBe('deleted');
       });
 
-      test('should not change state and throw NOT_ALLOWED error', () => {
+      test('should not change state and throw POST_IS_DELETED error', () => {
         try {
-          post.inactivate();
+          post.delete();
         } catch (error) {
-          expect(error.message).toBe('TRANSITION_NOT_ALLOWED');
+          expect(error.message).toBe('POST_IS_DELETED');
         }
 
         expect(post.state).toBe('deleted');
@@ -264,14 +264,14 @@ describe('Domain :: entities :: Post', () => {
     });
   });
 
-  describe('#activate', () => {
+  describe('#restore', () => {
     context('when post\'s state is "deleted"', () => {
       beforeEach(() => {
-        post.inactivate();
+        post.delete();
         expect(post.state).toBe('deleted');
       });
       test('should change state to "active"', () => {
-        post.activate();
+        post.restore();
         expect(post.state).toBe('active');
       });
     });
@@ -281,11 +281,11 @@ describe('Domain :: entities :: Post', () => {
     beforeEach(() => {
       expect(post.state).toBe('active');
     });
-    test('should not change state and throw NOT_ALLOWED error', () => {
+    test('should not change state and throw POST_IS_ACTIVE error', () => {
       try {
-        post.activate();
+        post.restore();
       } catch (error) {
-        expect(error.message).toBe('TRANSITION_NOT_ALLOWED');
+        expect(error.message).toBe('POST_IS_ACTIVE');
       }
 
       expect(post.state).toBe('active');

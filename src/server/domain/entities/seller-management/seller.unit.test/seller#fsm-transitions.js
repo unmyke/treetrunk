@@ -41,7 +41,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           seller.delete(day1);
-        }).toThrowError('SELLER_NOT_DISMISSED');
+        }).toThrowError('SELLER_IS_NOT_DISMISSED');
       });
     });
 
@@ -49,7 +49,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           seller.restore(day1);
-        }).toThrowError('SELLER_NOT_DELETED');
+        }).toThrowError('SELLER_IS_NOT_DELETED');
       });
     });
 
@@ -64,7 +64,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           seller.deleteAppointmentAt(day1);
-        }).toThrowError('SELLER_NOT_RECRUITED');
+        }).toThrowError('SELLER_IS_NOT_RECRUITED');
       });
     });
 
@@ -72,7 +72,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           seller.deleteAppointmentAt(day1);
-        }).toThrowError('SELLER_NOT_RECRUITED');
+        }).toThrowError('SELLER_IS_NOT_RECRUITED');
       });
     });
 
@@ -80,7 +80,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           seller.updateAppointmentTo(day1, newPostId, day);
-        }).toThrowError('SELLER_NOT_RECRUITED');
+        }).toThrowError('SELLER_IS_NOT_RECRUITED');
       });
     });
 
@@ -88,7 +88,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           seller.dismissAt(day4);
-        }).toThrowError('SELLER_NOT_RECRUITED');
+        }).toThrowError('SELLER_IS_NOT_RECRUITED');
       });
     });
 
@@ -96,7 +96,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           seller.deleteDismiss();
-        }).toThrowError('SELLER_NOT_DISMISSED');
+        }).toThrowError('SELLER_IS_NOT_DISMISSED');
       });
     });
 
@@ -104,7 +104,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           seller.updateDismissTo(day4);
-        }).toThrowError('SELLER_NOT_DISMISSED');
+        }).toThrowError('SELLER_IS_NOT_DISMISSED');
       });
     });
   });
@@ -126,7 +126,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.delete(day1);
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
 
@@ -134,7 +134,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.restore(day1);
-            }).toThrowError('SELLER_NOT_DELETED');
+            }).toThrowError('SELLER_IS_NOT_DELETED');
           });
         });
 
@@ -170,7 +170,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.deleteDismiss();
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
 
@@ -178,7 +178,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.updateDismissTo(day4);
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
       });
@@ -198,7 +198,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.delete(day1);
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
 
@@ -206,7 +206,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.restore(day1);
-            }).toThrowError('SELLER_NOT_DELETED');
+            }).toThrowError('SELLER_IS_NOT_DELETED');
           });
         });
 
@@ -242,7 +242,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.deleteDismiss();
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
 
@@ -250,7 +250,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.updateDismissTo(day4);
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
       });
@@ -272,7 +272,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.delete(day1);
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
 
@@ -280,7 +280,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.restore(day1);
-            }).toThrowError('SELLER_NOT_DELETED');
+            }).toThrowError('SELLER_IS_NOT_DELETED');
           });
         });
 
@@ -316,7 +316,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.deleteDismiss();
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
 
@@ -324,7 +324,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.updateDismissTo(day4);
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
       });
@@ -351,7 +351,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.delete(day1);
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
 
@@ -359,7 +359,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.restore(day1);
-            }).toThrowError('SELLER_NOT_DELETED');
+            }).toThrowError('SELLER_IS_NOT_DELETED');
           });
         });
 
@@ -388,7 +388,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.deleteDismiss();
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
 
@@ -396,7 +396,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               seller.updateDismissTo(day4);
-            }).toThrowError('SELLER_NOT_DISMISSED');
+            }).toThrowError('SELLER_IS_NOT_DISMISSED');
           });
         });
       });
@@ -430,7 +430,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             seller.restore(day1);
-          }).toThrowError('SELLER_NOT_DELETED');
+          }).toThrowError('SELLER_IS_NOT_DELETED');
         });
       });
 
@@ -445,7 +445,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             seller.deleteAppointmentAt(day1);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
         });
       });
 
@@ -453,7 +453,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             seller.updateAppointmentTo(day1, newPostId, day);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
         });
       });
 
@@ -461,7 +461,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             seller.dismissAt(day4);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
         });
       });
 
@@ -506,7 +506,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             seller.restore(day1);
-          }).toThrowError('SELLER_NOT_DELETED');
+          }).toThrowError('SELLER_IS_NOT_DELETED');
         });
       });
 
@@ -521,7 +521,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             seller.deleteAppointmentAt(day2);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
         });
       });
 
@@ -529,7 +529,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             seller.updateAppointmentTo(day1, newPostId, day);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
         });
       });
 
@@ -537,7 +537,7 @@ describe('Domain :: commonTypes :: Seller :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             seller.dismissAt(day4);
-          }).toThrowError('SELLER_NOT_RECRUITED');
+          }).toThrowError('SELLER_IS_NOT_RECRUITED');
         });
       });
 

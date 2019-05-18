@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
-import { loop } from '@domain/_lib/base-methods';
+import { loop, getLifecycleEvenName } from '@domain/_lib/base-methods';
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { Post as states } from '../../states';
@@ -72,29 +72,39 @@ export default class Post extends BaseEntity {
     ],
 
     methods: {
-      onInvalidTransition(from) {
+      onInvalidTransition(_, from) {
         switch (from) {
           case states.DELETED:
-            throw errors.postDeleted();
+            throw errors.postIsDeleted();
+
+          case states.ACTIVE:
+            throw errors.postIsActive();
 
           default:
-            throw errors.postActive();
+            throw errors.transitionNotAllowed();
         }
       },
 
-      [`onBefore${transitions.UPDATE}`](_, { name }) {
+      [getLifecycleEvenName('before', transitions.UPDATE)](_, { name }) {
         this.name = name || this.name;
       },
 
-      [`onBefore${transitions.ADD_PIECE_RATE}`](_, value, day = new Day()) {
+      [getLifecycleEvenName('before', transitions.ADD_PIECE_RATE)](
+        _,
+        value,
+        day = new Day()
+      ) {
         return diaryOperationRunner(() => this._pieceRates.add(value, day));
       },
 
-      [`onBefore${transitions.DELETE_PIECE_RATE_AT}`](_, day = new Day()) {
+      [getLifecycleEvenName('before', transitions.DELETE_PIECE_RATE_AT)](
+        _,
+        day = new Day()
+      ) {
         return diaryOperationRunner(() => this._pieceRates.deleteAt(day));
       },
 
-      [`onBefore${transitions.UPDATE_PIECE_RATE_TO}`](
+      [getLifecycleEvenName('before', transitions.UPDATE_PIECE_RATE_TO)](
         _,
         day,
         newValue,
@@ -105,11 +115,11 @@ export default class Post extends BaseEntity {
         );
       },
 
-      [`onAfter${transitions.DELETE}`]() {
+      [getLifecycleEvenName('after', transitions.DELETE)]() {
         this.deletedAt = new Date();
       },
 
-      [`onAfter${transitions.RESTORE}`]() {
+      [getLifecycleEvenName('after', transitions.RESTORE)]() {
         this.deletedAt = null;
       },
     },

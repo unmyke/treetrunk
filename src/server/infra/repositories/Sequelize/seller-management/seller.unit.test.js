@@ -21,7 +21,7 @@ const getRawSeller = ({
 });
 
 const {
-  subdomains: {
+  entities: {
     SellerManagement: { Seller },
   },
   commonTypes: { Day, SellerId, PostId },
@@ -35,7 +35,7 @@ const {
     },
   },
   mappers: {
-    subdomains: {
+    entities: {
       SellerManagement: { Seller: sellerMapper },
     },
   },

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
-import { loop } from '@domain/_lib/base-methods';
+import { loop, getLifecycleEvenName } from '@domain/_lib/base-methods';
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { SeniorityType as states } from '../../states';
@@ -23,8 +23,8 @@ const transitions = {
   ADD_AWARD: 'addAward',
   DELETE_AWARD_AT: 'deleteAwardAt',
   UPDATE_AWARD_TO: 'updateAwardTo',
-  ACTIVATE: 'activate',
-  INACTIVATE: 'inactivate',
+  DELETE: 'delete',
+  RESTORE: 'restore',
 };
 
 export default class SeniorityType extends BaseEntity {
@@ -76,46 +76,61 @@ export default class SeniorityType extends BaseEntity {
         to: states.ACTIVE,
       },
       {
-        name: transitions.INACTIVATE,
+        name: transitions.RESTORE,
         from: states.ACTIVE,
         to: states.DELETED,
       },
-      { name: transitions.ACTIVATE, from: states.DELETED, to: states.ACTIVE },
+      { name: transitions.DELETE, from: states.DELETED, to: states.ACTIVE },
     ],
 
     methods: {
-      onInvalidTransition(from) {
+      onInvalidTransition(_, from) {
         switch (from) {
           case states.DELETED:
-            throw errors.seniorityTypeDeleted();
+            throw errors.seniorityTypeIsDeleted();
+
+          case states.ACTIVE:
+            throw errors.seniorityTypeIsActive();
 
           default:
-            throw errors.seniorityTypeActive();
+            throw errors.transitionNotAllowed();
         }
       },
 
-      [`onBefore${transitions.UPDATE}`](_, { name }) {
+      [getLifecycleEvenName('before', transitions.UPDATE)](_, { name }) {
         this.name = name || this.name;
       },
 
-      [`onBefore${transitions.ADD_AWARD}`](_, value, day = new Day()) {
+      [getLifecycleEvenName('before', transitions.ADD_AWARD)](
+        _,
+        value,
+        day = new Day()
+      ) {
         return diaryOperationRunner(() => this._awards.add(value, day));
       },
 
-      [`onBefore${transitions.DELETE_AWARD_AT}`](_, day = new Day()) {
+      [getLifecycleEvenName('before', transitions.DELETE_AWARD_AT)](
+        _,
+        day = new Day()
+      ) {
         return diaryOperationRunner(() => this._awards.deleteAt(day));
       },
 
-      [`onBefore${transitions.UPDATE_AWARD_TO}`](_, day, newValue, newDay) {
+      [getLifecycleEvenName('before', transitions.UPDATE_AWARD_TO)](
+        _,
+        day,
+        newValue,
+        newDay
+      ) {
         return diaryOperationRunner(() =>
           this._awards.updateTo(day, newValue, newDay)
         );
       },
-      [`onAfter${transitions.INACTIVATE}`]() {
+      [getLifecycleEvenName('after', transitions.DELETE)]() {
         this.deletedAt = new Date();
       },
 
-      [`onAfter${transitions.ACTIVATE}`]() {
+      [getLifecycleEvenName('after', transitions.RESTORE)]() {
         this.deletedAt = null;
       },
     },

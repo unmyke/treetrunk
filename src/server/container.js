@@ -1,11 +1,10 @@
 /* eslint-disable import/namespace */
 /* eslint-disable no-shadow */
 import Bottle from 'bottlejs';
-import { lowerFirst } from 'lodash';
 import { getSubdomainsContainer } from '@infra/support/container-helpers';
 
 import config from '@config';
-import { subdomains, commonTypes, states, errors } from '@domain';
+import { entities, commonTypes, states, errors } from '@domain';
 
 import {
   Application,
@@ -18,7 +17,7 @@ import makeValidator from '@infra/support/make-validator';
 import Server from '@interfaces/graphql';
 // import router from '@interfaces/http/router';
 import Logger from '@infra/logging';
-// import { subdomains as subdomainsSerializers } from '@interfaces/http/serializers';
+// import { entities as entitiesSerializers } from '@interfaces/http/serializers';
 
 // import { containerMiddleware } from '@interfaces/http/utils/bottle-express';
 // import loggerMiddleware from '@interfaces/http/logging/logger-middleware';
@@ -36,7 +35,7 @@ const bottle = new Bottle();
 
 bottle.constant('config', config);
 
-bottle.constant('subdomains', subdomains);
+bottle.constant('entities', entities);
 bottle.constant('commonTypes', commonTypes);
 bottle.constant('states', states);
 bottle.constant('errors', errors);
@@ -50,18 +49,18 @@ bottle.constant('getCrudServiceName', getCrudServiceName);
 //   )
 // );
 
-bottle.factory('mappers', ({ subdomains, commonTypes }) =>
+bottle.factory('mappers', ({ entities, commonTypes }) =>
   getSubdomainsContainer(mappers, (Mapper, SubdomainName, EntityName) =>
-    Mapper({ commonTypes, Entity: subdomains[SubdomainName][EntityName] })
+    Mapper({ commonTypes, Entity: entities[SubdomainName][EntityName] })
   )
 );
 
-bottle.factory('repositories', ({ subdomains, models, mappers }) =>
+bottle.factory('repositories', ({ entities, models, mappers }) =>
   getSubdomainsContainer(
     repositories,
     (Repository, SubdomainName, EntityName) =>
       Repository({
-        Entity: subdomains[SubdomainName][EntityName],
+        Entity: entities[SubdomainName][EntityName],
         Model: models[EntityName],
         models,
         mapper: mappers[SubdomainName][EntityName],
@@ -73,15 +72,15 @@ bottle.factory('repositories', ({ subdomains, models, mappers }) =>
 );
 
 // bottle.factory('serializers', () =>
-//   getSubdomainsContainer(subdomainsSerializers, (Serializer) => Serializer())
+//   getSubdomainsContainer(entitiesSerializers, (Serializer) => Serializer())
 // );
 
 bottle.factory(
   'services',
-  ({ subdomains, commonTypes, repositories }) =>
+  ({ entities, commonTypes, repositories }) =>
     Object.keys(services).reduce((prevSubdomainOperations, SubdomainName) => {
       const SubdomainOperations = services[SubdomainName];
-      const SubdomainEntities = subdomains[SubdomainName];
+      const SubdomainEntities = entities[SubdomainName];
       const SubdomainRepos = repositories[SubdomainName];
 
       return {
@@ -98,12 +97,12 @@ bottle.factory(
                 repositories: SubdomainRepos,
               }),
               ...Object.keys(EntityOperations).reduce(
-                (prevEntityOperations, OperationName) => {
-                  const EntityOperation = EntityOperations[OperationName];
+                (prevEntityOperations, operationName) => {
+                  const EntityOperation = EntityOperations[operationName];
 
                   return {
                     ...prevEntityOperations,
-                    [lowerFirst(OperationName)]: EntityOperation({
+                    [operationName]: EntityOperation({
                       entities: SubdomainEntities,
                       commonTypes,
                       repositories: SubdomainRepos,
@@ -123,7 +122,7 @@ bottle.factory(
   //     (acc, operationName) => ({
   //       ...acc,
   //       [lowerFirst(operationName)]: EntityOperations[operationName]({
-  //         entities: subdomains[SubdomainName],
+  //         entities: entities[SubdomainName],
   //         commonTypes,
   //         repositories: repositories[SubdomainName],
   //       }),

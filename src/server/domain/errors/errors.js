@@ -18,10 +18,10 @@ const errors = {
   recordHasLimitedScope: makeError('RECORD_HAS_LIMITED_SCOPE'),
   newRecordAlreadyExists: makeError('NEW_RECORD_ALREADY_EXISTS'),
   newRecordDuplicate: makeError('NEW_RECORD_DUPLICATE'),
-  diaryClosed: makeError('DIARY_CLOSED'),
-  diaryNotStarted: makeError('DIARY_NOT_STARTED'),
+  diaryIsClosed: makeError('DIARY_IS_CLOSED'),
+  diaryIsNotStarted: makeError('DIARY_IS_NOT_STARTED'),
   diaryHasRecordsLater: makeError('DIARY_HAS_RECORDS_LATER'),
-  diaryNotClosed: makeError('DIARY_NOT_CLOSED'),
+  diaryIsNotClosed: makeError('DIARY_IS_NOT_CLOSED'),
 
   // Seller
   appointmentAlreadyExists: makeError('APPOINTMENT_ALREADY_EXISTS'),
@@ -31,12 +31,12 @@ const errors = {
   appointmentHasLimitedScope: makeError('APPOINTMENT_HAS_LIMITED_SCOPE'),
   newAppointmentAlreadyExists: makeError('NEW_APPOINTMENT_ALREADY_EXISTS'),
   newAppointmentDuplicate: makeError('NEW_APPOINTMENT_DUPLICATE'),
-  carrerClosed: makeError('CARRER_CLOSED'),
-  sellerNotRecruited: makeError('SELLER_NOT_RECRUITED'),
+  carrerIsClosed: makeError('CARRER_IS_CLOSED'),
+  sellerIsNotRecruited: makeError('SELLER_IS_NOT_RECRUITED'),
   sellerHasAppointmentsLater: makeError('SELLER_HAS_APPOINTMENTS_LATER'),
-  sellerNotDismissed: makeError('SELLER_NOT_DISMISSED'),
-  sellerDeleted: makeError('SELLER_DELETED'),
-  sellerNotDeleted: makeError('SELLER_NOT_DELETED'),
+  sellerIsNotDismissed: makeError('SELLER_IS_NOT_DISMISSED'),
+  sellerIsDeleted: makeError('SELLER_IS_DELETED'),
+  sellerIsNotDeleted: makeError('SELLER_IS_NOT_DELETED'),
   sellerNotFound: makeError('SELLER_NOT_FOUND'),
   sellerAlreadyExists: makeError('SELLER_ALREADY_EXISTS'),
 
@@ -49,8 +49,8 @@ const errors = {
   newPieceRateAlreadyExists: makeError('NEW_PIECE_RATE_ALREADY_EXISTS'),
   newPieceRateDuplicate: makeError('NEW_PIECE_RATE_DUPLICATE'),
   postNotFound: makeError('POST_NOT_FOUND'),
-  postActive: makeError('POST_ACTIVE'),
-  postDeleted: makeError('POST_DELETED'),
+  postIsActive: makeError('POST_IS_ACTIVE'),
+  postIsDeleted: makeError('POST_IS_DELETED'),
   postAlreadyExists: makeError('POST_ALREADY_EXISTS'),
 
   // SeniorityType
@@ -62,8 +62,8 @@ const errors = {
   newAwardAlreadyExists: makeError('NEW_AWARD_ALREADY_EXISTS'),
   newAwardDuplicate: makeError('NEW_AWARD_DUPLICATE'),
   seniorityTypeNotFound: makeError('SENIORITY_TYPE_NOT_FOUND'),
-  seniorityTypeActive: makeError('SENIORITY_TYPE_ACTIVE'),
-  seniorityTypeDeleted: makeError('SENIORITY_TYPE_DELETED'),
+  seniorityTypeIsActive: makeError('SENIORITY_TYPE_IS_ACTIVE'),
+  seniorityTypeIsDeleted: makeError('SENIORITY_TYPE_IS_DELETED'),
   seniorityTypeAlreadyExists: makeError('SENIORITY_TYPE_ALREADY_EXISTS'),
 
   // FSM

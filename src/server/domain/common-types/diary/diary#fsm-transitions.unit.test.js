@@ -58,7 +58,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           diary.deleteAt(day1);
-        }).toThrowError('DIARY_NOT_STARTED');
+        }).toThrowError('DIARY_IS_NOT_STARTED');
       });
     });
 
@@ -66,7 +66,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           diary.updateTo(day1, newValue, day);
-        }).toThrowError('DIARY_NOT_STARTED');
+        }).toThrowError('DIARY_IS_NOT_STARTED');
       });
     });
 
@@ -74,7 +74,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           diary.addCloseAt(day4);
-        }).toThrowError('DIARY_NOT_STARTED');
+        }).toThrowError('DIARY_IS_NOT_STARTED');
       });
     });
 
@@ -82,7 +82,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           diary.deleteClose();
-        }).toThrowError('DIARY_NOT_CLOSED');
+        }).toThrowError('DIARY_IS_NOT_CLOSED');
       });
     });
 
@@ -90,7 +90,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
       test('should throw exception and leave state unchanged', () => {
         expect(() => {
           diary.updateCloseTo(day4);
-        }).toThrowError('DIARY_NOT_CLOSED');
+        }).toThrowError('DIARY_IS_NOT_CLOSED');
       });
     });
   });
@@ -135,7 +135,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               diary.deleteClose();
-            }).toThrowError('DIARY_NOT_CLOSED');
+            }).toThrowError('DIARY_IS_NOT_CLOSED');
           });
         });
 
@@ -143,7 +143,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               diary.updateCloseTo(day4);
-            }).toThrowError('DIARY_NOT_CLOSED');
+            }).toThrowError('DIARY_IS_NOT_CLOSED');
           });
         });
       });
@@ -186,7 +186,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               diary.deleteClose();
-            }).toThrowError('DIARY_NOT_CLOSED');
+            }).toThrowError('DIARY_IS_NOT_CLOSED');
           });
         });
 
@@ -194,7 +194,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               diary.updateCloseTo(day4);
-            }).toThrowError('DIARY_NOT_CLOSED');
+            }).toThrowError('DIARY_IS_NOT_CLOSED');
           });
         });
       });
@@ -239,7 +239,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               diary.deleteClose();
-            }).toThrowError('DIARY_NOT_CLOSED');
+            }).toThrowError('DIARY_IS_NOT_CLOSED');
           });
         });
 
@@ -247,7 +247,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               diary.updateCloseTo(day4);
-            }).toThrowError('DIARY_NOT_CLOSED');
+            }).toThrowError('DIARY_IS_NOT_CLOSED');
           });
         });
       });
@@ -293,7 +293,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               diary.deleteClose();
-            }).toThrowError('DIARY_NOT_CLOSED');
+            }).toThrowError('DIARY_IS_NOT_CLOSED');
           });
         });
 
@@ -301,7 +301,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
           test('should throw exception and leave state unchanged', () => {
             expect(() => {
               diary.updateCloseTo(day4);
-            }).toThrowError('DIARY_NOT_CLOSED');
+            }).toThrowError('DIARY_IS_NOT_CLOSED');
           });
         });
       });
@@ -326,7 +326,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             diary.deleteAt(day1);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
         });
       });
 
@@ -334,7 +334,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             diary.updateTo(day1, newValue, day);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
         });
       });
 
@@ -342,7 +342,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             diary.addCloseAt(day4);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
         });
       });
 
@@ -381,7 +381,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             diary.deleteAt(day2);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
         });
       });
 
@@ -389,7 +389,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             diary.updateTo(day1, newValue, day);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
         });
       });
 
@@ -397,7 +397,7 @@ describe('Domain :: commonTypes :: Diary :: #FSM transitions', () => {
         test('should throw exception and leave state unchanged', () => {
           expect(() => {
             diary.addCloseAt(day4);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
         });
       });
 

@@ -1,6 +1,6 @@
 import container from '@container';
-import cleanDatabase from '@infra/support/test/clean-database';
-import factory from '@infra/support/test/factory';
+import cleanDatabase from '@infra/tests/clean-database';
+import factory from '@infra/tests/factory';
 
 const {
   entities: {

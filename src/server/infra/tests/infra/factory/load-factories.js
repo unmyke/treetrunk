@@ -1,4 +1,4 @@
-import { forEachSubdomain } from '../container-helpers';
+import { forEachSubdomain } from '@infra/support/container-helpers';
 
 const loadFactories = ({ factoryGirl, models, factories }) => {
   forEachSubdomain(factories, factoryGirl, (factory, factoryGirl) => {

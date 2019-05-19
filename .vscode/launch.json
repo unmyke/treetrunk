@@ -23,12 +23,13 @@
       "request": "launch",
       "name": "console (run)",
       "program": "${workspaceFolder}/node_modules/.bin/gulp",
-      "args": ["devConsole", "--nolazy"],
+      "args": ["devConsole"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "sourceMaps": true,
-      "runtimeExecutable": "~/.nodenv/shims/node"
+      "runtimeExecutable": "~/.nodenv/shims/node",
+      "autoAttachChildProcesses": true
       // "outFiles": ["dst/***.js*"],
     },
     {

@@ -20,8 +20,8 @@ const BaseRepository = ({ Model, mapper, errors }) => {
         return model;
       });
 
-  const getList = ({ id = {}, ...query } = {}) =>
-    Model.getList({ id: getIdValue(id), ...query }).then(
+  const getList = ({ id = {}, ...query } = {}, where) =>
+    Model.getList({ id: getIdValue(id), ...query, where }).then(
       ({ models, hasBefore, hasAfter }) => ({
         entities: models.map(mapToEntity),
         hasBefore,

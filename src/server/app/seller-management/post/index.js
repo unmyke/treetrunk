@@ -1,9 +1,11 @@
-import CreatePostPieceRate from './create-piece-rate';
-import UpdatePostPieceRate from './update-piece-rate';
-import DeletePostPieceRate from './delete-piece-rate';
+import createPost from './create';
+import createPostPieceRate from './create-piece-rate';
+import updatePostPieceRate from './update-piece-rate';
+import deletePostPieceRate from './delete-piece-rate';
 
 export default {
-  CreatePostPieceRate,
-  UpdatePostPieceRate,
-  DeletePostPieceRate,
+  createPost,
+  createPostPieceRate,
+  updatePostPieceRate,
+  deletePostPieceRate,
 };

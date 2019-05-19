@@ -1,20 +1,16 @@
-import plugins from './plugins';
+import * as commonPlugins from './plugins';
+import { embedToModel } from './_lib';
 
-const embedToModel = (model, models) => {
-  if (model.toEmbed) {
-    model.toEmbed.forEach(({ path, modelName }) => {
-      model.embeds(path, models[modelName]);
-    });
-  }
-};
+const modelLoader = ({ models, database, modelsPlugins }) => {
+  const modelsListNames = Object.keys(models);
 
-const modelLoader = (models, database) => {
-  const modelsList = Object.values(models);
+  return modelsListNames.map((modelName) => {
+    const Model = models[modelName];
+    embedToModel(Model, models);
 
-  return modelsList.map((model) => {
-    embedToModel(model, models);
-    model.use(plugins);
-    return database.register(model);
+    const modelPlugins = modelsPlugins[modelName];
+    Model.use([...Object.values({ ...commonPlugins, ...modelPlugins })]);
+    return database.register(Model);
   });
 };
 

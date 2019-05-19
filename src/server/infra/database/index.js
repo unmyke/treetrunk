@@ -1,5 +1,5 @@
 import { Database } from 'mongorito';
-import * as models from './models';
+import models, { plugins as modelsPlugins } from './models';
 import modelLoader from './model-loader';
 
 export default ({ config: { database: config }, errors }) => {
@@ -21,7 +21,8 @@ export default ({ config: { database: config }, errors }) => {
   const dbOptions = { auth, ...options };
 
   const database = new Database(url, dbOptions);
-  modelLoader(models, database);
+
+  modelLoader({ models, database, modelsPlugins });
 
   return { database, models };
 };

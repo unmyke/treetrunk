@@ -1,5 +1,8 @@
-import savePlugin from './mongorito-save-plugin';
-import listPlugin from './mongorito-list-plugin';
-import entityIdIndexesPlugin from './mongorito-entity-id-indexes-plugin';
-
-export default [savePlugin, listPlugin, entityIdIndexesPlugin];
+export { default as savePlugin } from './mongorito-save-plugin';
+export { default as listPlugin } from './mongorito-list-plugin';
+export {
+  default as entityIdIndexesPlugin,
+} from './mongorito-entity-id-indexes-plugin';
+export {
+  default as mongoritoUniqnessCheckPlugin,
+} from './mongorito-uniqness-check-plugin';

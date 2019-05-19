@@ -2,7 +2,9 @@ const getSeniorityTypeByMonths = (
   { seniority },
   _,
   {
-    services: { getSeniorityTypeByMonths },
+    dataSources: {
+      services: { getSeniorityTypeByMonths },
+    },
     serializers: { SeniorityType: seniorityTypeSerializer },
   }
 ) =>

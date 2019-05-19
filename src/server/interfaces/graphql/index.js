@@ -3,16 +3,17 @@ import { ApolloServer } from 'apollo-server';
 import * as serializers from './serializers';
 import makeSchema from './make-schema';
 
-export default ({
+const server = ({
   config,
   logger,
   services,
   errors,
   getCrudServiceName: getServiceName,
 }) => {
-  const server = new ApolloServer({
-    schema: makeSchema(getServiceName),
-    // resolvers,
+  const schema = makeSchema(getServiceName);
+  const apolloServer = new ApolloServer({
+    schema,
+    dataSources: () => ({ services }),
     context: {
       services,
       serializers,
@@ -23,10 +24,11 @@ export default ({
 
   const start = () =>
     new Promise((resolve, reject) =>
-      server.listen(config.api.port).then(
-        ({ url }) => {
+      apolloServer.listen(config.api.port).then(
+        (apolloServer) => {
+          const { url } = apolloServer;
           logger.info(`[p ${process.pid}] GraphQL serves at ${url}`);
-          resolve();
+          resolve(apolloServer);
         },
         (error) => {
           logger.error(
@@ -39,7 +41,16 @@ export default ({
       )
     );
 
+  const stop = () => {
+    apolloServer.close(() => {
+      logger.warn(`[p ${process.pid}] GraphQL stops!`);
+    });
+  };
+
   return Object.freeze({
+    get: () => apolloServer,
     start,
+    stop,
   });
 };
+export default server;

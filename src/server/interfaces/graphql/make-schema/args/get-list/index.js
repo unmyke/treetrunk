@@ -1,18 +1,18 @@
-import { arg, intArg } from 'nexus';
-import scalars from '../../scalars';
+import { arg } from 'nexus';
+import {
+  Cursor as CursorScalar,
+  PositiveInt as PositiveIntScalar,
+} from '../../scalars';
 import FilterInput, { contains as FilterInputContains } from './filter';
 import SortInput, { contains as SortInputContains } from './sort';
 
-const { Cursor: CursorScalar } = scalars;
-
 const connectionArgs = {
-  first: intArg(),
-  after: arg({ type: CursorScalar }),
-  last: intArg(),
-  before: arg({ type: CursorScalar }),
-  skip: intArg(),
-  filter: arg({ type: FilterInput }),
-  sort: arg({ type: SortInput }),
+  first: arg({ type: PositiveIntScalar, required: false }),
+  after: arg({ type: CursorScalar, required: false }),
+  last: arg({ type: PositiveIntScalar, required: false }),
+  before: arg({ type: CursorScalar, required: false }),
+  filter: arg({ type: FilterInput, required: false }),
+  sort: arg({ type: SortInput, required: false }),
 };
 
 export default connectionArgs;

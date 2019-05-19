@@ -20,9 +20,11 @@ const getPostsByPostIds = (
   { postIds },
   args,
   {
-    services: { getPostsList },
-    errors,
+    dataSources: {
+      services: { getPostsList },
+    },
     serializers: { Posts: postsSerializer },
+    errors,
   }
 ) => {
   const postListArgs = argsParser(postIds, args, errors);

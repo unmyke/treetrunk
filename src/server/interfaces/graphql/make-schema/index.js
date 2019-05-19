@@ -6,7 +6,8 @@ import args, { contains as argsContains } from './args';
 import enums, { contains as enumsContains } from './enums';
 import inputs, { contains as inputsContains } from './inputs';
 import interfaces, { contains as interfacesContains } from './interfaces';
-import scalars, { contains as scalarsContains } from './scalars';
+import operations, { contains as operationsContains } from './operations';
+import * as scalars from './scalars';
 import types, {
   contains as typesContains,
   connections as typeConnections,
@@ -44,7 +45,6 @@ const schema = (getServiceName) => {
       ...typesContains,
       Query,
       Mutation,
-      ...scalarsContains,
       scalars,
       ...enumsContains,
       enums,
@@ -55,6 +55,8 @@ const schema = (getServiceName) => {
       ...typesContains,
       types,
       typeConnections,
+      ...operationsContains,
+      operations,
       crudOperations,
       typeOperations,
     ],

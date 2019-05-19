@@ -13,21 +13,29 @@ export default () => {
     const idPropName = getIdPropNameByModel(modelClass);
     const { [idPropName]: id, ...modelFields } = getState().fields;
 
-    return modelClass.findOne({ [idPropName]: id }).then((existingModel) => {
-      if (existingModel) {
-        const _id = existingModel.get('_id');
-        const newModelFields = {
-          ...modelFields,
-          _id,
-        };
-        model.set({ _id });
+    return modelClass
+      .uniquenessCheck({ id, idPropName, fields: modelFields })
+      .then(
+        () =>
+          modelClass.findOne({ [idPropName]: id }).then((existingModel) => {
+            if (existingModel) {
+              const _id = existingModel.get('_id');
+              const newModelFields = {
+                ...modelFields,
+                _id,
+              };
+              model.set({ _id });
 
-        return dispatch({ type: UPDATE, fields: newModelFields });
-      }
-      return dispatch({
-        type: CREATE,
-        fields: { ...modelFields, [idPropName]: id },
-      });
-    });
+              return dispatch({ type: UPDATE, fields: newModelFields });
+            }
+            return dispatch({
+              type: CREATE,
+              fields: { ...modelFields, [idPropName]: id },
+            });
+          }),
+        (error) => {
+          throw error;
+        }
+      );
   };
 };

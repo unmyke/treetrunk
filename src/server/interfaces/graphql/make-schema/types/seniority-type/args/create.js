@@ -6,6 +6,6 @@ import {
 
 const createArgs = {
   seniorityType: arg({ type: SeniorityTypeInput, required: true }),
-  award: arg({ type: AwardInput, required: true }),
+  award: arg({ type: AwardInput, required: false }),
 };
 export default createArgs;

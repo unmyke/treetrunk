@@ -13,7 +13,7 @@ const PositiveIntScalar = scalarType({
   },
   parseLiteral: (ast) => {
     // TODO validation
-    return parse(ast.value);
+    return parse(parseInt(ast.value, 10));
   },
 });
 

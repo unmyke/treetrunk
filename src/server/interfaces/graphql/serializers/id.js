@@ -1,3 +1,3 @@
-const idSerializer = ({ value }) => value;
+const idSerializer = ({ value = null } = {}) => value;
 
 export default idSerializer;

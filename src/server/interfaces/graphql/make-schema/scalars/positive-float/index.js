@@ -13,7 +13,7 @@ const PositiveFloatScalar = scalarType({
   },
   parseLiteral: (ast) => {
     // TODO validation
-    return parse(ast.value);
+    return parse(parseFloat(ast.value));
   },
 });
 

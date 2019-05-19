@@ -9,11 +9,17 @@ const makeGetResolver = (getServiceName) => ({ type, crudName }) => {
     _,
     args,
     {
-      services: { [serviceName]: service },
+      dataSources: {
+        services: { [serviceName]: service },
+      },
       serializers: { [serilizerName]: serialize },
       errors,
     }
-  ) => service(...argsParsers[crudName](args, errors)).then(serialize);
+  ) => {
+    return service(...argsParsers[crudName](args, errors)).then((res) => {
+      return serialize(res);
+    });
+  };
 };
 
 export default makeGetResolver;

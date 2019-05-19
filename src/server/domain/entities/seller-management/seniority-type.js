@@ -97,8 +97,12 @@ export default class SeniorityType extends BaseEntity {
         }
       },
 
-      [getLifecycleEvenName('before', transitions.UPDATE)](_, { name }) {
+      [getLifecycleEvenName('before', transitions.UPDATE)](
+        _,
+        { name, months }
+      ) {
         this.name = name || this.name;
+        this.months = months || this.months;
       },
 
       [getLifecycleEvenName('before', transitions.ADD_AWARD)](

@@ -1,19 +1,17 @@
-import CreateSellerAppointment from './create-appointment';
-import Create from './create';
-import DeleteAppointment from './delete-appointment';
-import DeleteDismiss from './delete-dismiss';
-import Dismiss from './dismiss';
-import UpdateAppointment from './update-appointment';
-import UpdateDismiss from './update-dismiss';
-import Update from './update';
+import createSeller from './create';
+import createSellerAppointment from './create-appointment';
+import deleteSellerAppointment from './delete-appointment';
+import deleteSellerDismiss from './delete-dismiss';
+import dismissSeller from './dismiss';
+import updateSellerAppointment from './update-appointment';
+import updateSellerDismiss from './update-dismiss';
 
 export default {
-  Create,
-  Update,
-  CreateSellerAppointment,
-  UpdateAppointment,
-  DeleteAppointment,
-  Dismiss,
-  UpdateDismiss,
-  DeleteDismiss,
+  createSeller,
+  createSellerAppointment,
+  updateSellerAppointment,
+  deleteSellerAppointment,
+  dismissSeller,
+  updateSellerDismiss,
+  deleteSellerDismiss,
 };

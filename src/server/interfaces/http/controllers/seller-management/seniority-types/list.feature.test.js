@@ -1,5 +1,5 @@
 import container from '@container';
-import request from '@infra/support/test/request';
+import request from '@infra/tests/request';
 
 const {
   entities: {

@@ -4,6 +4,7 @@ import Bottle from 'bottlejs';
 import { getSubdomainsContainer } from '@infra/support/container-helpers';
 
 import config from '@config';
+import tests from '@infra/tests';
 import { entities, commonTypes, states, errors } from '@domain';
 
 import {
@@ -136,6 +137,7 @@ bottle.constant('makeValidator', makeValidator);
 
 bottle.factory('server', Server);
 bottle.factory('logger', Logger);
+bottle.factory('tests', tests);
 // bottle.factory('router', (container) => router(container));
 // bottle.factory('containerMiddleware', (container) =>
 //   containerMiddleware(container)

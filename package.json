@@ -37,6 +37,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
+    "apollo-server-testing": "^2.5.0",
     "app-json-config-loader": "^0.2.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.8.0",

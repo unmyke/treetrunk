@@ -22,16 +22,16 @@ module.exports = {
     quotes: ['error', 'single', { avoidEscape: true }],
     semi: ['error', 'always'],
     'prettier/prettier': ['error'],
-    // 'import/no-extraneous-dependencies': [
-    //   'error',
-    //   {
-    //     devDependencies: [
-    //       '**/*.test.js',
-    //       '**/*.test/**/*.js',
-    //       'src/server/infra/support/test/**/*.js',
-    //     ],
-    //   },
-    // ],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: [
+          '**/*.test.js',
+          '**/*.test/index.js',
+          'src/server/infra/tests/**/*.js',
+        ],
+      },
+    ],
     'no-shadow': 'off',
     'import/namespace': ['error', { allowComputed: true }],
   },

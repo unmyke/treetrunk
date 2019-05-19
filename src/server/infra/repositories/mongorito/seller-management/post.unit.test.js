@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
-import factory from '@infra/support/test/factory';
-import cleanDatabase from '@infra/support/test/clean-database';
+import factory from '@infra/tests/factory';
+import cleanDatabase from '@infra/tests/clean-database';
 
 import container from '@container';
 import PostIdMapper from '../../../mappers/common-types/post-id';

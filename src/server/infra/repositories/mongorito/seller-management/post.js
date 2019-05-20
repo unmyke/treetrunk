@@ -12,7 +12,12 @@ const PostRepository = ({
 
   const getList = (opts) =>
     baseRepo
-      .getList(opts, { postId: { $ne: getIdValue(PostId.dismissPostId) } })
+      .getList(
+        opts,
+        PostId.dismissPostId
+          ? { postId: { $ne: getIdValue(PostId.dismissPostId) } }
+          : undefined
+      )
       .then(({ entities, ...meta }) => ({
         entities: entities.filter((post) => !post.isDismissPost()),
         ...meta,

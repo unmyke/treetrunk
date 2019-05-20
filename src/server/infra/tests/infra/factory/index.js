@@ -6,8 +6,8 @@ import * as factories from './factories';
 
 const factoryGirl = new factoryG.FactoryGirl();
 
-const Factory = ({ models, database }) => {
-  factoryGirl.setAdapter(MongoritoAdapter(database));
+const Factory = ({ models, database, logger }) => {
+  factoryGirl.setAdapter(MongoritoAdapter({ database, logger }));
 
   const factory = loadFactories({
     factoryGirl,

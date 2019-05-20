@@ -1,9 +1,7 @@
 import { once } from '@common';
 
-const MongoritoAdapter = (database) => {
-  const connectOnce = once(() =>
-    database.connect().then(() => console.log('Database connected!'))
-  );
+const MongoritoAdapter = ({ database }) => {
+  const connectOnce = once((database) => database.connect());
   const callWithConnectOnce = (fn) => (...args) =>
     connectOnce(database).then(() => fn(...args));
 

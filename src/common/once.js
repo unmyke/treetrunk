@@ -12,9 +12,8 @@ const once = (fn) => {
 
   return (...args) => {
     if (!run) {
-      run = true;
       result = fn(...args);
-      return result;
+      run = true;
     }
 
     return result;

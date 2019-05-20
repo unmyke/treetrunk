@@ -4,8 +4,6 @@ import { CRUDS } from '@common';
 import getOperationNameGetter from './get-operation-name-getter';
 import * as queries from './queries';
 
-console.log(process.env.NODE_ENV);
-
 const {
   tests: {
     infra: {
@@ -35,6 +33,7 @@ describe(`graphQl endpoint`, () => {
       describe(`#seller`, () => {
         beforeEach(() =>
           factory.create('seller').then((s) => {
+            console.log(s.get());
             seller = s.get();
           })
         );
@@ -45,8 +44,8 @@ describe(`graphQl endpoint`, () => {
             query({
               query: operationName,
               variables: { id: seller.sellerId },
-            }).then(({ data, error }) => {
-              expect(error).toEqual({});
+            }).then(({ data, errors }) => {
+              expect(errors).toBeUndefined();
               expect(data).toHaveProperty('seller');
               expect(data.seller).toHaveProperty('post');
             }));

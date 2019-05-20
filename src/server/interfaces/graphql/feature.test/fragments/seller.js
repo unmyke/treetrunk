@@ -16,7 +16,7 @@ const seller = (postCount) => gql`
     post {
       ...post
     }
-    posts(last: ${postCount}) {
+    posts(sort: { field: "day", order: DESC }) {
       ...postConnection
     }
     appointments {

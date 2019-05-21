@@ -1,9 +1,18 @@
-import { once } from '@common';
+const DATABASE_STATES = {
+  CONNECTED: 0,
+  CONNECTING: 1,
+  DISCONNECTED: 2,
+};
 
 const MongoritoAdapter = ({ database }) => {
-  const connectOnce = once((database) => database.connect());
-  const callWithConnectOnce = (fn) => (...args) =>
-    connectOnce(database).then(() => fn(...args));
+  const callWithConnectOnce = (fn) => (...args) => {
+    const runFn = () => fn(...args);
+    if (database.state === DATABASE_STATES.DISCONNECTED) {
+      return database.connect().then(runFn());
+    }
+
+    return runFn();
+  };
 
   const build = (Model, props) => new Model(props);
   const save = callWithConnectOnce((model) =>

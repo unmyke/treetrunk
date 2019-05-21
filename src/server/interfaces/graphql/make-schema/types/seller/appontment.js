@@ -6,6 +6,7 @@ import { getPostByPostId } from './resolvers';
 const SellerAppontment = objectType({
   name: 'SellerAppontment',
   definition(t) {
+    t.id('postId');
     t.field('post', {
       type: Post,
       resolve: getPostByPostId,

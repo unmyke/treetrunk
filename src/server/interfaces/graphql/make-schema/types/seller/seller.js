@@ -24,6 +24,8 @@ const Seller = objectType({
     t.string('middleName');
     t.string('lastName');
     t.phone('phone', { nullable: true });
+    t.id('postId');
+    t.list.id('postIds');
     t.field('post', {
       type: Post,
       nullable: true,
@@ -35,11 +37,12 @@ const Seller = objectType({
       nullable: true,
       resolve: getPostsByPostIds,
     });
-    t.field('seniorityType', {
-      type: SeniorityType,
-      nullable: true,
-      resolve: getSeniorityTypeByMonths,
-    });
+    t.positiveInt('seniority'),
+      t.field('seniorityType', {
+        type: SeniorityType,
+        nullable: true,
+        resolve: getSeniorityTypeByMonths,
+      });
     t.day('dismissDay', { nullable: true });
     t.day('recruitDay', { nullable: true });
     t.field('state', { type: StateEnum });

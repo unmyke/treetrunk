@@ -10,6 +10,7 @@ import { entities, commonTypes, states, errors } from '@domain';
 import {
   Application,
   services,
+  InitializeApplication,
   getCrudServices,
   getCrudServiceName,
 } from '@app';
@@ -54,6 +55,7 @@ bottle.factory('repositories', ({ entities, models, mappers, logger }) =>
 //  Application Layer
 bottle.constant('getCrudServiceName', getCrudServiceName);
 bottle.factory('app', Application);
+bottle.factory('initializeApplication', InitializeApplication);
 bottle.factory('services', ({ entities, commonTypes, repositories }) =>
   Object.keys(services).reduce((prevSubdomainOperations, SubdomainName) => {
     const SubdomainOperations = services[SubdomainName];

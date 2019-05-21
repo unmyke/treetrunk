@@ -1,1 +1,2 @@
-() => Promise.resolve();
+import { seller } from '../entities';
+() => Promise.resolve(seller);

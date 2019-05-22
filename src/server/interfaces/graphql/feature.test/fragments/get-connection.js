@@ -3,12 +3,14 @@ import { upperFirst } from 'lodash';
 
 import pageInfo from './page-info';
 
-const getConnection = (type) => () => {
+const getConnection = (type) => {
   const { name } = type;
   const Name = upperFirst(name);
+  const connectionName = `${name}Connection`;
 
-  return gql`
-    fragment ${name}Connection on ${Name}Connection {
+  const connection = () => {
+    return gql`
+    fragment ${connectionName} on ${Name}Connection {
       edges {
         cursor
         node {
@@ -22,5 +24,10 @@ const getConnection = (type) => () => {
     ${type()}
     ${pageInfo()}
   `;
+  };
+
+  Object.defineProperty(connection, 'name', { value: connectionName });
+
+  return connection;
 };
 export default getConnection;

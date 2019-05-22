@@ -1,4 +1,6 @@
 import { startOfDay } from 'date-fns';
+import uuidv4 from 'uuid/v4';
+import { GraphQLError } from 'graphql';
 
 import container from '@container';
 import { CRUDS } from '@common';
@@ -9,42 +11,37 @@ import mappers from './mappers';
 
 const {
   tests: {
-    infra: {
-      factory,
-      cleanUp: { onStartTest, onAfterEach, onStopTest },
-    },
+    infra: { factory, cleanDatabase },
     interfaces: {
       apolloClient: { query, mutations },
     },
     states,
   },
+  database,
 } = container;
 
 let getOperationName;
 
 describe(`graphQl endpoint`, () => {
-  beforeAll(onStartTest);
-  afterEach(onAfterEach);
-  afterAll(onStopTest);
+  beforeAll(cleanDatabase);
+  afterEach(cleanDatabase);
+  afterAll(() => database.disconnect());
 
   describe(`:: Queries`, () => {
     describe(`:: Seller`, () => {
-      getOperationName = getOperationNameGetter('Seller');
-      let operationName;
-      let sellerModel;
-
       describe(`#seller`, () => {
+        let sellerModel;
+
         beforeEach(() =>
           factory.create('seller').then((s) => {
             sellerModel = s.get();
           })
         );
-        operationName = queries.GET_SELLER_BY_ID;
 
-        context('if pass existent ID', () => {
+        context('if pass existent id', () => {
           test(`should return seller with corresponding id`, () =>
             query({
-              query: operationName,
+              query: queries.SELLER,
               variables: { id: sellerModel.sellerId },
             }).then(({ data, errors }) => {
               expect(errors).toBeUndefined();
@@ -69,32 +66,51 @@ describe(`graphQl endpoint`, () => {
               );
             }));
         });
-        context('if pass unexistent ID', () => {
-          test(`should return seller with corresponding id`, () =>
+        context('if pass unexistent id', () => {
+          test(`should return error`, () =>
             query({
-              query: operationName,
-              variables: { id: sellerModel.sellerId },
+              query: queries.SELLER,
+              variables: { id: uuidv4() },
+            }).then(({ data, errors }) => {
+              expect(errors).toHaveLength(1);
+              expect(errors[0]).toBeInstanceOf(GraphQLError);
+              expect(errors[0].message).toBe('SELLER_NOT_FOUND');
+              expect(data).toBeNull();
+            }));
+        });
+
+        context('if id not passed', () => {
+          test(`should return error`, () =>
+            query({
+              query: queries.SELLER,
+              variables: {},
+            }).then(({ data, errors }) => {
+              expect(errors).toHaveLength(1);
+              expect(errors[0]).toBeInstanceOf(GraphQLError);
+              expect(errors[0].message).toBe(
+                'Variable "$id" of required type "ID!" was not provided.'
+              );
+              expect(data).toBeUndefined();
+            }));
+        });
+      });
+      describe(`#getSellers`, () => {
+        let sellerModels;
+
+        beforeEach(() =>
+          factory.createMany('seller', 10).then((sellers) => {
+            sellerModels = sellers.map((s) => s.get());
+          })
+        );
+
+        context('if pass no args', () => {
+          test(`should return deafult count of sellers`, () =>
+            query({
+              query: queries.SELLERS,
+              variables: {},
             }).then(({ data, errors }) => {
               expect(errors).toBeUndefined();
-              expect(data).toHaveProperty('seller');
-              const { seller } = data;
-              expect(seller.id).toEqual(sellerModel.sellerId);
-              expect(seller.firstName).toBe(sellerModel.firstName);
-              expect(seller.middleName).toBe(sellerModel.middleName);
-              expect(seller.lastName).toBe(sellerModel.lastName);
-              expect(seller.appointments).toHaveLength(
-                sellerModel.appointments.length
-              );
-              expect(seller.appointments[0].postId).toBe(
-                sellerModel.appointments[0].postId
-              );
-              expect(seller.appointments[0].day).toBe(
-                startOfDay(sellerModel.appointments[0].day).getTime()
-              );
-              expect(seller.postId).toBe(sellerModel.appointments[0].postId);
-              expect(seller.postIds).toHaveLength(
-                sellerModel.appointments.length
-              );
+              expect(data).toHaveProperty('sellers');
             }));
         });
       });

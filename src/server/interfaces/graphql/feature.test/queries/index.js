@@ -1,2 +1,4 @@
-export { default as GET_SELLER_BY_ID } from './get-seller-by-id';
-export { default as GET_POST_BY_ID } from './get-post-by-id';
+export { default as SELLER } from './seller';
+export { default as POST } from './post';
+export { default as SENIORITY_TYPE } from './seniority-type';
+export { default as SELLERS } from './sellers';

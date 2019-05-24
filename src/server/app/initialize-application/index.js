@@ -26,7 +26,7 @@ const InitializeApplication = ({ entities, repositories, commonTypes }) => () =>
         })
         .then((entity) => {
           const id = entity[`${lowerFirst(ModelName)}Id`];
-          callback({ Class: EntityId, name, id });
+          return callback({ Class: EntityId, name, id });
         });
     })
   );

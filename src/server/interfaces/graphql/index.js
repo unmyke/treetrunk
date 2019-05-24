@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server';
 import * as serializers from './serializers';
 import makeSchema from './make-schema';
 
-const server = ({
+const Server = ({
   config,
   logger,
   services,
@@ -14,11 +14,10 @@ const server = ({
   const apolloServer = new ApolloServer({
     schema,
     dataSources: () => ({ services }),
-    context: {
-      services,
+    context: () => ({
       serializers,
       errors,
-    },
+    }),
     debug: config.mode !== 'production',
   });
 
@@ -53,4 +52,4 @@ const server = ({
     stop,
   });
 };
-export default server;
+export default Server;

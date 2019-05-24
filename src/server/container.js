@@ -23,6 +23,7 @@ import getDatabase from '@infra/database';
 import mappers from '@infra/mappers';
 
 const { database, models } = getDatabase({ config, errors });
+const PRODUCTION_MODE = 'production';
 
 // Container
 const bottle = new Bottle();
@@ -110,6 +111,6 @@ bottle.factory('mappers', ({ entities, commonTypes }) =>
 
 bottle.factory('server', Server);
 bottle.factory('logger', Logger);
-bottle.factory('tests', tests);
+if (config.mode !== PRODUCTION_MODE) bottle.factory('tests', tests);
 
 export default bottle.container;

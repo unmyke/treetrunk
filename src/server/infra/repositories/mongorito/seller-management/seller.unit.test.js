@@ -1,6 +1,4 @@
 import container from '@container';
-import cleanDatabase from '@infra/tests/clean-database';
-import factory from '@infra/tests/factory';
 
 const {
   entities: {
@@ -11,11 +9,13 @@ const {
     SellerManagement: { Seller: sellerRepo },
   },
   models: { Seller: SellerModel },
+  tests: {
+    infra: { cleanDatabase, factory },
+  },
   database,
 } = container;
 
 describe('#SellerRepository', () => {
-  beforeAll(() => database.connect());
   afterAll(() => database.disconnect());
   beforeEach(cleanDatabase);
 

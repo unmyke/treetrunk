@@ -1,4 +1,4 @@
-const getCleanDatabase = ({ models, logger }) =>
+const CleanDatabase = ({ models, logger }) => () =>
   Promise.all(Object.values(models).map((Model) => Model.remove())).catch(
     (err) => {
       logger.error(err);
@@ -6,4 +6,4 @@ const getCleanDatabase = ({ models, logger }) =>
     }
   );
 
-export default getCleanDatabase;
+export default CleanDatabase;

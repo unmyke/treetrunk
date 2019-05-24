@@ -1,3 +1,4 @@
+import { lowerFirst } from 'lodash';
 import { getIdPropNameByModel, getIdValue } from '../../_lib';
 
 const BaseRepository = ({ Model, mapper, errors }) => {
@@ -14,7 +15,7 @@ const BaseRepository = ({ Model, mapper, errors }) => {
       .findOne()
       .then((model) => {
         if (!model)
-          throw errors.modelNotFound(
+          throw errors[`${lowerFirst(Model.name)}NotFound`](
             `${Model.name} with ${idPropName}: "${getIdValue(id)}" not found`
           );
         return model;

@@ -1,10 +1,10 @@
 import { fn } from 'jest';
 import container from '@container';
-import { post as postMock, appointments as appointmentsMock } from '../mocks';
+import { post as postMock, pieceRates as pieceRatesMock } from '../mocks';
 
 const {
   entities: {
-    PostManagement: { Post },
+    SellerManagement: { Post },
   },
   commonTypes: { PostId },
 } = container;
@@ -17,12 +17,9 @@ const getPostMock = fn((id) => {
     createdAt,
   });
 
-  pieceRates.forEach();
-
-  post.addApointment(
-    new PostId({ value: appointmentsMock[0].postId }),
-    new Day({ value: appointmentsMock[0].day })
-  );
+  pieceRatesMock.forEach(({ value, day }) => {
+    post.addPieceRate(value, new Day({ value: day }));
+  });
 
   return Promise.resolve(post);
 });

@@ -16,7 +16,7 @@ import {
 } from '@app';
 import makeValidator from '@infra/support/make-validator';
 
-import Server from '@interfaces/graphql';
+import { Server, makeSchema } from '@interfaces/graphql';
 import Logger from '@infra/logging';
 import repositories from '@infra/repositories';
 import getDatabase from '@infra/database';
@@ -108,9 +108,13 @@ bottle.factory('mappers', ({ entities, commonTypes }) =>
     Mapper({ commonTypes, Entity: entities[SubdomainName][EntityName] })
   )
 );
-
-bottle.factory('server', Server);
 bottle.factory('logger', Logger);
 if (config.mode !== PRODUCTION_MODE) bottle.factory('tests', tests);
+
+//  Interface Layer
+bottle.factory('schema', ({ getCrudServiceName }) =>
+  makeSchema(getCrudServiceName)
+);
+bottle.factory('server', Server);
 
 export default bottle.container;

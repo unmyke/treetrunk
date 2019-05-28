@@ -8,7 +8,9 @@ import mappers from './mappers';
 
 const { config, logger, schema } = container;
 
-const getOperation = (services) => {
+const getUrl = ({ protocol, host, port, uri }) =>
+  `${protocol || 'http'}://${host && 'localhost'}${port && `:${port}`}${uri}`;
+const getTestClient = (services) => {
   const server = Server({
     config,
     logger,
@@ -17,14 +19,14 @@ const getOperation = (services) => {
     schema,
   }).apolloServer;
 
-  const { query, mutation } = createTestClient(server);
-  return { query, mutation };
+  return createTestClient(server);
 };
 
-describe(`graphQl endpoint`, (tests) => {
-  tests({
-    getOperation,
-    mappers,
-    queries,
-  });
-});
+const otps = {
+  url: getUrl(config.api),
+  getTestClient,
+  mappers,
+  queries,
+};
+
+export default otps;

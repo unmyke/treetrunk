@@ -6,7 +6,14 @@ import Server from '../server';
 import * as queries from './queries';
 import mappers from './mappers';
 
-const { config, logger, schema } = container;
+const {
+  config,
+  logger,
+  schema,
+  tests: {
+    jest: { getTest, getContext, getDescribe },
+  },
+} = container;
 
 const getUrl = ({ protocol, host, port, uri }) =>
   `${protocol || 'http'}://${host && 'localhost'}${port && `:${port}`}${uri}`;
@@ -22,11 +29,19 @@ const getTestClient = (services) => {
   return createTestClient(server);
 };
 
-const otps = {
+const testConfig = {
   url: getUrl(config.api),
-  getTestClient,
+  utils: {
+    getTest,
+    getTests,
+    getContext,
+    getContexts,
+    getDescribe,
+    getDescribes,
+    getTestClient,
+  },
   mappers,
   queries,
 };
 
-export default otps;
+export default testConfig;

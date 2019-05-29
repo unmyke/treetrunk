@@ -1,7 +1,8 @@
 import * as infra from './infra';
 import * as interfaces from './interfaces';
+import * as jest from './jest';
 
-const testUtils = { infra, interfaces };
+const testUtils = { infra, interfaces, jest };
 
 const tests = (container) =>
   Object.keys(testUtils).reduce((prevLayerUtils, layerName) => {

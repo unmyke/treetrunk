@@ -1,9 +1,15 @@
-import initTests from './init';
+import testConfig from './test-config';
 import queries from './queries';
 import mutations from './mutations';
 
-const { url, ...opts } = initTests(describes);
+const { url, ...config } = testConfig;
+const {
+  utils: { getDescribe },
+} = config;
 
-describe(`GraphQL endpoint ${url}`, () => {
-  describes(opts);
+const describeItem = getDescribe({
+  name: `GraphQL endpoint ${url}`,
+  callback: [queries(config), mutations(config)],
 });
+
+describeItem(config);

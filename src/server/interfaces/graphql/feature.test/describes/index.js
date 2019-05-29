@@ -7,11 +7,11 @@ const describes = {
 
 const getDescribeTable = getDescribeTableByDescribes(describes);
 
-export default (opts) => {
-  const describeTable = getDescribeTable(opts);
+export default (config) => () => {
+  const describeTable = getDescribeTable(config);
   const describeEach = describe.each(describeTable);
 
-  describeEach(`#%s`, ([, contexts, opts]) => {
-    contexts.forEach((context) => contextRunner(context, opts));
+  describeEach(`#%s`, ([, contexts, config]) => {
+    contexts.forEach((context) => contextRunner(context, config));
   });
 };

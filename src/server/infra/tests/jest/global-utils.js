@@ -1,18 +1,22 @@
 export const getGlobal = (globalItem) => ({ name, callback }) => {
-  if (Array.isArray(callback)) {
-    callback.forEach((cb) => {
-      return globalItem(name, cb);
-    });
-  }
-  return globalItem(name, callback);
+  globalItem(
+    name,
+    Array.isArray(callback)
+      ? () => {
+          callback.forEach((cb) => {
+            cb();
+          });
+        }
+      : callback
+  );
 };
 
-export const getGlobals = (globalItem) => (items) => {
+export const getGlobals = (globalItem) => (items, config) => {
   const gItem = getGlobal(globalItem);
-  return Object.entries(items).map(([name, callback]) =>
+  Object.entries(items).forEach(([name, callback]) =>
     gItem({
       name,
-      callback,
+      callback: callback(config),
     })
   );
 };

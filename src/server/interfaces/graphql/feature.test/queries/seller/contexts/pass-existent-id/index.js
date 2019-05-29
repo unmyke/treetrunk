@@ -2,14 +2,14 @@ import uuidv4 from 'uuid/v4';
 import {
   seller as sellerMock,
   appointments as appointmentsMock,
-} from '../mocks';
-import getSeller from './get-seller';
+} from '../../mocks';
 
-const sellerTest = ({ getOperation, queries }) => {
+const passExistentIdContext = ({ getApolloClient, queries, mocks }) => {
   context('if pass existent id', () => {
     test(`should return seller with corresponding id`, () => {
+      const { services } = mocks;
       const id = uuidv4();
-      const { query } = getOperation({ getSeller });
+      const { query } = getApolloClient(services);
 
       return query({
         query: queries.SELLER,
@@ -37,4 +37,4 @@ const sellerTest = ({ getOperation, queries }) => {
   });
 };
 
-export default sellerTest;
+export default passExistentIdContext;

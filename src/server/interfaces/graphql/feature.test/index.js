@@ -1,15 +1,17 @@
-import testConfig from './test-config';
-import queries from './queries';
-import mutations from './mutations';
+import container from '@container';
+import getServerUrl from './get-server-url';
+import queryTests from './queries';
+import mutationTests from './mutations';
+import { queries, mutations } from './generators';
 
-const { url, ...config } = testConfig;
 const {
-  utils: { getDescribe },
-} = config;
+  config: { api },
+  tests: {
+    interface: { getApolloClient },
+  },
+} = container;
 
-const describeItem = getDescribe({
-  name: `GraphQL endpoint ${url}`,
-  callback: [queries(config), mutations(config)],
+describe(`GraphQL endpoint ${getServerUrl(api)}`, () => {
+  queryTests({ getApolloClient, queries, mutations });
+  mutationTests({ getApolloClient, queries, mutations });
 });
-
-describeItem(config);

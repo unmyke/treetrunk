@@ -27,22 +27,22 @@ export { default as createPost } from './create-post';
 export { default as createPostPieceRate } from './create-post-piece-rate';
 export { default as updatePostPieceRate } from './update-post-piece-rate';
 export { default as deletePostPieceRate } from './delete-post-piece-rate';
-export { default as getSeniorityType } from './get-senioritytype';
-export { default as getSeniorityTypesList } from './get-senioritytypes-list';
-export { default as updateSeniorityType } from './update-senioritytype';
-export { default as deleteSeniorityType } from './delete-senioritytype';
-export { default as restoreSeniorityType } from './restore-senioritytype';
-export { default as destroySeniorityType } from './destroy-senioritytype';
-export { default as createSeniorityType } from './create-senioritytype';
+export { default as getSeniorityType } from './get-seniority-type';
+export { default as getSeniorityTypesList } from './get-seniority-types-list';
+export { default as updateSeniorityType } from './update-seniority-type';
+export { default as deleteSeniorityType } from './delete-seniority-type';
+export { default as restoreSeniorityType } from './restore-seniority-type';
+export { default as destroySeniorityType } from './destroy-seniority-type';
+export { default as createSeniorityType } from './create-seniority-type';
 export {
   default as getSeniorityTypeByMonths,
-} from './get-senioritytype-by-months';
+} from './get-seniority-type-by-months';
 export {
   default as createSeniorityTypeAward,
-} from './create-senioritytype-award';
+} from './create-seniority-type-award';
 export {
   default as updateSeniorityTypeAward,
-} from './update-senioritytype-award';
+} from './update-seniority-type-award';
 export {
   default as deleteSeniorityTypeAward,
-} from './delete-senioritytype-award';
+} from './delete-seniority-type-award';

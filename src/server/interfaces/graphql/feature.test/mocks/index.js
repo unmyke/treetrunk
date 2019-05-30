@@ -1,3 +1,3 @@
-import * as services from './services';
+import services from './services';
 
 export { services };

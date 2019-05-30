@@ -6,9 +6,6 @@ const getEntity = (type, connection) => {
   const { name: typeName } = type;
   const { name: connectionName } = connection;
   const TypeName = upperFirst(typeName);
-  console.log(`typeName: ${typeName}`);
-  console.log(`TypeName: ${TypeName}`);
-  console.log(`connectionName: ${connectionName}`);
 
   return gql`
     query ${pluralize(TypeName)}(

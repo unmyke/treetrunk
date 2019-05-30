@@ -1,4 +1,5 @@
 import { createTestClient } from 'apollo-server-testing';
+import { Server } from '@interfaces/graphql';
 
 const getApolloClient = ({ config, logger, errors, schema }) => (services) => {
   const server = Server({

@@ -157,7 +157,7 @@ describe('Domain :: entities :: Post', () => {
   describe('#instanceAt', () => {
     beforeEach(() => {
       post = Post.restore({
-        postId: new PostId(),
+        postId: new PostId().value,
         name,
         state: states.ACTIVE,
         pieceRates: [
@@ -183,7 +183,7 @@ describe('Domain :: entities :: Post', () => {
 
       beforeEach(() => {
         expectedPost = Post.restore({
-          postId: post.postId,
+          postId: post.postId.value,
           name,
           state: states.ACTIVE,
           pieceRates: [

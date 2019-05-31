@@ -28,16 +28,25 @@ const transitions = {
 };
 
 export default class Post extends BaseEntity {
-  static restore({ name, pieceRates, state, ...props }) {
-    const post = new Post({ name, state, ...props });
+  static restore({ postId: postIdValue, name, pieceRates, state, ...props }) {
+    const postId = postIdValue && new PostId({ value: postIdValue });
+    const post = new Post({
+      postId,
+      name,
+      state,
+      ...props,
+    });
     post._pieceRates = Diary.restore(pieceRates);
     post.setState(state);
 
     return post;
   }
 
-  static instanceAt({ name, _pieceRates, state, ...props }, day = new Day()) {
-    const post = new Post({ name, ...props });
+  static instanceAt(
+    { postId, name, _pieceRates, state, ...props },
+    day = new Day()
+  ) {
+    const post = new Post({ postId, name, ...props });
     post._pieceRates = Diary.instanceAt(_pieceRates, day);
     post.setState(state);
 

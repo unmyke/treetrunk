@@ -24,7 +24,7 @@ const passExistentIdContext = ({ getApolloClient, queries, mocks }) => {
         variables: { id },
       }).then(({ data, errors }) => {
         expect(getSeller.mock.calls.length).toBe(1);
-        expect(getPost.mock.calls.length).toBe(1);
+        expect(getPost.mock.calls.length).toBe(3);
         expect(getPostsList.mock.calls.length).toBe(1);
         expect(getSeniorityTypeByMonths.mock.calls.length).toBe(1);
 

@@ -28,8 +28,19 @@ const transitions = {
 };
 
 export default class SeniorityType extends BaseEntity {
-  static restore({ name, months, state, awards, ...props }) {
+  static restore({
+    seniorityTypeId: seniorityTypeIdValue,
+    name,
+    months,
+    state,
+    awards,
+    ...props
+  }) {
+    const seniorityTypeId =
+      seniorityTypeIdValue &&
+      new SeniorityTypeId({ value: seniorityTypeIdValue });
     const seniorityType = new SeniorityType({
+      seniorityTypeId,
       name,
       months,
       ...props,

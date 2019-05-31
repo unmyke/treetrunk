@@ -7,12 +7,17 @@ import * as mocks from './mocks';
 
 const {
   config: { api },
+  entities: {
+    SellerManagement: { Post },
+  },
+  commonTypes: { PostId },
   tests: {
     interfaces: { getApolloClient },
   },
 } = container;
 
 const ctx = { getApolloClient, queries, mutations, mocks };
+Post.dismissPostId = new PostId();
 
 describe(`GraphQL endpoint ${getServerUrl(api)}`, () => {
   queryTests(ctx);

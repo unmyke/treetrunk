@@ -2,6 +2,9 @@ import gql from 'graphql-tag';
 
 import node from './node';
 import timestamp from './timestamp';
+import post from './post';
+import postConnection from './post-connection';
+import seniorityType from './seniority-type';
 
 const seller = () => gql`
   fragment seller on Seller {
@@ -12,17 +15,31 @@ const seller = () => gql`
     phone
     postId
     postIds
+    post {
+      ...post
+    }
+    posts {
+      ...postConnection
+    }
     appointments {
       postId
+      post {
+        ...post
+      }
       day
     }
     seniority
+    seniorityType {
+      ...seniorityType
+    }
     recruitDay
     dismissDay
     ...timestamp
   }
   ${node()}
   ${timestamp()}
-  ${node()}
+  ${post()}
+  ${postConnection()}
+  ${seniorityType()}
 `;
 export default seller;

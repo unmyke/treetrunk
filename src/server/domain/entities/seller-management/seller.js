@@ -73,6 +73,7 @@ export default class Seller extends BaseEntity {
   // Factories
 
   static restore({
+    sellerId: sellerIdValue,
     firstName,
     middleName,
     lastName,
@@ -81,7 +82,9 @@ export default class Seller extends BaseEntity {
     appointments,
     ...props
   }) {
+    const sellerId = sellerIdValue && new SellerId({ value: sellerIdValue });
     const seller = new Seller({
+      sellerId,
       firstName,
       middleName,
       lastName,
@@ -92,7 +95,10 @@ export default class Seller extends BaseEntity {
 
     if (appointments !== undefined) {
       seller._appointments = Diary.restore(
-        appointments.map(({ postId, day }) => ({ value: postId, day })),
+        appointments.map(({ postId, day }) => ({
+          value: new PostId({ value: postId }),
+          day,
+        })),
         PostId.dismissPostId
       );
     }

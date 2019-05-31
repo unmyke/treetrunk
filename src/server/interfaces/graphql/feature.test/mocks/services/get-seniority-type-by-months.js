@@ -1,5 +1,9 @@
-import getSeniorityType from './get-seniority-type';
+import getMockEntityFactory from '../get-mock-entity-factory';
+const seniorityTypeFactory = getMockEntityFactory({
+  subdomainName: 'SellerManagement',
+  entityName: 'SeniorityType',
+});
 
 const getSeniorityTypeByMonthsMock = (months) =>
-  getSeniorityType(null, { months });
+  seniorityTypeFactory({ months });
 export default getSeniorityTypeByMonthsMock;

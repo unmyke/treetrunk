@@ -2,8 +2,8 @@ import uuidv4 from 'uuid/v4';
 
 const getSeniorityTypeData = (chance) => {
   const seniorityTypeId = uuidv4();
-  const name = 'SeniorityType name';
-  const months = 3;
+  const name = chance.word();
+  const months = chance.integer({ min: 1, max: 120 });
   const awards = [
     {
       value: 200,

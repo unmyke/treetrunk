@@ -6,14 +6,14 @@ const { entities } = container;
 
 const getMockEntityFactory = ({ subdomainName, entityName }) => {
   const Entity = entities[subdomainName][entityName];
-  const entityIdPropName = `${lowerFirst(Entity)}Id`;
+  const entityIdPropName = `${lowerFirst(entityName)}Id`;
   const entityData = data[subdomainName][entityName];
 
-  return (id, fields = {}) =>
+  return ({ id, ...data }) =>
     Entity.restore({
       ...entityData,
-      ...(id ? { [entityIdPropName]: id } : {}),
-      ...fields,
+      [entityIdPropName]: id,
+      ...data,
     });
 };
 export default getMockEntityFactory;

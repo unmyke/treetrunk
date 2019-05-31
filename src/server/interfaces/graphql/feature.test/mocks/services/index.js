@@ -1,79 +1,36 @@
-import getSeller from './get-seller';
-// import getSellersList from './get-sellers-list';
-// import updateSeller from './update-seller';
-// import deleteSeller from './delete-seller';
-// import restoreSeller from './restore-seller';
-// import destroySeller from './destroy-seller';
-// import createSeller from './create-seller';
-// import createSellerAppointment from './create-seller-appointment';
-// import updateSellerAppointment from './update-seller-appointment';
-// import deleteSellerAppointment from './delete-seller-appointment';
-// import dismissSeller from './dismiss-seller';
-// import updateSellerDismiss from './update-seller-dismiss';
-// import deleteSellerDismiss from './delete-seller-dismiss';
-import getPost from './get-post';
-import getPostsList from './get-posts-list';
-// import updatePost from './update-post';
-// import deletePost from './delete-post';
-// import restorePost from './restore-post';
-// import destroyPost from './destroy-post';
-// import createPost from './create-post';
-// import createPostPieceRate from './create-post-piece-rate';
-// import updatePostPieceRate from './update-post-piece-rate';
-// import deletePostPieceRate from './delete-post-piece-rate';
-import getSeniorityType from './get-seniority-type';
-// import getSeniorityTypesList from './get-seniority-types-list';
-// import updateSeniorityType from './update-seniority-type';
-// import deleteSeniorityType from './delete-seniority-type';
-// import restoreSeniorityType from './restore-seniority-type';
-// import destroySeniorityType from './destroy-seniority-type';
-// import createSeniorityType from './create-seniority-type';
-import getSeniorityTypeByMonths from './get-seniority-type-by-months';
-// import createSeniorityTypeAward from './create-seniority-type-award';
-// import updateSeniorityTypeAward from './update-seniority-type-award';
-// import deleteSeniorityTypeAward from './delete-seniority-type-award';
-
-const services = {
-  getSeller,
-  // getSellersList,
-  // updateSeller,
-  // deleteSeller,
-  // restoreSeller,
-  // destroySeller,
-  // createSeller,
-  // createSellerAppointment,
-  // updateSellerAppointment,
-  // deleteSellerAppointment,
-  // dismissSeller,
-  // updateSellerDismiss,
-  // deleteSellerDismiss,
-  getPost,
-  getPostsList,
-  // updatePost,
-  // deletePost,
-  // restorePost,
-  // destroyPost,
-  // createPost,
-  // createPostPieceRate,
-  // updatePostPieceRate,
-  // deletePostPieceRate,
-  getSeniorityType,
-  getSeniorityTypeByMonths,
-  // getSeniorityTypesList,
-  // updateSeniorityType,
-  // deleteSeniorityType,
-  // restoreSeniorityType,
-  // destroySeniorityType,
-  // createSeniorityType,
-  // createSeniorityTypeAward,
-  // updateSeniorityTypeAward,
-  // deleteSeniorityTypeAward,
-};
-
-export default Object.entries(services).reduce(
-  (prevServices, [name, service]) => ({
-    ...prevServices,
-    [name]: jest.fn(service),
-  }),
-  {}
-);
+export { default as getSeller } from './get-seller';
+// export { default as getSellersList} from './get-sellers-list';
+// export { default as updateSeller} from './update-seller';
+// export { default as deleteSeller} from './delete-seller';
+// export { default as restoreSeller} from './restore-seller';
+// export { default as destroySeller} from './destroy-seller';
+// export { default as createSeller} from './create-seller';
+// export { default as createSellerAppointment} from './create-seller-appointment';
+// export { default as updateSellerAppointment} from './update-seller-appointment';
+// export { default as deleteSellerAppointment} from './delete-seller-appointment';
+// export { default as dismissSeller} from './dismiss-seller';
+// export { default as updateSellerDismiss} from './update-seller-dismiss';
+// export { default as deleteSellerDismiss} from './delete-seller-dismiss';
+export { default as getPost } from './get-post';
+export { default as getPostsList } from './get-posts-list';
+// export { default as updatePost} from './update-post';
+// export { default as deletePost} from './delete-post';
+// export { default as restorePost} from './restore-post';
+// export { default as destroyPost} from './destroy-post';
+// export { default as createPost} from './create-post';
+// export { default as createPostPieceRate} from './create-post-piece-rate';
+// export { default as updatePostPieceRate} from './update-post-piece-rate';
+// export { default as deletePostPieceRate} from './delete-post-piece-rate';
+export { default as getSeniorityType } from './get-seniority-type';
+// export { default as getSeniorityTypesList} from './get-seniority-types-list';
+// export { default as updateSeniorityType} from './update-seniority-type';
+// export { default as deleteSeniorityType} from './delete-seniority-type';
+// export { default as restoreSeniorityType} from './restore-seniority-type';
+// export { default as destroySeniorityType} from './destroy-seniority-type';
+// export { default as createSeniorityType} from './create-seniority-type';
+export {
+  default as getSeniorityTypeByMonths,
+} from './get-seniority-type-by-months';
+// export { default as createSeniorityTypeAward} from './create-seniority-type-award';
+// export { default as updateSeniorityTypeAward} from './update-seniority-type-award';
+// export { default as deleteSeniorityTypeAward} from './delete-seniority-type-award';

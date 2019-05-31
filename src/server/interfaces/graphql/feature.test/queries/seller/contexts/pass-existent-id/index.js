@@ -1,18 +1,14 @@
 import uuidv4 from 'uuid/v4';
+import getPostsList from './get-posts-list';
 
 const passExistentIdContext = ({ getApolloClient, queries, mocks }) => {
   context('if pass existent id', () => {
     test(`should return seller with corresponding id`, () => {
       const {
-        services: {
-          getSeller,
-          getPost,
-          getPostsList,
-          getSeniorityTypeByMonths,
-        },
+        services: { getSeller, getPost, getSeniorityTypeByMonths },
       } = mocks;
       const id = uuidv4();
-      const { query } = getApolloClient({
+      const { query, mockServices } = getApolloClient({
         getSeller,
         getPost,
         getPostsList,
@@ -23,10 +19,12 @@ const passExistentIdContext = ({ getApolloClient, queries, mocks }) => {
         query: queries.SELLER,
         variables: { id },
       }).then(({ data, errors }) => {
-        expect(getSeller.mock.calls.length).toBe(1);
-        expect(getPost.mock.calls.length).toBe(3);
-        expect(getPostsList.mock.calls.length).toBe(1);
-        expect(getSeniorityTypeByMonths.mock.calls.length).toBe(1);
+        // const {} = mockServices.getSeller.mock.calls.length;
+        // const {} = mockServices.getSeller.mock.calls.length;
+        expect(mockServices.getPost.mock.calls.length).toBe(3);
+        expect(mockServices.getSeller.mock.calls.length).toBe(1);
+        expect(mockServices.getPostsList.mock.calls.length).toBe(1);
+        expect(mockServices.getSeniorityTypeByMonths.mock.calls.length).toBe(1);
 
         expect(errors).toBeUndefined();
         expect(data).toHaveProperty('seller');

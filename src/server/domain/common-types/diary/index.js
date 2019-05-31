@@ -63,7 +63,8 @@ export default class Diary extends BaseClass {
     try {
       records
         .sort(getDayComparator('asc', ({ day }) => day))
-        .forEach(({ value, day }) => {
+        .forEach(({ value, day: dayValue }) => {
+          const day = new Day({ value: dayValue });
           if (isEqualValues(value, closeValue)) {
             diary.addCloseAtOnRestore(day);
           } else {

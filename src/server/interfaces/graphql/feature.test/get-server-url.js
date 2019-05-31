@@ -1,3 +1,4 @@
-const getServerUrl = ({ protocol, host, port, uri }) =>
-  `${protocol || 'http'}://${host && 'localhost'}${port && `:${port}`}${uri}`;
+const getServerUrl = ({ protocol, host, port, path }) =>
+  `${protocol || 'http'}://${host && 'localhost'}${port && `:${port}`}${path ||
+    ''}`;
 export default getServerUrl;

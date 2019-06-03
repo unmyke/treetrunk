@@ -4,6 +4,7 @@ import queryTests from './queries';
 import mutationTests from './mutations';
 import { queries, mutations } from './generators';
 import * as mocks from './mocks';
+import * as matchers from './matchers';
 
 const {
   config: { api },

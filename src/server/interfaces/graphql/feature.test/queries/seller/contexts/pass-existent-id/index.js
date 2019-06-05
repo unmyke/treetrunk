@@ -15,22 +15,22 @@ const passExistentIdContext = ({ getApolloClient, queries, mocks }) => {
         getSeniorityTypeByMonths,
       });
 
-      const response = query({
+      const res = query({
         query: queries.SELLER,
         variables: { id },
       });
 
-      await expect(response).not.haveErrors();
-      await expect(response).haveSeller({ id, mockServices });
+      await expect(res).not.haveErrors();
+      await expect(res).haveSeller(mockServices);
 
-      expect(mockServices.getPost.mock.calls.length).toBe(3);
-      expect(mockServices.getSeller.mock.calls.length).toBe(1);
-      expect(mockServices.getPostsList.mock.calls.length).toBe(1);
-      expect(mockServices.getSeniorityTypeByMonths.mock.calls.length).toBe(1);
+      // expect(mockServices.getPost.mock.calls.length).toBe(3);
+      // expect(mockServices.getSeller.mock.calls.length).toBe(1);
+      // expect(mockServices.getPostsList.mock.calls.length).toBe(1);
+      // expect(mockServices.getSeniorityTypeByMonths.mock.calls.length).toBe(1);
 
-      expect(data).toHaveProperty('seller');
-      const { seller } = data;
-      expect(seller.id).toEqual(id);
+      // expect(data).toHaveProperty('seller');
+      // const { seller } = data;
+      // expect(seller.id).toEqual(id);
       // expect(seller.firstName).toBe(sellerMock.firstName);
       // expect(seller.middleName).toBe(sellerMock.middleName);
       // expect(seller.lastName).toBe(sellerMock.lastName);

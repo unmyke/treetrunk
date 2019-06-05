@@ -19,6 +19,7 @@ const {
 
 const ctx = { getApolloClient, queries, mutations, mocks };
 Post.dismissPostId = new PostId();
+expect.extend(matchers);
 
 describe(`GraphQL endpoint ${getServerUrl(api)}`, () => {
   queryTests(ctx);

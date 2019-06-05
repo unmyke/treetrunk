@@ -1,4 +1,4 @@
-import { seller as checkSeller } from './check-types';
+import checks from './checks';
 
 async function haveSeller(
   res,
@@ -31,7 +31,7 @@ async function haveSeller(
     mockSeniorityType,
   };
 
-  return await checkSeller(seller, mockSeller, includes);
+  return await checks.Seller(seller, mockSeller, includes);
 }
 
 export default haveSeller;

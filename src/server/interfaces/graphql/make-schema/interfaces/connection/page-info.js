@@ -5,7 +5,8 @@ const PageInfo = objectType({
   definition(t) {
     t.boolean('hasNextPage');
     t.boolean('hasPreviousPage');
-    t.positiveInt('count');
+    t.boolean('startCursor');
+    t.boolean('endCursor');
   },
 });
 

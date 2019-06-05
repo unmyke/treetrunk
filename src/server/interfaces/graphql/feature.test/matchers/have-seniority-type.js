@@ -1,4 +1,4 @@
-async function haveSeniorityType({ data }, { id, mockServices }) {
+async function haveSeniorityType({ data }, mockServices) {
   const { data } = res;
 
   const { getSeniorityType } = mockServices;

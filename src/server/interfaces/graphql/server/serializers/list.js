@@ -1,4 +1,7 @@
+/* eslint-disable no-underscore-dangle */
 import { lowerFirst } from 'lodash';
+
+const getId = (entity) => entity[`${lowerFirst(entity.constructor.name)}Id`];
 
 const getListSerializer = (serializer) => ({
   entities,
@@ -8,11 +11,13 @@ const getListSerializer = (serializer) => ({
   const edges = entities.map((entity) => {
     const cursor = {
       typeName: entity.constructor.name,
-      id: entity[`${lowerFirst(entity.constructor.name)}Id`],
+      id: getId(entity),
     };
     const node = serializer(entity);
     return { cursor, node };
   });
+  const startCursor = edges[0].cursor;
+  const endCursor = edges[edges.length - 1].cursor;
 
   edges.__type = `${serializer.name}Edge`;
   return {
@@ -21,7 +26,8 @@ const getListSerializer = (serializer) => ({
     pageInfo: {
       hasPreviousPage: hasBefore,
       hasNextPage: hasAfter,
-      count: edges.length,
+      startCursor,
+      endCursor,
     },
   };
 };

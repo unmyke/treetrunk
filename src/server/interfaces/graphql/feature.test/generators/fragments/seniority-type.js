@@ -13,6 +13,7 @@ const seniorityType = () => gql`
       value
       day
     }
+    state
     ...timestamp
   }
   ${node()}

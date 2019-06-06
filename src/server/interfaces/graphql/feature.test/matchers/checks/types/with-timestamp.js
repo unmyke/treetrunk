@@ -1,4 +1,8 @@
-const checkEntityTimestamp = (typeChecker) => (entity, mockEntity) => {
+const checkEntityTimestamp = (typeChecker) => (
+  entity,
+  mockEntity,
+  includes
+) => {
   if (mockEntity.createdAt) {
     expect(entity.createdAt).toBe(mockEntity.createdAt.getTime());
   } else {
@@ -15,6 +19,6 @@ const checkEntityTimestamp = (typeChecker) => (entity, mockEntity) => {
     expect(entity.deletedAt).toBeNull();
   }
 
-  return typeChecker(entity, mockEntity);
+  return typeChecker(entity, mockEntity, includes);
 };
 export default checkEntityTimestamp;

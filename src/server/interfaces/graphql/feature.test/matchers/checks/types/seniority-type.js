@@ -1,7 +1,8 @@
-import checkEntityTimestamp from './entity-timestamp';
+import withState from './with-state';
+import withTimestamp from './with-timestamp';
 
-const checkSeniorityType = checkEntityTimestamp(
-  (seniorityType, mockSeniorityType) => {
+const checkSeniorityType = withState(
+  withTimestamp((seniorityType, mockSeniorityType) => {
     if (!seniorityType) {
       return {
         message: () => 'there is no seniority type in response',
@@ -13,16 +14,17 @@ const checkSeniorityType = checkEntityTimestamp(
     expect(seniorityType.name).toBe(mockSeniorityType.name);
     expect(seniorityType.months).toBe(mockSeniorityType.months);
     expect(seniorityType.award).toBe(mockSeniorityType.award);
-    mockSeller.awards.forEach(({ value, day: { value: day } }, idx) => {
-      expect({ value, day: day.getTime() }).toEqual(
-        mockSeniorityType.awards[idx]
-      );
+    mockSeniorityType.awards.forEach(({ value, day: { value: day } }, idx) => {
+      expect(seniorityType.awards[idx]).toEqual({
+        value,
+        day: day.getTime(),
+      });
     });
 
     return {
       message: 'response contains seniority type',
       pass: true,
     };
-  }
+  })
 );
 export default checkSeniorityType;

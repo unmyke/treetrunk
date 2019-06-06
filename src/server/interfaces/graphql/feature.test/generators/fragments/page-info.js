@@ -4,7 +4,8 @@ const pageInfo = () => gql`
   fragment pageInfo on PageInfo {
     hasNextPage
     hasPreviousPage
-    count
+    startCursor
+    endCursor
   }
 `;
 export default pageInfo;

@@ -34,6 +34,7 @@ const seller = () => gql`
     }
     recruitDay
     dismissDay
+    state
     ...timestamp
   }
   ${node()}

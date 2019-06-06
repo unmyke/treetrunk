@@ -1,47 +1,26 @@
-import { createTestClient } from 'apollo-server-testing';
-
 import container from '@container';
-import Server from '../server';
+import getServerUrl from './get-server-url';
+import * as operations from './operations';
+import * as services from './services';
+import * as matchers from './matchers';
 
-import * as queries from './queries';
-import mappers from './mappers';
+const configureTests = () => {
+  const {
+    config: { api },
+    entities: {
+      SellerManagement: { Post },
+    },
+    commonTypes: { PostId },
+    tests: {
+      interfaces: { getApolloClient },
+    },
+  } = container;
 
-const {
-  config,
-  logger,
-  schema,
-  tests: {
-    jest: { getTest, getContext, getDescribe },
-  },
-} = container;
+  Post.dismissPostId = new PostId();
+  expect.extend(matchers);
+  const url = getServerUrl(api);
 
-const getUrl = ({ protocol, host, port, uri }) =>
-  `${protocol || 'http'}://${host && 'localhost'}${port && `:${port}`}${uri}`;
-const getTestClient = (services) => {
-  const server = Server({
-    config,
-    logger,
-    services,
-    errors,
-    schema,
-  }).apolloServer;
-
-  return createTestClient(server);
+  const ctx = { url, getApolloClient, operations, services };
+  return ctx;
 };
-
-const testConfig = {
-  url: getUrl(config.api),
-  utils: {
-    getTest,
-    getTests,
-    getContext,
-    getContexts,
-    getDescribe,
-    getDescribes,
-    getTestClient,
-  },
-  mappers,
-  queries,
-};
-
-export default testConfig;
+export default configureTests;

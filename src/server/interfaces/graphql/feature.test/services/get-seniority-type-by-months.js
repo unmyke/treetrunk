@@ -1,5 +1,6 @@
-import getMockEntityFactory from '../get-mock-entity-factory';
-const seniorityTypeFactory = getMockEntityFactory({
+import { createFactory } from '../entity-factory';
+
+const seniorityTypeFactory = createFactory({
   subdomainName: 'SellerManagement',
   entityName: 'SeniorityType',
 });

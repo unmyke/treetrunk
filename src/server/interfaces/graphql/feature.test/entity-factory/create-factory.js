@@ -4,7 +4,7 @@ import data from './data';
 
 const { entities } = container;
 
-const getMockEntityFactory = ({ subdomainName, entityName }) => {
+const createFactory = ({ subdomainName, entityName }) => {
   const Entity = entities[subdomainName][entityName];
   const entityIdPropName = `${lowerFirst(entityName)}Id`;
   const entityData = data[subdomainName][entityName];
@@ -16,4 +16,4 @@ const getMockEntityFactory = ({ subdomainName, entityName }) => {
       ...data,
     });
 };
-export default getMockEntityFactory;
+export default createFactory;

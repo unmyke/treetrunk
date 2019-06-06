@@ -1,6 +1,4 @@
-import { getPost } from '../../../../mocks/services';
-
-const getPostsListMock = ({
+const createGetPostsListMock = ({ getPost }) => ({
   filter: {
     fields: [{ value: postIds }],
   },
@@ -13,4 +11,4 @@ const getPostsListMock = ({
   };
 };
 
-export default getPostsListMock;
+export default createGetPostsListMock;

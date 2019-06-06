@@ -12,6 +12,7 @@ const post = () => gql`
       value
       day
     }
+    state
     ...timestamp
   }
   ${node()}

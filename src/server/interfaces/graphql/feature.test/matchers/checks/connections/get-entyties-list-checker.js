@@ -4,12 +4,6 @@ import getId from '@infra/support/get-entity-id';
 import decodeCursor from './decode-cursor';
 import * as typeChecks from '../types';
 
-const decodeCursor = (cursor) => {
-  const [type, id] = decode(cursor).stplit(':');
-
-  return { type, id };
-};
-
 const getEntytiesListChecker = (type) => (entitiesList, mockEntitiesList) => {
   const operation = pluralize(lowerFirst(type));
   const connection = `${type}Connection`;
@@ -36,7 +30,7 @@ const getEntytiesListChecker = (type) => (entitiesList, mockEntitiesList) => {
     };
   }
 
-  const { hasNextPage, hasPreviousPage, endCursor, endCursor } = pageInfo || {};
+  const { hasNextPage, hasPreviousPage, startCursor, endCursor } = pageInfo;
   if (!hasPreviousPage) {
     return {
       message: () =>

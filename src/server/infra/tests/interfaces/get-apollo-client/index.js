@@ -1,15 +1,9 @@
 import { createTestClient } from 'apollo-server-testing';
 import { Server } from '@interfaces/graphql';
-import getMockService from './get-mock-service';
+import getMockServices from './get-mock-services';
 
 const getApolloClient = ({ config, logger, errors, schema }) => (services) => {
-  const mockServices = Object.entries(services).reduce(
-    (prevServices, [serviceName, service]) => ({
-      ...prevServices,
-      [serviceName]: getMockService(service),
-    }),
-    {}
-  );
+  const mockServices = getMockServices(services);
 
   const server = Server({
     config,

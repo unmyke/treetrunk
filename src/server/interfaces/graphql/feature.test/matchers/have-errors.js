@@ -3,7 +3,7 @@ const haveErrors = (res) =>
     const haveErrors = Boolean(errors && errors.length > 0);
 
     return {
-      message: () => `reponse has ${haveErrors ? '' : 'no '}errors`,
+      message: () => `response has ${haveErrors ? '' : 'no '}errors`,
       pass: haveErrors,
     };
   });

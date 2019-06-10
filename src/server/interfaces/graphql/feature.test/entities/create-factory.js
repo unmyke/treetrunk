@@ -1,13 +1,13 @@
 import { lowerFirst } from 'lodash';
 import container from '@container';
-import data from './data';
+import mockEntities from './mock-entities';
 
 const { entities } = container;
 
 const createFactory = ({ subdomainName, entityName }) => {
   const Entity = entities[subdomainName][entityName];
   const entityIdPropName = `${lowerFirst(entityName)}Id`;
-  const entityData = data[subdomainName][entityName];
+  const entityData = mockEntities[subdomainName][entityName];
 
   return ({ id, ...data }) =>
     Entity.restore({

@@ -1,4 +1,4 @@
-import { createFactory } from '../entity-factory';
+import { createFactory } from '../entities';
 
 const getEntityFactory = ({ subdomainName, entityName }) => {
   const entityFactory = createFactory({ subdomainName, entityName });

@@ -6,18 +6,8 @@ const getSellerData = (chance) => {
   const middleName = chance.name();
   const lastName = chance.name();
   const phone = chance.phone();
-  const appointments = [
-    {
-      postId: uuidv4(),
-      day: new Date('2018-01-02'),
-    },
-    {
-      postId: uuidv4(),
-      day: new Date('2018-01-03'),
-    },
-  ];
   const createdAt = new Date('2018-01-01');
-  const state = 'recruited';
+  const state = 'new';
 
   const sellerData = {
     sellerId,
@@ -25,7 +15,7 @@ const getSellerData = (chance) => {
     middleName,
     lastName,
     phone,
-    appointments,
+    // appointments,
     createdAt,
     state,
   };

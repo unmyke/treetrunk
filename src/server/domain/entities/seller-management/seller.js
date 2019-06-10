@@ -179,7 +179,7 @@ export default class Seller extends BaseEntity {
     ],
 
     methods: {
-      onInvalidTransition(transition, from) {
+      onInvalidTransition(transition, from, to) {
         switch (true) {
           case from === states.DELETED:
             throw errors.sellerIsDeleted();
@@ -206,7 +206,9 @@ export default class Seller extends BaseEntity {
             throw errors.sellerIsNotDismissed();
 
           default:
-            throw errors.transitionNotAllowed();
+            throw errors.transitionNotAllowed(
+              `Transition ${transition} for seller with id ${this.sellerId.toString()} from state ${from} to state ${to} is not allowed`
+            );
         }
       },
 

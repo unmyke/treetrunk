@@ -4,7 +4,7 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const BabelMinifyWebpackPlugin = require('babel-minify-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const {
   envs: { PROD, DEV },

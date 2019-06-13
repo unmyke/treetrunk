@@ -7,6 +7,6 @@ const getPostByPostId = (
     },
     serializers: { Post: postSerializer },
   }
-) => getPost(postId).then(postSerializer);
+) => (postId ? getPost(postId).then(postSerializer) : null);
 
 export default getPostByPostId;

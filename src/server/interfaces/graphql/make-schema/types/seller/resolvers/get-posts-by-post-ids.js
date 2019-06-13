@@ -28,7 +28,6 @@ const getPostsByPostIds = (
   }
 ) => {
   const postListArgs = argsParser(postIds, args, errors);
-
   return getPostsList(postListArgs).then(postsSerializer);
 };
 

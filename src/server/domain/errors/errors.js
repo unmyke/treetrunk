@@ -1,6 +1,8 @@
 import { makeError } from '@common';
 
 const errors = {
+  // commonType factories
+  creationCommonType: makeError('CREATION_COMMON_TYPE'),
   // Diary
   recordAlreadyExists: makeError('RECORD_ALREADY_EXISTS'),
   recordDuplicate: makeError('RECORD_DUPLICATE'),

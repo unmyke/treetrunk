@@ -6,6 +6,7 @@ import { getSubdomainsContainer } from '@infra/support/container-helpers';
 import config from '@config';
 import tests from '@infra/tests';
 import { entities, commonTypes, states, errors } from '@domain';
+import * as domainFp from '@domain/fp';
 
 import {
   Application,
@@ -32,6 +33,7 @@ bottle.constant('config', config);
 //    Domain Layer
 bottle.constant('entities', entities);
 bottle.constant('commonTypes', commonTypes);
+bottle.constant('fp', domainFp);
 bottle.constant('states', states);
 bottle.constant('errors', errors);
 

@@ -8,8 +8,13 @@ const ifServiceReturnsRecuitedSeller = ({
 }) => {
   context('if service returns recuited seller', () => {
     test(`should return seller with corresponding id`, async () => {
-      const { getPost, getPostsList, getSeniorityTypeByMonths } = services;
-      const getSeller = createGetSeller(services);
+      const {
+        getSeller,
+        getPost,
+        getSeniorityTypeByMonths,
+        getPostsList,
+      } = services;
+      // const getPostsList = createGetPostsList(services);
       const id = uuidv4();
       const servicesToMock = {
         getSeller,

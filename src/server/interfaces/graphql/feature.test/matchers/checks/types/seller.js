@@ -29,7 +29,12 @@ const checkSeller = withState(
       } else {
         expect(seller.recruitDay).toBeNull();
       }
-      expect(seller.postId).toBe(mockSeller.postId.value);
+      if (mockSeller.postId) {
+        expect(seller.postId).toBe(mockSeller.postId.value);
+        checkPost(seller.post, mockPosts[0]);
+      } else {
+        expect(seller.postId).toBeNull();
+      }
       mockSeller.postIds.forEach(({ value: postId }, idx) => {
         expect(seller.postIds[idx]).toBe(postId);
       });
@@ -41,10 +46,15 @@ const checkSeller = withState(
           checkPost(post, mockPostsList.entities[idx]);
         }
       );
-
-      checkPost(seller.post, mockPosts[0]);
       checkPostConnection(seller.posts, mockPostsList);
-      checkSeniorityType(seller.seniorityType, mockSeniorityType);
+
+      if (mockSeller.seniority) {
+        expect(seller.seniority).toBe(mockSeller.seniority);
+        checkSeniorityType(seller.seniorityType, mockSeniorityType);
+      } else {
+        expect(seller.seniority).toBeNull();
+        expect(seller.seniorityType).toBeNull();
+      }
 
       return {
         message: 'response contains seller',

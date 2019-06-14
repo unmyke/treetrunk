@@ -1,11 +1,10 @@
-import getPost from './get-post';
+import getListFactory from './get-list-factory';
 
-const getPostsListMock = ({}) => {
-  const entities = appointmentsMock.map(({ postId }) => getPost(postId));
-  return {
-    entities,
-    hasAfter: false,
-    hasBefore: false,
-  };
-};
+const getPostsListMock = getListFactory({
+  subdomainName: 'SellerManagement',
+  entityName: 'Post',
+  count: 10,
+  hasAfter: false,
+  hasBefore: true,
+});
 export default getPostsListMock;

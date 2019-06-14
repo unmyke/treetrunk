@@ -5,9 +5,7 @@ async function haveSeller(
   { getSeller, getPost, getPostsList, getSeniorityTypeByMonths }
 ) {
   expect(getSeller).toBeCalledTimes(1);
-  expect(getPost).toBeCalledTimes(3);
   expect(getPostsList).toBeCalledTimes(1);
-  expect(getSeniorityTypeByMonths).toBeCalledTimes(1);
 
   const [
     {
@@ -16,16 +14,22 @@ async function haveSeller(
     mockSeller,
     mockSeniorityType,
     mockPostsList,
+    mockPosts,
   ] = await Promise.all([
     res,
     getSeller.mock.results[0].value,
-    getSeniorityTypeByMonths.mock.results[0].value,
+    getSeniorityTypeByMonths.mock.results[0] &&
+      getSeniorityTypeByMonths.mock.results[0].value,
     getPostsList.mock.results[0].value,
+    Promise.all(getPost.mock.results.map(({ value }) => value)),
   ]);
 
-  const mockPosts = await Promise.all(
-    getPost.mock.results.map(({ value }) => value)
-  );
+  expect(getPost).toBeCalledTimes(seller.postIds.length);
+  if (seller.seniority) {
+    expect(getSeniorityTypeByMonths).toBeCalledTimes(1);
+  } else {
+    expect(getSeniorityTypeByMonths).toBeCalledTimes(0);
+  }
 
   const includes = {
     mockPosts,

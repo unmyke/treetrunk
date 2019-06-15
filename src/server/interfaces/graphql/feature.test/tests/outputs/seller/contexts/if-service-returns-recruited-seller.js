@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4';
-import createGetPostsList from './create-get-posts-list';
+// import createGetPostsList from './create-get-posts-list';
 
 const ifServiceReturnsRecuitedSeller = ({
   getApolloClient,
@@ -8,8 +8,13 @@ const ifServiceReturnsRecuitedSeller = ({
 }) => {
   context('if service returns recuited seller', () => {
     test(`should return seller with corresponding id`, async () => {
-      const { getSeller, getPost, getSeniorityTypeByMonths } = services;
-      const getPostsList = createGetPostsList(services);
+      const {
+        getSeller,
+        getPost,
+        getPostsList,
+        getSeniorityTypeByMonths,
+      } = services;
+      // const getPostsList = createGetPostsList(services);
       const id = uuidv4();
       const servicesToMock = {
         getSeller,

@@ -1,8 +1,8 @@
-import contexts from './contexts';
+import * as contexts from './contexts';
 
 const sellerContexts = (ctx) => {
   describe('seller', () => {
-    contexts.forEach((sellerQueryContext) => {
+    Object.values(contexts).forEach((sellerQueryContext) => {
       sellerQueryContext(ctx);
     });
   });

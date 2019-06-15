@@ -12,7 +12,7 @@ const createFactory = ({ subdomainName, entityName }) => {
   return ({ id, ...data }) =>
     Entity.restore({
       ...entityData,
-      [entityIdPropName]: id,
+      ...(id ? { [entityIdPropName]: id } : {}),
       ...data,
     });
 };

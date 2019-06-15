@@ -1,3 +1,6 @@
-import ifServiceReturnsRecuitedSeller from './if-service-returns-recuited-seller';
-
-export default [ifServiceReturnsRecuitedSeller];
+export {
+  default as ifServiceReturnsNewSeller,
+} from './if-service-returns-new-seller';
+export {
+  default as ifServiceReturnsRecuitedSeller,
+} from './if-service-returns-recruited-seller';

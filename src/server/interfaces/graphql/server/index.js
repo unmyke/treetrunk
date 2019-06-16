@@ -23,9 +23,7 @@ const Server = ({ config, logger, services, errors, schema }) => {
         },
         (error) => {
           logger.error(
-            `[p ${process.pid}] Cannot start GraphQL server. Error: ${
-              error.message
-            }`
+            `[p ${process.pid}] Cannot start GraphQL server. Error: ${error.message}`
           );
           reject(error);
         }

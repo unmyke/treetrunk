@@ -8,8 +8,8 @@ const getSeniorityTypeByMonths = (
     serializers: { SeniorityType: seniorityTypeSerializer },
   }
 ) =>
-  getSeniorityTypeByMonths(seniority).then((seniorityType) => {
-    return seniorityType ? seniorityTypeSerializer(seniorityType) : null;
-  });
+  seniority
+    ? getSeniorityTypeByMonths(seniority).then(seniorityTypeSerializer)
+    : null;
 
 export default getSeniorityTypeByMonths;

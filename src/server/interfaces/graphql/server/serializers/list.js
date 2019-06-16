@@ -16,8 +16,10 @@ const getListSerializer = (serializer) => ({
     const node = serializer(entity);
     return { cursor, node };
   });
-  const startCursor = edges[0].cursor;
-  const endCursor = edges[edges.length - 1].cursor;
+  const startItem = edges[0];
+  const endItem = edges[edges.length - 1];
+  const startCursor = startItem ? startItem.cursor : null;
+  const endCursor = endItem ? endItem.cursor : null;
 
   edges.__type = `${serializer.name}Edge`;
   return {

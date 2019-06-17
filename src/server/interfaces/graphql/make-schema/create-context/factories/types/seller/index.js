@@ -1,7 +1,7 @@
 import { objectType } from 'nexus';
 
 import getAppointment from './appontment';
-import getStateEnum from './state-enum';
+import StateEnum from './state-enum';
 import {
   getPostByPostId as getPostByPostIdResolever,
   getPostsByPostIds as getPostsByPostIdsResolever,
@@ -18,7 +18,6 @@ const Seller = (ctx) => {
   } = ctx;
 
   const Appointment = getAppointment(ctx);
-  const StateEnum = getStateEnum(ctx);
   const getPostByPostId = getPostByPostIdResolever(ctx);
   const getPostsByPostIds = getPostsByPostIdsResolever(ctx);
   const getSeniorityTypeByMonths = getSeniorityTypeByMonthsResolever(ctx);

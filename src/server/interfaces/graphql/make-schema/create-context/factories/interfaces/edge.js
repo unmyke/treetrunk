@@ -1,10 +1,10 @@
 import { interfaceType } from 'nexus';
 
-const Edge = ({ interfaces: { Node } }) => {
+const Edge = ({ scalars: { Cursor }, interfaces: { Node } }) => {
   return interfaceType({
     name: 'EdgeInterface',
     definition(t) {
-      t.cursor('cursor');
+      t.field('cursor', { type: Cursor });
       t.field('node', {
         type: Node,
       });

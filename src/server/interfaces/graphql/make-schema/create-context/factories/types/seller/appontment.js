@@ -2,10 +2,11 @@ import { objectType } from 'nexus';
 
 import { getPostByPostId as getPostByPostIdResolver } from './resolvers';
 
-const SellerAppontment = (
-  { types: { Post }, scalars: { Day } },
-  getResolver
-) => {
+const SellerAppontment = ({
+  types: { Post },
+  scalars: { Day },
+  utlis: { getResolver },
+}) => {
   const getPostByPostId = getResolver(getPostByPostIdResolver);
 
   return objectType({

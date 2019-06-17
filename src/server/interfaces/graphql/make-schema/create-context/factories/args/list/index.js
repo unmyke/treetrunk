@@ -3,7 +3,7 @@ import SortInput from './sort';
 
 const listArgs = (ctx) => {
   const {
-    getOperationArgs,
+    utils: { getOperationArgs },
     scalars: { Cursor, PositiveInt },
   } = ctx;
   return getOperationArgs('GetListInput', (t) => {

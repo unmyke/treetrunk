@@ -1,13 +1,13 @@
 import { objectType } from 'nexus';
 
-import { Node as getNode, Timestamps as getTimestamps } from '../../interfaces';
-import { DeletableEntityState as getDeletableEntityState } from '../../enums';
 import getAward from './award';
 
 const SeniorityType = (ctx) => {
-  const Node = getNode(ctx);
-  const Timestamps = getTimestamps(ctx);
-  const DeletableEntityState = getDeletableEntityState(ctx);
+  const {
+    interfaces: { Node, Timestamps },
+    scalars: { PositiveFloat, PositiveInt },
+    enums: { DeletableEntityState },
+  } = ctx;
   const Award = getAward(ctx);
 
   return objectType({
@@ -15,8 +15,8 @@ const SeniorityType = (ctx) => {
     definition(t) {
       t.implements(Node, Timestamps);
       t.string('name');
-      t.int('months', { nullable: true });
-      t.float('award', { nullable: true });
+      t.field('months', { type: PositiveInt, nullable: true });
+      t.field('award', { type: PositiveFloat, nullable: true });
       t.field('state', { type: DeletableEntityState });
       t.list.field('awards', { type: Award });
     },

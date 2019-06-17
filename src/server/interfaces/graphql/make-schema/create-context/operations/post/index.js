@@ -11,31 +11,9 @@ const PostOperations = {
 const getPostOperations = (ctx) => {
   const {
     types: { Post },
-    connections: { Post: PostConnection },
-    utils: {
-      getTypeMutationAdder,
-      getTypeQueryAdder,
-      getTypeOperationResolvers,
-    },
+    utils: { createTypeOperations },
   } = ctx;
 
-  const addTypeMutation = getTypeMutationAdder(Post);
-  const addTypeQuery = getTypeQueryAdder(Post);
-  const operationResolvers = getTypeOperationResolvers(Post);
-
-  return Object.entries(PostOperations).reduce(
-    (prevOperations, [operationName, operation]) => ({
-      ...prevOperations,
-      [operationName]: operation({
-        ...ctx,
-        type: Post,
-        typeConnection: PostConnection,
-        addTypeMutation,
-        addTypeQuery,
-        operationResolvers,
-      }),
-    }),
-    {}
-  );
+  return createTypeOperations(Post, PostOperations);
 };
 export default getPostOperations;

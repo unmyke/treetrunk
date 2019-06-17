@@ -1,4 +1,4 @@
-const getPostByPostId = (
+const getPostByPostIdResolver = () => (
   { postId },
   _,
   {
@@ -9,4 +9,4 @@ const getPostByPostId = (
   }
 ) => (postId ? getPost(postId).then(postSerializer) : null);
 
-export default getPostByPostId;
+export default getPostByPostIdResolver;

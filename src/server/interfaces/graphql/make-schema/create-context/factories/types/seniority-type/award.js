@@ -1,12 +1,12 @@
 import { objectType } from 'nexus';
 
-const SeniorityTypeAward = () =>
+const SeniorityTypeAward = ({ PositiveFloat, Day }) =>
   objectType({
     name: 'SeniorityTypeAward',
     description: 'SeniorityTypeAward for seniority',
     definition(t) {
-      t.float('value');
-      t.day('day');
+      t.field('value', { type: PositiveFloat });
+      t.field('day', { type: Day });
     },
   });
 

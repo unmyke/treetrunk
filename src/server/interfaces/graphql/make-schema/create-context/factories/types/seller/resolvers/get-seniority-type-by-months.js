@@ -1,4 +1,4 @@
-const getSeniorityTypeByMonths = (
+const getSeniorityTypeByMonths = () => (
   { seniority },
   _,
   {

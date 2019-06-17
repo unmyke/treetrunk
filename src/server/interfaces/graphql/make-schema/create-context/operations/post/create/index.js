@@ -2,9 +2,7 @@ import getArgs from './args';
 
 const createPieceRate = (ctx) => {
   const {
-    addTypeMutation,
-    type,
-    operationResolvers,
+    utils: { addTypeMutation },
     operationNames: { CREATE },
   } = ctx;
   const args = getArgs(ctx);

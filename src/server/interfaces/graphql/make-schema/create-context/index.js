@@ -6,15 +6,14 @@ import getNestedContainersFactory from './get-nested-containers-factory';
 import operations from './operations';
 
 import * as factories from './factories';
+import * as constants from './constants';
 
-import * as scalars from './scalars';
-import * as enums from './enums';
-import * as argsParsers from './args-parsers';
-
-import getTypeConnection from './get-connection';
-import getTypeOperations from './get-operations';
-import getTypeOperationArgs from './get-operation-args';
-import getOperationTypes from './get-operation-types';
+import {
+  getTypeConnection,
+  getTypeOperations,
+  getTypeOperationArgs,
+  getOperationTypes,
+} from './utils';
 
 const createContext = (getServiceName) => {
   const bottle = new Bottle();
@@ -28,17 +27,11 @@ const createContext = (getServiceName) => {
   const getTypeResolvers = makeGetResolver(getServiceName);
   const operationTypes = getOperationTypes(getServiceName);
 
-  const constants = {
-    enums,
-    argsParsers,
-    scalars,
-    operationTypes,
-  };
   const createNestedConstants = getNestedContainersFactory({
     bottle,
     type: 'constant',
   });
-  createNestedConstants(constants);
+  createNestedConstants({ ...constants, operations, operationTypes });
 
   const utils = {
     getTypeConnection,
@@ -46,12 +39,12 @@ const createContext = (getServiceName) => {
     getTypeOperationArgs,
     getTypeResolvers,
   };
-  const createUtilsNestedConstants = getNestedContainersFactory({
+  const createUtilsNestedUtils = getNestedContainersFactory({
     bottle,
-    type: 'constant',
+    type: 'factory',
     name: 'utils',
   });
-  createUtilsNestedConstants(utils);
+  createUtilsNestedUtils(utils);
 
   const context = bottle.container;
 

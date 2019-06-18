@@ -5,7 +5,7 @@ const FilterFieldInput = () =>
     name: 'FilterFieldInput',
     definition(t) {
       t.string('name');
-      t.string('value');
+      t.list.string('value');
     },
   });
 export default FilterFieldInput;

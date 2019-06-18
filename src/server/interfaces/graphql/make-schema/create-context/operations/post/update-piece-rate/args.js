@@ -1,8 +1,8 @@
-import { Day as DayScalar } from '../../../scalars';
 import { PieceRate as getPieceRateInput } from '../inputs';
 
 const updatePieceRateArgs = (ctx) => {
   const {
+    scalars: { DayScalar },
     utils: { getOperationArgs },
   } = ctx;
   const PieceRateInput = getPieceRateInput(ctx);

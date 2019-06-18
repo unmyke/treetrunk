@@ -1,7 +1,7 @@
 import { CRUDS } from '@common';
 import getOperationField from './get-operation-field';
 
-const getOperationFields = ({ type, args, getResolver }) =>
+const getOperationFields = (ctx) => ({ type, args, getResolver }) =>
   Object.values(CRUDS).reduce(
     (prevOperationFields, crudName) => ({
       ...prevOperationFields,

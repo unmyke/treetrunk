@@ -5,9 +5,7 @@ const Edge = ({ scalars: { Cursor }, interfaces: { Node } }) => {
     name: 'EdgeInterface',
     definition(t) {
       t.field('cursor', { type: Cursor });
-      t.field('node', {
-        type: Node,
-      });
+      t.field('node', { type: Node });
       t.resolveType(({ __type }) => __type);
     },
   });

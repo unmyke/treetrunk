@@ -1,16 +1,26 @@
+import { queryType, mutationType } from 'nexus';
+
+import getSchemaOperations from './get-schema-operations';
+
 import node from './node';
-import * as seller from './seller';
-import * as post from './post';
-import * as seniorityType from './seniority-type';
+import * as Seller from './seller';
+import * as Post from './post';
+import * as SeniorityType from './seniority-type';
 
-const operations = { node, ...seller, ...post, ...seniorityType };
+const operations = { node };
+const typesOperations = { Seller, Post, SeniorityType };
 
-const getOperations = (ctx) =>
-  Object.entries(operations).reduce(
-    (prevOperation, [operationName, operation]) => ({
-      ...prevOperation,
-      [operationName]: operation(ctx),
-    }),
-    {}
-  );
-export default getOperations;
+const Query = queryType({
+  definition() {},
+});
+
+const Mutation = mutationType({
+  definition() {},
+});
+
+const operations = {
+  Query,
+  Mutation,
+  ...getSchemaOperations({ operations, typesOperations }),
+};
+export default operations;

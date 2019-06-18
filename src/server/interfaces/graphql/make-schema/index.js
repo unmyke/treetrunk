@@ -1,13 +1,13 @@
 import { makeSchema } from 'nexus';
 import { resolve } from 'path';
 
-import createContext from './create-context';
+import getSchemaContainer from './get-schema-container';
 
 const schema = (getServiceName) => {
-  const context = createContext(getServiceName);
+  const container = getSchemaContainer(getServiceName);
 
   return makeSchema({
-    types: context.operations,
+    types: container.operations,
     outputs: { schema: resolve(__dirname, 'schema.graphql') },
   });
 };

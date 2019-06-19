@@ -3,12 +3,16 @@ import { queryType, mutationType } from 'nexus';
 import getSchemaOperations from './get-schema-operations';
 
 import node from './node';
-import * as Seller from './seller';
+// import * as Seller from './seller';
 import * as Post from './post';
-import * as SeniorityType from './seniority-type';
+// import * as SeniorityType from './seniority-type';
 
 const operations = { node };
-const typesOperations = { Seller, Post, SeniorityType };
+const typesOperations = {
+  // Seller,
+  Post,
+  // SeniorityType
+};
 
 const Query = queryType({
   definition() {},

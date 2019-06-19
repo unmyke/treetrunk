@@ -4,11 +4,11 @@ import resolve from './resolver';
 const createPieceRate = (ctx) => {
   const {
     types: { Post },
-    utils: { getTypeMutation },
+    utils: { getMutation },
   } = ctx;
   const args = getArgs(ctx);
 
-  return getTypeMutation('createPostPieceRate', {
+  return getMutation('createPostPieceRate', {
     type: Post,
     description: 'Add pieceRate to post',
     args,

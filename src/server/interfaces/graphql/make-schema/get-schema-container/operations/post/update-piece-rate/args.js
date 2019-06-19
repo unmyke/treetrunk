@@ -2,9 +2,9 @@ import { PieceRate as getPieceRateInput } from '../inputs';
 
 const updatePieceRateArgs = (ctx) => {
   const {
+    interfaces: { TypeOperationInputInterface },
     scalars: { DayScalar },
     utils: { getOperationArgs },
-    interfaces: { TypeOperationInputInterface },
   } = ctx;
   const PieceRateInput = getPieceRateInput(ctx);
 

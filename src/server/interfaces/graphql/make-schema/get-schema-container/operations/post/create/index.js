@@ -1,18 +1,14 @@
 import getArgs from './args';
 
-const createPieceRate = (ctx) => {
+const create = (ctx) => {
   const {
-    types: { Post },
-    utils: { getTypeMutation },
-    resolvers: { create: createResolver },
+    utils: { getCrudMutation },
   } = ctx;
   const args = getArgs(ctx);
 
-  return getTypeMutation('createPost', {
-    type: Post,
+  return getCrudMutation('create', {
     description: 'Add post',
     args,
-    resolve: createResolver,
   });
 };
-export default createPieceRate;
+export default create;

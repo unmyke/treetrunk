@@ -4,10 +4,12 @@ import { resolve } from 'path';
 import getSchemaContainer from './get-schema-container';
 
 const schema = (getServiceName) => {
-  const container = getSchemaContainer(getServiceName);
+  const { queries, typeMutations, mutations } = getSchemaContainer(
+    getServiceName
+  );
 
   return makeSchema({
-    types: container.operations,
+    types: [queries, typeMutations, mutations],
     outputs: { schema: resolve(__dirname, 'schema.graphql') },
   });
 };

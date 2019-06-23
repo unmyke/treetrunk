@@ -1,54 +1,62 @@
 import Bottle from 'bottlejs';
 
-import makeGetResolver from './make-get-resolver';
-import getNestedContainersFactory from './get-nested-containers-factory';
-
-import operations from './operations';
-
-import * as factories from './factories';
-import * as constants from './constants';
-
 import {
-  getTypeConnection,
-  getTypeOperations,
-  getTypeOperationArgs,
-  getOperationTypes,
-} from './utils';
+  getNestedContainerFactories,
+  getNestedContainerFactory,
+  createGetResolver,
+  nestedContainerTypes,
+} from './container-utils';
+
+// import getOperationTypes from './get-operation-types';
+
+// import operations from './operations';
+// import crudOperations from './crud'
+
+import * as constants from './constants';
+import * as factories from './factories';
+import * as containerResolvers from './container-resolvers';
+import * as utils from './utils';
 
 const getSchemaContainer = (getServiceName) => {
   const bottle = new Bottle();
 
-  const createNestedFactories = getNestedContainersFactory({
+  // schema entires :: by constants
+  // const operationTypes = getOperationTypes(getServiceName);
+  const createNestedConstants = getNestedContainerFactories({
     bottle,
-    type: 'factory',
+    type: nestedContainerTypes.CONSTANT,
+  });
+  createNestedConstants({
+    ...constants,
+    // operationTypes,
+  });
+
+  // schema entires :: by factories
+  const createNestedFactories = getNestedContainerFactories({
+    bottle,
+    type: nestedContainerTypes.FACTORY,
   });
   createNestedFactories(factories);
 
-  const getTypeResolvers = makeGetResolver(getServiceName);
-  const operationTypes = getOperationTypes(getServiceName);
-
-  const createNestedConstants = getNestedContainersFactory({
+  // schema entries :: by dynamic
+  const createNestedDynamicsByResolvers = getNestedContainerFactories({
     bottle,
-    type: 'constant',
+    type: nestedContainerTypes.DYNAMIC,
   });
-  createNestedConstants({ ...constants, operations, operationTypes });
+  createNestedDynamicsByResolvers(containerResolvers);
 
-  const utils = {
-    getTypeConnection,
-    getTypeOperations,
-    getTypeOperationArgs,
-    getTypeResolvers,
-  };
-  const createUtilsNestedUtils = getNestedContainersFactory({
+  // schema builder utils
+  const getTypeResolvers = createGetResolver(getServiceName);
+
+  const createNestedUtils = getNestedContainerFactory({
     bottle,
-    type: 'factory',
+    type: nestedContainerTypes.FACTORY,
     name: 'utils',
   });
-  createUtilsNestedUtils(utils);
+  createNestedUtils({ ...utils, getTypeResolvers });
 
-  const context = bottle.container;
-
-  return context;
+  const { container } = bottle;
+  return container;
 };
 
 export default getSchemaContainer;

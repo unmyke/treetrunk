@@ -5,3 +5,4 @@ const getOperations = (ctx) => (operations) =>
       [operationName]: operation(ctx),
     })
   );
+export default getOperations;

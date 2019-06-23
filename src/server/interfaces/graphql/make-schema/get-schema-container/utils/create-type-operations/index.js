@@ -1,5 +1,7 @@
 const createTypeOperations = (ctx) => ({ type, operations }) => {
-  const { getTypeMutation } = ctx;
+  const {
+    utils: { getTypeMutation },
+  } = ctx;
   const mutation = getTypeMutation(type);
 
   return Object.entries(operations).reduce(

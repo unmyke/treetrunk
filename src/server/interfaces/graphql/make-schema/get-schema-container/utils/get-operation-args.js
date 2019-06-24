@@ -10,7 +10,7 @@ const getOperationArgs = () => (inputName, definition) => {
   const inputType = getInputType(inputName, definition);
 
   return {
-    input: { type: inputType, nullable: false },
+    input: inputType.asArg({ nullable: false }),
   };
 };
 export default getOperationArgs;

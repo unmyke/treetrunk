@@ -1,26 +1,31 @@
 import getMutationFieldFactory from './get-mutation-field-factory';
 
-const getFieldsToTypeMutationFactory = (typeName, mutations) =>
-  Object.entries(mutations).reduce(
-    (prevTypeMutations, [mutationName, mutation]) => ({
+const getFieldsToTypeMutationFactory = (typeName, mutations) => {
+  const typeMutation = ({ utils: { getTypeMutation } }) => {
+    const typeMutation = getTypeMutation(typeName);
+
+    return typeMutation;
+  };
+
+  return Object.entries(mutations).reduce(
+    (prevTypeMutations, [mutationFieldName, mutationField]) => ({
       ...prevTypeMutations,
-      [`${typeName}.${mutationName}`]: (ctx) => {
+      [`${typeName}.${mutationFieldName}`]: (ctx) => {
         const {
-          types,
           utils: { getTypeMutation },
         } = ctx;
 
-        const type = types[typeName];
-        const typeMutation = getTypeMutation(type);
+        const typeMutation = getTypeMutation(typeName);
         const getMutationField = getMutationFieldFactory(ctx);
 
         return getMutationField({
-          root: typeMutation,
-          mutation,
+          typeMutation,
+          mutationField,
         });
       },
     }),
-    {}
+    { [typeName]: typeMutation }
   );
+};
 
 export default getFieldsToTypeMutationFactory;

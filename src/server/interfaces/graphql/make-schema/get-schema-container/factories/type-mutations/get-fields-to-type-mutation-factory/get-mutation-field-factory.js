@@ -4,7 +4,7 @@ const getMutationFieldFactory = (ctx) => ({ root, mutation: getMutation }) => {
   const { name, ...config } = getMutation(ctx);
 
   return extendType({
-    type: root,
+    type: root.name,
     definition: (t) => {
       t.field(name, config);
     },

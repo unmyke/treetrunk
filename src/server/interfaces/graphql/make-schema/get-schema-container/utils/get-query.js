@@ -5,12 +5,14 @@ const getQuery = (ctx) => {
     types: { Query },
   } = ctx;
 
-  return (name, query) =>
-    extendType({
-      type: Query,
+  return (name, query) => {
+    const queryField = extendType({
+      type: Query.name,
       definition: (t) => {
         t.field(name, query);
       },
     });
+    return queryField;
+  };
 };
 export default getQuery;

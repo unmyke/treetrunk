@@ -1,5 +1,6 @@
 // export { default as createTypeOperations } from './create-type-operations';
 export { default as getTypeConnection } from './get-type-connection';
+export { default as getTypeMutation } from './get-type-mutation';
 // export { default as getTypeQueries } from './get-type-queries';
 export { default as getQuery } from './get-query';
 // export { default as getAddToTypeMutation } from './get-add-to-type-mutation';

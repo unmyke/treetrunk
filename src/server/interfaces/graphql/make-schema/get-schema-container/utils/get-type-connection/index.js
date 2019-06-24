@@ -6,9 +6,12 @@ const getTypeConnection = (ctx) => {
   const {
     interfaces: { Connection },
   } = ctx;
+  const connections = new Map();
 
   return (type) => {
     const { name } = type;
+    if (connections.has(name)) return connections.get(name);
+
     const Edge = getTypeEdge(ctx);
     const TypeEdge = Edge(type);
 
@@ -19,6 +22,7 @@ const getTypeConnection = (ctx) => {
         t.list.field('edges', { type: TypeEdge });
       },
     });
+    connections.set(name, TypeConnection);
 
     return TypeConnection;
   };

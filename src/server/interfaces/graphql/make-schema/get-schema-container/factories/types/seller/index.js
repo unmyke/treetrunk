@@ -11,13 +11,14 @@ import {
 const Seller = (ctx) => {
   const {
     types: { Post, SeniorityType },
-    connections: { Post: PostConnection },
     interfaces: { Node, Timestamps },
     scalars: { Phone, Day, PositiveInt },
     args: { list: listArgs },
+    utils: { getTypeConnection },
   } = ctx;
 
   const Appointment = getAppointment(ctx);
+  const PostConnection = getTypeConnection(Post);
   const getPostByPostId = getPostByPostIdResolever(ctx);
   const getPostsByPostIds = getPostsByPostIdsResolever(ctx);
   const getSeniorityTypeByMonths = getSeniorityTypeByMonthsResolever(ctx);

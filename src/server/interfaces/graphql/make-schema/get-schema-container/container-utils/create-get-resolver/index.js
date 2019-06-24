@@ -3,9 +3,9 @@ import getSerializerName from './get-serializer-name';
 const createGetResolver = (getServiceName) => (ctx) => {
   const { argsParsers } = ctx;
 
-  return ({ type, crudName }) => {
-    const serilizerName = getSerializerName({ type, crudName });
-    const serviceName = getServiceName(type.name, crudName);
+  return ({ type: { name: typeName }, crudName }) => {
+    const serilizerName = getSerializerName({ typeName, crudName });
+    const serviceName = getServiceName(typeName, crudName);
 
     return (
       _,

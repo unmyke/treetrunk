@@ -1,13 +1,13 @@
-import { extendType } from 'nexus';
+import { extendType, objectType } from 'nexus';
 import getTypeMutationName from './get-type-mutation-name';
 
 const getTypeMutation = (ctx) => {
-  const {
-    types: { Mutation },
-  } = ctx;
+  const { types } = ctx;
+  const { Mutation } = types;
   const typeMutations = new Map();
 
-  return ({ name: typeName }) => {
+  // return ({ name: typeName}) => {
+  return (typeName) => {
     if (typeMutations.get(typeName)) return typeMutations.get(typeName);
 
     const typeMutationName = getTypeMutationName(typeName);

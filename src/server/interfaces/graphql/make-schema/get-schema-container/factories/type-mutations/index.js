@@ -5,9 +5,9 @@ import * as Post from './post';
 import * as SeniorityType from './seniority-type';
 
 const mutations = {
-  Seller,
+  // Seller,
   Post,
-  SeniorityType,
+  // SeniorityType,
 };
 
 const typeMutationFields = Object.entries(mutations).reduce(

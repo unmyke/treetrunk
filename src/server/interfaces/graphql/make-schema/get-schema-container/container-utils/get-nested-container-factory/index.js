@@ -1,10 +1,8 @@
 import * as nestedContainerCreators from './nested-container-creators';
 
-const getNestedContainerFactory = ({ bottle, type, name, resolver }) => (
-  containers
-) => {
+const getNestedContainerFactory = ({ bottle, type, name }) => (containers) => {
   Object.entries(containers).forEach(
-    nestedContainerCreators[type]({ bottle, name, resolver })
+    nestedContainerCreators[type]({ bottle, name })
   );
 };
 export default getNestedContainerFactory;

@@ -10,18 +10,15 @@ const mutations = {
   SeniorityType,
 };
 
-const typeMutations = Object.entries(mutations).reduce(
-  (prevMutations, [typeName, typeMutations]) => {
-    const getTypeMutationFields = getFieldsToTypeMutationFactory(
-      typeName,
-      typeMutations
-    );
+const typeMutationFields = Object.entries(mutations).reduce(
+  (prevMutationFiels, [typeName, mutations]) => {
+    const mutationFields = getFieldsToTypeMutationFactory(typeName, mutations);
 
     return {
-      ...prevMutations,
-      ...getTypeMutationFields,
+      ...prevMutationFiels,
+      ...mutationFields,
     };
   },
   {}
 );
-export default typeMutations;
+export default typeMutationFields;

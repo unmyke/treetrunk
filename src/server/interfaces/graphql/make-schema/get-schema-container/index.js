@@ -14,7 +14,6 @@ import {
 
 import * as constants from './constants';
 import * as factories from './factories';
-import * as containerResolvers from './container-resolvers';
 import * as utils from './utils';
 
 const getSchemaContainer = (getServiceName) => {
@@ -38,22 +37,15 @@ const getSchemaContainer = (getServiceName) => {
   });
   createNestedFactories(factories);
 
-  // schema entries :: by dynamic
-  const createNestedDynamicsByResolvers = getNestedContainerFactories({
-    bottle,
-    type: nestedContainerTypes.DYNAMIC,
-  });
-  createNestedDynamicsByResolvers(containerResolvers);
-
   // schema builder utils
-  const getTypeResolvers = createGetResolver(getServiceName);
+  const getResolver = createGetResolver(getServiceName);
 
   const createNestedUtils = getNestedContainerFactory({
     bottle,
     type: nestedContainerTypes.FACTORY,
     name: 'utils',
   });
-  createNestedUtils({ ...utils, getTypeResolvers });
+  createNestedUtils({ ...utils, getResolver });
 
   const { container } = bottle;
   return container;

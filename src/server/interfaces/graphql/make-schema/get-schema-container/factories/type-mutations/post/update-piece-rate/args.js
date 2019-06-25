@@ -2,16 +2,14 @@ import { PieceRate as getPieceRateInput } from '../inputs';
 
 const updatePieceRateArgs = (ctx) => {
   const {
-    interfaces: { TypeOperationInputInterface },
-    scalars: { DayScalar },
+    scalars: { Day },
     utils: { getOperationArgs },
   } = ctx;
   const PieceRateInput = getPieceRateInput(ctx);
 
   return getOperationArgs('UpdatePostPieceRateInput', (t) => {
-    t.implements(TypeOperationInputInterface);
-    // t.id('id', { required: true });
-    t.field('day', { type: DayScalar, required: true });
+    t.id('id', { required: true });
+    t.field('day', { type: Day, required: true });
     t.field('newPieceRate', { type: PieceRateInput, required: true });
   });
 };

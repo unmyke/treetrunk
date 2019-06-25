@@ -13,6 +13,7 @@ const getTypeMutation = (ctx) => {
     const typeMutationName = getTypeMutationName(typeName);
     const typeMutation = extendType({
       type: Mutation.name,
+
       definition: (t) => {
         t.field(typeMutationName, {
           type: objectType({

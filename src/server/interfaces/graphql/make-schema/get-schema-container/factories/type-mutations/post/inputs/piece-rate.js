@@ -3,13 +3,14 @@ import { inputObjectType } from 'nexus';
 const PieceRateInput = (ctx) => {
   const {
     scalars: { Percentage, DateTime },
+    utils: { memoize },
   } = ctx;
 
   return inputObjectType({
     name: 'PieceRateInput',
     definition(t) {
-      t.fields('value', { type: Percentage });
-      t.fields('day', { type: DateTime });
+      t.field('value', { type: Percentage });
+      t.field('day', { type: DateTime });
     },
   });
 };

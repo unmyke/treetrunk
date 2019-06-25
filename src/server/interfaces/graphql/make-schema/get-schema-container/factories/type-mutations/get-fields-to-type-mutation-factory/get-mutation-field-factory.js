@@ -1,16 +1,21 @@
 import { extendType } from 'nexus';
 
-const getMutationFieldFactory = (ctx) => ({
-  typeMutation,
-  mutationField: getMutationField,
-}) => {
-  const { name, ...config } = getMutationField(ctx);
+const getMutationFieldFactory = ({ typeName, field: getMutationField }) => (
+  ctx
+) => {
+  const {
+    utils: { getTypeMutation },
+  } = ctx;
+  const typeMutation = getTypeMutation(typeName);
+  const { name, ...mutation } = getMutationField(ctx);
 
-  return extendType({
+  const mutationField = extendType({
     type: typeMutation.name,
     definition: (t) => {
-      t.field(name, config);
+      t.field(name, mutation);
     },
   });
+  return mutationField;
 };
+
 export default getMutationFieldFactory;

@@ -1,8 +1,16 @@
-import { queryField as getQueryField } from 'nexus';
+import { extendType } from 'nexus';
 
-const getQuery = () => {
-  return (name, query) => {
-    const queryField = getQueryField(name, query);
+const getQuery = (ctx) => {
+  const {
+    types: { Query },
+  } = ctx;
+  return ({ name, ...query }) => {
+    const queryField = extendType({
+      type: Query.name,
+      definition: (t) => {
+        t.field(name, query);
+      },
+    });
     return queryField;
   };
 };

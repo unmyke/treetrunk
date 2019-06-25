@@ -4,15 +4,18 @@ import * as Seller from './seller';
 import * as Post from './post';
 import * as SeniorityType from './seniority-type';
 
-const mutations = {
+const typesMutations = {
   // Seller,
   Post,
   // SeniorityType,
 };
 
-const typeMutationFields = Object.entries(mutations).reduce(
-  (prevMutationFiels, [typeName, mutations]) => {
-    const mutationFields = getFieldsToTypeMutationFactory(typeName, mutations);
+const typeMutationFields = Object.entries(typesMutations).reduce(
+  (prevMutationFiels, [typeName, typeMutationFields]) => {
+    const mutationFields = getFieldsToTypeMutationFactory(
+      typeName,
+      typeMutationFields
+    );
 
     return {
       ...prevMutationFiels,

@@ -7,7 +7,8 @@ const nodeQuery = (ctx) => {
     utils: { getQuery },
   } = ctx;
 
-  return getQuery('node', {
+  return getQuery({
+    name: 'node',
     type: Node,
     args: cursorArgs,
     resolve,

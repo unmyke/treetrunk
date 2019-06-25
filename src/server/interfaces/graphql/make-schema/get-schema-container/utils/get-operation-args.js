@@ -1,4 +1,4 @@
-import { inputObjectType } from 'nexus';
+import { arg, inputObjectType } from 'nexus';
 
 const getInputType = (typeName, definition) =>
   inputObjectType({
@@ -10,7 +10,7 @@ const getOperationArgs = () => (inputName, definition) => {
   const inputType = getInputType(inputName, definition);
 
   return {
-    input: inputType.asArg({ nullable: false }),
+    input: arg({ type: inputType, nullable: false }),
   };
 };
 export default getOperationArgs;

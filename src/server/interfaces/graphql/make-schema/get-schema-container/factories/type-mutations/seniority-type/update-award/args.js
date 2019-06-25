@@ -5,7 +5,11 @@ const updateAwardArgs = (ctx) => {
   const {
     scalars: { Day: DayScalar },
   } = ctx;
-  const AwardInput = getAwardInput(ctx);
+  const {
+    utils: { getSchemaItem },
+  } = ctx;
+
+  const AwardInput = getSchemaItem(getAwardInput);
 
   return {
     id: idArg({ required: true }),

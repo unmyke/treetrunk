@@ -14,11 +14,11 @@ const Seller = (ctx) => {
     interfaces: { Node, Timestamps },
     scalars: { Phone, Day, PositiveInt },
     args: { list: listArgs },
-    utils: { getTypeConnection },
+    utils: { getTypeConnection, getSchemaItem },
   } = ctx;
 
-  const Appointment = getAppointment(ctx);
-  const PostConnection = getTypeConnection(Post);
+  const Appointment = getSchemaItem(getAppointment);
+  const PostConnection = getTypeConnection(Post.name);
   const getPostByPostId = getPostByPostIdResolever(ctx);
   const getPostsByPostIds = getPostsByPostIdsResolever(ctx);
   const getSeniorityTypeByMonths = getSeniorityTypeByMonthsResolever(ctx);
@@ -43,7 +43,7 @@ const Seller = (ctx) => {
         args: listArgs,
         resolve: getPostsByPostIds,
       });
-      t.filed('seniority', { type: PositiveInt, nullable: true });
+      t.field('seniority', { type: PositiveInt, nullable: true });
       t.field('seniorityType', {
         type: SeniorityType,
         nullable: true,

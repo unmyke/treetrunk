@@ -1,18 +1,20 @@
-import { mutationField } from 'nexus';
-
-import { Seller as getSeller } from '../../../types';
 import getArgs from './args';
 import resolve from './resolver';
 
 const deleteAppointment = (ctx) => {
-  const Seller = getSeller(ctx);
-  const args = getArgs(ctx);
+  const {
+    types: { Seller },
+    utils: { getSchemaItem },
+  } = ctx;
 
-  return mutationField('deleteSellerAppointmentAt', {
+  const args = getSchemaItem(getArgs);
+
+  return {
+    name: 'deleteAppointmentAt',
     type: Seller,
     description: "Delete seller's appointment at day",
     args,
     resolve,
-  });
+  };
 };
 export default deleteAppointment;

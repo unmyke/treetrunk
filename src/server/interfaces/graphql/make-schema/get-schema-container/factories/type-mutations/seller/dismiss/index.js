@@ -1,18 +1,20 @@
-import { mutationField } from 'nexus';
-
-import { Seller as getSeller } from '../../../types';
 import getArgs from './args';
 import resolve from './resolver';
 
 const dismiss = (ctx) => {
-  const Seller = getSeller(ctx);
-  const args = getArgs(ctx);
+  const {
+    types: { Seller },
+    utils: { getSchemaItem },
+  } = ctx;
 
-  return mutationField('dismissSellerAt', {
+  const args = getSchemaItem(getArgs);
+
+  return {
+    name: 'dismissAt',
     type: Seller,
     description: 'Dismiss seller at day',
     args,
     resolve,
-  });
+  };
 };
 export default dismiss;

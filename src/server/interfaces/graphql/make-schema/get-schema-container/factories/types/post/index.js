@@ -7,9 +7,10 @@ const Post = (ctx) => {
     interfaces: { Node, Timestamps },
     enums: { DeletableEntityState },
     scalars,
+    utils: { getSchemaItem },
   } = ctx;
   const { PositiveFloat } = scalars;
-  const PieceRate = getPieceRate({ scalars });
+  const PieceRate = getSchemaItem(getPieceRate);
 
   return objectType({
     name: 'Post',

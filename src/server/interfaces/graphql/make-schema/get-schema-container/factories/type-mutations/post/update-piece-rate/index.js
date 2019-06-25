@@ -4,11 +4,12 @@ import resolve from './resolver';
 const updatePieceRate = (ctx) => {
   const {
     types: { Post },
+    utils: { getSchemaItem },
   } = ctx;
-  const args = getArgs(ctx);
+  const args = getSchemaItem(getArgs);
 
   return {
-    name: 'updatePostPieceRateTo',
+    name: 'updatePieceRateTo',
     type: Post,
     description: "Update post's pieceRate at day to new value and day",
     args,

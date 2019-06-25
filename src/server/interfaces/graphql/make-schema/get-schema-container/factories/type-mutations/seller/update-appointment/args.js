@@ -3,9 +3,9 @@ import { Appointment as getAppointmentInput } from '../inputs';
 const updateAppointmentArgs = (ctx) => {
   const {
     scalars: { Day },
-    utils: { getOperationArgs },
+    utils: { getOperationArgs, getSchemaItem },
   } = ctx;
-  const AppointmentInput = getAppointmentInput(ctx);
+  const AppointmentInput = getSchemaItem(getAppointmentInput);
 
   return getOperationArgs('UpdateSellerAppointmentInput', (t) => {
     t.id('id', { required: true });

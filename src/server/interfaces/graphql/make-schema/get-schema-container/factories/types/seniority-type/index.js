@@ -7,8 +7,9 @@ const SeniorityType = (ctx) => {
     interfaces: { Node, Timestamps },
     scalars: { PositiveFloat, PositiveInt },
     enums: { DeletableEntityState },
+    utils: { getSchemaItem },
   } = ctx;
-  const Award = getAward(ctx);
+  const Award = getSchemaItem(getAward);
 
   return objectType({
     name: 'SeniorityType',

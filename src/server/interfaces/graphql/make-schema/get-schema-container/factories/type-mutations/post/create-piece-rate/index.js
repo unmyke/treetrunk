@@ -8,7 +8,7 @@ const createPieceRate = (ctx) => {
   const args = getArgs(ctx);
 
   return {
-    name: 'createPostPieceRate',
+    name: 'createPieceRate',
     type: Post,
     description: 'Add pieceRate to post',
     args,

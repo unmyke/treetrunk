@@ -1,4 +1,2 @@
-import { lowerFirst } from 'lodash';
-
-const getRootTypeMutationName = (typeName) => lowerFirst(typeName);
+const getRootTypeMutationName = (typeName) => `${typeName}Mutations`;
 export default getRootTypeMutationName;

@@ -1,28 +1,29 @@
 import { objectType } from 'nexus';
 
-import getTypeEdge from './get-type-edge';
+import getTypeEdgeFactory from './get-type-edge';
 
 const getTypeConnection = (ctx) => {
   const {
     interfaces: { Connection },
   } = ctx;
   const connections = new Map();
+  const getTypeEdge = getTypeEdgeFactory(ctx);
 
-  return (type) => {
-    const { name } = type;
-    if (connections.has(name)) return connections.get(name);
+  // return (type) => {
+  return (typeName) => {
+    // const { typeName } = type;
+    if (connections.has(typeName)) return connections.get(typeName);
 
-    const Edge = getTypeEdge(ctx);
-    const TypeEdge = Edge(type);
+    const TypeEdge = getTypeEdge(typeName);
 
     const TypeConnection = objectType({
-      name: `${name}Connection`,
+      name: `${typeName}Connection`,
       definition(t) {
         t.implements(Connection);
         t.list.field('edges', { type: TypeEdge });
       },
     });
-    connections.set(name, TypeConnection);
+    connections.set(typeName, TypeConnection);
 
     return TypeConnection;
   };

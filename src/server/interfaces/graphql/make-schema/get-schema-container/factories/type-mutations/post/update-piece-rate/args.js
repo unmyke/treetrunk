@@ -3,9 +3,9 @@ import { PieceRate as getPieceRateInput } from '../inputs';
 const updatePieceRateArgs = (ctx) => {
   const {
     scalars: { Day },
-    utils: { getOperationArgs },
+    utils: { getOperationArgs, getSchemaItem },
   } = ctx;
-  const PieceRateInput = getPieceRateInput(ctx);
+  const PieceRateInput = getSchemaItem(getPieceRateInput);
 
   return getOperationArgs('UpdatePostPieceRateInput', (t) => {
     t.id('id', { required: true });

@@ -4,11 +4,13 @@ import resolve from './resolver';
 const createAppointment = (ctx) => {
   const {
     types: { Seller },
+    utils: { getSchemaItem },
   } = ctx;
-  const args = getArgs(ctx);
+
+  const args = getSchemaItem(getArgs);
 
   return {
-    name: 'createSellerAppointment',
+    name: 'createAppointment',
     type: Seller,
     description: 'Add appointment to seller',
     args,

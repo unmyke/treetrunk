@@ -2,14 +2,12 @@ import { Appointment as getAppointmentInput } from '../inputs';
 
 const createAppointmentArgs = (ctx) => {
   const {
-    utils: { getOperationArgs },
-    interfaces: { TypeOperationInputInterface },
+    utils: { getOperationArgs, getSchemaItem },
   } = ctx;
-  const AppointmentInput = getAppointmentInput(ctx);
+  const AppointmentInput = getSchemaItem(getAppointmentInput);
 
   return getOperationArgs('CreateSellerAppointmentInput', (t) => {
-    t.implements(TypeOperationInputInterface);
-    // t.id('id', { required: true });
+    t.id('id', { required: true });
     t.field('appointment', { type: AppointmentInput, required: true });
   });
 };

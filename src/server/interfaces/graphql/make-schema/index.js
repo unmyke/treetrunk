@@ -8,24 +8,25 @@ const schema = (getServiceName) => {
   const {
     interfaces: interfacesContainer,
     queries: queryContainer,
-    typeMutations: typeMutationsContainer,
-    // mutations: typeMutationsContainer,
+    typeMutationFields: typeMutationFieldsContainer,
+    mutationFields: mutationFieldsContainer,
   } = getSchemaContainer(getServiceName);
 
-  const interfaces = resolveContainer(interfacesContainer);
-  const queries = resolveContainer(queryContainer);
-  const typeMutations = resolveContainer(typeMutationsContainer);
-  // const mutations = mutationsContainer
+  const containers = [
+    interfacesContainer,
+    queryContainer,
+    typeMutationFieldsContainer,
+    mutationFieldsContainer,
+  ];
+  const [
+    interfaces,
+    queries,
+    typeMutationFields,
+    mutationFields,
+  ] = resolveContainer(containers);
 
   return makeSchema({
-    types: [
-      // Query,
-      // Mutation,
-      interfaces,
-      queries,
-      typeMutations,
-      // mutations
-    ],
+    types: [interfaces, queries, typeMutationFields, mutationFields],
     outputs: { schema: resolve(__dirname, 'schema.graphql') },
   });
 };

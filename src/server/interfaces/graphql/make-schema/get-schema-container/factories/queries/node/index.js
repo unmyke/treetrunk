@@ -4,10 +4,10 @@ const nodeQuery = (ctx) => {
   const {
     interfaces: { Node },
     args: { cursor: cursorArgs },
-    utils: { getQuery },
+    utils: { getQueryField },
   } = ctx;
 
-  return getQuery({
+  return getQueryField({
     name: 'node',
     type: Node,
     args: cursorArgs,

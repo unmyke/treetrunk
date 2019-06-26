@@ -7,7 +7,9 @@ const getTypeMutationField = (ctx) => {
     utils: { getTypeMutation },
   } = ctx;
 
-  return (typeName) => {
+  return (type) => {
+    const { name: typeName } = type;
+    // const typeMutation = getTypeMutation(type);
     const typeMutation = getTypeMutation(typeName);
 
     return extendType({

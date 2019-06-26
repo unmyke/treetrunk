@@ -4,7 +4,7 @@ export { default as getTypeMutation } from './get-type-mutation';
 export { default as getTypeMutationField } from './get-type-mutation-field';
 export { default as getMutationField } from './get-mutation-field';
 // export { default as getTypeQueries } from './get-type-queries';
-export { default as getQuery } from './get-query';
+export { default as getQueryField } from './get-query-field';
 // export { default as getAddToTypeMutation } from './get-add-to-type-mutation';
 // export { default as getTypeMutations } from './get-type-mutations';
 // export { default as getTypeOperations } from './get-type-operations';

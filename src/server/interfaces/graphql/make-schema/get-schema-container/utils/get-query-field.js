@@ -1,8 +1,8 @@
 import * as operationTypes from './operation-types';
 import getOperationFieldFactory from './get-operation-field';
 
-const getMutationField = (ctx) => {
+const getQueryField = (ctx) => {
   const getOperationField = getOperationFieldFactory(ctx);
-  return getOperationField(operationTypes.MUTATION);
+  return getOperationField(operationTypes.QUERY);
 };
-export default getMutationField;
+export default getQueryField;

@@ -4,7 +4,7 @@ import resolve from './resolver';
 const updateAppointment = (ctx) => {
   const {
     types: { Seller },
-    utils: { getSchemaItem },
+    utils: { getSchemaItem, getMutationField },
   } = ctx;
 
   const args = getSchemaItem(getArgs);

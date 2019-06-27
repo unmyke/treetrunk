@@ -1,6 +1,7 @@
 // export { default as createTypeOperations } from './create-type-operations';
 export { default as getTypeConnection } from './get-type-connection';
 export { default as getTypeMutation } from './get-type-mutation';
+export { default as getOperationField } from './get-operation-field';
 export { default as getTypeMutationField } from './get-type-mutation-field';
 export { default as getMutationField } from './get-mutation-field';
 // export { default as getTypeQueries } from './get-type-queries';

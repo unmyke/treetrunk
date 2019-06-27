@@ -8,25 +8,25 @@ const getOperationField = (ctx) => {
     utils: { getTypeMutation },
   } = ctx;
 
-  return (type) => {
-    return (getOperationField, typeName) => {
-      const exendedType =
-        type === operationTypes.QUERY
-          ? Query
-          : typeName
-          ? getTypeMutation(typeName)
-          : Mutation;
+  return (operationType) => (
+    { name, ...operation },
+    { name: typeName } = {}
+  ) => {
+    const exendedType =
+      operationType === operationTypes.QUERY
+        ? Query
+        : typeName
+        ? getTypeMutation(typeName)
+        : Mutation;
 
-      const { name, ...operation } = getOperationField(ctx);
-
-      const operationField = extendType({
-        type: exendedType.name,
-        definition: (t) => {
-          t.field(name, operation);
-        },
-      });
-      return operationField;
-    };
+    const operationField = extendType({
+      // type: exendedType,
+      type: exendedType.name,
+      definition: (t) => {
+        t.field(name, operation);
+      },
+    });
+    return operationField;
   };
 };
 

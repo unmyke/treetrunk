@@ -31,6 +31,7 @@ module.exports = (env) => ({
     publicPath: '/',
   },
   devtool: env === PROD ? false : 'cheap-module-eval-source-map',
+  // devtool: env === PROD ? false : 'inline-source-map',
   module: {
     rules: [
       {

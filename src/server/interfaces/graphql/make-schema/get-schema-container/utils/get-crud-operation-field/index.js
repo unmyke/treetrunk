@@ -1,25 +1,34 @@
-import getTypeQueryName from './get-type-query-name';
-import getTypeListQueryName from './get-type-list-query-name';
+import getQueryName from './get-query-name';
 import getOutputType from './get-output-type';
+import getArgs from './get-args';
 
-import { CRUDS, crudPredicates } from '@common';
+import { crudPredicates } from '@common';
 
-const { isListGetter, isMultipleSetter, isSetter, isGetter } = crudPredicates;
+const { isGetter } = crudPredicates;
 
 const getCrudOperations = (ctx) => {
   const {
-    utils: { getTypeResolver, getMutationField, getQueryField },
+    utils: { getMutationField, getQueryField },
   } = ctx;
 
   return (crudName) => {
-    const getOperationField = isGetter ? getQueryField : getMutationField;
+    const isQuery = isGetter(crudName);
+    const getOperationField = isQuery ? getQueryField : getMutationField;
 
     return (type, opts) => {
-      getOperationField({
-        type: getOutputType({ ctx, crudName, type }),
-        args: getArgs({ ctx, crudName, type }),
-        ...opts,
-      });
+      const name = isQuery ? getQueryName({ type, crudName }) : crudName;
+      const outputType = getOutputType({ ctx, crudName, type });
+      const args = getArgs({ ctx, crudName, type });
+
+      return getOperationField(
+        {
+          name,
+          type: outputType,
+          args,
+          ...opts,
+        },
+        isQuery ? undefined : type
+      );
     };
   };
 };

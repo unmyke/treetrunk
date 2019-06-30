@@ -4,9 +4,9 @@ import resolve from './resolver';
 const createPieceRate = (ctx) => {
   const {
     types: { Post },
-    utils: { getMutationField },
+    utils: { getMutationField, getSchemaItem },
   } = ctx;
-  const args = getArgs(ctx);
+  const args = getSchemaItem(getArgs);
 
   return getMutationField(
     {

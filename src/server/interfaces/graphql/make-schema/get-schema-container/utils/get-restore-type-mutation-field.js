@@ -1,21 +1,10 @@
-const getRestoreTypeMutationField = (ctx) => {
+import { CRUDS } from '@common';
+
+const getCreateTypeMutationField = (ctx) => {
   const {
-    args: { id: args },
-    utils: { getMutationField },
+    utils: { getCrudOperationField },
   } = ctx;
 
-  return (type) => {
-    const restoreTypeMutationField = getMutationField(
-      {
-        name: 'restore',
-        type,
-        description: `Restore ${type.name}`,
-        args,
-        resovle: () => {},
-      },
-      type
-    );
-    return restoreTypeMutationField;
-  };
+  return getCrudOperationField(CRUDS.RESTORE);
 };
-export default getRestoreTypeMutationField;
+export default getCreateTypeMutationField;

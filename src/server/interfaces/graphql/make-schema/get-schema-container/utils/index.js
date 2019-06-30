@@ -12,5 +12,23 @@ export { default as getQueryField } from './get-query-field';
 // export { default as getOperations } from './get-operations';
 // export { default as getTypeMutation } from './get-type-mutation';
 // export { default as generateByEntities } from './generate-by-entities';
+export { default as getCrudOperationField } from './get-crud-operation-field';
 export { default as getOperationArgs } from './get-operation-args';
 export { default as getSchemaItem } from './get-schema-item';
+export {
+  default as getDestroyTypeMutationField,
+} from './get-destroy-type-mutation-field';
+export {
+  default as getDeleteTypeMutationField,
+} from './get-delete-type-mutation-field';
+export {
+  default as getCreateTypeMutationField,
+} from './get-create-type-mutation-field';
+export {
+  default as getRestoreTypeMutationField,
+} from './get-restore-type-mutation-field';
+export {
+  default as getUpdateTypeMutationField,
+} from './get-update-type-mutation-field';
+export { default as getTypeByIdQueryField } from './get-type-by-id-query-field';
+export { default as getTypeListQueryField } from './get-type-list-query-field';

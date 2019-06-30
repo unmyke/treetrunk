@@ -5,6 +5,6 @@ const getCreateTypeMutationField = (ctx) => {
     utils: { getCrudOperationField },
   } = ctx;
 
-  return getCrudOperationField(CRUDS.UPDATE);
+  return getCrudOperationField(CRUDS.DESTROY);
 };
 export default getCreateTypeMutationField;

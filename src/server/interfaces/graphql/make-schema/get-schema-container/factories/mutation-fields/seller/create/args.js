@@ -3,16 +3,16 @@ import {
   Appointment as getAppointmentInput,
 } from '../inputs';
 
-const createArgs = (ctx) => {
+const createSellerArgs = (ctx) => {
   const {
-    utils: { getOperationArgs },
+    utils: { getOperationArgs, getSchemaItem },
   } = ctx;
-  const SellerInput = getSellerInput(ctx);
-  const AppointmentInput = getAppointmentInput(ctx);
+  const SellerInput = getSchemaItem(getSellerInput);
+  const AppointmentInput = getSchemaItem(getAppointmentInput);
 
   return getOperationArgs('CreateSellerInput', (t) => {
     t.field('seller', { type: SellerInput, required: true });
     t.field('appointment', { type: AppointmentInput, required: false });
   });
 };
-export default createArgs;
+export default createSellerArgs;

@@ -1,21 +1,10 @@
-const getDeleteTypeMutationField = (ctx) => {
+import { CRUDS } from '@common';
+
+const getCreateTypeMutationField = (ctx) => {
   const {
-    args: { id: args },
-    utils: { getMutationField },
+    utils: { getCrudOperationField },
   } = ctx;
 
-  return (type) => {
-    const deleteTypeMutationField = getMutationField(
-      {
-        name: 'delete',
-        type,
-        description: `Delete ${type.name}`,
-        args,
-        resovle: () => {},
-      },
-      type
-    );
-    return deleteTypeMutationField;
-  };
+  return getCrudOperationField(CRUDS.DELETE);
 };
-export default getDeleteTypeMutationField;
+export default getCreateTypeMutationField;

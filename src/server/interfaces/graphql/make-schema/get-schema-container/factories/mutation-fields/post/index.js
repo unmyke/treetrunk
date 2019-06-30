@@ -1,5 +1,8 @@
-// export { default as create } from './create';
-// export { default as update } from './update';
-export { default as createPieceRate } from './create-piece-rate';
-export { default as updatePieceRate } from './update-piece-rate';
-export { default as deletePieceRate } from './delete-piece-rate';
+export { default as createPost } from './create';
+export { default as updatePost } from './update';
+export { default as restorePost } from './restore';
+export { default as destroyPost } from './destroy';
+export { default as deletePost } from './delete';
+export { default as createPostPieceRate } from './create-piece-rate';
+export { default as updatePostPieceRate } from './update-piece-rate';
+export { default as deletePostPieceRate } from './delete-piece-rate';

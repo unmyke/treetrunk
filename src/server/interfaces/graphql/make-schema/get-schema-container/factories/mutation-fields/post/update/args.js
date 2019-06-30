@@ -1,15 +1,14 @@
-import { inputObjectType } from 'nexus';
 import { Post as getPostInput } from '../inputs';
 
-const UpdateInput = (ctx) => {
-  const PostInput = getPostInput(ctx);
+const updatePostArgs = (ctx) => {
+  const {
+    utils: { getOperationArgs, getSchemaItem },
+  } = ctx;
+  const PostInput = getSchemaItem(getPostInput);
 
-  return inputObjectType({
-    name: 'UpdatePostInput',
-    definition: (t) => {
-      t.id('id', { required: true });
-      t.field('post', { type: PostInput, required: true });
-    },
+  return getOperationArgs('UpdatePostInput', (t) => {
+    t.id('id', { required: true });
+    t.field('post', { type: PostInput, required: true });
   });
 };
-export default UpdateInput;
+export default updatePostArgs;

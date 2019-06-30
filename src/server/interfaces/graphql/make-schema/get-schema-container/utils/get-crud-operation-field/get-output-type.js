@@ -1,4 +1,5 @@
 import { crudPredicates } from '@common';
+
 const { isListGetter, isMultipleSetter } = crudPredicates;
 
 const getOutputType = ({ ctx, crudName, type }) => {
@@ -7,7 +8,7 @@ const getOutputType = ({ ctx, crudName, type }) => {
   } = ctx;
 
   if (isListGetter(crudName) || isMultipleSetter(crudName))
-    return getTypeConnection(type);
+    return getTypeConnection(type.name);
   return type;
 };
 export default getOutputType;

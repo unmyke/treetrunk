@@ -3,7 +3,7 @@ import * as types from './types';
 import * as interfaces from './interfaces';
 import * as connections from './connections';
 import * as typeMutationFields from './type-mutation-fields';
-import * as queries from './queries';
+import * as queryFields from './query-fields';
 import mutationFields from './mutation-fields';
 
 export {
@@ -11,7 +11,7 @@ export {
   types,
   interfaces,
   connections,
-  queries,
+  queryFields,
   mutationFields,
   typeMutationFields,
 };

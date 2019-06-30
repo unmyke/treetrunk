@@ -1,14 +1,19 @@
 import { inputObjectType } from 'nexus';
 
-const SellerInput = () =>
-  inputObjectType({
+const SellerInput = (ctx) => {
+  const {
+    scalars: { Phone },
+  } = ctx;
+
+  return inputObjectType({
     name: 'SellerInput',
     definition(t) {
       t.string('firstName');
       t.string('middleName');
       t.string('lastName');
-      t.phone('phone');
+      t.field('phone', { type: Phone });
     },
   });
+};
 
 export default SellerInput;

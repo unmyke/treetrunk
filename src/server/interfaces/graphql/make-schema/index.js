@@ -7,26 +7,26 @@ import resolveContainer from './resolve-container';
 const schema = (getServiceName) => {
   const {
     interfaces: interfacesContainer,
-    queries: queryContainer,
     typeMutationFields: typeMutationFieldsContainer,
+    queryFields: queryFieldsContainer,
     mutationFields: mutationFieldsContainer,
   } = getSchemaContainer(getServiceName);
 
   const containers = [
     interfacesContainer,
-    queryContainer,
     typeMutationFieldsContainer,
+    queryFieldsContainer,
     mutationFieldsContainer,
   ];
   const [
     interfaces,
-    queries,
     typeMutationFields,
+    queryFields,
     mutationFields,
   ] = resolveContainer(containers);
 
   return makeSchema({
-    types: [interfaces, queries, typeMutationFields, mutationFields],
+    types: [interfaces, queryFields, typeMutationFields, mutationFields],
     outputs: { schema: resolve(__dirname, 'schema.graphql') },
   });
 };

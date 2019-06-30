@@ -1,20 +1,10 @@
+import { CRUDS } from '@common';
+
 const getCreateTypeMutationField = (ctx) => {
   const {
-    utils: { getMutationField },
+    utils: { getCrudOperationField },
   } = ctx;
 
-  return (type, { args, resolver }) => {
-    const createTypeMutationField = getMutationField(
-      {
-        name: 'create',
-        type,
-        description: `Create ${type.name}`,
-        args,
-        resovle: resolver,
-      },
-      type
-    );
-    return createTypeMutationField;
-  };
+  return getCrudOperationField(CRUDS.CREATE);
 };
 export default getCreateTypeMutationField;

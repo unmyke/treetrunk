@@ -30,8 +30,8 @@ module.exports = (env) => ({
     __dirname: true,
     __filename: true,
   },
-  // devtool: 'source-map',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
+  // devtool: 'inline-source-map',
   module: {
     rules: [
       {

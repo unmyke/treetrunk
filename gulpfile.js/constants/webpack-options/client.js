@@ -30,8 +30,8 @@ module.exports = (env) => ({
     filename: env === PROD ? 'js/[name].[chunkhash:8].js"' : 'js/[name].js',
     publicPath: '/',
   },
-  // devtool: env === PROD ? false : 'cheap-module-eval-source-map',
-  devtool: env === PROD ? false : 'inline-source-map',
+  devtool: env === PROD ? false : 'cheap-module-eval-source-map',
+  // devtool: env === PROD ? false : 'inline-source-map',
   module: {
     rules: [
       {

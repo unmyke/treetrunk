@@ -1,12 +1,12 @@
 import getArgs from './args';
 
-const createPost = (ctx) => {
+const createSeller = (ctx) => {
   const {
-    types: { Post },
+    types: { Seller },
     utils: { getCreateTypeMutationField, getSchemaItem },
   } = ctx;
   const args = getSchemaItem(getArgs);
 
-  return getCreateTypeMutationField(Post, { args });
+  return getCreateTypeMutationField(Seller, { args });
 };
-export default createPost;
+export default createSeller;

@@ -1,14 +1,14 @@
 import { Seller as getSellerInput } from '../inputs';
 
-const updateArgs = (ctx) => {
+const updateSellerArgs = (ctx) => {
   const {
-    utils: { getOperationArgs },
+    utils: { getOperationArgs, getSchemaItem },
   } = ctx;
-  const SellerInput = getSellerInput(ctx);
+  const SellerInput = getSchemaItem(getSellerInput);
 
   return getOperationArgs('UpdateSellerInput', (t) => {
     t.id('id', { required: true });
     t.field('seller', { type: SellerInput, required: true });
   });
 };
-export default updateArgs;
+export default updateSellerArgs;

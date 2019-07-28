@@ -1,8 +1,11 @@
-export { default as GetAllPosts } from './get-all';
-export { default as GetPost } from './get';
-export { default as CreatePost } from './create';
-export { default as UpdatePost } from './update';
-export { default as DeletePost } from './delete';
-export { default as CreatePostPieceRate } from './create-piece-rate';
-// export { default as UpdatePostPieceRate } from './update-piece-rate';
-export { default as DeletePostPieceRate } from './delete-piece-rate';
+import createPost from './create';
+import createPostPieceRate from './create-piece-rate';
+import updatePostPieceRate from './update-piece-rate';
+import deletePostPieceRate from './delete-piece-rate';
+
+export default {
+  createPost,
+  createPostPieceRate,
+  updatePostPieceRate,
+  deletePostPieceRate,
+};

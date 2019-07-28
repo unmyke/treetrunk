@@ -7,28 +7,74 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "nodemon",
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
-      "runtimeArgs": ["--exec", "yarn", "babel-node"],
-      "program": "${workspaceFolder}/dist/client.bundle.index.js",
+      "name": "server (run)",
+      "program": "${workspaceFolder}/node_modules/.bin/gulp",
+      "args": ["devServer"],
       "cwd": "${workspaceFolder}",
-      "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "sourceMaps": true,
-      "outFiles": ["dst/***.js*"],
-      "env": {
-        "NODE_PATH": "."
-      }
+      // "sourceMapPathOverrides": {
+      //   "*/webpack:/*": "${workspaceRoot}/*",
+      //   "server/webpack:/*": "${workspaceRoot}/*",
+      //   "client/webpack:/*": "${workspaceRoot}/*",
+      //   "common/webpack:/*": "${workspaceRoot}/*"
+      // },
+      "runtimeExecutable": "~/.nodenv/shims/node",
+      "autoAttachChildProcesses": true
+      // "outFiles": ["dst/***.js*"],
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "build",
-      "program": "${workspaceFolder}/node_modules/.bin/webpack-cli",
-      "args": ["--config", "webpack.config.js", "2"],
-      "autoAttachChildProcesses": true,
-      "stopOnEntry": true
+      "name": "console (run)",
+      "program": "${workspaceFolder}/node_modules/.bin/gulp",
+      "args": ["devConsole"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "runtimeExecutable": "~/.nodenv/shims/node",
+      "autoAttachChildProcesses": true
+      // "outFiles": ["dst/***.js*"],
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "client (run)",
+      "program": "${workspaceFolder}/node_modules/.bin/gulp",
+      "args": ["devClient"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "runtimeExecutable": "~/.nodenv/shims/node"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "jest (current file)",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "${relativeFile}",
+        "--config",
+        "./jest.config/index.js",
+        "--runInBand"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      },
+      "runtimeExecutable": "~/.nodenv/shims/node"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Gulp task: devServer",
+      "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+      "args": ["devServer"]
     }
   ]
 }

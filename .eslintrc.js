@@ -5,6 +5,8 @@ module.exports = {
     'airbnb',
     'plugin:prettier/recommended',
     'prettier',
+    'prettier/babel',
+    'prettier/react',
     'plugin:import/errors',
     'plugin:import/warnings',
   ],
@@ -16,10 +18,21 @@ module.exports = {
     'comma-dangle': 'off',
     'react/jsx-filename-extension': 'off',
     'comma-spacing': ['error', { before: false, after: true }],
-    indent: ['error', 2, { SwitchCase: 1 }],
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single', { avoidEscape: true }],
     semi: ['error', 'always'],
     'prettier/prettier': ['error'],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: [
+          '**/*.test.js',
+          '**/*.test/index.js',
+          'src/server/infra/tests/**/*.js',
+        ],
+      },
+    ],
+    'no-shadow': 'off',
+    'import/namespace': ['error', { allowComputed: true }],
   },
 };

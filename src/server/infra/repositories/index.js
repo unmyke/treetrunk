@@ -1,1 +1,3 @@
-export { SellerManagement } from './mongoose';
+import * as mongorito from './mongorito';
+
+export default mongorito;

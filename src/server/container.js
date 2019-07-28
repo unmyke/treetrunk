@@ -1,118 +1,120 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable no-shadow */
 /* eslint-disable import/namespace */
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-shadow */
 import Bottle from 'bottlejs';
-import { lowerFirst } from 'lodash';
 import { getSubdomainsContainer } from '@infra/support/container-helpers';
 
 import config from '@config';
-import { subdomains, commonTypes, states, errors } from '@domain';
+import tests from '@infra/tests';
+import { entities, commonTypes, states, errors } from '@domain';
 
-import Application, * as services from '@app';
-import InitializeApplication from '@app/initialize-application';
+import {
+  Application,
+  services,
+  InitializeApplication,
+  getCrudServices,
+  getCrudServiceName,
+} from '@app';
 import makeValidator from '@infra/support/make-validator';
 
-import Server from '@interfaces/http/server';
-import router from '@interfaces/http/router';
-import logger from '@infra/logging/logger';
-import { subdomains as subdomainsSerializers } from '@interfaces/http/serializers';
-
-import { containerMiddleware } from '@interfaces/http/utils/bottle-express';
-import loggerMiddleware from '@interfaces/http/logging/logger-middleware';
-import swaggerMiddleware from '@interfaces/http/swagger/swagger-middleware';
-import errorHandler from '@interfaces/http/errors/error-handler';
-import devErrorHandler from '@interfaces/http/errors/dev-error-handler';
-
-import * as repositories from '@infra/repositories';
-import { database, models } from '@infra/database';
+import { Server, makeSchema } from '@interfaces/graphql';
+import Logger from '@infra/logging';
+import repositories from '@infra/repositories';
+import getDatabase from '@infra/database';
 import mappers from '@infra/mappers';
 
+const { database, models } = getDatabase({ config, errors });
+const PRODUCTION_MODE = 'production';
+
+// Container
 const bottle = new Bottle();
 
 bottle.constant('config', config);
-bottle.factory('initializeApplication', (container) => () =>
-  new InitializeApplication(container)
-);
-bottle.factory('app', (container) => Application(container));
-
-bottle.factory('subdomains', () => subdomains);
-bottle.factory('commonTypes', () => commonTypes);
-bottle.factory('states', () => states);
+//    Domain Layer
+bottle.constant('entities', entities);
+bottle.constant('commonTypes', commonTypes);
+bottle.constant('states', states);
 bottle.constant('errors', errors);
 
-// bottle.factory('mappers.commonTypes', ({ commonTypes }) =>
-//   getCommonTypesContainer(commonTypesMappers, (Mapper) =>
-//     Mapper({ commonTypes })
-//   )
-// );
-
-bottle.factory('mappers', ({ subdomains, commonTypes }) =>
-  getSubdomainsContainer(mappers, (Mapper, SubdomainName, EntityName) =>
-    Mapper({ commonTypes, Entity: subdomains[SubdomainName][EntityName] })
-  )
-);
-
-bottle.factory('repositories', ({ models, mappers }) =>
+bottle.factory('repositories', ({ entities, models, mappers, logger }) =>
   getSubdomainsContainer(
     repositories,
     (Repository, SubdomainName, EntityName) =>
       Repository({
+        commonTypes,
+        Entity: entities[SubdomainName][EntityName],
         Model: models[EntityName],
         models,
         mapper: mappers[SubdomainName][EntityName],
         mappers,
         database,
+        errors,
+        logger,
       })
   )
 );
 
-bottle.factory('serializers', () =>
-  getSubdomainsContainer(subdomainsSerializers, (Serializer) => Serializer())
-);
+//  Application Layer
+bottle.constant('getCrudServiceName', getCrudServiceName);
+bottle.factory('app', Application);
+bottle.factory('initializeApplication', InitializeApplication);
+bottle.factory('services', ({ entities, commonTypes, repositories }) =>
+  Object.keys(services).reduce((prevSubdomainOperations, SubdomainName) => {
+    const SubdomainOperations = services[SubdomainName];
+    const SubdomainEntities = entities[SubdomainName];
+    const SubdomainRepos = repositories[SubdomainName];
 
-bottle.factory(
-  'services',
-  ({ makeValidator, subdomains, commonTypes, errors, repositories }) =>
-    getSubdomainsContainer(services, (EntityOperations, SubdomainName) =>
-      Object.keys(EntityOperations).reduce(
-        (acc, operationName) => ({
-          ...acc,
-          [lowerFirst(operationName)]: () =>
-            new EntityOperations[operationName]({
-              entities: subdomains[SubdomainName],
+    return {
+      ...prevSubdomainOperations,
+      ...Object.keys(SubdomainOperations).reduce(
+        (prevEntitiesOperations, EntityName) => {
+          const EntityOperations = SubdomainOperations[EntityName];
+
+          return {
+            ...prevEntitiesOperations,
+            ...getCrudServices(EntityName, {
+              entities: SubdomainEntities,
               commonTypes,
-              repositories: repositories[SubdomainName],
-              validate: makeValidator(
-                EntityOperations[operationName].constraints,
-                errors
-              ),
-              errors,
+              repositories: SubdomainRepos,
             }),
-        }),
+            ...Object.keys(EntityOperations).reduce(
+              (prevEntityOperations, operationName) => {
+                const EntityOperation = EntityOperations[operationName];
+
+                return {
+                  ...prevEntityOperations,
+                  [operationName]: EntityOperation({
+                    entities: SubdomainEntities,
+                    commonTypes,
+                    repositories: SubdomainRepos,
+                  }),
+                };
+              },
+              {}
+            ),
+          };
+        },
         {}
-      )
-    )
+      ),
+    };
+  }, {})
 );
 
-bottle.constant('makeValidator', makeValidator);
-
-bottle.factory('server', (container) => new Server(container));
-bottle.factory('logger', (container) => logger(container));
-bottle.factory('router', (container) => router(container));
-bottle.factory('containerMiddleware', (container) =>
-  containerMiddleware(container)
-);
-// bottle.constant('serializers', serializers);
-
-bottle.factory('loggerMiddleware', (container) => loggerMiddleware(container));
-bottle.constant(
-  'errorHandler',
-  config.production ? errorHandler : devErrorHandler
-);
-bottle.constant('swaggerMiddleware', swaggerMiddleware);
-
+//  Infrastructure Layer
 bottle.constant('database', database);
 bottle.constant('models', models);
+bottle.constant('makeValidator', makeValidator);
+bottle.factory('mappers', ({ entities, commonTypes }) =>
+  getSubdomainsContainer(mappers, (Mapper, SubdomainName, EntityName) =>
+    Mapper({ commonTypes, Entity: entities[SubdomainName][EntityName] })
+  )
+);
+bottle.factory('logger', Logger);
+if (config.mode !== PRODUCTION_MODE) bottle.factory('tests', tests);
+
+//  Interface Layer
+bottle.factory('schema', ({ getCrudServiceName }) =>
+  makeSchema(getCrudServiceName)
+);
+bottle.factory('server', Server);
 
 export default bottle.container;

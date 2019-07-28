@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
-import factory from '@infra/support/test/factory';
-import cleanDatabase from '@infra/support/test/clean-database';
+import factory from '@infra/tests/factory';
+import cleanDatabase from '@infra/tests/clean-database';
 
 import container from '@container';
 import { PostIdMapper } from '../../../mappers/common-types/PostIdmapper';
@@ -13,7 +13,7 @@ const getRawPost = ({ postId, name, phone, pieceRates }) => ({
 });
 
 const {
-  subdomains: {
+  entities: {
     SellerManagement: { Post },
   },
   commonTypes: { Day, PostId },
@@ -24,7 +24,7 @@ const {
     SellerManagement: { Post: PostModel, PostPieceRate: PostPieceRateModel },
   },
   mappers: {
-    subdomains: {
+    entities: {
       SellerManagement: { Post: postMapper },
     },
   },

@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
-import factory from '@infra/support/test/factory';
-import cleanDatabase from '@infra/support/test/clean-database';
+import factory from '@infra/tests/factory';
+import cleanDatabase from '@infra/tests/clean-database';
 
 import container from '@container';
 
@@ -12,7 +12,7 @@ const getRawSeniorityType = ({ seniorityTypeId, name, phone, awards }) => ({
 });
 
 const {
-  subdomains: {
+  entities: {
     SellerManagement: { SeniorityType },
   },
   commonTypes: { Day, SeniorityTypeId },
@@ -26,7 +26,7 @@ const {
     },
   },
   mappers: {
-    subdomains: {
+    entities: {
       SellerManagement: { SeniorityType: seniorityTypeMapper },
     },
   },

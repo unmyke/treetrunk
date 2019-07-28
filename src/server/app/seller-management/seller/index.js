@@ -1,6 +1,17 @@
-export { default as GetAllSellers } from './get-all';
-export { default as GetSeller } from './get';
-export { default as CreateSeller } from './create';
-export { default as UpdateSeller } from './update';
-export { default as DeleteSeller } from './delete';
-export { default as CreateSellerAppointment } from './create-appointment';
+import createSeller from './create';
+import createSellerAppointment from './create-appointment';
+import deleteSellerAppointment from './delete-appointment';
+import deleteSellerDismiss from './delete-dismiss';
+import dismissSeller from './dismiss';
+import updateSellerAppointment from './update-appointment';
+import updateSellerDismiss from './update-dismiss';
+
+export default {
+  createSeller,
+  createSellerAppointment,
+  updateSellerAppointment,
+  deleteSellerAppointment,
+  dismissSeller,
+  updateSellerDismiss,
+  deleteSellerDismiss,
+};

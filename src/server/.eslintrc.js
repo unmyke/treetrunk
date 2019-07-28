@@ -1,4 +1,13 @@
-const path = require('path');
+const { resolve } = require('path');
+const {
+  targets: { SERVER },
+} = require(resolve(process.cwd(), 'gulpfile.js/constants/types'));
+const { [SERVER]: aliases } = require(resolve(
+  process.cwd(),
+  'gulpfile.js/constants/aliases'
+));
+
+const alias = Object.entries(aliases);
 
 module.exports = {
   env: {
@@ -7,10 +16,10 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
-      webpack: {
-        config: path.resolve(__dirname, '../../webpack.config.js'),
-        'config-index': 0,
-      },
+      alias,
     },
+  },
+  rules: {
+    'consistent-return': 'off',
   },
 };

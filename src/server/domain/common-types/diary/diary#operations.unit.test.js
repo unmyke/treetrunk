@@ -52,7 +52,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.deleteAt(newRecord.day);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
 
           expect(diary._store.size).toBe(0);
           expect(diary._archive.size).toBe(0);
@@ -65,7 +65,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateTo(record1.day, newRecord.value, newRecord.day);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
 
           expect(diary._store.size).toBe(0);
           expect(diary._archive.size).toBe(0);
@@ -78,7 +78,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.addCloseAt(day1);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
 
           expect(diary._store.size).toBe(0);
           expect(diary._archive.size).toBe(0);
@@ -90,7 +90,7 @@ describe('Domain :: commonTypes :: Diary', () => {
       test('should throw exception and leave records unchanged', () => {
         expect(() => {
           diary.deleteClose();
-        }).toThrowError('DIARY_NOT_CLOSED');
+        }).toThrowError('DIARY_IS_NOT_CLOSED');
 
         expect(diary._store.size).toBe(0);
         expect(diary._archive.size).toBe(0);
@@ -102,7 +102,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateCloseTo(day1);
-          }).toThrowError('DIARY_NOT_CLOSED');
+          }).toThrowError('DIARY_IS_NOT_CLOSED');
 
           expect(diary._store.size).toBe(0);
           expect(diary._archive.size).toBe(0);
@@ -160,7 +160,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.add(newPastRecord.value, newPastRecord.day);
-          }).toThrowError('DIARY_CLOSED');
+          }).toThrowError('DIARY_IS_CLOSED');
 
           expect(diary._store.records).toEqual([record1, record2, record3]);
           expect(diary._archive.map(({ day }) => day)).toEqual([day3]);
@@ -195,7 +195,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.deleteAt(newPastRecord.day);
-          }).toThrowError('DIARY_CLOSED');
+          }).toThrowError('DIARY_IS_CLOSED');
 
           expect(diary._store.records).toEqual([record1, record2, record3]);
           expect(diary._archive.map(({ day }) => day)).toEqual([day3]);
@@ -292,7 +292,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateTo(pastRecord1.day, newRecord.value, newRecord.day);
-          }).toThrowError('DIARY_CLOSED');
+          }).toThrowError('DIARY_IS_CLOSED');
 
           expect(diary._store.records).toEqual([record1, record2, record3]);
           expect(diary._archive.map(({ day }) => day)).toEqual([day3]);
@@ -353,7 +353,7 @@ describe('Domain :: commonTypes :: Diary', () => {
       test('should throw exception and leave records unchanged', () => {
         expect(() => {
           diary.deleteClose();
-        }).toThrowError('DIARY_NOT_CLOSED');
+        }).toThrowError('DIARY_IS_NOT_CLOSED');
 
         expect(diary._store.records).toEqual([record1, record2, record3]);
         expect(diary._archive.get(day3).value.records).toEqual([pastRecord1]);
@@ -365,7 +365,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateCloseTo(day1);
-          }).toThrowError('DIARY_NOT_CLOSED');
+          }).toThrowError('DIARY_IS_NOT_CLOSED');
 
           expect(diary._store.records).toEqual([record1, record2, record3]);
           expect(diary._archive.get(day3).value.records).toEqual([pastRecord1]);
@@ -392,7 +392,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.add(newPastRecord.value, newPastRecord.day);
-          }).toThrowError('DIARY_CLOSED');
+          }).toThrowError('DIARY_IS_CLOSED');
 
           expect(diary._store.records).toHaveLength(0);
           expect(diary._archive.get(day3).value.records).toEqual([pastRecord1]);
@@ -405,7 +405,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.deleteAt(newRecord.day);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
 
           expect(diary._store.records).toHaveLength(0);
           expect(diary._archive.get(day3).value.records).toEqual([pastRecord1]);
@@ -416,7 +416,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.deleteAt(newPastRecord.day);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
 
           expect(diary._store.records).toHaveLength(0);
           expect(diary._archive.get(day3).value.records).toEqual([pastRecord1]);
@@ -429,7 +429,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateTo(newRecord.day, newRecord.value, newRecord.day);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
 
           expect(diary._store.records).toHaveLength(0);
           expect(diary._archive.get(day3).value.records).toEqual([pastRecord1]);
@@ -440,7 +440,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.updateTo(newPastRecord.day, newRecord.value, newRecord.day);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
 
           expect(diary._store.records).toHaveLength(0);
           expect(diary._archive.get(day3).value.records).toEqual([pastRecord1]);
@@ -453,7 +453,7 @@ describe('Domain :: commonTypes :: Diary', () => {
         test('should throw exception and leave records unchanged', () => {
           expect(() => {
             diary.addCloseAt(day1);
-          }).toThrowError('DIARY_NOT_STARTED');
+          }).toThrowError('DIARY_IS_NOT_STARTED');
 
           expect(diary._store.records).toHaveLength(0);
           expect(diary._archive.get(day3).value.records).toEqual([pastRecord1]);

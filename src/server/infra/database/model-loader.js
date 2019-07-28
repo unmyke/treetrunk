@@ -1,43 +1,16 @@
-/* eslint-disable no-underscore-dangle */
-import { ActionTypes } from 'mongorito';
+import * as commonPlugins from './plugins';
+import { embedToModel } from './_lib';
 
-const savePlugin = () => {
-  return (store) => (next) => (action) => {
-    if (action.type === ActionTypes.SAVE) {
-      const { model, modelClass } = store;
-      const idPropName = `${modelClass.name.toLowerCase()}Id`;
-      const id = model ? model[idPropName] : null;
-      console.log(store.getState());
-      console.log(action);
+const modelLoader = ({ models, database, modelsPlugins }) => {
+  const modelsListNames = Object.keys(models);
 
-      if (id) {
-        modelClass.find({ [idPropName]: id }).then((existingModel) => {
-          if (existingModel) {
-            model.set({ _id: existingModel._id });
-          }
-        });
-      }
-    }
+  return modelsListNames.map((modelName) => {
+    const Model = models[modelName];
+    embedToModel(Model, models);
 
-    return next(action);
-  };
-};
-
-const embedToModel = (model, models) => {
-  if (model.toEmbed) {
-    model.toEmbed.forEach(({ path, modelName }) => {
-      model.embeds(path, models[modelName]);
-    });
-  }
-};
-
-const modelLoader = (models, database) => {
-  const modelsList = Object.values(models);
-
-  return modelsList.map((model) => {
-    embedToModel(model, models);
-    model.use(savePlugin);
-    return database.register(model);
+    const modelPlugins = modelsPlugins[modelName];
+    Model.use([...Object.values({ ...commonPlugins, ...modelPlugins })]);
+    return database.register(Model);
   });
 };
 

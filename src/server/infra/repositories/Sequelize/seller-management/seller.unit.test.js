@@ -1,6 +1,6 @@
 import uuidv4 from 'uuid/v4';
-import factory from '@infra/support/test/factory';
-import cleanDatabase from '@infra/support/test/clean-database';
+import factory from '@infra/tests/factory';
+import cleanDatabase from '@infra/tests/clean-database';
 
 import container from '@container';
 
@@ -21,7 +21,7 @@ const getRawSeller = ({
 });
 
 const {
-  subdomains: {
+  entities: {
     SellerManagement: { Seller },
   },
   commonTypes: { Day, SellerId, PostId },
@@ -35,7 +35,7 @@ const {
     },
   },
   mappers: {
-    subdomains: {
+    entities: {
       SellerManagement: { Seller: sellerMapper },
     },
   },

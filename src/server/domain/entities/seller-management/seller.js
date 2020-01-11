@@ -2,7 +2,7 @@
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
 import { BaseEntity } from '../../_lib';
-import { loop, getLifecycleEvenName } from '../../_lib/base-methods';
+import { loop, getLifecycleEventName } from '../../_lib/base-methods';
 import { errors } from '../../errors';
 import { Seller as states } from '../../states';
 import { SellerId, PostId, PersonName, Day, Diary } from '../../common-types';
@@ -212,7 +212,7 @@ export default class Seller extends BaseEntity {
         }
       },
 
-      [getLifecycleEvenName('before', transitions.UPDATE)](
+      [getLifecycleEventName('before', transitions.UPDATE)](
         _,
         { lastName, firstName, middleName, phone }
       ) {
@@ -225,7 +225,7 @@ export default class Seller extends BaseEntity {
         this.phone = phone || this.phone;
       },
 
-      [getLifecycleEvenName('before', transitions.ADD_APPOINTMENT)](
+      [getLifecycleEventName('before', transitions.ADD_APPOINTMENT)](
         _,
         postId,
         day = new Day()
@@ -233,14 +233,14 @@ export default class Seller extends BaseEntity {
         return diaryOperationRunner(() => this._appointments.add(postId, day));
       },
 
-      [getLifecycleEvenName('before', transitions.DELETE_APPOINTMENT_AT)](
+      [getLifecycleEventName('before', transitions.DELETE_APPOINTMENT_AT)](
         _,
         day = new Day()
       ) {
         return diaryOperationRunner(() => this._appointments.deleteAt(day));
       },
 
-      [getLifecycleEvenName('before', transitions.UPDATE_APPOINTMENT_TO)](
+      [getLifecycleEventName('before', transitions.UPDATE_APPOINTMENT_TO)](
         _,
         day,
         newPostId,
@@ -251,18 +251,18 @@ export default class Seller extends BaseEntity {
         );
       },
 
-      [getLifecycleEvenName('before', transitions.DISMISS_AT)](
+      [getLifecycleEventName('before', transitions.DISMISS_AT)](
         _,
         day = new Day()
       ) {
         return diaryOperationRunner(() => this._appointments.addCloseAt(day));
       },
 
-      [getLifecycleEvenName('before', transitions.DELETE_DISMISS)]() {
+      [getLifecycleEventName('before', transitions.DELETE_DISMISS)]() {
         return diaryOperationRunner(() => this._appointments.deleteClose());
       },
 
-      [getLifecycleEvenName('before', transitions.UPDATE_DISMISS_TO)](
+      [getLifecycleEventName('before', transitions.UPDATE_DISMISS_TO)](
         _,
         day = new Day()
       ) {
@@ -271,10 +271,10 @@ export default class Seller extends BaseEntity {
         );
       },
 
-      [getLifecycleEvenName('after', transitions.DELETE)]() {
+      [getLifecycleEventName('after', transitions.DELETE)]() {
         this.deletedAt = new Date();
       },
-      [getLifecycleEvenName('after', transitions.RESTORE)]() {
+      [getLifecycleEventName('after', transitions.RESTORE)]() {
         this.deletedAt = null;
       },
     },

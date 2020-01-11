@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
-import { loop, getLifecycleEvenName } from '@domain/_lib/base-methods';
+import { loop, getLifecycleEventName } from '@domain/_lib/base-methods';
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { Post as states } from '../../states';
@@ -94,11 +94,11 @@ export default class Post extends BaseEntity {
         }
       },
 
-      [getLifecycleEvenName('before', transitions.UPDATE)](_, { name }) {
+      [getLifecycleEventName('before', transitions.UPDATE)](_, { name }) {
         this.name = name || this.name;
       },
 
-      [getLifecycleEvenName('before', transitions.ADD_PIECE_RATE)](
+      [getLifecycleEventName('before', transitions.ADD_PIECE_RATE)](
         _,
         value,
         day = new Day()
@@ -106,14 +106,14 @@ export default class Post extends BaseEntity {
         return diaryOperationRunner(() => this._pieceRates.add(value, day));
       },
 
-      [getLifecycleEvenName('before', transitions.DELETE_PIECE_RATE_AT)](
+      [getLifecycleEventName('before', transitions.DELETE_PIECE_RATE_AT)](
         _,
         day = new Day()
       ) {
         return diaryOperationRunner(() => this._pieceRates.deleteAt(day));
       },
 
-      [getLifecycleEvenName('before', transitions.UPDATE_PIECE_RATE_TO)](
+      [getLifecycleEventName('before', transitions.UPDATE_PIECE_RATE_TO)](
         _,
         day,
         newValue,
@@ -124,11 +124,11 @@ export default class Post extends BaseEntity {
         );
       },
 
-      [getLifecycleEvenName('after', transitions.DELETE)]() {
+      [getLifecycleEventName('after', transitions.DELETE)]() {
         this.deletedAt = new Date();
       },
 
-      [getLifecycleEvenName('after', transitions.RESTORE)]() {
+      [getLifecycleEventName('after', transitions.RESTORE)]() {
         this.deletedAt = null;
       },
     },

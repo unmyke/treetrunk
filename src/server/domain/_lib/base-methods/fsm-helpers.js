@@ -8,5 +8,5 @@ export function toState(state) {
   return state;
 }
 
-export const getLifecycleEvenName = (lifecycle, target) =>
+export const getLifecycleEventName = (lifecycle, target) =>
   `on${upperFirst(lifecycle)}${upperFirst(target)}`;

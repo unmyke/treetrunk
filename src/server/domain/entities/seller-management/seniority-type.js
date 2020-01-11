@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { getSyncOperationRunner } from '@infra/support/operation-runner';
 
-import { loop, getLifecycleEvenName } from '@domain/_lib/base-methods';
+import { loop, getLifecycleEventName } from '@domain/_lib/base-methods';
 import { BaseEntity } from '../../_lib';
 import { errors } from '../../errors';
 import { SeniorityType as states } from '../../states';
@@ -108,7 +108,7 @@ export default class SeniorityType extends BaseEntity {
         }
       },
 
-      [getLifecycleEvenName('before', transitions.UPDATE)](
+      [getLifecycleEventName('before', transitions.UPDATE)](
         _,
         { name, months }
       ) {
@@ -116,7 +116,7 @@ export default class SeniorityType extends BaseEntity {
         this.months = months || this.months;
       },
 
-      [getLifecycleEvenName('before', transitions.ADD_AWARD)](
+      [getLifecycleEventName('before', transitions.ADD_AWARD)](
         _,
         value,
         day = new Day()
@@ -124,14 +124,14 @@ export default class SeniorityType extends BaseEntity {
         return diaryOperationRunner(() => this._awards.add(value, day));
       },
 
-      [getLifecycleEvenName('before', transitions.DELETE_AWARD_AT)](
+      [getLifecycleEventName('before', transitions.DELETE_AWARD_AT)](
         _,
         day = new Day()
       ) {
         return diaryOperationRunner(() => this._awards.deleteAt(day));
       },
 
-      [getLifecycleEvenName('before', transitions.UPDATE_AWARD_TO)](
+      [getLifecycleEventName('before', transitions.UPDATE_AWARD_TO)](
         _,
         day,
         newValue,
@@ -141,11 +141,11 @@ export default class SeniorityType extends BaseEntity {
           this._awards.updateTo(day, newValue, newDay)
         );
       },
-      [getLifecycleEvenName('after', transitions.DELETE)]() {
+      [getLifecycleEventName('after', transitions.DELETE)]() {
         this.deletedAt = new Date();
       },
 
-      [getLifecycleEvenName('after', transitions.RESTORE)]() {
+      [getLifecycleEventName('after', transitions.RESTORE)]() {
         this.deletedAt = null;
       },
     },
